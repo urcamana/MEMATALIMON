@@ -980,6 +980,19 @@ h11 {
 }
 
 
+/* corregir color de nav y canvas */
+/* ===================================================== */
+
+#offcanvasDarkNavbar{
+ background-color: var(--tema-principal) !important;
+
+} 
+
+.offcanvas-body .canv-as, .offcanvas-header{
+ background-color: var(--tema-canvas) !important;
+
+} 
+
 
 
 
@@ -995,15 +1008,16 @@ h11 {
  .card-group.tarjetas2 .card:hover {
   border-color: #ad44a19c !important;
 } 
-#offcanvasDarkNavbar{
- background-color: var(--tema-principal) !important;
 
-} 
 
-.offcanvas-body .canv-as, .offcanvas-header{
- background-color: var(--tema-canvas) !important;
 
-} 
+
+
+
+
+
+
+
 
 
 
