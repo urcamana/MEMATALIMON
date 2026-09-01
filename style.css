@@ -986,15 +986,15 @@ h11 {
 /* CAMBIAR SOLO EL COLOR DEL BORDE EN LAS CARDS */
 /* ===================================================== */
 
-/* .card-group.tarjetas2 .card {
-   Mantiene el grosor y estilo por defecto, cambiando solo el color 
-  border-color: #ae95d9 !important;
+ .card-group.tarjetas2 .card {
+  /* Mantiene el grosor y estilo por defecto, cambiando solo el color */
+ border-color: #94758a98 !important;
 } 
 
- Opcional: si quieres un color diferente al pasar el cursor 
+ /*Opcional: si quieres un color diferente al pasar el cursor */
  .card-group.tarjetas2 .card:hover {
-  border-color: #8e44ad !important;
-} */
+  border-color: #ad44a19c !important;
+} 
 #offcanvasDarkNavbar{
  background-color: var(--tema-principal) !important;
 
