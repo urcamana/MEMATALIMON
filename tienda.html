@@ -149,7 +149,6 @@
         <template id="contTemplate">
             <div class="tarjetas ">
                 <div class=" row justify-content-center esteSi">
-                    <h3></h3>
                     <!-- <div class="card " >
                         <img class="card-img-top" >
                         <div class="card-body">
@@ -286,6 +285,11 @@
                 </div>
                 <p>Cargando catálogo de productos...</p>
             </div>
+            <!-- Contenedor fijo donde logica.js inserta las tarjetas del catálogo.
+                 Antes las tarjetas se agregaban con document.body.appendChild(),
+                 lo que las mandaba al final de <body> (después del footer),
+                 dejando este espacio vacío. -->
+            <div id="contenedorCatalogo"></div>
             <!-- necesito agregar class display none -->
             <!-- agregamos esto para sombras en class " shadow-lg p-3 mb-5  rounded" -->
             <div class="offcanvas offcanvas-start hide text-bg-dark shadow-lg p-3 mb-5  rounded" tabindex="-1"

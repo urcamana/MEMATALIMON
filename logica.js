@@ -277,7 +277,7 @@ categoriasUnicas.forEach(categoria => {
     });
     let clone = document.importNode(template, true);
     fragmento.appendChild(clone);
-    document.body.appendChild(fragmento);//agregamos el contenedor padre
+    document.getElementById("contenedorCatalogo").appendChild(fragmento);//agregamos el contenedor padre
     document.getElementById(contenedorId).appendChild(fragmento2); //agregamos las cards
     //MOSTRAMOS EL BOTON QUE SELECCIONAMOS
     //CAMBIAMOS EL NOMBRE AL BOTON PRINCIPAL DEL MENU DESPLEGABLE POR EL SELECCIONADO
@@ -342,7 +342,7 @@ function obtenerURL() {
   });
   let clone = document.importNode(template, true);
   fragmento.appendChild(clone);
-  document.body.appendChild(fragmento);//agregamos el contenedor padre
+  document.getElementById("contenedorCatalogo").appendChild(fragmento);//agregamos el contenedor padre
   document.getElementById(contenedorId).appendChild(fragmento2); //agregamos las cards
   //MOSTRAMOS EL BOTON QUE SELECCIONAMOS
   //CAMBIAMOS EL NOMBRE AL BOTON PRINCIPAL DEL MENU DESPLEGABLE POR EL SELECCIONADO
@@ -386,12 +386,9 @@ datos.forEach(datos => {
 
 });
 
-template.querySelector("H3").textContent = '';
-
-
 let clone = document.importNode(template, true);
 fragmento.appendChild(clone);
-document.body.appendChild(fragmento);//agregamos el contenedor padre
+document.getElementById("contenedorCatalogo").appendChild(fragmento);//agregamos el contenedor padre
 document.getElementById(contenedorId).appendChild(fragmento2); //agregamos las cards
 
 // Ocultamos el loader inicial: el catálogo ya está pintado
@@ -703,7 +700,7 @@ function filtrarConBusqueda() {
     let clone = document.importNode(template, true);
     fragmento.appendChild(clone);
 
-    document.body.appendChild(fragmento);//agregamos el contenedor padre
+    document.getElementById("contenedorCatalogo").appendChild(fragmento);//agregamos el contenedor padre
 
     document.getElementById(contenedorId).appendChild(fragmento2); //agregamos las cards
 
