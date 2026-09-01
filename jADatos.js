@@ -54,8 +54,8 @@ try {
       <h2>No pudimos cargar el catálogo</h2>
       <p>Por favor, recargá la página. Si el problema persiste, contactanos por WhatsApp.</p>
              <div class="redes">
-
-            <a id="w" href="https://wa.me/message/5493751588752" target="_blank"><img src="IMG/w.png"
+                 
+            <a id="w" href="https://wa.me/5493751588752" target="_blank"><img src="IMG/w.png"
                     alt="WhatsApp"></a>
             <!-- 
             <a id="I" href="#i"><img src="../IMG/i.png" alt="Instagram"></a>
