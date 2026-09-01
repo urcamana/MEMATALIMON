@@ -53,6 +53,16 @@ try {
     <div style="text-align:center; padding: 4rem 1rem; font-family: sans-serif;">
       <h2>No pudimos cargar el catálogo</h2>
       <p>Por favor, recargá la página. Si el problema persiste, contactanos por WhatsApp.</p>
+             <div class="redes">
+
+            <a id="w" href="https://wa.me/message/" target="_blank"><img src="IMG/w.png"
+                    alt="WhatsApp"></a>
+            <!-- 
+            <a id="I" href="#i"><img src="../IMG/i.png" alt="Instagram"></a>
+
+            <a id="F" href="#f"><img src="../IMG/f.png" alt="Facebook"></a> -->
+
+        </div>
     </div>
   `;
 
