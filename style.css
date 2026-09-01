@@ -8,10 +8,12 @@ body {
   width: 100% !important;
   margin: 0 !important;
 }
-nav{
+
+nav {
   width: 100% !important;
-  margin: 0 !important; 
+  margin: 0 !important;
 }
+
 #totalCarritoNavb {
   font-size: 14px;
 }
@@ -20,7 +22,7 @@ nav{
   height: min-content;
   width: min-content;
   display: inline-block;
- font-size: 2vh;
+  font-size: 2vh;
 }
 
 
@@ -36,12 +38,13 @@ nav{
   top: 50%;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  border-color: #333;
+  border-color: #fa87f1;
   border-style: double;
 
 
 }
-#fondo{
+
+#fondo {
   position: fixed;
   z-index: 9999999999;
   opacity: 100%;
@@ -147,6 +150,7 @@ nav{
   z-index: 49 !important;
 
 }
+
 
 #alertAgrego {
   position: fixed;
@@ -371,12 +375,12 @@ li form {
   z-index: 99;
   display: none;
 
- 
-   width: 8.5vh;
-    height: 8.5vh;
-    border-radius: 50%;
 
-  
+  width: 8.5vh;
+  height: 8.5vh;
+  border-radius: 50%;
+
+
 }
 
 .scroll-up-btn {
@@ -448,22 +452,26 @@ li form {
 }
 
 .img-prod:active {
-position: fixed !; /* La imagen se posicionará en relación a la ventana */
-top: 50%;
-left: 50%;
-transform: translate(-50%, -50%) scale(2);
-z-index: 99999999!important; /* Asegúrate de que esté por encima de otros elementos */
-transform: scale(2);
-z-index: 1;
-margin: -5px; /* Agrega un margen negativo para crear espacio */
-object-fit: cover;
-transition: transform 0.3s ease-in-out;
+  position: fixed !;
+  /* La imagen se posicionará en relación a la ventana */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(2);
+  z-index: 99999999 !important;
+  /* Asegúrate de que esté por encima de otros elementos */
+  transform: scale(2);
+  z-index: 1;
+  margin: -5px;
+  /* Agrega un margen negativo para crear espacio */
+  object-fit: cover;
+  transition: transform 0.3s ease-in-out;
 }
 
 h7 {
   color: red;
   font-size: 2vh;
 }
+
 h11 {
   color: rgb(67, 64, 64);
   font-size: 1.4vh;
@@ -471,55 +479,59 @@ h11 {
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  background-color: #ffffff;
+  background-color: #f9f9f9;
 }
 
-h1, h2, h3, h5 {
-    font-family: 'Playfair Display', serif;
+h1,
+h2,
+h3,
+h5 {
+  font-family: 'Playfair Display', serif;
 }
 
 small {
-   font-size: 1.5vh;
+  font-size: 1.5vh;
 }
 
 .porCategoria {
-    display: flex;
-    justify-content: center;
-    margin: 2px 0;
+  display: flex;
+  justify-content: center;
+  margin: 2px 0;
 }
 
 .porCategoriaUl {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 2px;
-    list-style: none;
-    padding: 0;
-    margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-.porCategoriaUl li{
-    margin:0;
+.porCategoriaUl li {
+  margin: 0;
 }
 
-.categoria-btn{
-    border-radius:4px;
-    padding:2px 4px;
-    transition:.2s;
-    font-weight:5;
+.categoria-btn {
+  border-radius: 4px;
+  padding: 2px 4px;
+  transition: .2s;
+  font-weight: 5;
   color: rgb(6, 6, 6);
 }
 
-.categoria-btn:hover{
-    transform:translateY(-2px);
-    box-shadow:0 2px 4px rgba(0, 0, 0, 0.518);
+.categoria-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.518);
 }
 
-.bg-gray.py-5{
-    position: sticky;
-    top:5px;
-    z-index:40;
-    padding:5px;
+.bg-gray.py-5 {
+  position: sticky;
+  top: 5px;
+  z-index: 40;
+  padding: 5px;
+
 }
 
 
@@ -531,13 +543,13 @@ small {
   /* Convertir el botón en un elemento de bloque */
   margin: auto;
   /* Establecer márgenes automáticos para centrarlo */
-     font-size: 2vh;
+  font-size: 2vh;
 }
 
 
-.cantidadParaAgregar{
+.cantidadParaAgregar {
 
-     font-size: 2.5vh;
+  font-size: 2.5vh;
 }
 
 /* ===================================================== */
@@ -551,7 +563,7 @@ small {
 
 .card-group.tarjetas2 .card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 20px rgba(115, 123, 191, 0.15);
 }
 
 /* Precio final y precio sin impuestos, más legibles y con jerarquía visual */
@@ -572,14 +584,16 @@ h11 {
 /* Botón "Agregar al carrito" con mejor feedback al interactuar */
 .botonaparecer {
   transition: background-color 0.2s ease, transform 0.1s ease;
+  background-color: #a370b9 !important;
 }
 
 .botonaparecer:hover {
-  background-color: #000 !important;
+  background-color: #8e44ad !important;
 }
 
 .botonaparecer:active {
   transform: scale(0.96);
+  background-color: #8d44ad72 !important;
 }
 
 /* Insignia de % OFF más prolija (antes era un óvalo rosado difícil de leer) */
@@ -597,7 +611,7 @@ h11 {
 .sin-resultados {
   text-align: center;
   padding: 3rem 1rem;
-  color: #6c757d;
+  color: #000000;
   font-size: 1.1rem;
   width: 100%;
 }
@@ -717,7 +731,7 @@ h11 {
 #offcanvasDark .list-group-item {
   background-color: transparent;
   color: inherit;
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(245, 189, 239, 0.2);
 }
 
 /* ===================================================== */
@@ -734,6 +748,7 @@ h11 {
 }
 
 @media (max-width: 480px) {
+
   .carrito-btn-cantidad,
   .carrito-btn-eliminar {
     width: 38px;
@@ -787,3 +802,205 @@ h11 {
   position: relative;
   z-index: 999;
 }
+
+/* ===================================================== */
+/* PERSONALIZACIÓN DE COLORES: NAVBAR, OFFCANVAS Y BOTONES */
+/* ===================================================== */
+
+:root {
+  /* 🎨 CAMBIA ESTOS COLORES SEGÚN TU PREFERENCIA */
+  --tema-principal: #a88cd7;
+  /* Color principal para el Navbar y el Carrito */
+
+  --tema-secundario: #ae95d9e5;
+  /* Color secundario / cabeceras de offcanvas */
+
+  --tema-canvas: #8e66cf;
+  /* Color de fondo del offcanvas del carrito */
+
+  --tema-acento: #ae95d9c5;
+  /* Color para botones activos / destacados */
+  --tema-acento-hover: #624a62;
+  /* Color de botones al pasar el cursor */
+  --texto-general: #ffffff;
+  /* Color del texto sobre fondos oscuros */
+  --borde-suave: rgba(255, 255, 255, 0.15);
+  /* Bordes de separación */
+
+  --tema-categoria: #a1009c81;
+  /* Color principal de la categoría */
+
+  --texto-categoria: #f1eaea;
+  /* Color del texto en las categorías */
+
+}
+
+/* ----------------------------------------------------- */
+/* 1. BARRA DE NAVEGACIÓN PRINCIPAL (NAVBAR) */
+/* ----------------------------------------------------- */
+#nav1,
+#nav1.bg-dark {
+  background-color: var(--tema-principal) !important;
+  border-bottom: 1px solid var(--borde-suave);
+}
+
+#nav1 .navbar-brand,
+#nav1 .nav-link {
+  color: var(--texto-general) !important;
+}
+
+#nav1 .nav-link:hover,
+#nav1 .nav-link.active {
+  color: #ffffff !important;
+  /* Color de resaltado al pasar el mouse */
+}
+
+/* Botón "Carrito" del Navbar */
+#listaInteres {
+  background-color: var(--tema-secundario) !important;
+  color: var(--texto-general) !important;
+  border: 1px solid var(--borde-suave) !important;
+}
+
+#listaInteres:hover {
+  background-color: var(--tema-acento) !important;
+}
+
+/* Indicador de precio en el Navbar */
+#totalCarritoNavb {
+  background-color: transparent !important;
+  color: var(--texto-general) !important;
+  font-weight: bold;
+}
+
+/* Botón de menú hamburguesa (Móviles) */
+.navbar-toggler {
+  border-color: var(--borde-suave) !important;
+}
+
+/* ----------------------------------------------------- */
+/* 2. MENÚ DESPLEGABLE EN MÓVILES (OFFCANVAS NAVBAR) */
+/* ----------------------------------------------------- */
+#offcanvasDarkNavbar {
+  background-color: var(--tema-canvas) !important;
+  color: var(--texto-general) !important;
+}
+
+/* ----------------------------------------------------- */
+/* 3. PANEL DEL CARRITO DE COMPRAS (OFFCANVAS CARRITO) */
+/* ----------------------------------------------------- */
+#offcanvasDark,
+#offcanvasDark.text-bg-dark {
+  background-color: var(--tema-canvas) !important;
+  color: var(--texto-general) !important;
+}
+
+#offcanvasDark .offcanvas-header {
+  border-bottom: 1px solid var(--borde-suave);
+  background-color: var(--tema-canvas);
+}
+
+#offcanvasDark .offcanvas-title,
+#offcanvasDark #precioTotal,
+#offcanvasDark #cantidadTotalCarrito,
+#offcanvasDark p,
+#offcanvasDark h4 {
+  color: var(--texto-general) !important;
+}
+
+/* Tarjeta interna y lista de ítems dentro del Carrito */
+#offcanvasDark .card,
+#offcanvasDark .list-group,
+#offcanvasDark .list-group-item {
+  background-color: var(--tema-canvas) !important;
+  color: var(--texto-general) !important;
+  border-color: var(--borde-suave) !important;
+}
+
+/* ----------------------------------------------------- */
+/* 4. BOTONES DEL CARRITO (+, -, 🗑) */
+/* ----------------------------------------------------- */
+.carrito-btn-cantidad {
+  background-color: var(--tema-principal) !important;
+  color: var(--texto-general) !important;
+  border: 1px solid var(--borde-suave) !important;
+}
+
+.carrito-btn-cantidad:hover {
+  background-color: var(--tema-acento) !important;
+}
+
+.carrito-btn-eliminar {
+  background-color: #e74c3c !important;
+  /* Rojo para borrar */
+  color: #ffffff !important;
+  border: none !important;
+}
+
+.carrito-btn-eliminar:hover {
+  background-color: #c0392b !important;
+}
+
+/* ----------------------------------------------------- */
+/* 5. SECCIÓN DE FILTROS Y CATEGORÍAS */
+/* ----------------------------------------------------- */
+.porCategoriaUl .categoria-btn {
+  background-color: var(--tema-categoria) !important;
+  color: var(--texto-categoria) !important;
+  border: 1px solid var(--borde-suave) !important;
+}
+
+.porCategoriaUl .categoria-btn:hover,
+.porCategoriaUl .categoria-btn.active {
+  background-color: var(--tema-acento) !important;
+  color: #ffffff !important;
+}
+
+
+/* El encabezado con el título necesita buen contraste para el texto
+           blanco: el fondo claro con opacidad reducida de arriba no alcanza
+           el mínimo de contraste accesible, así que acá lo pisamos con un
+           fondo sólido y oscuro solo para esta sección. */
+.heroTitulo {
+  background-color: #5833979d !important;
+  opacity: 75% !important;
+}
+
+
+.bg-gray.py-5 {
+  background-color: rgb(253, 253, 253);
+  opacity: 60%;
+
+  right: 0;
+  z-index: 39;
+  padding: 0%;
+  margin-right: 0 !important;
+  margin-bottom: 0px;
+  right: 0 !important;
+}
+
+
+
+
+
+/* CAMBIAR SOLO EL COLOR DEL BORDE EN LAS CARDS */
+/* ===================================================== */
+
+/* .card-group.tarjetas2 .card {
+   Mantiene el grosor y estilo por defecto, cambiando solo el color 
+  border-color: #ae95d9 !important;
+} 
+
+ Opcional: si quieres un color diferente al pasar el cursor 
+ .card-group.tarjetas2 .card:hover {
+  border-color: #8e44ad !important;
+} */
+#offcanvasDarkNavbar{
+ background-color: var(--tema-principal) !important;
+
+} 
+
+.offcanvas-body .canv-as, .offcanvas-header{
+ background-color: var(--tema-canvas) !important;
+
+} 
