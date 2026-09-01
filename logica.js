@@ -740,7 +740,14 @@ function filtrarConBusqueda() {
   //PONEMOS LOS EVENTOS DEL BUSCADOR
 
   formulario.addEventListener('input', filtrarConDebounce);
-  formulario.addEventListener('change', filtrar);
+  // Sacamos el listener de 'change': se disparaba al perder el foco el
+  // input (blur), lo cual pasa justo antes del evento 'click' cuando el
+  // usuario tocaba un botón "Agregar" del resultado de la búsqueda. Eso
+  // reconstruía el catálogo (y hacía scroll arriba) en medio del click,
+  // dejando el botón original removido del DOM antes de que el click
+  // llegara a procesarse: la página subía y el producto no se agregaba.
+  // El listener de 'input' (con debounce) ya cubre la búsqueda mientras
+  // se escribe, y el de 'keydown' cubre Enter.
   formulario.addEventListener('keydown', (event) => {
     if (event.keyCode === 13 || event.key === 'Enter') { // Verifica si se presionó Enter
       clearTimeout(debounceBusqueda);
