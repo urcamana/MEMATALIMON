@@ -1,4 +1,4 @@
-﻿* {
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -980,19 +980,6 @@ h11 {
 }
 
 
-/* corregir color de nav y canvas */
-/* ===================================================== */
-
-#offcanvasDarkNavbar{
- background-color: var(--tema-principal) !important;
-
-} 
-
-.offcanvas-body .canv-as, .offcanvas-header{
- background-color: var(--tema-canvas) !important;
-
-} 
-
 
 
 
@@ -1008,84 +995,12 @@ h11 {
  .card-group.tarjetas2 .card:hover {
   border-color: #ad44a19c !important;
 } 
+#offcanvasDarkNavbar{
+ background-color: var(--tema-principal) !important;
 
+} 
 
+.offcanvas-body .canv-as, .offcanvas-header{
+ background-color: var(--tema-canvas) !important;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Habilitar CSS Grid y corregir el alineamiento para eliminar el hueco inicial */
-.esteSi {
-  display: grid !important;
-  grid-auto-flow: dense !important;   /* Ocupa automáticamente cualquier hueco */
-  align-content: start !important;      /* Alinea las tarjetas arriba del todo */
-  justify-content: start !important;  /* Alinea las tarjetas a la izquierda */
-  align-items: start !important;
-  gap: 1rem !important;                 /* Espaciado uniforme */
-  margin: 0 auto !important;
-  padding: 0 !important;               /* Reseteado para evitar saltos en la 1° card */
-  width: 100% !important;
-}
-
-
-.esteSi > [class*="col-"] {
-  width: 100% !important;
-  max-width: 100% !important;
-  flex: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
-}
-/* Eliminar pseudoelementos de Bootstrap que generan espacios vacíos en Grid */
-.esteSi::before,
-.esteSi::after {
-  display: none !important;
-}
-
-/* Forzar reset de márgenes en la primera tarjeta */
-.esteSi > *:first-child,
-.esteSi .card:first-child {
-  margin-top: 0 !important;
-  margin-left: 0 !important;
-}
-/* ----------------------------------------------------- */
-/* OPCS. CONFIGURACIÓN EN CELULAR (Menos de 768px) */
-/* ----------------------------------------------------- */
-
-@media (max-width: 767px) {
-  .esteSi {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-}
-
-/* ----------------------------------------------------- */
-/* OPCS. CONFIGURACIÓN EN TABLET (768px a 991px) */
-/* ----------------------------------------------------- */
-
-@media (min-width: 768px) and (max-width: 991px) {
-  .esteSi {
-    grid-template-columns: repeat(3, 1fr) !important;
-  }
-}
-
-/* ----------------------------------------------------- */
-/* OPCS. CONFIGURACIÓN EN COMPUTADORA / PC (Más de 992px) */
-/* ----------------------------------------------------- */
-
-@media (min-width: 992px) {
-  .esteSi {
-    grid-template-columns: repeat(4, 1fr) !important;
-  }
-}
+} 
