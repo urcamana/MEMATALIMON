@@ -1,23 +1,45 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <link rel="shortcut icon" href="IMG/logo.png" type="image/x-icon">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    <link href="https://jsdelivr.net" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="style.css">
-    <title>Me Mata Limón!</title>
+    <!-- Iconos de Bootstrap para las redes y datos -->
+    <link rel="stylesheet" href="https://jsdelivr.net">
+    <title>Me Mata Limón! - Contacto y Políticas</title>
+    <style>
+        body {
+            background-color: #fcf8ff; /* Fondo sutil lila muy claro general */
+        }
+        .main-container {
+            margin-top: 90px;
+            margin-bottom: 50px;
+        }
+        .card-contacto {
+            border: 1px solid #e1d5eb;
+            background-color: #ffffff;
+        }
+        /* Estilos personalizados para el acordeón alineados a tu paleta lila */
+        .accordion-button:not(.collapsed) {
+            background-color: #f3ebf7;
+            color: #4a285a;
+            box-shadow: inset 0 -1px 0 rgba(0,0,0,.125);
+        }
+        .accordion-button:focus {
+            border-color: #d1bfe3;
+            box-shadow: 0 0 0 0.25rem rgba(130, 68, 163, 0.25);
+        }
+        .text-purple {
+            color: #4a285a;
+        }
+    </style>
 </head>
-
 <body>
-
-
-
     <header>
-        <nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top " id="nav1">
+        <nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top" id="nav1">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">Me Mata Limón!</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
@@ -33,178 +55,97 @@
                     </div>
                     <div class="offcanvas-body">
                         <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-
                             <li class="nav-item">
-                                <a class="nav-link" aria-current="page" href="tienda.html">Tienda</a>
+                                <a class="nav-link" href="tienda.html">Tienda</a>
                             </li>
-
-
-
                             <li class="nav-item">
-                                <a class="nav-link" aria-current="page" href="index.html">Inicio</a>
-                            </li>
-                         
+                                <a class="nav-link" href="index.html">Inicio</a>
+                            </li>                         
                             <li class="nav-item">
-                                <a class="nav-link active" href="contacto.html">Contacto</a>
+                                <a class="nav-link active" aria-current="page" href="contacto.html">Contacto</a>
                             </li>
-                            <!-- <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
-                                    aria-expanded="false">
-                                    LISTAS DE PRECIOS
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li><a class="dropdown-item"
-                                            href="https://docs.google.com/spreadsheets/d/1w_hsYMt6A3x2Ifzj4hEV-BUbPwA2RiMH/edit?usp=drive_link&ouid=101203030641581564462&rtpof=true&sd=true"
-                                            target="_blank">Lista de insumos</a></li>
-                                    <li><a class="dropdown-item"
-                                            href="https://drive.google.com/file/d/1XXb7YNY9to02aB-IX_B4SIPUElDXinAs/view?usp=drive_link"
-                                            target="_blank">Catalogo maquinas</a></li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                 <li><a class="dropdown-item" href="mobiliarios.html">Mobiliarios</a></li>
-                                </ul>
-                            </li>  -->
                         </ul>
-
                     </div>
                 </div>
             </div>
         </nav>
-
-        </nav>
-
     </header>
 
+    <main class="container main-container">
+        <div class="card card-contacto p-4 shadow-sm mb-4">
+            <div class="text-center mb-4">
+                <img id="logo" alt="Logo de Me Mata Limón!" src="IMG/logo blanco.jpg" class="img-fluid rounded shadow-sm" style="max-height: 100px;">
+            </div>
+            
+            <div class="row g-4">
+                <!-- Columna Izquierda: Información optimizada y compactada -->
+                <div class="col-md-6">
+                    <div class="h-100 d-flex flex-column justify-content-between">
+                        <div>
+                            <h4 class="fw-bold text-purple mb-3"><i class="bi bi-chat-left-dots-fill me-2"></i>Atención al Cliente</h4>
+                            
+                            <div class="mb-3 p-2 bg-light rounded border-start border-3 border-purple">
+                                <span class="fw-bold d-block text-secondary small">NÚMEROS DE WHATSAPP</span>
+                                <div class="row row-cols-2 g-1 mt-1">
+                                    <div><i class="bi bi-whatsapp text-success me-1"></i> 3751588752</div>
+                                    <div><i class="bi bi-whatsapp text-success me-1"></i> 3751588753</div>
+                                    <div><i class="bi bi-whatsapp text-success me-1"></i> 3757526109</div>
+                                    <div><i class="bi bi-whatsapp text-success me-1"></i> 3757526015</div>
+                                </div>
+                            </div>
 
+                            <div class="mb-3 p-2 bg-light rounded border-start border-3 border-purple">
+                                <span class="fw-bold d-block text-secondary small">DIRECCIÓN</span>
+                                <p class="mb-0 text-dark mt-1"><i class="bi bi-geo-alt-fill text-danger me-1"></i> Av. San Martín Oeste 1885 (KM3), Eldorado, Misiones</p>
+                            </div>
 
-
-    <main>
-        <div class=" tarjetas container">
-            <div class="card">
-                <div class="container text-center">
-                    <div class="row">
-                        <div class="col">
-
-                            <section id="3">
-                                <img id="logo" alt="Logo de Me Mata Limón!" src="IMG/logo blanco.jpg">
-                                <p>Numeros de Whatsapp:</p>
-                                <p>3751588752</p>
-                                <p>3751588753</p>
-                                <p>3757526109</p>
-                                <p>3757526015</p>
-                                <br>
-                                <p> Direccion:</p>
-                                <p> Av. San Martín Oeste 1885 (KM3), N3380 Eldorado, Misiones</p>
-                                <br>
-                                <p>Horarios de atencion: </p>
-                      <tbody>
-  <tr><td><b>Martes a Sábado</b></td><td>9:30 a 13hs. y de 16 a 19 hs.</td></tr>
-  <tr><td><b>Domingo</b></td><td>9:30 a 13hs.</td></tr>
-  <tr><td><b>Lunes</b></td><td>Cerrado</td></tr>
-</tbody>
-
-
-                            </section>
-
+                            <div class="p-2 bg-light rounded border-start border-3 border-purple">
+                                <span class="fw-bold d-block text-secondary small">HORARIOS DE ATENCIÓN</span>
+                                <table class="table table-sm table-borderless mb-0 mt-1 small">
+                                    <tbody>
+                                        <tr><td class="py-0"><b>Martes a Sábado:</b></td><td class="py-0 text-muted">9:30 a 13hs. y 16 a 19hs.</td></tr>
+                                        <tr><td class="py-0"><b>Domingo:</b></td><td class="py-0 text-muted">9:30 a 13hs.</td></tr>
+                                        <tr><td class="py-0"><b>Lunes:</b></td><td class="py-0 text-danger fw-bold">Cerrado</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
 
-                        <div class="col">
-                            <section>
-
-
-                                <p>Nuestra ubicacion en el mapa.</p>
-                                <iframe
-                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3573.5127882031243!2d-54.66267912549741!3d-26.406923772259127!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94f7739b32d2c9bb%3A0x841ced93dc354725!2sMe%20mata%20lim%C3%B3n!5e0!3m2!1ses!2sar!4v1788289415352!5m2!1ses!2sar"
-                                    width="400" height="300" style="border:0;" allowfullscreen="" loading="lazy"
-                                    referrerpolicy="no-referrer-when-downgrade"></iframe>
-                            </section>
-
+                        <!-- Nueva Sección: Seguinos en redes sociales -->
+                        <div class="mt-4 pt-3 border-top">
+                            <h6 class="fw-bold text-purple mb-3">¡Seguinos en nuestras redes!</h6>
+                            <div class="d-flex gap-2">
+                                <a href="https://www.facebook.com/memata.limon.7" target="_blank" class="btn btn-outline-primary btn-sm px-3">
+                                    <i class="bi bi-facebook me-2"></i>Facebook
+                                </a>
+                                <a href="https://www.instagram.com/Accesorioslimonok" target="_blank" class="btn btn-outline-danger btn-sm px-3">
+                                    <i class="bi bi-instagram me-2"></i>Instagram
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-
-
-
-            </div>
-        </div>
-
-
-        <section id="inp">
-            <div class="container">
-                <div class=" row justify-content-center">
-                    <div class="col-8 text-center">
-                        <div class="card-group ">
-                            <!-- <div class="card cardcontact">
-
-                                <h3>Puede dejarnos un mensaje por aquí</h3>
-                                <p>Si necesita una respuesta urgente, por favor contactarse por WhatsApp</p>
-                                <br>
-                                <form>
-                                    <div class="mb-3">
-                                        <label for="exampleInputEmail1" class="form-label">Correo electronico</label>
-                                        <input type="email" class="form-control" id="exampleInputEmail1"
-                                            aria-describedby="emailHelp">
-                                        <div id="emailHelp" class="form-text">Nunca compartiremos su correo electrónico
-                                            con nadie más.
-                                        </div>
-                                    </div>
-
-                                    <div class="form-floating">
-                                        <textarea class="form-control" placeholder="Leave a comment here"
-                                            id="floatingTextarea"></textarea>
-                                        <label for="floatingTextarea">Comentario</label>
-                                    </div>
-                                    <div class="mb-3 form-check checknot">
-                                        <input type="checkbox" class="form-check-input text-left" id="exampleCheck1"
-                                            checked>
-                                        <label class="form-check-label" for="exampleCheck1">Deseo recibir ofertas y
-                                            promociones por
-                                            Email</label>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary btn-dark">Enviar</button>
-                                </form>
-                            </div> -->
-                        </div>
+                
+                <!-- Columna Derecha: Mapa adaptado -->
+                <div class="col-md-6 d-flex flex-column">
+                    <span class="fw-bold text-secondary mb-2 d-block text-center text-md-start"><i class="bi bi-map-fill me-1"></i> Nuestra ubicación en el mapa</span>
+                    <div class="ratio ratio-4x3 shadow-sm rounded overflow-hidden flex-grow-1 border">
+                        <iframe
+                            src="https://google.com"
+                            style="border:0;" allowfullscreen="" loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"></iframe>
                     </div>
                 </div>
             </div>
-
-        </section>
-
-
-
-    </main>
-
-
-
-
-
-    <footer>
-
-        <div class="redes">
-
-            <a id="w" href="https://wa.me/5493751588752" target="_blank"><img src="IMG/w.png"
-                    alt="WhatsApp"></a>
-            <!-- 
-            <a id="I" href="#i"><img src="IMG/i.png" alt="Instagram"></a>
-
-            <a id="F" href="#f"><img src="IMG/f.png" alt="Facebook"></a> -->
-
         </div>
 
-        <!-- <div class="diseñador">
-
-
-            <p>Diseño web para Codo a codo de:</p>
-            <a href="#">Sebastian Hector Manassero</a>
-        </div> -->
-    </footer>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-        crossorigin="anonymous"></script>
-
-</body>
-
-</html>
+        <!-- SECCIÓN: POLÍTICAS DE VENTA (ACORDEÓN BOOTSTRAP) -->
+        <div class="card card-contacto p-4 shadow-sm">
+            <h4 class="fw-bold text-purple mb-3"><i class="bi bi-shield-fill-check me-2"></i>Políticas de Venta y Condiciones</h4>
+            
+            <div class="accordion" id="acordeonPoliticas">
+                
+                <!-- Item 1: Medios de Pago -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#pagoCollapse" aria-expanded="true">
