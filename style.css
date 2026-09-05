@@ -181,6 +181,7 @@ footer .redes {
   border-radius: 50%;
 }
 
+
 section {
   display: flex;
   flex-direction: column;
@@ -1016,4 +1017,22 @@ h11 {
   object-fit: contain;
   aspect-ratio: 1 / 1; /* Reserva el espacio exacto antes de que cargue la imagen */
   content-visibility: auto; /* Optimiza el renderizado fuera de pantalla */
+}
+@media (max-width: 576px) {
+  footer .redes {
+    top: auto !important; 
+    bottom: 15px !important; 
+    right: 15px !important; 
+  }
+
+  .redes a img {
+    width: 42px !important;  
+    height: 42px !important; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  }
+
+    #fondo {
+    background-size: 100vw !important; /* Cambia a ancho de pantalla (vw) para que no se desborde */
+    background-position: center 35% !important; /* Lo centra prolijamente detrás de las categorías */
+  }
 }

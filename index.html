@@ -57,11 +57,12 @@
 
                             <li>
 
-                                <form class="d-flex justify-content-center " role="search" onsubmit="return false;">
-                                    <input id="formulario" class="form-control me-2" type="search"
-                                        placeholder="Buscar producto" aria-label="Buscar producto">
+<form class="d-flex justify-content-center" role="search" onsubmit="return false;" style="width: 100%; max-width: 600px; margin: 0 auto;">
+    <input id="formulario" class="form-control me-2" type="search" placeholder="Buscar producto" aria-label="Buscar producto">
+</form>
 
-                                </form>
+
+
                             </li>
 
 
@@ -102,18 +103,39 @@
                 </div>
             </div>
         </nav>
-        <div class="bg-gray py-5 heroTitulo">
-            <div class="container px-4 px-lg-5 my-5">
+               <div class="bg-gray py-5 heroTitulo">
+    <div class="container-fluid px-md-5 my-5"> <!-- 👈 Cambiado a container-fluid y ajustado el margen en PC -->
+
                 <div class="text-center text-white">
                     <h1 class="display-4 fw-bolder">Me Mata Limón!</h1>
                     <p class="lead fw-normal text-white-40 mb-0">Accesorios y electronica</p>
-                     <p class="lead fw-normal text-white-40 mb-0">Grabados personalizados</p>
+                    <p class="lead fw-normal text-white-40 mb-0">Grabados personalizados</p>
+
+                    <!-- ===================================================== -->
+                    <!-- NUEVO: CARRUSEL DE BANNERS DINÁMICOS -->
+                    <!-- ===================================================== -->
+                    <div id="carruselBanners" class="carousel slide mt-4 shadow rounded overflow-hidden" data-bs-ride="carousel" data-bs-interval="5000">
+                        <div class="carousel-inner">
+                            <!-- Banner 1 (Activo por defecto) -->
+                            <div class="carousel-item active">
+                                <img src="IMG/banner1.jpg" class="d-block w-100" alt="Banner Informativo 1" style="object-fit: cover; max-height: 600px;">
+                            </div>
+                            <!-- Banner 2 -->
+                            <div class="carousel-item">
+                                <img src="IMG/banner2.jpg" class="d-block w-100" alt="Banner Informativo 2" style="object-fit: cover; max-height: 600px;">
+                            </div>
+                            <!-- Banner 3 -->
+                            <div class="carousel-item">
+                                <img src="IMG/banner3.jpg" class="d-block w-100" alt="Banner Informativo 3" style="object-fit: cover; max-height: 600px;">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ===================================================== -->
 
                 </div>
-
             </div>
-
         </div>
+
     </header>
     <style>
         
@@ -251,13 +273,13 @@
                 <div class="col">
 
                     <h2>TIENDA ONLINE</h2>
-                    </P>
-                    <div class="bg-gray py-5" style="background-color: darkgrey;">
+                    
+                    <div class="py-2" style="background-color: transparent;">
                         <div class="d-md-none text-center mb-2">
                             <button class="btn btn-dark" type="button" data-bs-toggle="collapse"
                                 data-bs-target="#filtrosCategoria" aria-expanded="false">
 
-                                🔍 Filtros
+                                🔍 Categorias
                             </button>
                         </div>
                         <div id="filtrosCategoria" class="collapse d-md-block">
@@ -479,10 +501,10 @@
 
             <a id="w" href="https://wa.me/5493751588752" target="_blank"><img src="IMG/w.png"
                     alt="WhatsApp"></a>
-            <!-- 
-            <a id="I" href="#i"><img src="../IMG/i.png" alt="Instagram"></a>
+            
+            <a id="I" href="https://www.instagram.com/accesorioslimonok"><img src="IMG/i.png" alt="Instagram"></a>
 
-            <a id="F" href="#f"><img src="../IMG/f.png" alt="Facebook"></a> -->
+            <a id="F" href="https://www.facebook.com/memata.limon.7"><img src="IMG/f.png" alt="Facebook"></a> 
 
         </div>
 
