@@ -1030,17 +1030,9 @@ h11 {
     height: 42px !important; 
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
   }
-    #fondo2 {
-    width: 85% !important;   /* Reduce el ancho de la imagen para que entre cómoda en el celu */
-    max-width: 320px !important; /* Evita que supere el ancho de pantallas chicas */
-    height: auto !important;  /* Mantiene la proporción perfecta sin deformarse */
-    opacity: 0.15 !important; /* Ajusta la transparencia si querés que sea más sutil */
-    left: 50% !important;     /* Lo centra horizontalmente */
-    transform: translateX(-50%) !important; /* Truco técnico para un centrado perfecto */
-    position: absolute !important;
-  }
+
     #fondo {
-    background-size: 85vw !important; /* Cambia a ancho de pantalla (vw) para que no se desborde */
+    background-size: 100vw !important; /* Cambia a ancho de pantalla (vw) para que no se desborde */
     background-position: center 35% !important; /* Lo centra prolijamente detrás de las categorías */
   }
 }
