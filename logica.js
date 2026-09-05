@@ -648,7 +648,7 @@ enlaceWhatsApp.addEventListener('click', function (event) {
   window.open(enlaceWhatsApp.getAttribute("href"), '_blank');
   localStorage.removeItem('datosCarrito')
 });
-enlaceWhatsApp.textContent = "Mandar carrito por WhatsApp";
+enlaceWhatsApp.textContent = "Enviar carrito por WhatsApp";
 document.getElementById("whats").appendChild(enlaceWhatsApp);
 
 // Ejemplo de modificación del array y actualización del enlace
