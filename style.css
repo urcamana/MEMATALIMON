@@ -1039,4 +1039,8 @@ h11 {
     transform: translateX(-50%) !important; /* Truco técnico para un centrado perfecto */
     position: absolute !important;
   }
+    #fondo {
+    background-size: 85vw !important; /* Cambia a ancho de pantalla (vw) para que no se desborde */
+    background-position: center 35% !important; /* Lo centra prolijamente detrás de las categorías */
+  }
 }
