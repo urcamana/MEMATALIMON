@@ -359,7 +359,18 @@
                                         <input type="text" class="form-control" id="direccionEnvio" placeholder="Calle, número, piso, localidad..." style="border-color: #d1bfe3;">
                                         <div class="form-text" style="color: #6a4c7c;">Calcularemos el costo final al responder tu pedido.</div>
                                     </div>
-
+                                    <!-- Selector: Método de Pago (Agregado) -->
+                                    <div class="mb-3">
+                                        <label for="metodoPago" class="form-label fw-semibold">Método de Pago:</label>
+                                        <select class="form-select" id="metodoPago" required style="border-color: #d1bfe3;">
+                                            <option value="" disabled selected>-- Seleccioná cómo vas a abonar --</option>
+                                            <option value="Efectivo">EFECTIVO</option>
+                                            <option value="Transferencia">TRANSFERENCIA</option>
+                                            <option value="Link de Pago">LINK DE PAGO</option>
+                                            <option value="QR">QR (SOLO RETIRO PRESENCIAL)</option>
+                                            <option value="Tarjeta">TARJETA DE DÉBITO / CRÉDITO (SOLO RETIRO PRESENCIAL)</option>
+                                        </select>
+                                    </div>
                                     <!-- Campo para Observaciones -->
                                     <div class="mb-2">
                                         <label for="observacionesPedido" class="form-label fw-semibold">Observaciones o notas adicionales:</label>
