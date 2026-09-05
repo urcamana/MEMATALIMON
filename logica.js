@@ -667,6 +667,10 @@ function generarEnlaceWhatsApp() {
 // Función para actualizar el enlace de WhatsApp
 function actualizarEnlaceWhatsApp() {
   const enlace = generarEnlaceWhatsApp();
+    if (!enlace) {
+      enlaceWhatsApp.removeAttribute("href");
+      return;
+  }
   enlaceWhatsApp.setAttribute("class", "btn btn-success")
   enlaceWhatsApp.setAttribute("href", enlace);
   enlaceWhatsApp.style.cssText = '  font-weight: bold;font-size: 17px; color: white;   ;';
@@ -677,11 +681,15 @@ function actualizarEnlaceWhatsApp() {
 const enlaceWhatsApp = document.createElement("button");
 
 enlaceWhatsApp.addEventListener('click', function (event) {
-  event.preventDefault(); // Evita la redirección
+  event.preventDefault(); // Evita la redirección automática
 
   actualizarEnlaceWhatsApp(); 
+  const urlActual = enlaceWhatsApp.getAttribute("href");
+  if (urlActual === `https://wa.me` || !urlActual || urlActual.endsWith('text=')) {
+      return; 
+  }
   
-  window.open(enlaceWhatsApp.getAttribute("href"), '_blank');
+  window.open(urlActual, '_blank');
   localStorage.removeItem('datosCarrito')
 });
 enlaceWhatsApp.textContent = "Enviar carrito por WhatsApp";
