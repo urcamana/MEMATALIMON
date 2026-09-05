@@ -666,6 +666,9 @@ const enlaceWhatsApp = document.createElement("button");
 
 enlaceWhatsApp.addEventListener('click', function (event) {
   event.preventDefault(); // Evita la redirección
+
+  actualizarEnlaceWhatsApp(); 
+  
   window.open(enlaceWhatsApp.getAttribute("href"), '_blank');
   localStorage.removeItem('datosCarrito')
 });
