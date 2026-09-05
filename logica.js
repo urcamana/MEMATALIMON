@@ -609,7 +609,6 @@ function generarEnlaceWhatsApp() {
   const pagoElegido = selectorPago ? selectorPago.value : '';
 
   if (!pagoElegido) {
-      alert("Por favor, seleccioná un método de pago obligatorio antes de enviar el pedido.");
       return ""; // Frena la ejecución si no hay método de pago
   }
 
