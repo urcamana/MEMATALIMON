@@ -181,6 +181,19 @@ footer .redes {
   border-radius: 50%;
 }
 
+@media (max-width: 576px) {
+  footer .redes {
+    top: auto !important; 
+    bottom: 15px !important; 
+    right: 15px !important; 
+  }
+
+  .redes a img {
+    width: 42px !important;  
+    height: 42px !important; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  }
+}
 section {
   display: flex;
   flex-direction: column;
