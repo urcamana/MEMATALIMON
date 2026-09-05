@@ -618,8 +618,8 @@ function generarEnlaceWhatsApp() {
     UnidadesProductosTotales += producto.Unidades;
   });
   let tota = total();
-  textoCarrito += `\n\n--- IMPORTE TOTAL DEL CARRITO:${tota} \n\n`; // Agregar un salto de línea adicional
-  textoCarrito += `\n\n--- Total de productos: ${UnidadesProductosTotales} \n\n`;
+  textoCarrito += `\n\n--- IMPORTE TOTAL DEL CARRITO: ${tota} `; // Agregar un salto de línea adicional
+  textoCarrito += `\n\n--- Total de productos: ${UnidadesProductosTotales} \n`;
 
   textoCarrito += `\n--- DATOS DE ENTREGA ---`;
 
@@ -634,7 +634,6 @@ function generarEnlaceWhatsApp() {
     const direccion = document.getElementById('direccionEnvio') ? document.getElementById('direccionEnvio').value : '';
     textoCarrito += `\n*Método:* Envío a domicilio`;
     textoCarrito += `\n*Dirección:* ${direccion || 'No especificada'}`;
-    textoCarrito += `\n_(Sujeto a cotización final de motomandado)_`;
   } else {
     textoCarrito += `\n*Método:* No especificado`;
   }
