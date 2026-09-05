@@ -618,7 +618,7 @@ function generarEnlaceWhatsApp() {
     UnidadesProductosTotales += producto.Unidades;
   });
   let tota = total();
-  textoCarrito += `\n\n--- PRECIO TOTAL DEL CARRITO:${tota} \n\n`; // Agregar un salto de línea adicional
+  textoCarrito += `\n\n--- IMPORTE TOTAL DEL CARRITO:${tota} \n\n`; // Agregar un salto de línea adicional
   textoCarrito += `\n\n--- Total de productos: ${UnidadesProductosTotales} \n\n`;
 
   const enlace = `https://wa.me/${telefono}/?text=${encodeURIComponent(textoCarrito)}`;
