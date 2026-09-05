@@ -333,13 +333,18 @@
                                 <h4>Precios con cualquier medio de pago.</h4>
                                 <p>LA RECEPCION DEL PEDIDO NO ES INDICIO DE RESERVA DE STOCK.</p>
 
-                                                                                              <!-- OPCIONES DE ENTREGA Y ADICIONALES -->
+                                                                                                                             <!-- OPCIONES DE ENTREGA Y ADICIONALES -->
                                 <div class="mt-4 p-3 border rounded shadow-sm" style="background-color: #f3ebf7; color: #4a285a;">
                                     <h5 class="mb-3 fw-bold">Método de Entrega</h5>
                                     
                                     <!-- Opción: Retiro en persona -->
                                     <div class="form-check mb-2">
-                                        <input class="form-check-input" type="radio" name="metodoEntrega" id="entregaRetiro" value="retiro" checked onclick="document.getElementById('campoDireccion').classList.add('d-none')">
+                                        <input class="form-check-input" type="radio" name="metodoEntrega" id="entregaRetiro" value="retiro" checked 
+                                            onclick="
+                                                document.getElementById('campoDireccion').classList.add('d-none');
+                                                document.getElementById('pagoQR').classList.remove('d-none');
+                                                document.getElementById('pagoTarjeta').classList.remove('d-none');
+                                            ">
                                         <label class="form-check-label" for="entregaRetiro">
                                             Retirar personalmente
                                         </label>
@@ -347,7 +352,15 @@
                                     
                                     <!-- Opción: Envío a domicilio -->
                                     <div class="form-check mb-3">
-                                        <input class="form-check-input" type="radio" name="metodoEntrega" id="entregaEnvio" value="envio" onclick="document.getElementById('campoDireccion').classList.remove('d-none')">
+                                        <input class="form-check-input" type="radio" name="metodoEntrega" id="entregaEnvio" value="envio" 
+                                            onclick="
+                                                document.getElementById('campoDireccion').classList.remove('d-none');
+                                                document.getElementById('pagoQR').classList.add('d-none');
+                                                document.getElementById('pagoTarjeta').classList.add('d-none');
+                                                if(document.getElementById('metodoPago').value === 'QR' || document.getElementById('metodoPago').value === 'Tarjeta') { 
+                                                    document.getElementById('metodoPago').value = ''; 
+                                                }
+                                            ">
                                         <label class="form-check-label" for="entregaEnvio">
                                             Envío a domicilio <small class="text-muted" style="font-size: 0.8em;">(Envio por motomandados a partir de $3.000)</small>
                                         </label>
@@ -359,24 +372,27 @@
                                         <input type="text" class="form-control" id="direccionEnvio" placeholder="Calle, número, piso, localidad..." style="border-color: #d1bfe3;">
                                         <div class="form-text" style="color: #6a4c7c;">Calcularemos el costo final al responder tu pedido.</div>
                                     </div>
-                                    <!-- Selector: Método de Pago (Agregado) -->
+
+                                    <!-- Selector: Método de Pago con IDs en las opciones -->
                                     <div class="mb-3">
                                         <label for="metodoPago" class="form-label fw-semibold">Método de Pago:</label>
                                         <select class="form-select" id="metodoPago" required style="border-color: #d1bfe3;">
                                             <option value="" disabled selected>-- Seleccioná cómo vas a abonar --</option>
-                                            <option value="Efectivo">EFECTIVO</option>
-                                            <option value="Transferencia">TRANSFERENCIA</option>
-                                            <option value="Link de Pago">LINK DE PAGO</option>
-                                            <option value="QR">QR (SOLO RETIRO PRESENCIAL)</option>
-                                            <option value="Tarjeta">TARJETA DE DÉBITO / CRÉDITO (SOLO RETIRO PRESENCIAL)</option>
+                                            <option value="Efectivo" id="pagoEfectivo">EFECTIVO</option>
+                                            <option value="Transferencia" id="pagoTransferencia">TRANSFERENCIA</option>
+                                            <option value="Link de Pago" id="pagoLink">LINK DE PAGO</option>
+                                            <option value="QR" id="pagoQR">QR (SOLO RETIRO PRESENCIAL)</option>
+                                            <option value="Tarjeta" id="pagoTarjeta">TARJETA DE DÉBITO / CRÉDITO (SOLO RETIRO PRESENCIAL)</option>
                                         </select>
                                     </div>
+
                                     <!-- Campo para Observaciones -->
                                     <div class="mb-2">
                                         <label for="observacionesPedido" class="form-label fw-semibold">Observaciones o notas adicionales:</label>
                                         <textarea class="form-control" id="observacionesPedido" rows="2" placeholder="Ej: Grabado personalizado con el nombre 'Lucas', tocar timbre fuerte, etc." style="border-color: #d1bfe3;"></textarea>
                                     </div>
                                 </div>
+
 
 
 
