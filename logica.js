@@ -577,7 +577,7 @@ function total() {
   });
   sumaTotal = new Intl.NumberFormat('es-Mx', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(sumaTotal);
 
-  intprecioTotal.textContent = "PRECIO TOTAL: $ " + sumaTotal;
+  intprecioTotal.textContent = "IMPORTE TOTAL: $ " + sumaTotal;
   totalCarritoNavb.textContent = "$ " + sumaTotal
 
   // Cantidad total de unidades en el carrito (sumando todos los productos)
