@@ -604,6 +604,15 @@ function generarEnlaceWhatsApp() {
 
   const telefono = "5493751588752"; // Reemplaza con el número de teléfono deseado
 
+    // 1. Validar de forma obligatoria que haya seleccionado un método de pago antes de continuar
+  const selectorPago = document.getElementById('metodoPago');
+  const pagoElegido = selectorPago ? selectorPago.value : '';
+
+  if (!pagoElegido) {
+      alert("Por favor, seleccioná un método de pago obligatorio antes de enviar el pedido.");
+      return ""; // Frena la ejecución si no hay método de pago
+  }
+
   // Construir el texto del mensaje con la información de los duplicados y los precios
   let textoCarrito = "Hola! Me interesan estos productos de la web:";
   let UnidadesProductosTotales = 0;
@@ -638,6 +647,10 @@ function generarEnlaceWhatsApp() {
     textoCarrito += `\n*Método:* No especificado`;
   }
 
+    // --- ADICIONAL: MÉTODO DE PAGO ---
+  textoCarrito += `\n\n--- DATOS DE PAGO ---`;
+  textoCarrito += `\n*Forma de pago:* ${pagoElegido}`;
+  
   // 3. Capturar el cuadro de observaciones
   const campoObservaciones = document.getElementById('observacionesPedido');
   const observaciones = campoObservaciones ? campoObservaciones.value.trim() : '';
