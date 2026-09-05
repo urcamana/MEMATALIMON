@@ -621,15 +621,36 @@ function generarEnlaceWhatsApp() {
   textoCarrito += `\n\n--- IMPORTE TOTAL DEL CARRITO:${tota} \n\n`; // Agregar un salto de línea adicional
   textoCarrito += `\n\n--- Total de productos: ${UnidadesProductosTotales} \n\n`;
 
+  textoCarrito += `\n--- DATOS DE ENTREGA ---`;
+
+  // 1. Capturar el método de entrega seleccionado (Radio buttons)
+  const opcionEntrega = document.querySelector('input[name="metodoEntrega"]:checked');
+  const metodo = opcionEntrega ? opcionEntrega.value : 'No seleccionado';
+
+  if (metodo === "retiro") {
+    textoCarrito += `\n*Método:* Retirar personalmente`;
+  } else if (metodo === "envio") {
+    // 2. Si es envío, capturar la dirección ingresada
+    const direccion = document.getElementById('direccionEnvio') ? document.getElementById('direccionEnvio').value : '';
+    textoCarrito += `\n*Método:* Envío a domicilio`;
+    textoCarrito += `\n*Dirección:* ${direccion || 'No especificada'}`;
+    textoCarrito += `\n_(Sujeto a cotización final de motomandado)_`;
+  } else {
+    textoCarrito += `\n*Método:* No especificado`;
+  }
+
+  // 3. Capturar el cuadro de observaciones
+  const campoObservaciones = document.getElementById('observacionesPedido');
+  const observaciones = campoObservaciones ? campoObservaciones.value.trim() : '';
+  if (observaciones) {
+    textoCarrito += `\n*Observaciones:* ${observaciones}`;
+  }
+  
+  textoCarrito += `\n\n`; // Espaciado final de cierre
+
   const enlace = `https://wa.me/${telefono}/?text=${encodeURIComponent(textoCarrito)}`;
   return enlace;
 }
-
-
-
-
-
-
 
 // Función para actualizar el enlace de WhatsApp
 function actualizarEnlaceWhatsApp() {
