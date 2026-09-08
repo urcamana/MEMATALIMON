@@ -73,62 +73,77 @@ function MostrarEnCatalogo(datos, contenedorId) {
   //MOSTRAMOS LOS ELEMENTOS DEL CATALOGO
   template.querySelector('.esteSi').setAttribute("id", contenedorId);
 
-  // Carga de imágenes y atributos
+  //const imageId = `gimg-${contenedorId}-${datos.Artículo}`;
   template2.querySelector("img").setAttribute("src", "./imgcarrito/" + (datos.Artículo) + ".jpg");
   template2.querySelector("img").setAttribute("id", "img" + datos.Artículo);
-  
-  // Alt descriptivo real para accesibilidad
+  // Alt descriptivo real para accesibilidad (antes quedaba un texto fijo
+  // que decía "Imagen no encontrada" incluso cuando la imagen cargaba bien)
   template2.querySelector("img").setAttribute("alt",
     typeof datos.Descripción === 'string' ? datos.Descripción : "Producto");
-    
-  // Selecciona el elemento H5 dentro de tu template y ajusta su tamaño
+  // Selecciona el elemento H5 dentro de tu template
   const h5Element = template2.querySelector("h5");
+
+  // Verifica si se encontró el elemento H5
   if (h5Element) {
+    // Obtén la descripción del objeto de datos
     const descripcionTexto = datos.Descripción;
 
+    // Verifica si la descripción es un string válido
     if (typeof descripcionTexto === 'string') {
+      // Asigna el texto al H5
       h5Element.textContent = descripcionTexto;
 
+      // Verifica la longitud del texto y ajusta el tamaño de la fuente
       if (descripcionTexto.length < 35) {
-        h5Element.style.fontSize = '1.8VH'; 
+        h5Element.style.fontSize = '1.8VH'; // Tamaño si es corto
       } else {
-        h5Element.style.fontSize = '1.6VH'; 
+        h5Element.style.fontSize = '1.6VH'; // Tamaño si es largo o igual a 20
       }
     } else {
+      // Manejo opcional si la descripción no es un string
       h5Element.textContent = 'Descripción no válida';
-      h5Element.style.fontSize = '1.4VH'; 
+      h5Element.style.fontSize = '1.4VH'; // Un tamaño por defecto
       console.warn('datos.Descripción no es un string:', datos.Descripción);
     }
   } else {
     console.warn('Elemento h5 no encontrado en template2');
   }
 
-  // Llamamos la función del módulo para agregar las variantes 
+  //llamamos la funcion del modulo para agregar las variantes 
   varianteDeMedidas.AgregaVariantes(datos, template2);
 
-  // Configuramos la cantidad e inventario máximo
+  //mostramos el stock disponible
+  //template2.querySelector("p").textContent = (datos.Inventario) + " disponibles";
+
+  // Formatear precioCatalogo con formato numérico y limitar a 2 decimales
   template2.querySelector(".cantidad").setAttribute("id", "idbot" + (datos.Artículo));
   template2.querySelector(".cantidad").setAttribute("max", (datos.Inventario));
-  
-  // LIMPIAMOS Y CONVERTIMOS EL PRECIO DE VENTA DIRECTO DEL JSON
-  let precioBase = Number(String(datos.Venta).replace(/,/g, "."));
+  if (datos.Descuento != 0) {
 
-  if (Number(datos.Descuento) !== 0) {
+    // Precio original
+    let precioCatalogo = (Number(datos.Venta.replace(/,/g, ".")));
 
-    // Precio original (directo de la venta)
-    let precioCatalogo = precioBase;
-
-    // Precio con descuento corregido (% / 100)
-    let descuentoPorcentaje = Number(String(datos.Descuento).replace(/,/g, "."));
-    let precioCatalogo2 = precioCatalogo * (1 - (descuentoPorcentaje / 100));
+    // Precio con descuento
+    let precioCatalogo2 = precioCatalogo * (1 - Number(datos.Descuento.replace(/,/g, ".")));
 
     // Precio sin impuestos nacionales (IVA 21%)
     let precioCatalogo3 = precioCatalogo2 / 1.21;
 
     // Formatear recién al final
-    precioCatalogo = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo);
-    precioCatalogo2 = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo2);
-    precioCatalogo3 = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo3);
+    precioCatalogo = new Intl.NumberFormat('es-MX', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(precioCatalogo);
+
+    precioCatalogo2 = new Intl.NumberFormat('es-MX', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(precioCatalogo2);
+
+    precioCatalogo3 = new Intl.NumberFormat('es-MX', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(precioCatalogo3);
 
     template2.querySelector("small").innerHTML = "<del>$" + precioCatalogo + "</del>";
     template2.querySelector("h7").textContent = "$" + precioCatalogo2;
@@ -136,30 +151,37 @@ function MostrarEnCatalogo(datos, contenedorId) {
 
   } else {
 
-    // Precio final directo sin multiplicar por cero
-    let precioCatalogo = precioBase;
+    // Precio final
+    let precioCatalogo = (Number(datos.Venta.replace(/,/g, ".")) * Number(datos.DOLAR));
 
     // Precio sin impuestos nacionales
     let precioCatalogo3 = precioCatalogo / 1.21;
 
-    precioCatalogo = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo);
-    precioCatalogo3 = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo3);
+    precioCatalogo = new Intl.NumberFormat('es-MX', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(precioCatalogo);
+
+    precioCatalogo3 = new Intl.NumberFormat('es-MX', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(precioCatalogo3);
 
     template2.querySelector("small").textContent = "";
     template2.querySelector("h7").textContent = "$" + precioCatalogo;
     template2.querySelector("h11").textContent = "Sin imp. nac.: $" + precioCatalogo3;
   }
 
-  // seleccionamos el botón y le asignamos el id que corresponde
+  //seleccionamos el boton y le asignamos el id que corresponde
   const addButton = template2.querySelector("button");
   addButton.setAttribute("id", "idbot" + (datos.Artículo));
 
-  // hacemos un clon y lo subimos al fragmento correspondiente para poder repetirlo
+  //hacemos un clon y lo subimos al fragmento correspondiente para poder repetirlo. clone 1 contenedor . clone 2 etiquetas restantes
+
   let clone2 = document.importNode(template2, true);
   fragmento2.appendChild(clone2);
-  return fragmento2;
-}
-
+  return fragmento2
+};
 
 
 
