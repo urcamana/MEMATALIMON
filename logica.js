@@ -67,7 +67,6 @@ var selectElement = template2.querySelector('.variantes');
 
 
 
-//creamos funcion con datos para mostrar elementos del catalogo y no repetir code <-------
 function MostrarEnCatalogo(datos, contenedorId) {
 
   //MOSTRAMOS LOS ELEMENTOS DEL CATALOGO
@@ -125,15 +124,14 @@ function MostrarEnCatalogo(datos, contenedorId) {
     template2.querySelector("h11").textContent = "Sin imp. nac.: $" + precioCatalogo3;
   }
 
+  // Seleccionamos el botón de agregar y le asignamos el ID original idbot
   const addButton = template2.querySelector("button");
   addButton.setAttribute("id", "idbot" + (datos.Artículo));
 
-  // GENERAMOS EL CLON DE LA TARJETA PRIMERO
+  // GENERAMOS EL CLON DE LA TARJETA
   let clone2 = document.importNode(template2, true);
 
-  // =======================================================================
-  // INYECTAMOS EL CARRUSEL DIRECTAMENTE EN EL CLON VIVO
-  // =======================================================================
+  // INYECTAMOS EL CARRUSEL EN EL CLON
   const idCarruselUnico = "carrusel-art-" + datos.Artículo;
   const contenedorCarrusel = clone2.querySelector(".carousel");
   const contenedorInner = clone2.querySelector(".carousel-inner");
@@ -147,7 +145,7 @@ function MostrarEnCatalogo(datos, contenedorId) {
 
     contenedorInner.innerHTML = "";
 
-    // 1. Imagen base obligatoria (ej: 3.jpg)
+    // 1. Imagen principal (ej: 3.jpg)
     const itemPrincipal = document.createElement("div");
     itemPrincipal.className = "carousel-item active";
 
@@ -163,7 +161,7 @@ function MostrarEnCatalogo(datos, contenedorId) {
     itemPrincipal.appendChild(imgPrincipal);
     contenedorInner.appendChild(itemPrincipal);
 
-    // 2. Control de imágenes adicionales consecutivas (B, C, D, E)
+    // 2. Carga automática de letras variantes (B, C, D, E)
     const letrasVariantes = ["B", "C", "D", "E"];
 
     letrasVariantes.forEach(letra => {
@@ -190,23 +188,19 @@ function MostrarEnCatalogo(datos, contenedorId) {
       contenedorInner.appendChild(itemSecundario);
     });
 
-    // Variable interna para almacenar la instancia viva del carrusel de Bootstrap
     let instanciaBootstrapCarousel = null;
 
     function reevaluarYReiniciarCarrusel() {
       const slidesVivos = contenedorInner.querySelectorAll(".carousel-item").length;
       
-      // Control de visibilidad de las flechas direccionales
       if (slidesVivos > 1) {
         btnPrev.style.display = "flex";
         btnNext.style.display = "flex";
         
-        // Destruimos la instancia previa si existiera para que no se congele el DOM
         if (instanciaBootstrapCarousel) {
           instanciaBootstrapCarousel.dispose();
         }
         
-        // Inicialización manual definitiva una vez que sabemos cuáles imágenes existen de verdad
         if (typeof bootstrap !== 'undefined' && bootstrap.Carousel) {
           instanciaBootstrapCarousel = new bootstrap.Carousel(contenedorCarrusel, {
             touch: true,
@@ -219,7 +213,6 @@ function MostrarEnCatalogo(datos, contenedorId) {
       }
     }
 
-    // Inicialización de arranque por defecto (cubre productos con una sola foto)
     if (typeof bootstrap !== 'undefined' && bootstrap.Carousel) {
       instanciaBootstrapCarousel = new bootstrap.Carousel(contenedorCarrusel, {
         touch: true,
@@ -227,11 +220,11 @@ function MostrarEnCatalogo(datos, contenedorId) {
       });
     }
   }
-  // =======================================================================
 
   fragmento2.appendChild(clone2);
   return fragmento2;
-};
+}
+
 
 
 
@@ -460,38 +453,34 @@ descu.porDeDescuento();
 
 
 
-//ponemos a escuchar todos los botones y mandamos a agregar los datos
-//esta es la funcion que agrega los datos a itemCarrito
-//ponemos a escuchar todos los botones y mandamos a agregar los datos
-//esta es la funcion que agrega los datos a itemCarrito
 function escucharBotones() {
 
   // Adjuntamos un único event listener al documento entero para delegación de eventos.
   document.addEventListener('click', event => {
     
-    // 1. SI EL CLIC FUE EN UNA FLECHA DEL CARRUSEL, LO IGNORAMOS COMPLETAMENTE
+    // FILTRO CRÍTICO: Si el usuario hizo clic en las flechas del carrusel, salimos inmediatamente
     if (event.target.closest('.carousel-control-prev') || event.target.closest('.carousel-control-next')) {
-      return; // Deja que Bootstrap maneje el movimiento de la imagen de forma nativa
+      return; // Permite que Bootstrap mueva la foto variantes sin interferencias
     }
 
-    // Usamos event.target.closest() para verificar si el clic fue en el botón de agregar
-    const btn = event.target.closest('button.botonaparecer');
+    // Buscamos si el clic pertenece al botón de agregar usando tu ID original idbot
+    const btn = event.target.closest('button[id^=idbot]');
 
     if (btn) {
-      event.preventDefault();
-      event.stopImmediatePropagation(); // Detiene la propagación del evento
+      event.stopImmediatePropagation(); // Detiene la propagación del evento de forma inmediata
 
-      var da = btn.id; // Obtenemos el ID del botón que fue clicado (ej: idbot1)
-      var regex = /(\d+)/g; 
+      var da = btn.id; // Obtenemos el ID del botón que fue clicado
+      var regex = /(\d+)/g; // Expresión regular corregida
       var da2 = (da.match(regex));
 
+      // Asegúrate de que da2 tenga al menos un elemento antes de acceder a da2[0]
       if (!da2 || da2.length === 0) {
         console.error("Error: No se pudo extraer el ID numérico del botón.", da);
-        return; 
+        return; // Salir de la función si no hay ID numérico
       }
       let productId = da2[0]; // Usar el primer elemento del array
 
-      // Buscamos la cantidad directamente en la tarjeta donde se hizo el clic
+      // Buscamos el input de cantidad relativo a la tarjeta clickeada
       const tarjetaContenedora = btn.closest('.tarjetas2');
       let selectElement = tarjetaContenedora ? tarjetaContenedora.querySelector('.cantidad') : null;
 
@@ -504,7 +493,7 @@ function escucharBotones() {
       var medidas = null;
       var textMedidas = "";
       if (selectElement77 != null) {
-        medidas = selectElement77.value; 
+        medidas = selectElement77.value; // Obtener el valor seleccionado del elemento select
         if (selectElement77.selectedIndex >= 0) {
           const selectedOptionElement = selectElement77.options[selectElement77.selectedIndex];
           textMedidas = selectedOptionElement.textContent;
@@ -515,7 +504,7 @@ function escucharBotones() {
       var varied = null;
       var varied2 = "";
       if (selectElement7 != null) {
-        varied = selectElement7.value; 
+        varied = selectElement7.value; // Obtener el valor seleccionado del elemento select
         if (selectElement7.selectedIndex >= 0) {
           const selectedOptionElement2 = selectElement7.options[selectElement7.selectedIndex];
           varied2 = selectedOptionElement2.textContent;
@@ -549,17 +538,17 @@ function escucharBotones() {
         if (siEstaId) {
           siEstaId.Unidades += Unidades;
           localStor.guardarEnLocalStorage(itemCarrito);
-          agregar(Descripción, articuloId); 
+          agregar(Descripción, articuloId); // Usar Descripción en lugar de tit para la alerta
         } else {
           if (Descuento != 0) {
             let ventaCD = ((Venta) * (1 - (Number(Descuento) / 100)));
             itemCarrito.push({ Artículo, Descripción, Venta: ventaCD.toString(), DOLAR, Unidades, ImagenId });
             localStor.guardarEnLocalStorage(itemCarrito);
-            agregar(Descripción, articuloId); 
+            agregar(Descripción, articuloId); // Usar Descripción en lugar de tit para la alerta
           } else {
             itemCarrito.push({ Artículo, Descripción, Venta, DOLAR, Unidades, ImagenId });
             localStor.guardarEnLocalStorage(itemCarrito);
-            agregar(Descripción, articuloId); 
+            agregar(Descripción, articuloId); // Usar Descripción en lugar de tit para la alerta
           }
         }
       };
@@ -570,7 +559,7 @@ function escucharBotones() {
         if (varied == null) {
           varied2 = "";
         }
-        let articuloIdModificado = medidas + '9990' + productId + varied; 
+        let articuloIdModificado = medidas + '9990' + productId + varied; // Concatenar como string
         agregarOModificarItem(articuloIdModificado, (parseInt(articuloIdModificado)), `${tit}  ${textMedidas} ${varied2}`, pre, dol, unidades, desc, parseInt(productId));
       }
 
@@ -578,6 +567,7 @@ function escucharBotones() {
     }
   });
 }
+
 
 
 
