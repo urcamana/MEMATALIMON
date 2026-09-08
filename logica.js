@@ -73,167 +73,115 @@ function MostrarEnCatalogo(datos, contenedorId) {
   //MOSTRAMOS LOS ELEMENTOS DEL CATALOGO
   template.querySelector('.esteSi').setAttribute("id", contenedorId);
 
+  //const imageId = `gimg-${contenedorId}-${datos.Artículo}`;
+  template2.querySelector("img").setAttribute("src", "./imgcarrito/" + (datos.Artículo) + ".jpg");
+  template2.querySelector("img").setAttribute("id", "img" + datos.Artículo);
+  // Alt descriptivo real para accesibilidad (antes quedaba un texto fijo
+  // que decía "Imagen no encontrada" incluso cuando la imagen cargaba bien)
+  template2.querySelector("img").setAttribute("alt",
+    typeof datos.Descripción === 'string' ? datos.Descripción : "Producto");
   // Selecciona el elemento H5 dentro de tu template
   const h5Element = template2.querySelector("h5");
 
+  // Verifica si se encontró el elemento H5
   if (h5Element) {
+    // Obtén la descripción del objeto de datos
     const descripcionTexto = datos.Descripción;
+
+    // Verifica si la descripción es un string válido
     if (typeof descripcionTexto === 'string') {
+      // Asigna el texto al H5
       h5Element.textContent = descripcionTexto;
+
+      // Verifica la longitud del texto y ajusta el tamaño de la fuente
       if (descripcionTexto.length < 35) {
-        h5Element.style.fontSize = '1.8VH'; 
+        h5Element.style.fontSize = '1.8VH'; // Tamaño si es corto
       } else {
-        h5Element.style.fontSize = '1.6VH'; 
+        h5Element.style.fontSize = '1.6VH'; // Tamaño si es largo o igual a 20
       }
     } else {
+      // Manejo opcional si la descripción no es un string
       h5Element.textContent = 'Descripción no válida';
-      h5Element.style.fontSize = '1.4VH'; 
+      h5Element.style.fontSize = '1.4VH'; // Un tamaño por defecto
       console.warn('datos.Descripción no es un string:', datos.Descripción);
     }
+  } else {
+    console.warn('Elemento h5 no encontrado en template2');
   }
 
   //llamamos la funcion del modulo para agregar las variantes 
   varianteDeMedidas.AgregaVariantes(datos, template2);
 
-  // Formatear precioCatalogo con formato numérico
+  //mostramos el stock disponible
+  //template2.querySelector("p").textContent = (datos.Inventario) + " disponibles";
+
+  // Formatear precioCatalogo con formato numérico y limitar a 2 decimales
   template2.querySelector(".cantidad").setAttribute("id", "idbot" + (datos.Artículo));
   template2.querySelector(".cantidad").setAttribute("max", (datos.Inventario));
-  
-  // Usamos tu cálculo original respetando el nuevo DOLAR: 1 del JSON
   if (datos.Descuento != 0) {
+
+    // Precio original
     let precioCatalogo = (Number(datos.Venta.replace(/,/g, ".")));
+
+    // Precio con descuento
     let precioCatalogo2 = precioCatalogo * (1 - Number(datos.Descuento.replace(/,/g, ".")));
+
+    // Precio sin impuestos nacionales (IVA 21%)
     let precioCatalogo3 = precioCatalogo2 / 1.21;
 
-    precioCatalogo = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo);
-    precioCatalogo2 = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo2);
-    precioCatalogo3 = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo3);
+    // Formatear recién al final
+    precioCatalogo = new Intl.NumberFormat('es-MX', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(precioCatalogo);
+
+    precioCatalogo2 = new Intl.NumberFormat('es-MX', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(precioCatalogo2);
+
+    precioCatalogo3 = new Intl.NumberFormat('es-MX', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(precioCatalogo3);
 
     template2.querySelector("small").innerHTML = "<del>$" + precioCatalogo + "</del>";
     template2.querySelector("h7").textContent = "$" + precioCatalogo2;
     template2.querySelector("h11").textContent = "Sin imp. nac.: $" + precioCatalogo3;
+
   } else {
+
+    // Precio final
     let precioCatalogo = (Number(datos.Venta.replace(/,/g, ".")) * Number(datos.DOLAR));
+
+    // Precio sin impuestos nacionales
     let precioCatalogo3 = precioCatalogo / 1.21;
 
-    precioCatalogo = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo);
-    precioCatalogo3 = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo3);
+    precioCatalogo = new Intl.NumberFormat('es-MX', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(precioCatalogo);
+
+    precioCatalogo3 = new Intl.NumberFormat('es-MX', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(precioCatalogo3);
 
     template2.querySelector("small").textContent = "";
     template2.querySelector("h7").textContent = "$" + precioCatalogo;
     template2.querySelector("h11").textContent = "Sin imp. nac.: $" + precioCatalogo3;
   }
 
-  // Mantenemos el ID original idbot para que escucharBotones funcione a la perfección
+  //seleccionamos el boton y le asignamos el id que corresponde
   const addButton = template2.querySelector("button");
   addButton.setAttribute("id", "idbot" + (datos.Artículo));
 
-  // GENERAMOS EL CLON DE LA TARJETA
+  //hacemos un clon y lo subimos al fragmento correspondiente para poder repetirlo. clone 1 contenedor . clone 2 etiquetas restantes
+
   let clone2 = document.importNode(template2, true);
-
-  // =======================================================================
-  // INYECTAMOS EL CARRUSEL EN EL CLON AISLANDO LOS IDS DE IMAGEN
-  // =======================================================================
-  const idCarruselUnico = "carrusel-art-" + datos.Artículo;
-  const contenedorCarrusel = clone2.querySelector(".carousel");
-  const contenedorInner = clone2.querySelector(".carousel-inner");
-  const btnPrev = clone2.querySelector(".carousel-control-prev");
-  const btnNext = clone2.querySelector(".carousel-control-next");
-
-  if (contenedorCarrusel && contenedorInner && btnPrev && btnNext) {
-    contenedorCarrusel.setAttribute("id", idCarruselUnico);
-    btnPrev.setAttribute("data-bs-target", "#" + idCarruselUnico);
-    btnNext.setAttribute("data-bs-target", "#" + idCarruselUnico);
-
-    contenedorInner.innerHTML = "";
-
-    // 1. Imagen base obligatoria (Esta SÍ lleva id="imgX" para descu.js)
-    const itemPrincipal = document.createElement("div");
-    itemPrincipal.className = "carousel-item active";
-
-    const imgPrincipal = document.createElement("img");
-    imgPrincipal.className = "d-block img-fluid mx-auto rounded img-prod";
-    imgPrincipal.style.cssText = "max-height: 220px; object-fit: contain; width: auto;";
-    imgPrincipal.setAttribute("src", "./imgcarrito/" + datos.Artículo + ".jpg");
-    imgPrincipal.setAttribute("id", "img" + datos.Artículo); // <- Única autorizada para el descuento
-    imgPrincipal.setAttribute("alt", typeof datos.Descripción === 'string' ? datos.Descripción : "Producto");
-    imgPrincipal.draggable = false;
-    imgPrincipal.onerror = function () { this.src = "./imgcarrito/IMGND.jpg"; };
-
-    itemPrincipal.appendChild(imgPrincipal);
-    contenedorInner.appendChild(itemPrincipal);
-
-    // 2. Carga controlada de letras variantes (B, C, D, E) - SIN ID "img"
-    const letrasVariantes = ["B", "C", "D", "E"];
-
-    letrasVariantes.forEach(letra => {
-      const itemSecundario = document.createElement("div");
-      itemSecundario.className = "carousel-item";
-
-      const imgSecundaria = document.createElement("img");
-      imgSecundaria.className = "d-block img-fluid mx-auto rounded img-prod";
-      imgSecundaria.style.cssText = "max-height: 220px; object-fit: contain; width: auto;";
-      imgSecundaria.setAttribute("src", "./imgcarrito/" + datos.Artículo + letra + ".jpg");
-      // Importante: No lleva atributo ID para no interferir con descu.js
-      imgSecundaria.setAttribute("alt", (typeof datos.Descripción === 'string' ? datos.Descripción : "Producto") + " - Vista " + letra);
-      imgSecundaria.draggable = false;
-
-      imgSecundaria.onerror = function () {
-        itemSecundario.remove();
-        reevaluarYReiniciarCarrusel();
-      };
-
-      imgSecundaria.onload = function () {
-        reevaluarYReiniciarCarrusel();
-      };
-
-      itemSecundario.appendChild(imgSecundaria);
-      contenedorInner.appendChild(itemSecundario);
-    });
-
-    let instanciaBootstrapCarousel = null;
-
-    function reevaluarYReiniciarCarrusel() {
-      const slidesVivos = contenedorInner.querySelectorAll(".carousel-item").length;
-      
-      if (slidesVivos > 1) {
-        btnPrev.style.display = "flex";
-        btnNext.style.display = "flex";
-        
-        if (instanciaBootstrapCarousel) {
-          instanciaBootstrapCarousel.dispose();
-        }
-        
-        if (typeof bootstrap !== 'undefined' && bootstrap.Carousel) {
-          instanciaBootstrapCarousel = new bootstrap.Carousel(contenedorCarrusel, {
-            touch: true,
-            interval: false
-          });
-        }
-      } else {
-        btnPrev.style.display = "none";
-        btnNext.style.display = "none";
-      }
-    }
-
-    if (typeof bootstrap !== 'undefined' && bootstrap.Carousel) {
-      instanciaBootstrapCarousel = new bootstrap.Carousel(contenedorCarrusel, {
-        touch: true,
-        interval: false
-      });
-    }
-  }
-  // =======================================================================
-
   fragmento2.appendChild(clone2);
-  return fragmento2;
-}
-
-
-
-
-
-
+  return fragmento2
+};
 
 
 
@@ -458,17 +406,16 @@ descu.porDeDescuento();
 
 
 
+//ponemos a escuchar todos los botones y mandamos a agregar los datos
+//esta es la funcion que agrega los datos a itemCarrito
 function escucharBotones() {
 
   // Adjuntamos un único event listener al documento entero para delegación de eventos.
+  // Esto garantiza que el listener esté siempre activo, sin importar si los elementos
+  // del DOM son agregados o eliminados dinámicamente.
   document.addEventListener('click', event => {
-    
-    // FILTRO CRÍTICO: Si el usuario hizo clic en las flechas del carrusel, salimos inmediatamente
-    if (event.target.closest('.carousel-control-prev') || event.target.closest('.carousel-control-next')) {
-      return; // Permite que Bootstrap mueva la foto variantes sin interferencias
-    }
-
-    // Buscamos si el clic pertenece al botón de agregar usando tu ID original idbot
+    // Usamos event.target.closest() para verificar si el clic fue en un botón
+    // con un ID que empieza por 'idbot'. Esto funciona para botones dinámicos.
     const btn = event.target.closest('button[id^=idbot]');
 
     if (btn) {
@@ -485,16 +432,16 @@ function escucharBotones() {
       }
       let productId = da2[0]; // Usar el primer elemento del array
 
-      // Buscamos el input de cantidad relativo a la tarjeta clickeada
-      const tarjetaContenedora = btn.closest('.tarjetas2');
-      let selectElement = tarjetaContenedora ? tarjetaContenedora.querySelector('.cantidad') : null;
+      let selectElement = document.getElementById('idbot' + productId); // Obtener el elemento select por su id
 
       let unidades = 1; // Valor por defecto
       if (selectElement) {
         unidades = Number(selectElement.value);
+      } else {
       }
 
-      let selectElement77 = tarjetaContenedora ? tarjetaContenedora.querySelector('select[id^=med]') : null;
+
+      let selectElement77 = document.getElementById('med' + productId); // Obtener el elemento select por su id
       var medidas = null;
       var textMedidas = "";
       if (selectElement77 != null) {
@@ -502,10 +449,12 @@ function escucharBotones() {
         if (selectElement77.selectedIndex >= 0) {
           const selectedOptionElement = selectElement77.options[selectElement77.selectedIndex];
           textMedidas = selectedOptionElement.textContent;
+        } else {
         }
+      } else {
       }
 
-      let selectElement7 = tarjetaContenedora ? tarjetaContenedora.querySelector('select[id^=var]') : null;
+      let selectElement7 = document.getElementById('var' + productId); // Obtener el elemento select por su id
       var varied = null;
       var varied2 = "";
       if (selectElement7 != null) {
@@ -513,16 +462,23 @@ function escucharBotones() {
         if (selectElement7.selectedIndex >= 0) {
           const selectedOptionElement2 = selectElement7.options[selectElement7.selectedIndex];
           varied2 = selectedOptionElement2.textContent;
+        } else {
         }
+      } else {
       }
 
-      //buscamos los datos del boton presionado
+      //buscamos los datos del boton precionado
       var tit = buscarDatos.buscarId(parseInt(productId));
       var pre = buscarDatos.buscarIdPrecio(parseInt(productId));
       var dol = buscarDatos.buscarIdDol(parseInt(productId));
       var stock = buscarDatos.buscarStock(parseInt(productId));
       var desc = buscarDatos.buscarDescuento(parseInt(productId));
 
+      // El stock es del PRODUCTO, no de cada variante por separado: si hay
+      // 10 en stock y ya tenés 8 de una variante en el carrito, no podés
+      // agregar 8 más de otra variante (serían 16 de un producto con solo
+      // 10 disponibles). Sumamos las unidades de TODAS las variantes de
+      // este mismo producto que ya estén en el carrito antes de validar.
       const idBaseProducto = parseInt(productId);
       const unidadesYaEnCarrito = itemCarrito.reduce((total, item) => {
         const idBaseItem = item.ImagenId !== undefined ? item.ImagenId : item.Artículo;
@@ -547,9 +503,13 @@ function escucharBotones() {
         } else {
           if (Descuento != 0) {
             let ventaCD = ((Venta) * (1 - (Number(Descuento) / 100)));
+            // Guardamos "ImagenId" (el id real del producto) además de
+            // "Artículo" (que para variantes es un id compuesto y no
+            // corresponde a ningún archivo de imagen real).
             itemCarrito.push({ Artículo, Descripción, Venta: ventaCD.toString(), DOLAR, Unidades, ImagenId });
             localStor.guardarEnLocalStorage(itemCarrito);
             agregar(Descripción, articuloId); // Usar Descripción en lugar de tit para la alerta
+
           } else {
             itemCarrito.push({ Artículo, Descripción, Venta, DOLAR, Unidades, ImagenId });
             localStor.guardarEnLocalStorage(itemCarrito);
@@ -565,15 +525,16 @@ function escucharBotones() {
           varied2 = "";
         }
         let articuloIdModificado = medidas + '9990' + productId + varied; // Concatenar como string
+        // Le pasamos parseInt(productId) como ImagenId: es el id real del
+        // producto base, el que sí corresponde a un archivo de imagen.
         agregarOModificarItem(articuloIdModificado, (parseInt(articuloIdModificado)), `${tit}  ${textMedidas} ${varied2}`, pre, dol, unidades, desc, parseInt(productId));
       }
+
 
       total();
     }
   });
 }
-
-
 
 
 
