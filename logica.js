@@ -120,11 +120,17 @@ function MostrarEnCatalogo(datos, contenedorId) {
   template2.querySelector(".cantidad").setAttribute("max", (datos.Inventario));
   if (datos.Descuento != 0) {
 
-    // Precio original
-    let precioCatalogo = (Number(datos.Venta.replace(/,/g, ".")));
+// Convertimos Venta a string de forma segura antes del replace por si viene como número
+let ventaString = String(datos.Venta).replace(/,/g, ".");
+let precioOriginalNumero = Number(ventaString) * Number(datos.DOLAR);
 
-    // Precio con descuento
-    let precioCatalogo2 = precioCatalogo * (1 - Number(datos.Descuento.replace(/,/g, ".")));
+// Precio original base
+let precioCatalogo = precioOriginalNumero;
+
+// Precio con descuento (reemplazar también la conversión de datos.Descuento)
+let descuentoString = String(datos.Descuento).replace(/,/g, ".");
+let precioCatalogo2 = precioCatalogo * (1 - Number(descuentoString));
+
 
     // Precio sin impuestos nacionales (IVA 21%)
     let precioCatalogo3 = precioCatalogo2 / 1.21;
