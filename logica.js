@@ -213,7 +213,7 @@ function MostrarEnCatalogo(datos, contenedorId) {
 
   fragmento2.appendChild(clone2);
   return fragmento2;
-}
+};
 
 
 
