@@ -444,77 +444,73 @@ descu.porDeDescuento();
 
 //ponemos a escuchar todos los botones y mandamos a agregar los datos
 //esta es la funcion que agrega los datos a itemCarrito
+//ponemos a escuchar todos los botones y mandamos a agregar los datos
+//esta es la funcion que agrega los datos a itemCarrito
 function escucharBotones() {
 
   // Adjuntamos un único event listener al documento entero para delegación de eventos.
-  // Esto garantiza que el listener esté siempre activo, sin importar si los elementos
-  // del DOM son agregados o eliminados dinámicamente.
   document.addEventListener('click', event => {
-    // Usamos event.target.closest() para verificar si el clic fue en un botón
-    // con un ID que empieza por 'idbot'. Esto funciona para botones dinámicos.
-    const btn = event.target.closest('button[id^=idbot]');
+    
+    // 1. SI EL CLIC FUE EN UNA FLECHA DEL CARRUSEL, LO IGNORAMOS COMPLETAMENTE
+    if (event.target.closest('.carousel-control-prev') || event.target.closest('.carousel-control-next')) {
+      return; // Deja que Bootstrap maneje el movimiento de la imagen de forma nativa
+    }
+
+    // Usamos event.target.closest() para verificar si el clic fue en el botón de agregar
+    const btn = event.target.closest('button.botonaparecer');
 
     if (btn) {
-      event.stopImmediatePropagation(); // Detiene la propagación del evento de forma inmediata
+      event.preventDefault();
+      event.stopImmediatePropagation(); // Detiene la propagación del evento
 
-      var da = btn.id; // Obtenemos el ID del botón que fue clicado
-      var regex = /(\d+)/g; // Expresión regular corregida
+      var da = btn.id; // Obtenemos el ID del botón que fue clicado (ej: idbot1)
+      var regex = /(\d+)/g; 
       var da2 = (da.match(regex));
 
-      // Asegúrate de que da2 tenga al menos un elemento antes de acceder a da2[0]
       if (!da2 || da2.length === 0) {
         console.error("Error: No se pudo extraer el ID numérico del botón.", da);
-        return; // Salir de la función si no hay ID numérico
+        return; 
       }
       let productId = da2[0]; // Usar el primer elemento del array
 
-      let selectElement = document.getElementById('idbot' + productId); // Obtener el elemento select por su id
+      // Buscamos la cantidad directamente en la tarjeta donde se hizo el clic
+      const tarjetaContenedora = btn.closest('.tarjetas2');
+      let selectElement = tarjetaContenedora ? tarjetaContenedora.querySelector('.cantidad') : null;
 
       let unidades = 1; // Valor por defecto
       if (selectElement) {
         unidades = Number(selectElement.value);
-      } else {
       }
 
-
-      let selectElement77 = document.getElementById('med' + productId); // Obtener el elemento select por su id
+      let selectElement77 = tarjetaContenedora ? tarjetaContenedora.querySelector('select[id^=med]') : null;
       var medidas = null;
       var textMedidas = "";
       if (selectElement77 != null) {
-        medidas = selectElement77.value; // Obtener el valor seleccionado del elemento select
+        medidas = selectElement77.value; 
         if (selectElement77.selectedIndex >= 0) {
           const selectedOptionElement = selectElement77.options[selectElement77.selectedIndex];
           textMedidas = selectedOptionElement.textContent;
-        } else {
         }
-      } else {
       }
 
-      let selectElement7 = document.getElementById('var' + productId); // Obtener el elemento select por su id
+      let selectElement7 = tarjetaContenedora ? tarjetaContenedora.querySelector('select[id^=var]') : null;
       var varied = null;
       var varied2 = "";
       if (selectElement7 != null) {
-        varied = selectElement7.value; // Obtener el valor seleccionado del elemento select
+        varied = selectElement7.value; 
         if (selectElement7.selectedIndex >= 0) {
           const selectedOptionElement2 = selectElement7.options[selectElement7.selectedIndex];
           varied2 = selectedOptionElement2.textContent;
-        } else {
         }
-      } else {
       }
 
-      //buscamos los datos del boton precionado
+      //buscamos los datos del boton presionado
       var tit = buscarDatos.buscarId(parseInt(productId));
       var pre = buscarDatos.buscarIdPrecio(parseInt(productId));
       var dol = buscarDatos.buscarIdDol(parseInt(productId));
       var stock = buscarDatos.buscarStock(parseInt(productId));
       var desc = buscarDatos.buscarDescuento(parseInt(productId));
 
-      // El stock es del PRODUCTO, no de cada variante por separado: si hay
-      // 10 en stock y ya tenés 8 de una variante en el carrito, no podés
-      // agregar 8 más de otra variante (serían 16 de un producto con solo
-      // 10 disponibles). Sumamos las unidades de TODAS las variantes de
-      // este mismo producto que ya estén en el carrito antes de validar.
       const idBaseProducto = parseInt(productId);
       const unidadesYaEnCarrito = itemCarrito.reduce((total, item) => {
         const idBaseItem = item.ImagenId !== undefined ? item.ImagenId : item.Artículo;
@@ -535,21 +531,17 @@ function escucharBotones() {
         if (siEstaId) {
           siEstaId.Unidades += Unidades;
           localStor.guardarEnLocalStorage(itemCarrito);
-          agregar(Descripción, articuloId); // Usar Descripción en lugar de tit para la alerta
+          agregar(Descripción, articuloId); 
         } else {
           if (Descuento != 0) {
             let ventaCD = ((Venta) * (1 - (Number(Descuento) / 100)));
-            // Guardamos "ImagenId" (el id real del producto) además de
-            // "Artículo" (que para variantes es un id compuesto y no
-            // corresponde a ningún archivo de imagen real).
             itemCarrito.push({ Artículo, Descripción, Venta: ventaCD.toString(), DOLAR, Unidades, ImagenId });
             localStor.guardarEnLocalStorage(itemCarrito);
-            agregar(Descripción, articuloId); // Usar Descripción en lugar de tit para la alerta
-
+            agregar(Descripción, articuloId); 
           } else {
             itemCarrito.push({ Artículo, Descripción, Venta, DOLAR, Unidades, ImagenId });
             localStor.guardarEnLocalStorage(itemCarrito);
-            agregar(Descripción, articuloId); // Usar Descripción en lugar de tit para la alerta
+            agregar(Descripción, articuloId); 
           }
         }
       };
@@ -560,17 +552,15 @@ function escucharBotones() {
         if (varied == null) {
           varied2 = "";
         }
-        let articuloIdModificado = medidas + '9990' + productId + varied; // Concatenar como string
-        // Le pasamos parseInt(productId) como ImagenId: es el id real del
-        // producto base, el que sí corresponde a un archivo de imagen.
+        let articuloIdModificado = medidas + '9990' + productId + varied; 
         agregarOModificarItem(articuloIdModificado, (parseInt(articuloIdModificado)), `${tit}  ${textMedidas} ${varied2}`, pre, dol, unidades, desc, parseInt(productId));
       }
-
 
       total();
     }
   });
 }
+
 
 
 
