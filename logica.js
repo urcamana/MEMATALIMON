@@ -128,7 +128,7 @@ function MostrarEnCatalogo(datos, contenedorId) {
   const addButton = template2.querySelector("button");
   addButton.setAttribute("id", "idbot" + (datos.Artículo));
 
-  // GENERAMOS EL CLON DE LA TARJETA
+  // GENERAMOS EL CLON DE LA TARJETA PRIMERO
   let clone2 = document.importNode(template2, true);
 
   // =======================================================================
@@ -147,12 +147,12 @@ function MostrarEnCatalogo(datos, contenedorId) {
 
     contenedorInner.innerHTML = "";
 
-    // 1. Imagen base (ej: 1.jpg)
+    // 1. Imagen base obligatoria (ej: 3.jpg)
     const itemPrincipal = document.createElement("div");
     itemPrincipal.className = "carousel-item active";
 
     const imgPrincipal = document.createElement("img");
-    imgPrincipal.className = "d-block img-fluid mx-auto rounded";
+    imgPrincipal.className = "d-block img-fluid mx-auto rounded img-prod";
     imgPrincipal.style.cssText = "max-height: 220px; object-fit: contain; width: auto;";
     imgPrincipal.setAttribute("src", "./imgcarrito/" + datos.Artículo + ".jpg");
     imgPrincipal.setAttribute("id", "img" + datos.Artículo);
@@ -171,7 +171,7 @@ function MostrarEnCatalogo(datos, contenedorId) {
       itemSecundario.className = "carousel-item";
 
       const imgSecundaria = document.createElement("img");
-      imgSecundaria.className = "d-block img-fluid mx-auto rounded";
+      imgSecundaria.className = "d-block img-fluid mx-auto rounded img-prod";
       imgSecundaria.style.cssText = "max-height: 220px; object-fit: contain; width: auto;";
       imgSecundaria.setAttribute("src", "./imgcarrito/" + datos.Artículo + letra + ".jpg");
       imgSecundaria.setAttribute("alt", (typeof datos.Descripción === 'string' ? datos.Descripción : "Producto") + " - Vista " + letra);
@@ -179,31 +179,49 @@ function MostrarEnCatalogo(datos, contenedorId) {
 
       imgSecundaria.onerror = function () {
         itemSecundario.remove();
-        reevaluarFlechasCarrusel();
+        reevaluarYReiniciarCarrusel();
       };
 
       imgSecundaria.onload = function () {
-        reevaluarFlechasCarrusel();
+        reevaluarYReiniciarCarrusel();
       };
 
       itemSecundario.appendChild(imgSecundaria);
       contenedorInner.appendChild(itemSecundario);
     });
 
-    function reevaluarFlechasCarrusel() {
+    // Variable interna para almacenar la instancia viva del carrusel de Bootstrap
+    let instanciaBootstrapCarousel = null;
+
+    function reevaluarYReiniciarCarrusel() {
       const slidesVivos = contenedorInner.querySelectorAll(".carousel-item").length;
+      
+      // Control de visibilidad de las flechas direccionales
       if (slidesVivos > 1) {
         btnPrev.style.display = "flex";
         btnNext.style.display = "flex";
+        
+        // Destruimos la instancia previa si existiera para que no se congele el DOM
+        if (instanciaBootstrapCarousel) {
+          instanciaBootstrapCarousel.dispose();
+        }
+        
+        // Inicialización manual definitiva una vez que sabemos cuáles imágenes existen de verdad
+        if (typeof bootstrap !== 'undefined' && bootstrap.Carousel) {
+          instanciaBootstrapCarousel = new bootstrap.Carousel(contenedorCarrusel, {
+            touch: true,
+            interval: false
+          });
+        }
       } else {
         btnPrev.style.display = "none";
         btnNext.style.display = "none";
       }
     }
 
-    // Inicialización manual explícita para asegurar el cambio de imagen al hacer clic
+    // Inicialización de arranque por defecto (cubre productos con una sola foto)
     if (typeof bootstrap !== 'undefined' && bootstrap.Carousel) {
-      new bootstrap.Carousel(contenedorCarrusel, {
+      instanciaBootstrapCarousel = new bootstrap.Carousel(contenedorCarrusel, {
         touch: true,
         interval: false
       });
