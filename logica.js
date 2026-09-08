@@ -76,7 +76,6 @@ function MostrarEnCatalogo(datos, contenedorId) {
   // Selecciona el elemento H5 dentro de tu template
   const h5Element = template2.querySelector("h5");
 
-  // Verifica si se encontró el elemento H5
   if (h5Element) {
     const descripcionTexto = datos.Descripción;
     if (typeof descripcionTexto === 'string') {
@@ -96,7 +95,7 @@ function MostrarEnCatalogo(datos, contenedorId) {
   //llamamos la funcion del modulo para agregar las variantes 
   varianteDeMedidas.AgregaVariantes(datos, template2);
 
-  // Formatear precioCatalogo con formato numérico y limitar a 2 decimales
+  // Formatear precioCatalogo con formato numérico
   template2.querySelector(".cantidad").setAttribute("id", "idbot" + (datos.Artículo));
   template2.querySelector(".cantidad").setAttribute("max", (datos.Inventario));
   
@@ -129,7 +128,7 @@ function MostrarEnCatalogo(datos, contenedorId) {
   const addButton = template2.querySelector("button");
   addButton.setAttribute("id", "idbot" + (datos.Artículo));
 
-  // GENERAMOS EL CLON DE LA TARJETA PRIMERO
+  // GENERAMOS EL CLON DE LA TARJETA
   let clone2 = document.importNode(template2, true);
 
   // =======================================================================
@@ -153,7 +152,8 @@ function MostrarEnCatalogo(datos, contenedorId) {
     itemPrincipal.className = "carousel-item active";
 
     const imgPrincipal = document.createElement("img");
-    imgPrincipal.className = "d-block w-100 img-prod card-img-top";
+    imgPrincipal.className = "d-block img-fluid mx-auto rounded";
+    imgPrincipal.style.cssText = "max-height: 220px; object-fit: contain; width: auto;";
     imgPrincipal.setAttribute("src", "./imgcarrito/" + datos.Artículo + ".jpg");
     imgPrincipal.setAttribute("id", "img" + datos.Artículo);
     imgPrincipal.setAttribute("alt", typeof datos.Descripción === 'string' ? datos.Descripción : "Producto");
@@ -171,7 +171,8 @@ function MostrarEnCatalogo(datos, contenedorId) {
       itemSecundario.className = "carousel-item";
 
       const imgSecundaria = document.createElement("img");
-      imgSecundaria.className = "d-block w-100 img-prod card-img-top";
+      imgSecundaria.className = "d-block img-fluid mx-auto rounded";
+      imgSecundaria.style.cssText = "max-height: 220px; object-fit: contain; width: auto;";
       imgSecundaria.setAttribute("src", "./imgcarrito/" + datos.Artículo + letra + ".jpg");
       imgSecundaria.setAttribute("alt", (typeof datos.Descripción === 'string' ? datos.Descripción : "Producto") + " - Vista " + letra);
       imgSecundaria.draggable = false;
@@ -199,22 +200,21 @@ function MostrarEnCatalogo(datos, contenedorId) {
         btnNext.style.display = "none";
       }
     }
+
+    // Inicialización manual explícita para asegurar el cambio de imagen al hacer clic
+    if (typeof bootstrap !== 'undefined' && bootstrap.Carousel) {
+      new bootstrap.Carousel(contenedorCarrusel, {
+        touch: true,
+        interval: false
+      });
+    }
   }
   // =======================================================================
-
-  // =======================================================================
-
-  // Forzamos a Bootstrap a inicializar y darle vida al carrusel antes de enviarlo a la pantalla
-  if (typeof bootstrap !== 'undefined' && bootstrap.Carousel) {
-    new bootstrap.Carousel(contenedorCarrusel, {
-      touch: true,
-      interval: false // Evita que pase solo, cambia únicamente cuando el cliente toca la flecha
-    });
-  }
 
   fragmento2.appendChild(clone2);
   return fragmento2;
 }
+
 
 
 

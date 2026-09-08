@@ -186,83 +186,61 @@
             </div>
         </template>
 
-        <template id="contTemplate2">
-            <div class="col-sm-6 col-md-6  col-lg-4 col-6 mb-4">
-                <!-- <div class="col-sm-6 col-md-4  col-lg-3 col-6 mb-3"> este para que entren mas -->
-                <!-- col-6 mb-4  hace que sea mas chiquito-->
-
-                <div class="card-group tarjetas2 ">
-                    <div class="card ">
-<!-- NUEVO CARRUSEL AUTO-FILTRABLE -->
-
-<div class="carousel slide px-4" data-bs-ride="false" style="max-width: 100%; margin: 0 auto;">
-
-    
-    <!-- Contenedor donde se meterán las fotos (A, B, C, D, E) -->
-    <div class="carousel-inner">
-        <!-- Se armará dinámicamente por JavaScript -->
-    </div>
-
-    <!-- Botón Flecha Izquierda -->
-    <button class="carousel-control-prev" type="button" style="filter: invert(1); width: 12%; display: none;">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Anterior</span>
-    </button>
-
-    <!-- Botón Flecha Derecha -->
-    <button class="carousel-control-next" type="button" style="filter: invert(1); width: 12%; display: none;">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Siguiente</span>
-    </button>
-</div>
-
-                        <div class="row">
-                            <div>
-                                <div class="card contentarj h-100">
-                                    <div class="card-body d-flex flex-column justify-content-between">
-                                        <div>
-                                            <h5 class="card-title"></h5>
-
-
-                                            <div class="variantes">
-                                            </div>
-
-
-
-
-
-                                            <p class="card-text"></p><small class="text-body-secondary"></small>
-                                            <h7 class=""></h7><br>
-                                            <h11 class=""></h11>
-
-                                        </div>
-                                        <div>
-                                            <p class="cantidadParaAgregar">Cantidad:
-                                                <input type="number" name="cantidad" id="" class="cantidad" value="1"
-                                                    min="1" max="">
-                                            </p>
-
-                                            <button type="button"
-                                                class="btn btn-dark inter d-block mx-auto botonaparecer">
-                                                Agregar
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                    fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
-                                                    <path
-                                                        d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
+       <template id="contTemplate2">
+    <div class="col-sm-6 col-md-6 col-lg-4 col-6 mb-4">
+        <div class="card h-100 tarjetas2 text-center shadow-sm">
+            
+            <!-- CONTENEDOR DEL CARRUSEL OPTIMIZADO -->
+            <div class="carousel slide px-3 pt-2" data-bs-ride="false" style="max-width: 100%; margin: 0 auto;">
+                <!-- Contenedor donde se meterán las fotos (A, B, C, D, E) -->
+                <div class="carousel-inner">
+                    <!-- Se armará dinámicamente por JavaScript -->
                 </div>
+
+                <!-- Botón Flecha Izquierda -->
+                <button class="carousel-control-prev" type="button" style="filter: invert(1); width: 15%; display: none;">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Anterior</span>
+                </button>
+
+                <!-- Botón Flecha Derecho -->
+                <button class="carousel-control-next" type="button" style="filter: invert(1); width: 15%; display: none;">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Siguiente</span>
+                </button>
             </div>
 
+            <!-- CUERPO DE LA TARJETA COMPACTO -->
+            <div class="card-body d-flex flex-column justify-content-between p-3">
+                <div>
+                    <h5 class="card-title fw-bold" style="min-height: 2.4em; display: flex; align-items: center; justify-content: center;"></h5>
+                    
+                    <div class="variantes my-2">
+                    </div>
 
-        </template>
+                    <p class="card-text mb-1"></p>
+                    <small class="text-body-secondary"></small>
+                    <h7 class="d-block fw-bold text-danger fs-5 my-1"></h7>
+                    <h11 class="text-muted" style="font-size: 0.75rem;"></h11>
+                </div>
+
+                <div class="mt-3">
+                    <p class="cantidadParaAgregar mb-2" style="font-size: 0.9rem;">Cantidad:
+                        <input type="number" name="cantidad" class="cantidad form-control d-inline-block text-center" value="1" min="1" max="" style="width: 60px; height: 30px; padding: 2px;">
+                    </p>
+
+                    <button type="button" class="btn btn-dark inter d-block mx-auto botonaparecer w-100">
+                        Agregar
+                        <svg xmlns="http://w3.org" width="16" height="16" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
+                            <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
         <!-- <template id="contTemplate4">
 <div class="Variante">
 
