@@ -78,77 +78,49 @@ function MostrarEnCatalogo(datos, contenedorId) {
 
   // Verifica si se encontró el elemento H5
   if (h5Element) {
+    // Obtén la descripción del objeto de datos
     const descripcionTexto = datos.Descripción;
+
+    // Verifica si la descripción es un string válido
     if (typeof descripcionTexto === 'string') {
+      // Asigna el texto al H5
       h5Element.textContent = descripcionTexto;
+
+      // Verifica la longitud del texto y ajusta el tamaño de la fuente
       if (descripcionTexto.length < 35) {
-        h5Element.style.fontSize = '1.8VH'; 
+        h5Element.style.fontSize = '1.8VH'; // Tamaño si es corto
       } else {
-        h5Element.style.fontSize = '1.6VH'; 
+        h5Element.style.fontSize = '1.6VH'; // Tamaño si es largo o igual a 20
       }
     } else {
+      // Manejo opcional si la descripción no es un string
       h5Element.textContent = 'Descripción no válida';
-      h5Element.style.fontSize = '1.4VH'; 
+      h5Element.style.fontSize = '1.4VH'; // Un tamaño por defecto
       console.warn('datos.Descripción no es un string:', datos.Descripción);
     }
-  }
-
-  //llamamos la funcion del modulo para agregar las variantes 
-  varianteDeMedidas.AgregaVariantes(datos, template2);
-
-  // Formatear precioCatalogo con formato numérico y limitar a 2 decimales
-  template2.querySelector(".cantidad").setAttribute("id", "idbot" + (datos.Artículo));
-  template2.querySelector(".cantidad").setAttribute("max", (datos.Inventario));
-  
-  let precioBase = Number(String(datos.Venta).replace(/,/g, "."));
-
-  if (datos.Descuento != 0) {
-    let precioCatalogo = precioBase;
-    let precioCatalogo2 = precioCatalogo * (1 - Number(datos.Descuento.replace(/,/g, ".")));
-    let precioCatalogo3 = precioCatalogo2 / 1.21;
-
-    precioCatalogo = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo);
-    precioCatalogo2 = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo2);
-    precioCatalogo3 = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo3);
-
-    template2.querySelector("small").innerHTML = "<del>$" + precioCatalogo + "</del>";
-    template2.querySelector("h7").textContent = "$" + precioCatalogo2;
-    template2.querySelector("h11").textContent = "Sin imp. nac.: $" + precioCatalogo3;
   } else {
-    let precioCatalogo = precioBase;
-    let precioCatalogo3 = precioCatalogo / 1.21;
-
-    precioCatalogo = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo);
-    precioCatalogo3 = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo3);
-
-    template2.querySelector("small").textContent = "";
-    template2.querySelector("h7").textContent = "$" + precioCatalogo;
-    template2.querySelector("h11").textContent = "Sin imp. nac.: $" + precioCatalogo3;
+    console.warn('Elemento h5 no encontrado en template2');
   }
-
-  const addButton = template2.querySelector("button");
-  addButton.setAttribute("id", "idbot" + (datos.Artículo));
-
-  // GENERAMOS EL CLON DE LA TARJETA PRIMERO
-  let clone2 = document.importNode(template2, true);
 
   // =======================================================================
-  // INYECTAMOS EL CARRUSEL DIRECTAMENTE EN EL CLON VIVO
+  // NUEVA LÓGICA AUTOMÁTICA DEL CARRUSEL (A, B, C, D, E)
   // =======================================================================
   const idCarruselUnico = "carrusel-art-" + datos.Artículo;
-  const contenedorCarrusel = clone2.querySelector(".carousel");
-  const contenedorInner = clone2.querySelector(".carousel-inner");
-  const btnPrev = clone2.querySelector(".carousel-control-prev");
-  const btnNext = clone2.querySelector(".carousel-control-next");
+  const contenedorCarrusel = template2.querySelector(".carousel");
+  const contenedorInner = template2.querySelector(".carousel-inner");
+  const btnPrev = template2.querySelector(".carousel-control-prev");
+  const btnNext = template2.querySelector(".carousel-control-next");
 
+  // Asignamos identificadores únicos para los controles del carrusel
   if (contenedorCarrusel && contenedorInner && btnPrev && btnNext) {
     contenedorCarrusel.setAttribute("id", idCarruselUnico);
     btnPrev.setAttribute("data-bs-target", "#" + idCarruselUnico);
     btnNext.setAttribute("data-bs-target", "#" + idCarruselUnico);
 
+    // Vaciamos el contenedor por si quedó basura visual
     contenedorInner.innerHTML = "";
 
-    // 1. Imagen base (ej: 1.jpg)
+    // 1. Imagen base obligatoria (ej: 1.jpg)
     const itemPrincipal = document.createElement("div");
     itemPrincipal.className = "carousel-item active";
 
@@ -163,7 +135,7 @@ function MostrarEnCatalogo(datos, contenedorId) {
     itemPrincipal.appendChild(imgPrincipal);
     contenedorInner.appendChild(itemPrincipal);
 
-    // 2. Control de imágenes adicionales consecutivas (B, C, D, E)
+    // 2. Intentar cargar las letras extras de forma consecutiva
     const letrasVariantes = ["B", "C", "D", "E"];
 
     letrasVariantes.forEach(letra => {
@@ -176,6 +148,7 @@ function MostrarEnCatalogo(datos, contenedorId) {
       imgSecundaria.setAttribute("alt", (typeof datos.Descripción === 'string' ? datos.Descripción : "Producto") + " - Vista " + letra);
       imgSecundaria.draggable = false;
 
+      // Si la imagen no está en tu servidor, el navegador dará error y borramos el slide al instante
       imgSecundaria.onerror = function () {
         itemSecundario.remove();
         reevaluarFlechasCarrusel();
@@ -189,6 +162,7 @@ function MostrarEnCatalogo(datos, contenedorId) {
       contenedorInner.appendChild(itemSecundario);
     });
 
+    // Controla si se muestran o no las flechas de costado en base a las imágenes que sobrevivieron
     function reevaluarFlechasCarrusel() {
       const slidesVivos = contenedorInner.querySelectorAll(".carousel-item").length;
       if (slidesVivos > 1) {
@@ -202,10 +176,61 @@ function MostrarEnCatalogo(datos, contenedorId) {
   }
   // =======================================================================
 
+  //llamamos la funcion del modulo para agregar las variantes 
+  varianteDeMedidas.AgregaVariantes(datos, template2);
+
+  // Formatear precioCatalogo con formato numérico y limitar a 2 decimales
+  template2.querySelector(".cantidad").setAttribute("id", "idbot" + (datos.Artículo));
+  template2.querySelector(".cantidad").setAttribute("max", (datos.Inventario));
+  
+  // Tomamos el precio limpio de venta directo desde el JSON (corrigiendo el bug de $0)
+  let precioBase = Number(String(datos.Venta).replace(/,/g, "."));
+
+  if (datos.Descuento != 0) {
+
+    // Precio original
+    let precioCatalogo = precioBase;
+
+    // Precio con descuento
+    let precioCatalogo2 = precioCatalogo * (1 - Number(datos.Descuento.replace(/,/g, ".")));
+
+    // Precio sin impuestos nacionales (IVA 21%)
+    let precioCatalogo3 = precioCatalogo2 / 1.21;
+
+    // Formatear recién al final
+    precioCatalogo = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo);
+    precioCatalogo2 = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo2);
+    precioCatalogo3 = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo3);
+
+    template2.querySelector("small").innerHTML = "<del>$" + precioCatalogo + "</del>";
+    template2.querySelector("h7").textContent = "$" + precioCatalogo2;
+    template2.querySelector("h11").textContent = "Sin imp. nac.: $" + precioCatalogo3;
+
+  } else {
+
+    // Precio final directo
+    let precioCatalogo = precioBase;
+
+    // Precio sin impuestos nacionales
+    let precioCatalogo3 = precioCatalogo / 1.21;
+
+    precioCatalogo = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo);
+    precioCatalogo3 = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo3);
+
+    template2.querySelector("small").textContent = "";
+    template2.querySelector("h7").textContent = "$" + precioCatalogo;
+    template2.querySelector("h11").textContent = "Sin imp. nac.: $" + precioCatalogo3;
+  }
+
+  //seleccionamos el boton y le asignamos el id que corresponde
+  const addButton = template2.querySelector("button");
+  addButton.setAttribute("id", "idbot" + (datos.Artículo));
+
+  //hacemos un clon y lo subimos al fragmento correspondiente para poder repetirlo. clone 1 contenedor . clone 2 etiquetas restantes
+  let clone2 = document.importNode(template2, true);
   fragmento2.appendChild(clone2);
   return fragmento2;
-}
-
+};
 
 
 
