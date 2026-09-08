@@ -193,8 +193,27 @@
 
                 <div class="card-group tarjetas2 ">
                     <div class="card ">
-                        <img class="card-img-top img-prod" onerror="this.src='./imgcarrito/IMGND.jpg'"
-                            draggable="false" alt="Producto">
+<!-- NUEVO CARRUSEL AUTO-FILTRABLE -->
+<div class="carousel slide" data-bs-ride="false" style="max-width: 100%; margin: 0 auto;">
+    
+    <!-- Contenedor donde se meterán las fotos (A, B, C, D, E) -->
+    <div class="carousel-inner">
+        <!-- Se armará dinámicamente por JavaScript -->
+    </div>
+
+    <!-- Botón Flecha Izquierda -->
+    <button class="carousel-control-prev" type="button" style="filter: invert(1); width: 12%; display: none;">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Anterior</span>
+    </button>
+
+    <!-- Botón Flecha Derecha -->
+    <button class="carousel-control-next" type="button" style="filter: invert(1); width: 12%; display: none;">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Siguiente</span>
+    </button>
+</div>
+
                         <div class="row">
                             <div>
                                 <div class="card contentarj h-100">
