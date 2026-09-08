@@ -202,9 +202,20 @@ function MostrarEnCatalogo(datos, contenedorId) {
   }
   // =======================================================================
 
+  // =======================================================================
+
+  // Forzamos a Bootstrap a inicializar y darle vida al carrusel antes de enviarlo a la pantalla
+  if (typeof bootstrap !== 'undefined' && bootstrap.Carousel) {
+    new bootstrap.Carousel(contenedorCarrusel, {
+      touch: true,
+      interval: false // Evita que pase solo, cambia únicamente cuando el cliente toca la flecha
+    });
+  }
+
   fragmento2.appendChild(clone2);
   return fragmento2;
 }
+
 
 
 
