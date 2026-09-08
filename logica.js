@@ -115,40 +115,69 @@ function MostrarEnCatalogo(datos, contenedorId) {
   //mostramos el stock disponible
   //template2.querySelector("p").textContent = (datos.Inventario) + " disponibles";
 
+  //creamos funcion con datos para mostrar elementos del catalogo y no repetir code <-------
+function MostrarEnCatalogo(datos, contenedorId) {
+
+  //MOSTRAMOS LOS ELEMENTOS DEL CATALOGO
+  template.querySelector('.esteSi').setAttribute("id", contenedorId);
+
+  // Carga de imágenes y atributos
+  template2.querySelector("img").setAttribute("src", "./imgcarrito/" + (datos.Artículo) + ".jpg");
+  template2.querySelector("img").setAttribute("id", "img" + datos.Artículo);
+  
+  // Alt descriptivo real para accesibilidad
+  template2.querySelector("img").setAttribute("alt",
+    typeof datos.Descripción === 'string' ? datos.Descripción : "Producto");
+    
+  // Selecciona el elemento H5 dentro de tu template y ajusta su tamaño
+  const h5Element = template2.querySelector("h5");
+  if (h5Element) {
+    const descripcionTexto = datos.Descripción;
+
+    if (typeof descripcionTexto === 'string') {
+      h5Element.textContent = descripcionTexto;
+
+      if (descripcionTexto.length < 35) {
+        h5Element.style.fontSize = '1.8VH'; 
+      } else {
+        h5Element.style.fontSize = '1.6VH'; 
+      }
+    } else {
+      h5Element.textContent = 'Descripción no válida';
+      h5Element.style.fontSize = '1.4VH'; 
+      console.warn('datos.Descripción no es un string:', datos.Descripción);
+    }
+  } else {
+    console.warn('Elemento h5 no encontrado en template2');
+  }
+
+  // Llamamos la función del módulo para agregar las variantes 
+  varianteDeMedidas.AgregaVariantes(datos, template2);
+
+  // Configuramos la cantidad e inventario máximo
   // Formatear precioCatalogo con formato numérico y limitar a 2 decimales
   template2.querySelector(".cantidad").setAttribute("id", "idbot" + (datos.Artículo));
   template2.querySelector(".cantidad").setAttribute("max", (datos.Inventario));
-  if (datos.Descuento != 0) {
-// Convertimos Venta a string de forma segura antes del replace por si viene como número
-let ventaString = String(datos.Venta).replace(/,/g, ".");
-let precioOriginalNumero = Number(ventaString) * Number(datos.DOLAR);
+  
+  // Limpiamos y convertimos el precio base de venta directo del JSON (Sin multiplicar por Dolar)
+  let precioBase = Number(String(datos.Venta).replace(/,/g, "."));
 
-// Precio original base
-let precioCatalogo = precioOriginalNumero;
+  if (Number(datos.Descuento) !== 0) {
 
-// Precio con descuento (reemplazar también la conversión de datos.Descuento)
-let descuentoString = String(datos.Descuento).replace(/,/g, ".");
-let precioCatalogo2 = precioCatalogo * (1 - Number(descuentoString));
+    // Precio original (directo de la venta)
+    let precioCatalogo = precioBase;
 
+    // Precio con descuento corregido (% / 100)
+    let descuentoPorcentaje = Number(String(datos.Descuento).replace(/,/g, "."));
+    let precioCatalogo2 = precioCatalogo * (1 - (descuentoPorcentaje / 100));
 
     // Precio sin impuestos nacionales (IVA 21%)
     let precioCatalogo3 = precioCatalogo2 / 1.21;
 
     // Formatear recién al final
-    precioCatalogo = new Intl.NumberFormat('es-MX', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(precioCatalogo);
-
-    precioCatalogo2 = new Intl.NumberFormat('es-MX', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(precioCatalogo2);
-
-    precioCatalogo3 = new Intl.NumberFormat('es-MX', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(precioCatalogo3);
+    precioCatalogo = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo);
+    precioCatalogo2 = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo2);
+    precioCatalogo3 = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo3);
 
     template2.querySelector("small").innerHTML = "<del>$" + precioCatalogo + "</del>";
     template2.querySelector("h7").textContent = "$" + precioCatalogo2;
@@ -156,23 +185,14 @@ let precioCatalogo2 = precioCatalogo * (1 - Number(descuentoString));
 
   } else {
 
-// Convertimos Venta a string de forma segura antes del replace por si viene como número
-let ventaString = String(datos.Venta).replace(/,/g, ".");
-let precioCatalogo = Number(ventaString) * Number(datos.DOLAR);
-
+    // Precio final directo sin multiplicar por cero
+    let precioCatalogo = precioBase;
 
     // Precio sin impuestos nacionales
     let precioCatalogo3 = precioCatalogo / 1.21;
 
-    precioCatalogo = new Intl.NumberFormat('es-MX', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(precioCatalogo);
-
-    precioCatalogo3 = new Intl.NumberFormat('es-MX', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(precioCatalogo3);
+    precioCatalogo = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo);
+    precioCatalogo3 = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo3);
 
     template2.querySelector("small").textContent = "";
     template2.querySelector("h7").textContent = "$" + precioCatalogo;
@@ -183,12 +203,13 @@ let precioCatalogo = Number(ventaString) * Number(datos.DOLAR);
   const addButton = template2.querySelector("button");
   addButton.setAttribute("id", "idbot" + (datos.Artículo));
 
-  //hacemos un clon y lo subimos al fragmento correspondiente para poder repetirlo. clone 1 contenedor . clone 2 etiquetas restantes
-
+  //hacemos un clon y lo subimos al fragmento correspondiente para poder repetirlo
   let clone2 = document.importNode(template2, true);
   fragmento2.appendChild(clone2);
-  return fragmento2
+  return fragmento2;
 };
+
+
 
 
 
