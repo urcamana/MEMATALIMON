@@ -67,6 +67,7 @@ var selectElement = template2.querySelector('.variantes');
 
 
 
+//creamos funcion con datos para mostrar elementos del catalogo y no repetir code <-------
 function MostrarEnCatalogo(datos, contenedorId) {
 
   //MOSTRAMOS LOS ELEMENTOS DEL CATALOGO
@@ -98,10 +99,9 @@ function MostrarEnCatalogo(datos, contenedorId) {
   template2.querySelector(".cantidad").setAttribute("id", "idbot" + (datos.Artículo));
   template2.querySelector(".cantidad").setAttribute("max", (datos.Inventario));
   
-  let precioBase = Number(String(datos.Venta).replace(/,/g, "."));
-
+  // Usamos tu cálculo original respetando el nuevo DOLAR: 1 del JSON
   if (datos.Descuento != 0) {
-    let precioCatalogo = precioBase;
+    let precioCatalogo = (Number(datos.Venta.replace(/,/g, ".")));
     let precioCatalogo2 = precioCatalogo * (1 - Number(datos.Descuento.replace(/,/g, ".")));
     let precioCatalogo3 = precioCatalogo2 / 1.21;
 
@@ -113,7 +113,7 @@ function MostrarEnCatalogo(datos, contenedorId) {
     template2.querySelector("h7").textContent = "$" + precioCatalogo2;
     template2.querySelector("h11").textContent = "Sin imp. nac.: $" + precioCatalogo3;
   } else {
-    let precioCatalogo = precioBase;
+    let precioCatalogo = (Number(datos.Venta.replace(/,/g, ".")) * Number(datos.DOLAR));
     let precioCatalogo3 = precioCatalogo / 1.21;
 
     precioCatalogo = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo);
@@ -124,14 +124,16 @@ function MostrarEnCatalogo(datos, contenedorId) {
     template2.querySelector("h11").textContent = "Sin imp. nac.: $" + precioCatalogo3;
   }
 
-  // Seleccionamos el botón de agregar y le asignamos el ID original idbot
+  // Mantenemos el ID original idbot para que escucharBotones funcione a la perfección
   const addButton = template2.querySelector("button");
   addButton.setAttribute("id", "idbot" + (datos.Artículo));
 
   // GENERAMOS EL CLON DE LA TARJETA
   let clone2 = document.importNode(template2, true);
 
-  // INYECTAMOS EL CARRUSEL EN EL CLON
+  // =======================================================================
+  // INYECTAMOS EL CARRUSEL EN EL CLON AISLANDO LOS IDS DE IMAGEN
+  // =======================================================================
   const idCarruselUnico = "carrusel-art-" + datos.Artículo;
   const contenedorCarrusel = clone2.querySelector(".carousel");
   const contenedorInner = clone2.querySelector(".carousel-inner");
@@ -145,7 +147,7 @@ function MostrarEnCatalogo(datos, contenedorId) {
 
     contenedorInner.innerHTML = "";
 
-    // 1. Imagen principal (ej: 3.jpg)
+    // 1. Imagen base obligatoria (Esta SÍ lleva id="imgX" para descu.js)
     const itemPrincipal = document.createElement("div");
     itemPrincipal.className = "carousel-item active";
 
@@ -153,7 +155,7 @@ function MostrarEnCatalogo(datos, contenedorId) {
     imgPrincipal.className = "d-block img-fluid mx-auto rounded img-prod";
     imgPrincipal.style.cssText = "max-height: 220px; object-fit: contain; width: auto;";
     imgPrincipal.setAttribute("src", "./imgcarrito/" + datos.Artículo + ".jpg");
-    imgPrincipal.setAttribute("id", "img" + datos.Artículo);
+    imgPrincipal.setAttribute("id", "img" + datos.Artículo); // <- Única autorizada para el descuento
     imgPrincipal.setAttribute("alt", typeof datos.Descripción === 'string' ? datos.Descripción : "Producto");
     imgPrincipal.draggable = false;
     imgPrincipal.onerror = function () { this.src = "./imgcarrito/IMGND.jpg"; };
@@ -161,7 +163,7 @@ function MostrarEnCatalogo(datos, contenedorId) {
     itemPrincipal.appendChild(imgPrincipal);
     contenedorInner.appendChild(itemPrincipal);
 
-    // 2. Carga automática de letras variantes (B, C, D, E)
+    // 2. Carga controlada de letras variantes (B, C, D, E) - SIN ID "img"
     const letrasVariantes = ["B", "C", "D", "E"];
 
     letrasVariantes.forEach(letra => {
@@ -172,6 +174,7 @@ function MostrarEnCatalogo(datos, contenedorId) {
       imgSecundaria.className = "d-block img-fluid mx-auto rounded img-prod";
       imgSecundaria.style.cssText = "max-height: 220px; object-fit: contain; width: auto;";
       imgSecundaria.setAttribute("src", "./imgcarrito/" + datos.Artículo + letra + ".jpg");
+      // Importante: No lleva atributo ID para no interferir con descu.js
       imgSecundaria.setAttribute("alt", (typeof datos.Descripción === 'string' ? datos.Descripción : "Producto") + " - Vista " + letra);
       imgSecundaria.draggable = false;
 
@@ -220,10 +223,12 @@ function MostrarEnCatalogo(datos, contenedorId) {
       });
     }
   }
+  // =======================================================================
 
   fragmento2.appendChild(clone2);
   return fragmento2;
 }
+
 
 
 
