@@ -94,10 +94,10 @@ function MostrarEnCatalogo(datos, contenedorId) {
       h5Element.textContent = descripcionTexto;
 
       // Verifica la longitud del texto y ajusta el tamaño de la fuente
-      if (descripcionTexto.length < 26) {
+      if (descripcionTexto.length < 35) {
         h5Element.style.fontSize = '1.8VH'; // Tamaño si es corto
       } else {
-        h5Element.style.fontSize = '1.4VH'; // Tamaño si es largo o igual a 20
+        h5Element.style.fontSize = '1.6VH'; // Tamaño si es largo o igual a 20
       }
     } else {
       // Manejo opcional si la descripción no es un string
@@ -113,7 +113,7 @@ function MostrarEnCatalogo(datos, contenedorId) {
   varianteDeMedidas.AgregaVariantes(datos, template2);
 
   //mostramos el stock disponible
-  template2.querySelector("p").textContent = (datos.Inventario) + " disponibles";
+  //template2.querySelector("p").textContent = (datos.Inventario) + " disponibles";
 
   // Formatear precioCatalogo con formato numérico y limitar a 2 decimales
   template2.querySelector(".cantidad").setAttribute("id", "idbot" + (datos.Artículo));
@@ -121,7 +121,7 @@ function MostrarEnCatalogo(datos, contenedorId) {
   if (datos.Descuento != 0) {
 
     // Precio original
-    let precioCatalogo = (Number(datos.Venta.replace(/,/g, ".")) * Number(datos.DOLAR));
+    let precioCatalogo = (Number(datos.Venta.replace(/,/g, ".")));
 
     // Precio con descuento
     let precioCatalogo2 = precioCatalogo * (1 - Number(datos.Descuento.replace(/,/g, ".")));
