@@ -73,54 +73,6 @@ function MostrarEnCatalogo(datos, contenedorId) {
   //MOSTRAMOS LOS ELEMENTOS DEL CATALOGO
   template.querySelector('.esteSi').setAttribute("id", contenedorId);
 
-  //const imageId = `gimg-${contenedorId}-${datos.Artículo}`;
-  template2.querySelector("img").setAttribute("src", "./imgcarrito/" + (datos.Artículo) + ".jpg");
-  template2.querySelector("img").setAttribute("id", "img" + datos.Artículo);
-  // Alt descriptivo real para accesibilidad (antes quedaba un texto fijo
-  // que decía "Imagen no encontrada" incluso cuando la imagen cargaba bien)
-  template2.querySelector("img").setAttribute("alt",
-    typeof datos.Descripción === 'string' ? datos.Descripción : "Producto");
-  // Selecciona el elemento H5 dentro de tu template
-  const h5Element = template2.querySelector("h5");
-
-  // Verifica si se encontró el elemento H5
-  if (h5Element) {
-    // Obtén la descripción del objeto de datos
-    const descripcionTexto = datos.Descripción;
-
-    // Verifica si la descripción es un string válido
-    if (typeof descripcionTexto === 'string') {
-      // Asigna el texto al H5
-      h5Element.textContent = descripcionTexto;
-
-      // Verifica la longitud del texto y ajusta el tamaño de la fuente
-      if (descripcionTexto.length < 35) {
-        h5Element.style.fontSize = '1.8VH'; // Tamaño si es corto
-      } else {
-        h5Element.style.fontSize = '1.6VH'; // Tamaño si es largo o igual a 20
-      }
-    } else {
-      // Manejo opcional si la descripción no es un string
-      h5Element.textContent = 'Descripción no válida';
-      h5Element.style.fontSize = '1.4VH'; // Un tamaño por defecto
-      console.warn('datos.Descripción no es un string:', datos.Descripción);
-    }
-  } else {
-    console.warn('Elemento h5 no encontrado en template2');
-  }
-
-  //llamamos la funcion del modulo para agregar las variantes 
-  varianteDeMedidas.AgregaVariantes(datos, template2);
-
-  //mostramos el stock disponible
-  //template2.querySelector("p").textContent = (datos.Inventario) + " disponibles";
-
-  //creamos funcion con datos para mostrar elementos del catalogo y no repetir code <-------
-function MostrarEnCatalogo(datos, contenedorId) {
-
-  //MOSTRAMOS LOS ELEMENTOS DEL CATALOGO
-  template.querySelector('.esteSi').setAttribute("id", contenedorId);
-
   // Carga de imágenes y atributos
   template2.querySelector("img").setAttribute("src", "./imgcarrito/" + (datos.Artículo) + ".jpg");
   template2.querySelector("img").setAttribute("id", "img" + datos.Artículo);
@@ -155,11 +107,10 @@ function MostrarEnCatalogo(datos, contenedorId) {
   varianteDeMedidas.AgregaVariantes(datos, template2);
 
   // Configuramos la cantidad e inventario máximo
-  // Formatear precioCatalogo con formato numérico y limitar a 2 decimales
   template2.querySelector(".cantidad").setAttribute("id", "idbot" + (datos.Artículo));
   template2.querySelector(".cantidad").setAttribute("max", (datos.Inventario));
   
-  // Limpiamos y convertimos el precio base de venta directo del JSON (Sin multiplicar por Dolar)
+  // LIMPIAMOS Y CONVERTIMOS EL PRECIO DE VENTA DIRECTO DEL JSON
   let precioBase = Number(String(datos.Venta).replace(/,/g, "."));
 
   if (Number(datos.Descuento) !== 0) {
@@ -199,16 +150,15 @@ function MostrarEnCatalogo(datos, contenedorId) {
     template2.querySelector("h11").textContent = "Sin imp. nac.: $" + precioCatalogo3;
   }
 
-  //seleccionamos el boton y le asignamos el id que corresponde
+  // seleccionamos el botón y le asignamos el id que corresponde
   const addButton = template2.querySelector("button");
   addButton.setAttribute("id", "idbot" + (datos.Artículo));
 
-  //hacemos un clon y lo subimos al fragmento correspondiente para poder repetirlo
+  // hacemos un clon y lo subimos al fragmento correspondiente para poder repetirlo
   let clone2 = document.importNode(template2, true);
   fragmento2.appendChild(clone2);
   return fragmento2;
-};
-
+}
 
 
 
