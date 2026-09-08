@@ -230,7 +230,7 @@ function MostrarEnCatalogo(datos, contenedorId) {
   let clone2 = document.importNode(template2, true);
   fragmento2.appendChild(clone2);
   return fragmento2;
-}
+};
 
 
 
