@@ -1041,3 +1041,87 @@ h11 {
 .carousel-control-next-icon {
   filter: invert(100%) drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.8)) !important;
 }
+/* ===================================================== */
+/* AJUSTES DE TAMAÑO DE IMAGEN Y ESPACIOS EN TARJETAS   */
+/* ===================================================== */
+
+/* 1. Agranda la imagen y quita restricciones para que llene el espacio */
+.card .carousel,
+.card .carousel-inner,
+.card .carousel-item {
+  height: 320px !important; /* Aumenta el alto del contenedor */
+}
+
+.card .carousel-item img,
+.card-img-top {
+  height: 320px !important;
+  max-width: 100% !important;
+  object-fit: contain !important; /* Cambia a cover si querés que la imagen ocupe todo el marco sin bordes vacíos */
+}
+
+/* 2. Reduce el espacio superior e inferior en el cuerpo de la tarjeta */
+.card-body {
+  padding: 10px 15px !important;
+  min-height: unset !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Agrupa el contenido hacia arriba */
+  gap: 6px; /* Espacio uniforme entre elementos */
+}
+
+/* 3. Reduce espacios sobrantes entre textos, input de cantidad y botón */
+.card-body h5, 
+.card-body p, 
+.card-body h7, 
+.card-body h11,
+.card-body .variantes {
+  margin-bottom: 2px !important;
+}
+
+.card-body .cantidadParaAgregar,
+.card-body .cantidad {
+  margin-top: 4px !important;
+  margin-bottom: 6px !important;
+}
+
+.card-body .botonaparecer {
+  margin-top: 4px !important;
+}
+
+/* ===================================================== */
+/* AJUSTE DE TAMAÑO Y COLOR DE TIPOGRAFÍAS EN TARJETAS  */
+/* ===================================================== */
+
+/* Nombre del producto */
+.card-body h5,
+.card-body .card-title {
+  font-size: 1.1rem !important; /* Aumenta el tamaño del título */
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  color: #222222 !important;
+}
+
+/* Precio principal (destacado en rojo) */
+.card-body h7 {
+  font-size: 1.35rem !important; /* Aumenta el tamaño del precio principal */
+  font-weight: 700 !important;
+  color: #c0392b !important;
+  display: block !important;
+  margin-top: 4px !important;
+}
+
+/* Precio sin impuestos (secundario) */
+.card-body h11 {
+  font-size: 0.8rem !important; /* Un poco más grande que antes para ser legible */
+  font-weight: 500 !important;
+  color: #6c757d !important; /* Gris oscuro para contraste */
+  display: block !important;
+  margin-top: 2px !important;
+}
+
+/* Etiqueta y campo de cantidad */
+.card-body .cantidadParaAgregar {
+  font-size: 0.95rem !important;
+  font-weight: 500 !important;
+  color: #333333 !important;
+}
