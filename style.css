@@ -1125,3 +1125,14 @@ h11 {
   font-weight: 500 !important;
   color: #333333 !important;
 }
+
+/* Ajusta el tamaño del precio tachado */
+.esteSi small {
+  font-size: 0.95rem !important; /* Aumenta el tamaño de la letra */
+  color: #777777;                 /* Color gris para contrastar con el precio final */
+  font-weight: 500;               /* Opcional: le da un poco más de cuerpo */
+}
+
+.esteSi small del {
+  text-decoration: line-through;
+}
