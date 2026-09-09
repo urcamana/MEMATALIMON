@@ -37,7 +37,7 @@
 let data;
 
 try {
-  const response = await window.fetch('./articulos.json');
+const response = await window.fetch(`./articulos.json?v=${Date.now()}`);
 
   if (!response.ok) {
     throw new Error(`Error HTTP ${response.status} al cargar articulos.json`);
