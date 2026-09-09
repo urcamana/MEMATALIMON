@@ -67,121 +67,95 @@ var selectElement = template2.querySelector('.variantes');
 
 
 
-//creamos funcion con datos para mostrar elementos del catalogo y no repetir code <-------
 function MostrarEnCatalogo(datos, contenedorId) {
 
-  //MOSTRAMOS LOS ELEMENTOS DEL CATALOGO
   template.querySelector('.esteSi').setAttribute("id", contenedorId);
 
-  //const imageId = `gimg-${contenedorId}-${datos.Artículo}`;
-  template2.querySelector("img").setAttribute("src", "./imgcarrito/" + (datos.Artículo) + ".jpg");
-  template2.querySelector("img").setAttribute("id", "img" + datos.Artículo);
-  // Alt descriptivo real para accesibilidad (antes quedaba un texto fijo
-  // que decía "Imagen no encontrada" incluso cuando la imagen cargaba bien)
-  template2.querySelector("img").setAttribute("alt",
-    typeof datos.Descripción === 'string' ? datos.Descripción : "Producto");
-  // Selecciona el elemento H5 dentro de tu template
+  // Configuración del id único para el carrusel
+  const carouselId = "carousel-prod-" + datos.Artículo;
+  const carouselElem = template2.querySelector(".carousel");
+  carouselElem.setAttribute("id", carouselId);
+
+  const carouselInner = template2.querySelector(".carousel-inner");
+  const carouselIndicators = template2.querySelector(".carousel-indicators");
+  const btnPrev = template2.querySelector(".carousel-control-prev");
+  const btnNext = template2.querySelector(".carousel-control-next");
+
+  // Asignar targets de Bootstrap
+  btnPrev.setAttribute("data-bs-target", "#" + carouselId);
+  btnNext.setAttribute("data-bs-target", "#" + carouselId);
+  btnPrev.classList.add("d-none");
+  btnNext.classList.add("d-none");
+  carouselIndicators.innerHTML = '';
+
+  // Configurar la imagen principal dentro del carrusel
+  const imgPrincipal = carouselInner.querySelector("img");
+  imgPrincipal.src = "./imgcarrito/" + datos.Artículo + ".jpg";
+  imgPrincipal.id = "img" + datos.Artículo;
+  imgPrincipal.alt = typeof datos.Descripción === 'string' ? datos.Descripción : "Producto";
+  imgPrincipal.onerror = function () { this.src = "./imgcarrito/IMGND.jpg"; };
+
+  // Disparar búsqueda asíncrona de imágenes B, C, D, E en segundo plano
+  cargarImagenesSecundarias(datos.Artículo, carouselId, datos.Descripción);
+
+  // Descripción en H5
   const h5Element = template2.querySelector("h5");
-
-  // Verifica si se encontró el elemento H5
   if (h5Element) {
-    // Obtén la descripción del objeto de datos
     const descripcionTexto = datos.Descripción;
-
-    // Verifica si la descripción es un string válido
     if (typeof descripcionTexto === 'string') {
-      // Asigna el texto al H5
       h5Element.textContent = descripcionTexto;
-
-      // Verifica la longitud del texto y ajusta el tamaño de la fuente
       if (descripcionTexto.length < 35) {
-        h5Element.style.fontSize = '1.8VH'; // Tamaño si es corto
+        h5Element.style.fontSize = '1.8VH';
       } else {
-        h5Element.style.fontSize = '1.6VH'; // Tamaño si es largo o igual a 20
+        h5Element.style.fontSize = '1.6VH';
       }
     } else {
-      // Manejo opcional si la descripción no es un string
       h5Element.textContent = 'Descripción no válida';
-      h5Element.style.fontSize = '1.4VH'; // Un tamaño por defecto
-      console.warn('datos.Descripción no es un string:', datos.Descripción);
+      h5Element.style.fontSize = '1.4VH';
     }
-  } else {
-    console.warn('Elemento h5 no encontrado en template2');
   }
 
-  //llamamos la funcion del modulo para agregar las variantes 
+  // Variantes
   varianteDeMedidas.AgregaVariantes(datos, template2);
 
-  //mostramos el stock disponible
-  //template2.querySelector("p").textContent = (datos.Inventario) + " disponibles";
-
-  // Formatear precioCatalogo con formato numérico y limitar a 2 decimales
+  // Precios e Inventario
   template2.querySelector(".cantidad").setAttribute("id", "idbot" + (datos.Artículo));
   template2.querySelector(".cantidad").setAttribute("max", (datos.Inventario));
+  
   if (datos.Descuento != 0) {
-
-    // Precio original
     let precioCatalogo = (Number(datos.Venta.replace(/,/g, ".")));
-
-    // Precio con descuento
     let precioCatalogo2 = precioCatalogo * (1 - Number(datos.Descuento.replace(/,/g, ".")));
-
-    // Precio sin impuestos nacionales (IVA 21%)
     let precioCatalogo3 = precioCatalogo2 / 1.21;
 
-    // Formatear recién al final
-    precioCatalogo = new Intl.NumberFormat('es-MX', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(precioCatalogo);
-
-    precioCatalogo2 = new Intl.NumberFormat('es-MX', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(precioCatalogo2);
-
-    precioCatalogo3 = new Intl.NumberFormat('es-MX', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(precioCatalogo3);
+    precioCatalogo = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo);
+    precioCatalogo2 = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo2);
+    precioCatalogo3 = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo3);
 
     template2.querySelector("small").innerHTML = "<del>$" + precioCatalogo + "</del>";
     template2.querySelector("h7").textContent = "$" + precioCatalogo2;
     template2.querySelector("h11").textContent = "Sin imp. nac.: $" + precioCatalogo3;
-
   } else {
-
-    // Precio final
     let precioCatalogo = (Number(datos.Venta.replace(/,/g, ".")) * Number(datos.DOLAR));
-
-    // Precio sin impuestos nacionales
     let precioCatalogo3 = precioCatalogo / 1.21;
 
-    precioCatalogo = new Intl.NumberFormat('es-MX', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(precioCatalogo);
-
-    precioCatalogo3 = new Intl.NumberFormat('es-MX', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(precioCatalogo3);
+    precioCatalogo = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo);
+    precioCatalogo3 = new Intl.NumberFormat('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo3);
 
     template2.querySelector("small").textContent = "";
     template2.querySelector("h7").textContent = "$" + precioCatalogo;
     template2.querySelector("h11").textContent = "Sin imp. nac.: $" + precioCatalogo3;
   }
 
-  //seleccionamos el boton y le asignamos el id que corresponde
-  const addButton = template2.querySelector("button");
-  addButton.setAttribute("id", "idbot" + (datos.Artículo));
-
-  //hacemos un clon y lo subimos al fragmento correspondiente para poder repetirlo. clone 1 contenedor . clone 2 etiquetas restantes
+  // Asignar ID al botón de agregar al carrito
+  const addButton = template2.querySelector(".botonaparecer");
+  if (addButton) {
+    addButton.setAttribute("id", "idbot" + (datos.Artículo));
+  }
 
   let clone2 = document.importNode(template2, true);
   fragmento2.appendChild(clone2);
-  return fragmento2
-};
+  return fragmento2;
+}
 
 
 
@@ -253,32 +227,31 @@ categoriasUnicas.forEach(categoria => {
 
     FILTROS = boton.textContent;
 
-    //eliminamos el contenido del cATALOGO PARA MOSTRAR EL CONTENIDO FILTRADO
-    const element = document.querySelector(".esteSi");
-    element.parentElement.remove();
-    while (fragmento2.firstChild) {
-      fragmento2.removeChild(fragmento2.firstChild);
-    }
-    while (fragmento.firstChild) {
-      fragmento.removeChild(fragmento.firstChild);
-    }
+// ✅ AHORA
+while (fragmento2.firstChild) fragmento2.removeChild(fragmento2.firstChild);
+while (fragmento.firstChild) fragmento.removeChild(fragmento.firstChild);
 
+datos.forEach((datos) => {
+  if (datos.Inventario >= 1 && (FILTROS === "VER TODOS" || datos.Categoria == FILTROS || (FILTROS === "CON DESCUENTOS" && datos.Descuento != 0))) {
+    contenedorId = 0;
+    fragmento2 = MostrarEnCatalogo(datos, contenedorId);
+  }
+  mBotones.mostrarBotones();
+});
 
-    datos.forEach((datos) => {
-      if (datos.Inventario >= 1 /*&& datos.Descuento == 0 */ && (FILTROS === "VER TODOS" || datos.Categoria == FILTROS || FILTROS === "CON DESCUENTOS" && datos.Descuento != 0)) {
-        //mostramos los datos en el catalogo!!! <--------------------------------------------------
-        contenedorId = 0;
-        fragmento2 = MostrarEnCatalogo(datos, contenedorId);
-      }
+let clone = document.importNode(template, true);
+fragmento.appendChild(clone);
 
-      mBotones.mostrarBotones();
+const contenedorCatalogo = document.getElementById('contenedorCatalogo');
+if (contenedorCatalogo) {
+  contenedorCatalogo.innerHTML = ''; // Limpia únicamente el contenedor del catálogo
+  contenedorCatalogo.appendChild(fragmento);
+}
 
-
-    });
-    let clone = document.importNode(template, true);
-    fragmento.appendChild(clone);
-    document.body.appendChild(fragmento);//agregamos el contenedor padre
-    document.getElementById(contenedorId).appendChild(fragmento2); //agregamos las cards
+const target = document.getElementById(contenedorId);
+if (target) {
+  target.appendChild(fragmento2);
+}
     //MOSTRAMOS EL BOTON QUE SELECCIONAMOS
     //CAMBIAMOS EL NOMBRE AL BOTON PRINCIPAL DEL MENU DESPLEGABLE POR EL SELECCIONADO
     //nombreDesplegable.textContent = FILTROS;
@@ -321,29 +294,32 @@ function obtenerURL() {
 
   const FILTROS = urlParams.get('filtro') || 'todos'; // Si no hay filtro, se usa 'todos'
 
-  //eliminamos el contenido del cATALOGO PARA MOSTRAR EL CONTENIDO FILTRADO
-  const element = document.querySelector(".esteSi");
-  element.parentElement.remove();
-  while (fragmento2.firstChild) {
-    fragmento2.removeChild(fragmento2.firstChild);
-  }
-  while (fragmento.firstChild) {
-    fragmento.removeChild(fragmento.firstChild);
-  }
-  let FILTRO = FILTROS.toUpperCase();
-  datos.forEach((datos) => {
-    if (datos.Inventario >= 1 /*&& datos.Descuento == 0 */ && (FILTRO === "TODOS" || datos.Categoria == FILTRO)) {
-      //mostramos los datos en el catalogo!!! <--------------------------------------------------
-      contenedorId = 0;
-      fragmento2 = MostrarEnCatalogo(datos, contenedorId);
-    }
+// ✅ AHORA
+while (fragmento2.firstChild) fragmento2.removeChild(fragmento2.firstChild);
+while (fragmento.firstChild) fragmento.removeChild(fragmento.firstChild);
 
-    mBotones.mostrarBotones();
-  });
-  let clone = document.importNode(template, true);
-  fragmento.appendChild(clone);
-  document.body.appendChild(fragmento);//agregamos el contenedor padre
-  document.getElementById(contenedorId).appendChild(fragmento2); //agregamos las cards
+let FILTRO = FILTROS.toUpperCase();
+datos.forEach((datos) => {
+  if (datos.Inventario >= 1 && (FILTRO === "TODOS" || datos.Categoria == FILTRO)) {
+    contenedorId = 0;
+    fragmento2 = MostrarEnCatalogo(datos, contenedorId);
+  }
+  mBotones.mostrarBotones();
+});
+
+let clone = document.importNode(template, true);
+fragmento.appendChild(clone);
+
+const contenedorCatalogo = document.getElementById('contenedorCatalogo');
+if (contenedorCatalogo) {
+  contenedorCatalogo.innerHTML = '';
+  contenedorCatalogo.appendChild(fragmento);
+}
+
+const target = document.getElementById(contenedorId);
+if (target) {
+  target.appendChild(fragmento2);
+}
   //MOSTRAMOS EL BOTON QUE SELECCIONAMOS
   //CAMBIAMOS EL NOMBRE AL BOTON PRINCIPAL DEL MENU DESPLEGABLE POR EL SELECCIONADO
   nombreDesplegable.textContent = FILTRO;
@@ -738,14 +714,20 @@ function filtrarConBusqueda() {
       }
     }
 
-    const element = document.querySelector(".esteSi");
-    element.parentElement.remove();
-    let clone = document.importNode(template, true);
-    fragmento.appendChild(clone);
+// ✅ AHORA
+let clone = document.importNode(template, true);
+fragmento.appendChild(clone);
 
-    document.body.appendChild(fragmento);//agregamos el contenedor padre
+const contenedorCatalogo = document.getElementById('contenedorCatalogo');
+if (contenedorCatalogo) {
+  contenedorCatalogo.innerHTML = '';
+  contenedorCatalogo.appendChild(fragmento);
+}
 
-    document.getElementById(contenedorId).appendChild(fragmento2); //agregamos las cards
+const target = document.getElementById(contenedorId);
+if (target) {
+  target.appendChild(fragmento2);
+}
 
     // Si no hubo coincidencias, mostramos un aviso en vez de dejar la sección vacía
     if (coincidencias === 0) {
@@ -923,6 +905,70 @@ function actualizarCarrito() {
   borrarCarritoCompleto()
 
 };
+
+
+
+function cargarImagenesSecundarias(articuloId, carouselId, descripcion) {
+  const sufijos = ["B", "C", "D", "E"];
+
+  sufijos.forEach((sufijo) => {
+    const ruta = `./imgcarrito/${articuloId}${sufijo}.jpg`;
+    const testImg = new Image();
+
+    testImg.onload = () => {
+      const carouselElem = document.getElementById(carouselId);
+      if (!carouselElem) return;
+
+      const carouselInner = carouselElem.querySelector(".carousel-inner");
+      const carouselIndicators = carouselElem.querySelector(".carousel-indicators");
+      const btnPrev = carouselElem.querySelector(".carousel-control-prev");
+      const btnNext = carouselElem.querySelector(".carousel-control-next");
+
+      // Si es la primera imagen secundaria encontrada, creamos el indicador 0
+      if (carouselIndicators && carouselIndicators.children.length === 0) {
+        const ind0 = document.createElement("button");
+        ind0.type = "button";
+        ind0.setAttribute("data-bs-target", "#" + carouselId);
+        ind0.setAttribute("data-bs-slide-to", "0");
+        ind0.className = "active";
+        carouselIndicators.appendChild(ind0);
+      }
+
+      // Crear diapositiva adicional
+      const itemDiv = document.createElement("div");
+      itemDiv.className = "carousel-item";
+
+      const img = document.createElement("img");
+      img.src = ruta;
+      img.className = "card-img-top img-prod";
+      img.alt = typeof descripcion === 'string' ? descripcion : "Producto";
+      img.setAttribute("draggable", "false");
+
+      itemDiv.appendChild(img);
+      carouselInner.appendChild(itemDiv);
+
+      // Mostrar controles de navegación
+      if (btnPrev) btnPrev.classList.remove("d-none");
+      if (btnNext) btnNext.classList.remove("d-none");
+
+      // Crear indicador para la nueva imagen
+      const totalItems = carouselInner.querySelectorAll(".carousel-item").length;
+      if (carouselIndicators) {
+        const indNew = document.createElement("button");
+        indNew.type = "button";
+        indNew.setAttribute("data-bs-target", "#" + carouselId);
+        indNew.setAttribute("data-bs-slide-to", (totalItems - 1).toString());
+        carouselIndicators.appendChild(indNew);
+      }
+    };
+
+    testImg.src = ruta;
+  });
+}
+
+
+
+
 
 
 // Aumenta o disminuye en 1 la cantidad de un producto del carrito.

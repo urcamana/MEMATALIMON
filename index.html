@@ -186,61 +186,64 @@
             </div>
         </template>
 
-        <template id="contTemplate2">
-            <div class="col-sm-6 col-md-6  col-lg-4 col-6 mb-4">
-                <!-- <div class="col-sm-6 col-md-4  col-lg-3 col-6 mb-3"> este para que entren mas -->
-                <!-- col-6 mb-4  hace que sea mas chiquito-->
+      <template id="contTemplate2">
+            <div class="col-sm-6 col-md-6 col-lg-4 col-6 mb-4">
+                <div class="card-group tarjetas2">
+                    <div class="card">
+                        
+                        <!-- Carrusel ajustado al 100% de la tarjeta -->
+                        <div class="carousel slide" data-bs-ride="false" style="width: 100%;">
+                            <div class="carousel-indicators"></div>
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <img src="" class="card-img-top img-prod" alt="" draggable="false">
+                                </div>
+                            </div>
+                            <button class="carousel-control-prev d-none" type="button" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Anterior</span>
+                            </button>
+                            <button class="carousel-control-next d-none" type="button" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Siguiente</span>
+                            </button>
+                        </div>
 
-                <div class="card-group tarjetas2 ">
-                    <div class="card ">
-                        <img class="card-img-top img-prod" onerror="this.src='./imgcarrito/IMGND.jpg'"
-                            draggable="false" alt="Producto">
-                        <div class="row">
-                            <div>
-                                <div class="card contentarj h-100">
-                                    <div class="card-body d-flex flex-column justify-content-between">
-                                        <div>
-                                            <h5 class="card-title"></h5>
+                        <div class="card contentarj h-100">
+                            <div class="card-body d-flex flex-column justify-content-between">
+                                <div>
+                                    <h5 class="card-title"></h5>
 
-
-                                            <div class="variantes">
-                                            </div>
-
-
-
-
-
-                                            <p class="card-text"></p><small class="text-body-secondary"></small>
-                                            <h7 class=""></h7><br>
-                                            <h11 class=""></h11>
-
-                                        </div>
-                                        <div>
-                                            <p class="cantidadParaAgregar">Cantidad:
-                                                <input type="number" name="cantidad" id="" class="cantidad" value="1"
-                                                    min="1" max="">
-                                            </p>
-
-                                            <button type="button"
-                                                class="btn btn-dark inter d-block mx-auto botonaparecer">
-                                                Agregar
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                    fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
-                                                    <path
-                                                        d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
-                                                </svg>
-                                            </button>
-                                        </div>
+                                    <div class="variantes">
                                     </div>
+
+                                    <p class="card-text"></p><small class="text-body-secondary"></small>
+                                    <h7 class=""></h7><br>
+                                    <h11 class=""></h11>
+
+                                </div>
+                                <div>
+                                    <p class="cantidadParaAgregar">Cantidad:
+                                        <input type="number" name="cantidad" id="" class="cantidad" value="1"
+                                            min="1" max="">
+                                    </p>
+
+                                    <button type="button"
+                                        class="btn btn-dark inter d-block mx-auto botonaparecer">
+                                        Agregar
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
+                                            <path
+                                                d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+                                        </svg>
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
+                    </div>
                 </div>
             </div>
-
-
         </template>
         <!-- <template id="contTemplate4">
 <div class="Variante">
