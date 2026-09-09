@@ -214,6 +214,7 @@ datos.forEach(objeto => {
   }
 });
 
+poblarMenuDesplegableProductos(categoriasUnicas);
 
 // Crear los elementos de lista dinámicamente utilizando las categorías únicas
 categoriasUnicas.forEach(categoria => {
@@ -1086,3 +1087,65 @@ function borrarCarritoCompleto() {
     actualizarEnlaceWhatsApp();
   });
 };
+// Función para poblar el desplegable de Productos en el Navbar
+function poblarMenuDesplegableProductos(categorias) {
+  const menuContainer = document.getElementById("listaCategoriasMenu");
+  if (!menuContainer) return;
+
+  menuContainer.innerHTML = `
+    <li><a class="dropdown-item filtro-cat-nav" href="#" data-cat="TODOS">Ver todos los productos</a></li>
+    <li><hr class="dropdown-divider"></li>
+  `;
+
+  categorias.forEach(cat => {
+    if (cat && cat !== "VER TODOS" && cat !== "CON DESCUENTOS") {
+      const li = document.createElement("li");
+      li.innerHTML = `<a class="dropdown-item filtro-cat-nav" href="#" data-cat="${cat}">${cat}</a>`;
+      menuContainer.appendChild(li);
+    }
+  });
+
+  menuContainer.querySelectorAll(".filtro-cat-nav").forEach(item => {
+    item.addEventListener("click", (e) => {
+      e.preventDefault();
+      const categoriaSeleccionada = e.target.getAttribute("data-cat");
+
+      FILTROS = categoriaSeleccionada === "TODOS" ? "VER TODOS" : categoriaSeleccionada;
+
+      while (fragmento2.firstChild) fragmento2.removeChild(fragmento2.firstChild);
+      while (fragmento.firstChild) fragmento.removeChild(fragmento.firstChild);
+
+      datos.forEach((producto) => {
+        if (producto.Inventario >= 1 && (FILTROS === "VER TODOS" || producto.Categoria === FILTROS || (FILTROS === "CON DESCUENTOS" && producto.Descuento != 0))) {
+          contenedorId = 0;
+          fragmento2 = MostrarEnCatalogo(producto, contenedorId);
+        }
+        mBotones.mostrarBotones();
+      });
+
+      let clone = document.importNode(template, true);
+      fragmento.appendChild(clone);
+
+      const contenedorCatalogo = document.getElementById('contenedorCatalogo');
+      if (contenedorCatalogo) {
+        contenedorCatalogo.innerHTML = '';
+        contenedorCatalogo.appendChild(fragmento);
+      }
+
+      const target = document.getElementById(contenedorId);
+      if (target) {
+        target.appendChild(fragmento2);
+      }
+
+      descu.porDeDescuento();
+      varianteDeMedidas.cambiarVariantes();
+      subirScroll.subir();
+
+      const offcanvasElement = document.getElementById("offcanvasDarkNavbar");
+      if (offcanvasElement) {
+        const bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvasElement);
+        if (bsOffcanvas) bsOffcanvas.hide();
+      }
+    });
+  });
+}
