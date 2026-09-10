@@ -84,8 +84,14 @@ function MostrarEnCatalogo(datos, contenedorId) {
   // Asignar targets de Bootstrap
   btnPrev.setAttribute("data-bs-target", "#" + carouselId);
   btnNext.setAttribute("data-bs-target", "#" + carouselId);
-  btnPrev.classList.add("d-none");
-  btnNext.classList.add("d-none");
+  
+  // Guardamos los atributos del artículo para leerlos al hacer hover/touch
+  carouselElem.dataset.articulo = datos.Artículo;
+  carouselElem.dataset.descripcion = typeof datos.Descripción === 'string' ? datos.Descripción : "Producto";
+
+  // Mantenemos los botones visibles desde el principio
+  btnPrev.classList.remove("d-none");
+  btnNext.classList.remove("d-none");
   carouselIndicators.innerHTML = '';
 
   // Configurar la imagen principal dentro del carrusel
@@ -94,9 +100,6 @@ function MostrarEnCatalogo(datos, contenedorId) {
   imgPrincipal.id = "img" + datos.Artículo;
   imgPrincipal.alt = typeof datos.Descripción === 'string' ? datos.Descripción : "Producto";
   imgPrincipal.onerror = function () { this.src = "./imgcarrito/IMGND.jpg"; };
-
-  // Disparar búsqueda asíncrona de imágenes B, C, D, E en segundo plano
-  cargarImagenesSecundarias(datos.Artículo, carouselId, datos.Descripción);
 
   // Descripción en H5
   const h5Element = template2.querySelector("h5");
@@ -909,64 +912,6 @@ function actualizarCarrito() {
 
 
 
-function cargarImagenesSecundarias(articuloId, carouselId, descripcion) {
-  const sufijos = ["B", "C", "D", "E"];
-
-  sufijos.forEach((sufijo) => {
-    const ruta = `./imgcarrito/${articuloId}${sufijo}.jpg`;
-    const testImg = new Image();
-
-    testImg.onload = () => {
-      const carouselElem = document.getElementById(carouselId);
-      if (!carouselElem) return;
-
-      const carouselInner = carouselElem.querySelector(".carousel-inner");
-      const carouselIndicators = carouselElem.querySelector(".carousel-indicators");
-      const btnPrev = carouselElem.querySelector(".carousel-control-prev");
-      const btnNext = carouselElem.querySelector(".carousel-control-next");
-
-      // Si es la primera imagen secundaria encontrada, creamos el indicador 0
-      if (carouselIndicators && carouselIndicators.children.length === 0) {
-        const ind0 = document.createElement("button");
-        ind0.type = "button";
-        ind0.setAttribute("data-bs-target", "#" + carouselId);
-        ind0.setAttribute("data-bs-slide-to", "0");
-        ind0.className = "active";
-        carouselIndicators.appendChild(ind0);
-      }
-
-      // Crear diapositiva adicional
-      const itemDiv = document.createElement("div");
-      itemDiv.className = "carousel-item";
-
-      const img = document.createElement("img");
-      img.src = ruta;
-      img.className = "card-img-top img-prod";
-      img.alt = typeof descripcion === 'string' ? descripcion : "Producto";
-      img.setAttribute("draggable", "false");
-
-      itemDiv.appendChild(img);
-      carouselInner.appendChild(itemDiv);
-
-      // Mostrar controles de navegación
-      if (btnPrev) btnPrev.classList.remove("d-none");
-      if (btnNext) btnNext.classList.remove("d-none");
-
-      // Crear indicador para la nueva imagen
-      const totalItems = carouselInner.querySelectorAll(".carousel-item").length;
-      if (carouselIndicators) {
-        const indNew = document.createElement("button");
-        indNew.type = "button";
-        indNew.setAttribute("data-bs-target", "#" + carouselId);
-        indNew.setAttribute("data-bs-slide-to", (totalItems - 1).toString());
-        carouselIndicators.appendChild(indNew);
-      }
-    };
-
-    testImg.src = ruta;
-  });
-}
-
 
 
 
@@ -1147,5 +1092,90 @@ function poblarMenuDesplegableProductos(categorias) {
         if (bsOffcanvas) bsOffcanvas.hide();
       }
     });
+  });
+}
+
+// Delegación de eventos global para precargar al acercar el cursor o presionar la pantalla en un carrusel
+['mouseover', 'touchstart'].forEach(eventType => {
+  document.addEventListener(eventType, function (e) {
+    const btn = e.target.closest('.carousel-control-prev, .carousel-control-next');
+    if (!btn) return;
+
+    const carouselElem = btn.closest('.carousel');
+    if (!carouselElem) return;
+
+    const articuloId = carouselElem.dataset.articulo;
+    const descripcion = carouselElem.dataset.descripcion;
+
+    if (articuloId && carouselElem.dataset.cargado !== "true") {
+      cargarImagenesSecundariasLazy(articuloId, carouselElem.id, descripcion);
+    }
+  }, { passive: true });
+});
+
+function cargarImagenesSecundariasLazy(articuloId, carouselId, descripcion) {
+  const carouselElem = document.getElementById(carouselId);
+  if (!carouselElem || carouselElem.dataset.cargado === "true") return;
+
+  carouselElem.dataset.cargado = "true";
+
+  const sufijos = ["B", "C", "D", "E"];
+  let encontradas = 0;
+  let completadas = 0;
+
+  sufijos.forEach((sufijo) => {
+    const ruta = `./imgcarrito/${articuloId}${sufijo}.jpg`;
+    const testImg = new Image();
+
+    testImg.onload = () => {
+      encontradas++;
+      completadas++;
+
+      const carouselInner = carouselElem.querySelector(".carousel-inner");
+      const carouselIndicators = carouselElem.querySelector(".carousel-indicators");
+
+      if (carouselIndicators && carouselIndicators.children.length === 0) {
+        const ind0 = document.createElement("button");
+        ind0.type = "button";
+        ind0.setAttribute("data-bs-target", "#" + carouselId);
+        ind0.setAttribute("data-bs-slide-to", "0");
+        ind0.className = "active";
+        carouselIndicators.appendChild(ind0);
+      }
+
+      const itemDiv = document.createElement("div");
+      itemDiv.className = "carousel-item";
+
+      const img = document.createElement("img");
+      img.src = ruta;
+      img.className = "card-img-top img-prod";
+      img.alt = descripcion;
+      img.setAttribute("draggable", "false");
+
+      itemDiv.appendChild(img);
+      carouselInner.appendChild(itemDiv);
+
+      const totalItems = carouselInner.querySelectorAll(".carousel-item").length;
+      if (carouselIndicators) {
+        const indNew = document.createElement("button");
+        indNew.type = "button";
+        indNew.setAttribute("data-bs-target", "#" + carouselId);
+        indNew.setAttribute("data-bs-slide-to", (totalItems - 1).toString());
+        carouselIndicators.appendChild(indNew);
+      }
+    };
+
+    testImg.onerror = () => {
+      completadas++;
+      // Si se evaluaron los 4 sufijos y no se encontró ninguna imagen secundaria
+      if (completadas === sufijos.length && encontradas === 0) {
+        const btnPrev = carouselElem.querySelector(".carousel-control-prev");
+        const btnNext = carouselElem.querySelector(".carousel-control-next");
+        if (btnPrev) btnPrev.classList.add("d-none");
+        if (btnNext) btnNext.classList.add("d-none");
+      }
+    };
+
+    testImg.src = ruta;
   });
 }
