@@ -85,7 +85,7 @@ function MostrarEnCatalogo(datos, contenedorId) {
   btnPrev.setAttribute("data-bs-target", "#" + carouselId);
   btnNext.setAttribute("data-bs-target", "#" + carouselId);
   
-  // Guardamos los atributos del artículo para leerlos al hacer hover/touch
+  // Guardamos datos en el dataset para los eventos globales
   carouselElem.dataset.articulo = datos.Artículo;
   carouselElem.dataset.descripcion = typeof datos.Descripción === 'string' ? datos.Descripción : "Producto";
 
@@ -147,6 +147,12 @@ function MostrarEnCatalogo(datos, contenedorId) {
     template2.querySelector("small").textContent = "";
     template2.querySelector("h7").textContent = "$" + precioCatalogo;
     template2.querySelector("h11").textContent = "Sin imp. nac.: $" + precioCatalogo3;
+  }
+
+  // Guardamos el ID del artículo en el botón + Info para poder ubicarlo
+  const btnMasInfo = template2.querySelector(".btn-mas-info");
+  if (btnMasInfo) {
+    btnMasInfo.dataset.articulo = datos.Artículo;
   }
 
   // Asignar ID al botón de agregar al carrito
@@ -1095,8 +1101,8 @@ function poblarMenuDesplegableProductos(categorias) {
   });
 }
 
-// Delegación de eventos global para precargar al acercar el cursor o presionar la pantalla en un carrusel
-['mouseover', 'touchstart'].forEach(eventType => {
+// Delegación de eventos global para precargar/cargar imágenes secundarias al interactuar con las flechitas
+['mouseover', 'touchstart', 'click'].forEach(eventType => {
   document.addEventListener(eventType, function (e) {
     const btn = e.target.closest('.carousel-control-prev, .carousel-control-next');
     if (!btn) return;
@@ -1178,4 +1184,87 @@ function cargarImagenesSecundariasLazy(articuloId, carouselId, descripcion) {
 
     testImg.src = ruta;
   });
+}
+
+// Variable para almacenar el JSON de detalles en memoria y no volver a descargarlo
+let cacheDetallesExtra = null;
+
+// Escuchador global de clics para los botones "+ Info"
+document.addEventListener('click', function (e) {
+  const btn = e.target.closest('.btn-mas-info');
+  if (!btn) return;
+
+  const tarjeta = btn.closest('.card-body');
+  if (!tarjeta) return;
+
+  const infoContainer = tarjeta.querySelector('.info-extra-container');
+  const infoTexto = tarjeta.querySelector('.info-extra-texto');
+  const articuloId = btn.dataset.articulo;
+
+  if (!infoContainer || !infoTexto) return;
+
+  const estaOculto = infoContainer.classList.contains('d-none');
+
+  if (estaOculto) {
+    infoContainer.classList.remove('d-none');
+    btn.textContent = '- Info';
+    
+    // Consultar la información extendida
+    obtenerDetallesExtra(articuloId, infoTexto);
+  } else {
+    infoContainer.classList.add('d-none');
+    btn.textContent = '+ Info';
+  }
+});
+
+async function obtenerDetallesExtra(articuloId, elementoDestino) {
+  try {
+    if (!cacheDetallesExtra) {
+      const respuesta = await fetch('./detalles.json');
+      if (!respuesta.ok) {
+        throw new Error('No se pudo cargar detalles.json');
+      }
+      cacheDetallesExtra = await respuesta.json();
+    }
+
+    // Buscar coincidencia por id de artículo
+    const detalleEncontrado = cacheDetallesExtra.find(
+      item => String(item.Artículo) === String(articuloId)
+    );
+
+    if (detalleEncontrado) {
+      let htmlContenido = '';
+
+      // 1. Mostrar información si existe
+      if (detalleEncontrado.Info) {
+        htmlContenido += `<div class="mb-1 text-secondary">${detalleEncontrado.Info}</div>`;
+      }
+
+      // 2. Mostrar link de video si existe
+      if (detalleEncontrado.Video) {
+        htmlContenido += `
+          <div class="mt-2 pt-1 border-top">
+            <strong class="d-block text-dark mb-1" style="font-size: 0.78rem;">Video del producto:</strong>
+            <a href="${detalleEncontrado.Video}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-danger py-0 px-2 fw-bold" style="font-size: 0.75rem;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-play-btn-fill me-1" viewBox="0 0 16 16">
+                <path d="M0 12V4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm6.79-6.907A.5.5 0 0 0 6 5.5v5a.5.5 0 0 0 .79.407l3.5-2.5a.5.5 0 0 0 0-.814l-3.5-2.5z"/>
+              </svg>
+              Ver Video
+            </a>
+          </div>
+        `;
+      }
+
+      if (!detalleEncontrado.Info && !detalleEncontrado.Video) {
+        htmlContenido = '<span class="text-secondary">Sin información detallada disponible.</span>';
+      }
+
+      elementoDestino.innerHTML = htmlContenido;
+    } else {
+      elementoDestino.innerHTML = '<span class="text-secondary">Sin datos adicionales para este producto.</span>';
+    }
+  } catch (error) {
+    console.error("Error al obtener detalles adicionales:", error);
+    elementoDestino.innerHTML = '<span class="text-danger">Información no disponible.</span>';
+  }
 }
