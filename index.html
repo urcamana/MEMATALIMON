@@ -37,6 +37,12 @@
             </button>
             <div id="totalCarritoNavb" class="text-bg-dark">$ 0.00</div>
 
+<!-- Botón Favoritos en la barra superior -->
+<button id="btnFavoritosNav" type="button" class="btn btn-outline-danger btn-sm me-2 position-relative" data-bs-toggle="offcanvas" data-bs-target="#offcanvasFavoritos">
+    ❤️ Favoritos 
+    <span id="cantFavoritos" class="badge text-bg-danger rounded-pill">0</span>
+</button>
+
             <!-- Botón Hamburguesa Móvil -->
             <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -174,7 +180,11 @@
       <template id="contTemplate2">
     <div class="col-sm-6 col-md-6 col-lg-4 col-6 mb-4">
         <div class="card-group tarjetas2">
-            <div class="card">
+            <div class="card position-relative">
+    <!-- BOTÓN DE FAVORITO EN LA TARJETA -->
+    <button type="button" class="btn btn-sm btn-favorito-card position-absolute top-0 end-0 m-2 shadow-sm" style="z-index: 10; background: rgba(255,255,255,0.85); border-radius: 50%; padding: 4px 8px;">
+        🤍
+    </button>
                 
                 <!-- Carrusel ajustado al 100% de la tarjeta -->
                 <div class="carousel slide" data-bs-ride="false" style="width: 100%;">
@@ -433,6 +443,23 @@
                 <strong id="alertTit"></strong>
                 <div id="alertSuceso"></div>
             </div>
+
+<!-- Panel Offcanvas de Favoritos -->
+<div class="offcanvas offcanvas-end text-bg-dark shadow-lg p-3 rounded" tabindex="-1" id="offcanvasFavoritos" aria-labelledby="offcanvasFavoritosLabel">
+    <div class="offcanvas-header border-bottom border-secondary">
+        <h5 class="offcanvas-title fw-bold text-danger" id="offcanvasFavoritosLabel">❤️ Mis Favoritos</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div id="contenedorListaFavoritos" class="d-flex flex-column gap-3 mb-3">
+            <!-- JS renderizará la tarjeta completa de cada producto favorito -->
+        </div>
+        <div id="sinFavoritosMensaje" class="text-center text-muted my-5">
+            <p class="fs-5">No tenés productos guardados en favoritos.</p>
+        </div>
+    </div>
+</div>
+
     </main>
 
 
