@@ -191,11 +191,27 @@ const interes = document.getElementById("interes");
 const intprecioTotal = document.getElementById("precioTotal");
 var selectElement = template2.querySelector('.variantes');
 
-function MostrarEnCatalogo(datos, contenedorId) {
+// CREACIÓN GLOBAL DEL BOTÓN WHATSAPP
+const enlaceWhatsApp = document.createElement("a");
+enlaceWhatsApp.className = "btn btn-success btn-lg w-100 fw-bold shadow-sm rounded-pill my-3 d-flex align-items-center justify-content-center gap-2";
+enlaceWhatsApp.innerHTML = "📲 Enviar carrito por WhatsApp";
 
+enlaceWhatsApp.addEventListener('click', function (event) {
+  event.preventDefault();
+  actualizarEnlaceWhatsApp();
+  const urlActual = enlaceWhatsApp.getAttribute("href");
+  if (!urlActual || urlActual.endsWith('text=')) {
+    alertas.alertAgrego("Atención", "Seleccioná un método de pago antes de enviar", "alert-warning");
+    return;
+  }
+  
+  window.open(urlActual, '_blank');
+  localStorage.removeItem('datosCarrito');
+});
+
+function MostrarEnCatalogo(datos, contenedorId) {
   template.querySelector('.esteSi').setAttribute("id", contenedorId);
 
-  // Configuración del id único para el carrusel
   const carouselId = "carousel-prod-" + datos.Artículo;
   const carouselElem = template2.querySelector(".carousel");
   carouselElem.setAttribute("id", carouselId);
@@ -205,7 +221,6 @@ function MostrarEnCatalogo(datos, contenedorId) {
   const btnPrev = template2.querySelector(".carousel-control-prev");
   const btnNext = template2.querySelector(".carousel-control-next");
 
-  // Asignar targets de Bootstrap
   btnPrev.setAttribute("data-bs-target", "#" + carouselId);
   btnNext.setAttribute("data-bs-target", "#" + carouselId);
   
@@ -216,41 +231,33 @@ function MostrarEnCatalogo(datos, contenedorId) {
   btnNext.classList.remove("d-none");
   carouselIndicators.innerHTML = '';
 
-  // Configurar la imagen principal dentro del carrusel
   const imgPrincipal = carouselInner.querySelector("img");
   imgPrincipal.src = "./imgcarrito/" + datos.Artículo + ".jpg";
   imgPrincipal.id = "img" + datos.Artículo;
   imgPrincipal.alt = typeof datos.Descripción === 'string' ? datos.Descripción : "Producto";
   imgPrincipal.onerror = function () { this.src = "./imgcarrito/IMGND.jpg"; };
 
-  // CONFIGURACIÓN DEL BOTÓN DE FAVORITOS EN LA TARJETA
   const btnFavCard = template2.querySelector(".btn-favorito-card");
   if (btnFavCard) {
     btnFavCard.dataset.articulo = datos.Artículo;
+btnFavCard.className = "btn-favorito-card btn btn-sm position-absolute top-0 end-0 m-2 fs-3 border-0 bg-transparent";
     btnFavCard.innerHTML = listaFavoritos.includes(datos.Artículo) ? '❤️' : '🤍';
   }
 
-  // Descripción en H5
   const h5Element = template2.querySelector("h5");
   if (h5Element) {
     const descripcionTexto = datos.Descripción;
     if (typeof descripcionTexto === 'string') {
       h5Element.textContent = descripcionTexto;
-      if (descripcionTexto.length < 35) {
-        h5Element.style.fontSize = '1.8VH';
-      } else {
-        h5Element.style.fontSize = '1.6VH';
-      }
+      h5Element.style.fontSize = descripcionTexto.length < 35 ? '1.8VH' : '1.6VH';
     } else {
       h5Element.textContent = 'Descripción no válida';
       h5Element.style.fontSize = '1.4VH';
     }
   }
 
-  // Variantes
   varianteDeMedidas.AgregaVariantes(datos, template2);
 
-  // Precios e Inventario
   template2.querySelector(".cantidad").setAttribute("id", "idbot" + (datos.Artículo));
   template2.querySelector(".cantidad").setAttribute("max", (datos.Inventario));
   
@@ -279,14 +286,10 @@ function MostrarEnCatalogo(datos, contenedorId) {
   }
 
   const btnMasInfo = template2.querySelector(".btn-mas-info");
-  if (btnMasInfo) {
-    btnMasInfo.dataset.articulo = datos.Artículo;
-  }
+  if (btnMasInfo) btnMasInfo.dataset.articulo = datos.Artículo;
 
   const addButton = template2.querySelector(".botonaparecer");
-  if (addButton) {
-    addButton.setAttribute("id", "idbot" + (datos.Artículo));
-  }
+  if (addButton) addButton.setAttribute("id", "idbot" + (datos.Artículo));
 
   let clone2 = document.importNode(template2, true);
   fragmento2.appendChild(clone2);
@@ -357,9 +360,7 @@ categoriasUnicas.forEach(categoria => {
     }
 
     const target = document.getElementById(contenedorId);
-    if (target) {
-      target.appendChild(fragmento2);
-    }
+    if (target) target.appendChild(fragmento2);
 
     const botones = document.querySelectorAll(".categoria-btn");
     botones.forEach(btn => {
@@ -378,43 +379,6 @@ categoriasUnicas.forEach(categoria => {
   lil.appendChild(boton);
   dropdownMenu.appendChild(lil);
 });
-
-function obtenerURL() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const FILTROS = urlParams.get('filtro') || 'todos';
-
-  while (fragmento2.firstChild) fragmento2.removeChild(fragmento2.firstChild);
-  while (fragmento.firstChild) fragmento.removeChild(fragmento.firstChild);
-
-  let FILTRO = FILTROS.toUpperCase();
-  datos.forEach((datos) => {
-    if (datos.Inventario >= 1 && (FILTRO === "TODOS" || datos.Categoria == FILTRO)) {
-      contenedorId = 0;
-      fragmento2 = MostrarEnCatalogo(datos, contenedorId);
-    }
-    mBotones.mostrarBotones();
-  });
-
-  let clone = document.importNode(template, true);
-  fragmento.appendChild(clone);
-
-  const contenedorCatalogo = document.getElementById('contenedorCatalogo');
-  if (contenedorCatalogo) {
-    contenedorCatalogo.innerHTML = '';
-    contenedorCatalogo.appendChild(fragmento);
-  }
-
-  const target = document.getElementById(contenedorId);
-  if (target) {
-    target.appendChild(fragmento2);
-  }
-
-  if (nombreDesplegable) nombreDesplegable.textContent = FILTRO;
-  escucharBotones();
-  descu.porDeDescuento();
-  varianteDeMedidas.cambiarVariantes();
-  subirScroll.subir();
-}
 
 let contenedorId = 0;
 
@@ -445,8 +409,6 @@ descu.porDeDescuento();
 // Delegación global de eventos para botones
 function escucharBotones() {
   document.addEventListener('click', event => {
-    
-    // CAPTURA DE EVENTO PARA FAVORITOS (CORAZÓN EN TARJETA)
     const btnFav = event.target.closest('.btn-favorito-card');
     if (btnFav) {
       event.stopImmediatePropagation();
@@ -455,7 +417,6 @@ function escucharBotones() {
       return;
     }
 
-    // CAPTURA DE EVENTO PARA BOTÓN AGREGAR AL CARRITO
     const btn = event.target.closest('button[id^=idbot]');
     if (btn) {
       event.stopImmediatePropagation();
@@ -468,8 +429,7 @@ function escucharBotones() {
       let productId = da2[0];
 
       let selectElement = document.getElementById('idbot' + productId);
-      let unidades = 1;
-      if (selectElement) unidades = Number(selectElement.value);
+      let unidades = selectElement ? Number(selectElement.value) : 1;
 
       let selectElement77 = document.getElementById('med' + productId);
       var medidas = null;
@@ -556,6 +516,7 @@ function total() {
   });
   sumaTotal = new Intl.NumberFormat('es-Mx', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(sumaTotal);
 
+intprecioTotal.className = "fs-4 fw-bold text-warning bg-dark p-2 rounded text-center my-2";
   intprecioTotal.textContent = "IMPORTE TOTAL: $ " + sumaTotal;
   totalCarritoNavb.textContent = "$ " + sumaTotal;
 
@@ -581,6 +542,7 @@ function generarEnlaceWhatsApp() {
   let UnidadesProductosTotales = 0;
 
   itemCarrito.forEach(producto => {
+    var precioCatalogo = (producto.Venta.replace(/,/g, ".") * producto.DOLAR * producto.UnUnits); // Ojo con el nombre original
     var precioCatalogo = (producto.Venta.replace(/,/g, ".") * producto.DOLAR * producto.Unidades);
     precioCatalogo = new Intl.NumberFormat('es-Mx', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo);
 
@@ -597,7 +559,7 @@ function generarEnlaceWhatsApp() {
   const metodo = opcionEntrega ? opcionEntrega.value : 'No seleccionado';
 
   if (metodo === "retiro") {
-    textoCarrito += `\n*Método:* Retirar personally`;
+    textoCarrito += `\n*Método:* Retirar personalmente`;
   } else if (metodo === "envio") {
     const direccion = document.getElementById('direccionEnvio') ? document.getElementById('direccionEnvio').value : '';
     textoCarrito += `\n*Método:* Envío a domicilio`;
@@ -626,29 +588,15 @@ function actualizarEnlaceWhatsApp() {
     enlaceWhatsApp.removeAttribute("href");
     return;
   }
-  enlaceWhatsApp.setAttribute("class", "btn btn-success");
   enlaceWhatsApp.setAttribute("href", enlace);
-  enlaceWhatsApp.style.cssText = 'font-weight: bold; font-size: 17px; color: white;';
 }
-
-const enlaceWhatsApp = document.createElement("button");
-enlaceWhatsApp.addEventListener('click', function (event) {
-  event.preventDefault();
-  actualizarEnlaceWhatsApp(); 
-  const urlActual = enlaceWhatsApp.getAttribute("href");
-  if (urlActual === `https://wa.me` || !urlActual || urlActual.endsWith('text=')) return;
-  
-  window.open(urlActual, '_blank');
-  localStorage.removeItem('datosCarrito');
-});
-enlaceWhatsApp.textContent = "Enviar carrito por WhatsApp";
-document.getElementById("whats").appendChild(enlaceWhatsApp);
 
 actualizarEnlaceWhatsApp();
 filtrarConBusqueda();
 
 function filtrarConBusqueda() {
   const formulario = document.querySelector('#formulario');
+  if (!formulario) return;
   let debounceBusqueda;
 
   const filtrar = () => {
@@ -674,9 +622,7 @@ function filtrarConBusqueda() {
     }
 
     const target = document.getElementById(contenedorId);
-    if (target) {
-      target.appendChild(fragmento2);
-    }
+    if (target) target.appendChild(fragmento2);
 
     if (coincidencias === 0) {
       const contenedorResultados = document.getElementById(contenedorId);
@@ -790,7 +736,7 @@ function actualizarCarrito() {
 
   cantCarritod.textContent = cantCarritoLet;
   localStor.guardarEnLocalStorage(itemCarrito);
-  borrarCarritoCompleto();
+  actualizarBotonWhatsAppFinal();
 }
 
 function cambiarCantidadCarrito(articuloId, delta) {
@@ -840,36 +786,21 @@ function eliminarDelCarrito(articuloId) {
   actualizarEnlaceWhatsApp();
 }
 
-function borrarCarritoCompleto() {
-  const BCarritoComp = document.getElementById('borrarCarr');
-  BCarritoComp.innerHTML = '';
+function actualizarBotonWhatsAppFinal() {
+  const contenedorAbajo = document.getElementById('borrarCarr');
+  if (!contenedorAbajo) return;
+
+  contenedorAbajo.innerHTML = '';
 
   if (itemCarrito.length <= 0) {
-    BCarritoComp.classList.remove('show');
-    BCarritoComp.classList.add('hide');
+    contenedorAbajo.classList.remove('show');
+    contenedorAbajo.classList.add('hide');
     return;
   }
 
-  const btnBorrarCarrito = document.createElement("button");
-  btnBorrarCarrito.setAttribute("class", "btn btn-outline-danger");
-  btnBorrarCarrito.setAttribute("id", "btbc");
-  btnBorrarCarrito.innerHTML = "🗑 Vaciar carrito";
-
-  BCarritoComp.appendChild(btnBorrarCarrito);
-  BCarritoComp.classList.remove('hide');
-  BCarritoComp.classList.add('show');
-
-  btnBorrarCarrito.addEventListener('click', function (event) {
-    event.preventDefault();
-
-    if (!confirm("¿Vaciar todo el carrito? Esta acción no se puede deshacer.")) return;
-
-    itemCarrito.splice(0, itemCarrito.length);
-    alertas.alertAgrego("SE VACIÓ EL CARRITO", "Ya no hay elementos", "alert-danger");
-
-    actualizarCarrito();
-    actualizarEnlaceWhatsApp();
-  });
+  contenedorAbajo.appendChild(enlaceWhatsApp);
+  contenedorAbajo.classList.remove('hide');
+  contenedorAbajo.classList.add('show');
 }
 
 function poblarMenuDesplegableProductos(categorias) {
