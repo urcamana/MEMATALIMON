@@ -27,12 +27,13 @@ nav{
 
 
 #fondo2 {
-
   position: fixed;
   z-index: 9999999999;
   opacity: 100%;
-  height: 80vh;
-
+  
+  /* En computadoras se mantiene grande */
+  height: 70vh;
+  width: auto;
 
   left: 50%;
   top: 50%;
@@ -40,8 +41,6 @@ nav{
   border-radius: 50%;
   border-color: #fa87f1;
   border-style: double;
-
-
 }
 
 #fondo {
@@ -50,11 +49,20 @@ nav{
   opacity: 100%;
   height: 44vh;
 
-
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
   border-radius: 50%;
+}
+
+/* Ajuste específico para celulares y pantallas chicas */
+@media (max-width: 576px) {
+  #fondo2 {
+    /* Ajusta el tamaño en base al ancho de la pantalla del celular */
+    height: auto;
+    width: 80vw;
+    max-width: 320px;
+  }
 }
 
 /* .contenedor {
