@@ -1177,3 +1177,17 @@ padding: 10px 20px !important;
     max-height: 250px !important;
   }
 }
+
+/* Fondo blanco uniforme para las imágenes de los productos en cualquier dispositivo */
+.card .carousel,
+.card .carousel-inner,
+.card .carousel-item,
+.card-img-top {
+  background-color: #ffffff !important;
+}
+
+/* Asegura que las flechas del carrusel tengan contraste sobre el fondo blanco en mobile y PC */
+.carousel-control-prev,
+.carousel-control-next {
+  filter: invert(100%) !important;
+}
