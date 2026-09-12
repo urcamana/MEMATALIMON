@@ -1165,3 +1165,15 @@ padding: 10px 20px !important;
     object-fit: contain !important; /* Asegura que la imagen completa se vea sin cortes */
   }
 }
+
+/* Forzar que el banner o carrusel principal muestre la imagen completa en celulares */
+@media (max-width: 576px) {
+  .carousel-item img, 
+  .banner-img, 
+  #carouselExampleControls img {
+    object-fit: contain !important;
+    background-color: #000; /* Opcional: llena los espacios vacíos laterales con negro o el color de fondo de tu web */
+    height: auto !important;
+    max-height: 250px !important;
+  }
+}
