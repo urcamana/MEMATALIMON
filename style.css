@@ -1191,3 +1191,35 @@ padding: 10px 20px !important;
 .carousel-control-next {
   filter: invert(100%) !important;
 }
+
+/* Panel de Favoritos: fondo lila bien clarito y texto oscuro para contraste */
+.offcanvas.offcanvas-end,
+#offcanvasFavoritos,
+.offcanvas-favoritos {
+  background-color: #f3ebfc !important;
+  color: #333333 !important;
+}
+
+/* Encabezado y cuerpo del panel de favoritos */
+.offcanvas.offcanvas-end .offcanvas-header,
+.offcanvas.offcanvas-end .offcanvas-body {
+  background-color: #f3ebfc !important;
+  color: #333333 !important;
+}
+
+/* Asegura que los títulos y textos dentro del panel se lean correctamente */
+.offcanvas.offcanvas-end .offcanvas-title,
+.offcanvas.offcanvas-end p,
+.offcanvas.offcanvas-end span,
+.offcanvas.offcanvas-end h4,
+.offcanvas.offcanvas-end h5 {
+  color: #333333 !important;
+}
+
+/* Tarjetas o ítems dentro de favoritos */
+.offcanvas.offcanvas-end .card,
+.offcanvas.offcanvas-end .list-group-item {
+  background-color: #ffffff !important;
+  color: #333333 !important;
+  border-color: #e2d1f0 !important;
+}
