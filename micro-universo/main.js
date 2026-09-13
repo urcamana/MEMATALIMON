@@ -97,6 +97,9 @@ if (typeof initPostProcessing === 'function') {
     
     initXRSupport(renderer, scene, camera, particleSystem); // Ya tiene particleSystem listo
 
+    if (state.p2pEnabled && typeof initP2P === 'function') {
+        initP2P(); // Reemplaza esto por el nombre real de tu función en network-swarm.js
+    }
     animate();
 }
 
