@@ -1,20 +1,17 @@
-// network-swarm.js - P2P Autónomo con Servidor de Respaldo y Cero Bloqueos
+// network-swarm.js - P2P con Sincronización Gráfica Forzada
 
 let peer = null;
 let connections = new Map(); // Para el Host
 let hostConnection = null;   // Para el Cliente
 let isHost = false;
 
-// Usamos el servidor público oficial pero con un identificador de sala dinámico limpio
 const ROOM_NAME = "micro-universo-swarm-2026";
 
 const peerConfig = {
-    // Configuramos servidores STUN robustos para redes distintas
     config: {
         iceServers: [
             { urls: 'stun:stun.l.google.com:19302' },
-            { urls: 'stun:stun1.l.google.com:19302' },
-            { urls: 'stun:stun2.l.google.com:19302' }
+            { urls: 'stun:stun1.l.google.com:19302' }
         ]
     },
     debug: 0
@@ -24,7 +21,7 @@ function calculatePeerColor(peerId) {
     let hash = 0;
     for (let i = 0; i < peerId.length; i++) hash = peerId.charCodeAt(i) + ((hash << 5) - hash);
     const hue = Math.abs(hash) % 360;
-    return new THREE.Color(`hsl(${hue}, 85%, 60%)`);
+    return new THREE.Color(`hsl(${hue}, 90%, 65%)`); // Colores más vivos y distinguibles
 }
 
 function updateUIStatus() {
@@ -33,7 +30,6 @@ function updateUIStatus() {
     if (statusText) {
         statusText.innerText = `🟢 ${totalUsers} / 50 usuarios conectados`;
     } else {
-        // Fallback por si el elemento HTML tiene otro ID
         const counterEl = document.getElementById('swarm-counter');
         if (counterEl) counterEl.innerText = `🟢 ${totalUsers} / 50 usuarios conectados`;
     }
@@ -58,25 +54,22 @@ function tryAutoConnect() {
     }
 
     isHost = false;
-    // Intentamos registrar el ID maestro de la sala
     peer = new Peer(ROOM_NAME, peerConfig);
 
     peer.on('open', (id) => {
         isHost = true;
         state.peerId = id;
-        console.log('👑 [HOST] Servidor maestro iniciado con éxito:', id);
+        console.log('👑 [HOST] Soy el servidor maestro:', id);
         showReconnectOverlay(false);
         updateUIStatus();
+        triggerVisualUpdate();
     });
 
     peer.on('error', (err) => {
         if (err.type === 'unavailable-id') {
-            // El ID maestro ya está tomado. Eso significa que la PC 1 ya es el host.
-            // Nos conectamos inmediatamente como clientes puros.
-            console.log('🌐 Sala ocupada por otro Host. Conectando como cliente...');
+            console.log('🌐 Sala ocupada. Conectando como cliente...');
             connectAsClientNow();
         } else {
-            console.warn('Aviso P2P Host:', err);
             showReconnectOverlay(true);
             setTimeout(tryAutoConnect, 3000);
         }
@@ -95,20 +88,16 @@ function connectAsClientNow() {
     const clientId = 'client-' + Math.random().toString(36).substring(2, 8);
     state.peerId = clientId;
 
-    // Creamos un peer con ID aleatorio propio
     peer = new Peer(clientId, peerConfig);
 
     peer.on('open', () => {
-        console.log('🌐 [CLIENTE] Conectando al Host maestro...');
-        // Nos conectamos directamente al ID maestro fijo
+        console.log('🌐 [CLIENTE] Mi ID temporal:', clientId);
         const conn = peer.connect(ROOM_NAME, { reliable: true });
         setupClientConnection(conn);
     });
 
     peer.on('error', (err) => {
-        console.warn('Error al conectar como cliente:', err);
         showReconnectOverlay(true);
-        // Si el host maestro se cayó, reintentamos todo para ver si nos toca ser host a nosotros
         setTimeout(tryAutoConnect, 3000);
     });
 }
@@ -117,12 +106,12 @@ function setupHostConnection(conn) {
     connections.set(conn.peer, conn);
 
     conn.on('open', () => {
-        console.log('👤 [HOST] Nuevo usuario vinculado:', conn.peer);
+        console.log('👤 [HOST] Cliente conectado:', conn.peer);
         state.remotePeers.set(conn.peer, { color: calculatePeerColor(conn.peer) });
         showReconnectOverlay(false);
         updateUIStatus();
         broadcastPeersList();
-        if (typeof buildParticles === 'function') buildParticles();
+        triggerVisualUpdate();
     });
 
     conn.on('data', (data) => {
@@ -136,7 +125,7 @@ function setupHostConnection(conn) {
         state.remotePeers.delete(conn.peer);
         updateUIStatus();
         broadcastPeersList();
-        if (typeof buildParticles === 'function') buildParticles();
+        triggerVisualUpdate();
     });
 }
 
@@ -144,7 +133,7 @@ function setupClientConnection(conn) {
     hostConnection = conn;
 
     conn.on('open', () => {
-        console.log('🚀 [CLIENTE] ¡Conexión establecida con el servidor!');
+        console.log('🚀 [CLIENTE] Conectado al Host con éxito!');
         showReconnectOverlay(false);
         updateUIStatus();
         conn.send({ type: 'REQUEST_SYNC' });
@@ -152,6 +141,7 @@ function setupClientConnection(conn) {
 
     conn.on('data', (data) => {
         if (data.type === 'PEERS_UPDATE') {
+            console.log('📥 [CLIENTE] Lista de peers recibida:', data.peers);
             state.remotePeers.clear();
             data.peers.forEach(pId => {
                 if (pId !== state.peerId) {
@@ -160,12 +150,12 @@ function setupClientConnection(conn) {
             });
             showReconnectOverlay(false);
             updateUIStatus();
-            if (typeof buildParticles === 'function') buildParticles();
+            triggerVisualUpdate();
         }
     });
 
     conn.on('close', () => {
-        console.warn('⚠️ Se perdió la conexión con el servidor. Reintentando enlace...');
+        console.warn('⚠️ Conexión perdida con el servidor. Reconectando...');
         state.remotePeers.clear();
         showReconnectOverlay(true);
         updateUIStatus();
@@ -177,6 +167,7 @@ function broadcastPeersList() {
     if (!isHost) return;
     const peerIds = Array.from(connections.keys());
     peerIds.push(state.peerId);
+    console.log('📤 [HOST] Difundiendo lista de peers:', peerIds);
     
     connections.forEach((conn) => {
         if (conn.open) {
@@ -185,6 +176,16 @@ function broadcastPeersList() {
     });
 }
 
+// Función clave que fuerza al motor gráfico a redibujar los colores divididos
+function triggerVisualUpdate() {
+    if (typeof buildParticles === 'function') {
+        buildParticles(); // Reconstruye o actualiza los buffers de Three.js
+    } else if (typeof updateParticleColors === 'function') {
+        updateParticleColors();
+    }
+}
+
+// Función encargada de pintar el buffer de partículas en partes iguales según los peers
 function applySwarmColorsToBuffer(colorsArray, totalCount, peerMap) {
     if (!state.p2pEnabled || state.mode !== 'swarm') return;
     
@@ -192,7 +193,7 @@ function applySwarmColorsToBuffer(colorsArray, totalCount, peerMap) {
     if (!peers.includes(state.peerId)) {
         peers.push(state.peerId);
     }
-    peers.sort();
+    peers.sort(); // Orden alfabético idéntico en todas las PCs
 
     const totalParties = peers.length;
     const chunkSize = Math.floor(totalCount / totalParties);
