@@ -22,7 +22,7 @@ const state = {
 renderMode: 'auto', // 'auto' | 'cpu' | 'gpgpu'
 maxBudgetParticles: 15000, // Se adapta según GPU/CPU
 xrEnabled: false,
-p2pEnabled: false,
+p2pEnabled: true,
 peerId: Math.random().toString(36).substring(2, 8),
 peerQuota: 50,
 remotePeers: new Map(), // peerId -> { color, cursor, seed, count }
