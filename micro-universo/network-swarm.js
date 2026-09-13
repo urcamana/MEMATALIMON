@@ -1,9 +1,10 @@
-// network-swarm.js - P2P 100% Automático y Transparente (Sin IDs manuales)
+// network-swarm.js - P2P Automático con Sincronización Bidireccional de Colores
 
 let peer = null;
-let connections = new Map();
+let connections = new Map(); // Conexiones activas en el Host
+let hostConnection = null;   // Conexión al Host desde el Cliente
 let isHost = false;
-const GLOBAL_ROOM_ID = "micro-universo-global-room-v1"; // ID único estandarizado para la app
+const GLOBAL_ROOM_ID = "micro-universo-global-room-v1";
 
 const peerConfig = {
     config: {
@@ -32,42 +33,33 @@ function updateUIStatus() {
 
 function initP2P() {
     if (!state.p2pEnabled) return;
-    
-    console.log("Iniciando red P2P automática...");
     tryAutoConnect();
 }
 
 function tryAutoConnect() {
-    // Intentamos registrar el ID global. Si nadie abrió la web antes, nos convertimos en el Host.
     peer = new Peer(GLOBAL_ROOM_ID, peerConfig);
 
     peer.on('open', (id) => {
         isHost = true;
         state.peerId = id;
-        console.log('👑 Me he convertido en el SERVIDOR de la sala global:', id);
+        console.log('👑 [HOST] Servidor activo:', id);
         updateUIStatus();
     });
 
     peer.on('error', (err) => {
         if (err.type === 'unavailable-id') {
-            // El ID ya está ocupado por otro Host. Nos conectamos automáticamente como clientes.
-            console.log('🌐 Sala global ocupada. Conectándome como cliente al servidor existente...');
             connectAsAutomaticClient();
         } else {
-            console.warn('Aviso P2P:', err);
-            // Reintentar en unos segundos si hubo un fallo de red transitorio
             setTimeout(tryAutoConnect, 4000);
         }
     });
 
-    // Si somos host, esperamos las conexiones de los demás
     peer.on('connection', (conn) => {
         setupHostConnection(conn);
     });
 }
 
 function connectAsAutomaticClient() {
-    // Destruimos la instancia anterior fallida y creamos un ID aleatorio de cliente
     if (peer) {
         try { peer.destroy(); } catch(e) {}
     }
@@ -78,15 +70,12 @@ function connectAsAutomaticClient() {
     peer = new Peer(clientId, peerConfig);
 
     peer.on('open', () => {
-        console.log('Mi ID de cliente temporal es:', clientId);
-        // Nos conectamos de forma transparente al Host global fijo
+        console.log('🌐 [CLIENTE] Conectando al host...');
         const conn = peer.connect(GLOBAL_ROOM_ID, { reliable: true });
         setupClientConnection(conn);
     });
 
     peer.on('error', (err) => {
-        console.warn('Error al conectar como cliente:', err);
-        // Si el host se cayó justo, reintentamos todo el proceso para ver si nos toca ser host
         setTimeout(tryAutoConnect, 4000);
     });
 }
@@ -95,15 +84,20 @@ function setupHostConnection(conn) {
     connections.set(conn.peer, conn);
 
     conn.on('open', () => {
-        console.log('Nuevo usuario conectado al servidor:', conn.peer);
+        console.log('👤 [HOST] Nuevo peer conectado:', conn.peer);
         state.remotePeers.set(conn.peer, { color: calculatePeerColor(conn.peer) });
         updateUIStatus();
         broadcastPeersList();
         if (typeof buildParticles === 'function') buildParticles();
     });
 
+    conn.on('data', (data) => {
+        if (data.type === 'REQUEST_SYNC') {
+            broadcastPeersList();
+        }
+    });
+
     conn.on('close', () => {
-        console.log('Usuario desconectado:', conn.peer);
         connections.delete(conn.peer);
         state.remotePeers.delete(conn.peer);
         updateUIStatus();
@@ -113,14 +107,19 @@ function setupHostConnection(conn) {
 }
 
 function setupClientConnection(conn) {
+    hostConnection = conn;
+
     conn.on('open', () => {
-        console.log('¡Conectado exitosamente al servidor global!');
+        console.log('🚀 [CLIENTE] ¡Conectado al servidor con éxito!');
         updateUIStatus();
+        // Apenas conectamos, le pedimos o enviamos señal al host
+        conn.send({ type: 'REQUEST_SYNC' });
     });
 
     conn.on('data', (data) => {
         if (data.type === 'PEERS_UPDATE') {
             state.remotePeers.clear();
+            // Guardamos todos los peers que el host nos dice que están conectados (excluyéndonos a nosotros)
             data.peers.forEach(pId => {
                 if (pId !== state.peerId) {
                     state.remotePeers.set(pId, { color: calculatePeerColor(pId) });
@@ -132,14 +131,16 @@ function setupClientConnection(conn) {
     });
 
     conn.on('close', () => {
-        console.warn('⚠️ Se perdió la conexión con el servidor. Buscando nuevo servidor...');
-        // Si el servidor se desconecta, intentamos reconectarnos automáticamente (podríamos convertirnos en host nosotros)
+        console.warn('⚠️ Conexión perdida con el servidor. Reconectando...');
+        state.remotePeers.clear();
+        updateUIStatus();
         setTimeout(tryAutoConnect, 2000);
     });
 }
 
 function broadcastPeersList() {
     if (!isHost) return;
+    // Recopilamos todos los IDs: el del host + todos los clientes conectados
     const peerIds = Array.from(connections.keys());
     peerIds.push(state.peerId);
     
@@ -150,12 +151,16 @@ function broadcastPeersList() {
     });
 }
 
+// Función encargada de dividir las partículas y asignar colores únicos por usuario
 function applySwarmColorsToBuffer(colorsArray, totalCount, peerMap) {
     if (!state.p2pEnabled || state.mode !== 'swarm') return;
     
+    // Unimos nuestros propios datos con los peers remotos recibidos
     const peers = Array.from(peerMap.keys());
-    peers.push(state.peerId);
-    peers.sort();
+    if (!peers.includes(state.peerId)) {
+        peers.push(state.peerId);
+    }
+    peers.sort(); // Mismo orden alfabético en todas las computadoras
 
     const totalParties = peers.length;
     const chunkSize = Math.floor(totalCount / totalParties);
@@ -164,6 +169,7 @@ function applySwarmColorsToBuffer(colorsArray, totalCount, peerMap) {
         const startIdx = index * chunkSize;
         const endIdx = (index === totalParties - 1) ? totalCount : startIdx + chunkSize;
         
+        // Color único derivado del HSL del ID del usuario
         const c = (pId === state.peerId) 
             ? calculatePeerColor(state.peerId) 
             : (peerMap.get(pId)?.color || calculatePeerColor(pId));
