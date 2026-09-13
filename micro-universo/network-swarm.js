@@ -181,14 +181,23 @@ function broadcastPeersList() {
 function applySwarmColorsToBuffer(colorsArray, totalCount, peerMap) {
     if (!state.p2pEnabled || state.mode !== 'swarm') return;
     
-    const peers = Array.from(peerMap.entries());
-    const totalParties = peers.length + 1; 
+    // Obtenemos todos los IDs conectados (incluyéndonos a nosotros mismos)
+    const peers = Array.from(peerMap.keys());
+    peers.push(state.peerId); // Añadimos mi propio ID a la lista global
+    peers.sort(); // Ordenamos alfabéticamente para que el orden sea idéntico en todas las PCs
+
+    const totalParties = peers.length;
     const chunkSize = Math.floor(totalCount / totalParties);
-    
-    peers.forEach(([peerId, data], index) => {
-        const startIdx = (index + 1) * chunkSize;
-        const endIdx = (index === peers.length - 1) ? totalCount : startIdx + chunkSize;
-        const c = data.color;
+
+    // Repartimos bloques de partículas a cada usuario y los teñimos con su color HSL único
+    peers.forEach((pId, index) => {
+        const startIdx = index * chunkSize;
+        const endIdx = (index === totalParties - 1) ? totalCount : startIdx + chunkSize;
+        
+        // Si el ID soy yo, uso mi propio color; si es remoto, uso su color calculado por hash
+        const c = (pId === state.peerId) 
+            ? calculatePeerColor(state.peerId) 
+            : (peerMap.get(pId)?.color || calculatePeerColor(pId));
         
         for (let i = startIdx; i < endIdx; i++) {
             colorsArray[i * 3]     = c.r;
