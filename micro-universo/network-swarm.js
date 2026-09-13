@@ -1,16 +1,20 @@
-// network-swarm.js - P2P Robusto con Auto-Recuperación y Control de Overlay
+// network-swarm.js - P2P Autónomo con Servidor de Respaldo y Cero Bloqueos
 
 let peer = null;
 let connections = new Map(); // Para el Host
 let hostConnection = null;   // Para el Cliente
 let isHost = false;
-const GLOBAL_ROOM_ID = "micro-universo-global-room-v2"; // Versión actualizada para evitar caché vieja del servidor
+
+// Usamos el servidor público oficial pero con un identificador de sala dinámico limpio
+const ROOM_NAME = "micro-universo-swarm-2026";
 
 const peerConfig = {
+    // Configuramos servidores STUN robustos para redes distintas
     config: {
         iceServers: [
             { urls: 'stun:stun.l.google.com:19302' },
-            { urls: 'stun:stun1.l.google.com:19302' }
+            { urls: 'stun:stun1.l.google.com:19302' },
+            { urls: 'stun:stun2.l.google.com:19302' }
         ]
     },
     debug: 0
@@ -28,6 +32,10 @@ function updateUIStatus() {
     const statusText = document.getElementById('p2p-status-text');
     if (statusText) {
         statusText.innerText = `🟢 ${totalUsers} / 50 usuarios conectados`;
+    } else {
+        // Fallback por si el elemento HTML tiene otro ID
+        const counterEl = document.getElementById('swarm-counter');
+        if (counterEl) counterEl.innerText = `🟢 ${totalUsers} / 50 usuarios conectados`;
     }
 }
 
@@ -49,26 +57,28 @@ function tryAutoConnect() {
         try { peer.destroy(); } catch(e) {}
     }
 
-    // Intentamos ser el Host de la sala global
-    peer = new Peer(GLOBAL_ROOM_ID, peerConfig);
+    isHost = false;
+    // Intentamos registrar el ID maestro de la sala
+    peer = new Peer(ROOM_NAME, peerConfig);
 
     peer.on('open', (id) => {
         isHost = true;
         state.peerId = id;
-        console.log('👑 [HOST] Servidor activo:', id);
+        console.log('👑 [HOST] Servidor maestro iniciado con éxito:', id);
         showReconnectOverlay(false);
         updateUIStatus();
     });
 
     peer.on('error', (err) => {
         if (err.type === 'unavailable-id') {
-            // Si el ID está ocupado, nos conectamos como clientes
-            console.log('🌐 Sala ocupada. Conectando como cliente...');
-            connectAsAutomaticClient();
+            // El ID maestro ya está tomado. Eso significa que la PC 1 ya es el host.
+            // Nos conectamos inmediatamente como clientes puros.
+            console.log('🌐 Sala ocupada por otro Host. Conectando como cliente...');
+            connectAsClientNow();
         } else {
             console.warn('Aviso P2P Host:', err);
             showReconnectOverlay(true);
-            setTimeout(tryAutoConnect, 4000);
+            setTimeout(tryAutoConnect, 3000);
         }
     });
 
@@ -77,7 +87,7 @@ function tryAutoConnect() {
     });
 }
 
-function connectAsAutomaticClient() {
+function connectAsClientNow() {
     if (peer) {
         try { peer.destroy(); } catch(e) {}
     }
@@ -85,18 +95,21 @@ function connectAsAutomaticClient() {
     const clientId = 'client-' + Math.random().toString(36).substring(2, 8);
     state.peerId = clientId;
 
+    // Creamos un peer con ID aleatorio propio
     peer = new Peer(clientId, peerConfig);
 
     peer.on('open', () => {
-        console.log('🌐 [CLIENTE] Conectando al host global...');
-        const conn = peer.connect(GLOBAL_ROOM_ID, { reliable: true });
+        console.log('🌐 [CLIENTE] Conectando al Host maestro...');
+        // Nos conectamos directamente al ID maestro fijo
+        const conn = peer.connect(ROOM_NAME, { reliable: true });
         setupClientConnection(conn);
     });
 
     peer.on('error', (err) => {
-        console.warn('Error como cliente:', err);
+        console.warn('Error al conectar como cliente:', err);
         showReconnectOverlay(true);
-        setTimeout(tryAutoConnect, 4000);
+        // Si el host maestro se cayó, reintentamos todo para ver si nos toca ser host a nosotros
+        setTimeout(tryAutoConnect, 3000);
     });
 }
 
@@ -104,7 +117,7 @@ function setupHostConnection(conn) {
     connections.set(conn.peer, conn);
 
     conn.on('open', () => {
-        console.log('👤 [HOST] Nuevo peer conectado:', conn.peer);
+        console.log('👤 [HOST] Nuevo usuario vinculado:', conn.peer);
         state.remotePeers.set(conn.peer, { color: calculatePeerColor(conn.peer) });
         showReconnectOverlay(false);
         updateUIStatus();
@@ -131,7 +144,7 @@ function setupClientConnection(conn) {
     hostConnection = conn;
 
     conn.on('open', () => {
-        console.log('🚀 [CLIENTE] ¡Conectado al servidor con éxito!');
+        console.log('🚀 [CLIENTE] ¡Conexión establecida con el servidor!');
         showReconnectOverlay(false);
         updateUIStatus();
         conn.send({ type: 'REQUEST_SYNC' });
@@ -152,7 +165,7 @@ function setupClientConnection(conn) {
     });
 
     conn.on('close', () => {
-        console.warn('⚠️ Conexión perdida con el servidor. Reconectando...');
+        console.warn('⚠️ Se perdió la conexión con el servidor. Reintentando enlace...');
         state.remotePeers.clear();
         showReconnectOverlay(true);
         updateUIStatus();
