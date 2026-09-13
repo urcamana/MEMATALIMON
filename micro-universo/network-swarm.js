@@ -1,4 +1,4 @@
-// network-swarm.js - P2P con Sincronización Gráfica Forzada
+// network-swarm.js - P2P Avanzado con Sincronización de Posiciones y Colmena Unificada
 
 let peer = null;
 let connections = new Map(); // Para el Host
@@ -21,7 +21,7 @@ function calculatePeerColor(peerId) {
     let hash = 0;
     for (let i = 0; i < peerId.length; i++) hash = peerId.charCodeAt(i) + ((hash << 5) - hash);
     const hue = Math.abs(hash) % 360;
-    return new THREE.Color(`hsl(${hue}, 90%, 65%)`); // Colores más vivos y distinguibles
+    return new THREE.Color(`hsl(${hue}, 90%, 65%)`);
 }
 
 function updateUIStatus() {
@@ -59,7 +59,7 @@ function tryAutoConnect() {
     peer.on('open', (id) => {
         isHost = true;
         state.peerId = id;
-        console.log('👑 [HOST] Soy el servidor maestro:', id);
+        console.log('👑 [HOST] Servidor maestro activo:', id);
         showReconnectOverlay(false);
         updateUIStatus();
         triggerVisualUpdate();
@@ -67,7 +67,6 @@ function tryAutoConnect() {
 
     peer.on('error', (err) => {
         if (err.type === 'unavailable-id') {
-            console.log('🌐 Sala ocupada. Conectando como cliente...');
             connectAsClientNow();
         } else {
             showReconnectOverlay(true);
@@ -91,7 +90,7 @@ function connectAsClientNow() {
     peer = new Peer(clientId, peerConfig);
 
     peer.on('open', () => {
-        console.log('🌐 [CLIENTE] Mi ID temporal:', clientId);
+        console.log('🌐 [CLIENTE] Conectado con ID temporal:', clientId);
         const conn = peer.connect(ROOM_NAME, { reliable: true });
         setupClientConnection(conn);
     });
@@ -106,8 +105,8 @@ function setupHostConnection(conn) {
     connections.set(conn.peer, conn);
 
     conn.on('open', () => {
-        console.log('👤 [HOST] Cliente conectado:', conn.peer);
-        state.remotePeers.set(conn.peer, { color: calculatePeerColor(conn.peer) });
+        console.log('👤 [HOST] Peer conectado:', conn.peer);
+        state.remotePeers.set(conn.peer, { color: calculatePeerColor(conn.peer), cursor: {x:0, y:0} });
         showReconnectOverlay(false);
         updateUIStatus();
         broadcastPeersList();
@@ -117,6 +116,14 @@ function setupHostConnection(conn) {
     conn.on('data', (data) => {
         if (data.type === 'REQUEST_SYNC') {
             broadcastPeersList();
+        } else if (data.type === 'CURSOR_MOVE') {
+            // Actualizamos la posición del cursor remoto en el host
+            const peerData = state.remotePeers.get(data.peerId);
+            if (peerData) {
+                peerData.cursor = data.cursor;
+            }
+            // Reenviamos el movimiento del cursor a los demás clientes
+            broadcastCursorMove(data.peerId, data.cursor);
         }
     });
 
@@ -133,7 +140,7 @@ function setupClientConnection(conn) {
     hostConnection = conn;
 
     conn.on('open', () => {
-        console.log('🚀 [CLIENTE] Conectado al Host con éxito!');
+        console.log('🚀 [CLIENTE] Conectado al Host!');
         showReconnectOverlay(false);
         updateUIStatus();
         conn.send({ type: 'REQUEST_SYNC' });
@@ -141,21 +148,25 @@ function setupClientConnection(conn) {
 
     conn.on('data', (data) => {
         if (data.type === 'PEERS_UPDATE') {
-            console.log('📥 [CLIENTE] Lista de peers recibida:', data.peers);
             state.remotePeers.clear();
             data.peers.forEach(pId => {
                 if (pId !== state.peerId) {
-                    state.remotePeers.set(pId, { color: calculatePeerColor(pId) });
+                    state.remotePeers.set(pId, { color: calculatePeerColor(pId), cursor: {x:0, y:0} });
                 }
             });
             showReconnectOverlay(false);
             updateUIStatus();
             triggerVisualUpdate();
+        } else if (data.type === 'CURSOR_MOVE') {
+            const peerData = state.remotePeers.get(data.peerId);
+            if (peerData) {
+                peerData.cursor = data.cursor;
+            }
         }
     });
 
     conn.on('close', () => {
-        console.warn('⚠️ Conexión perdida con el servidor. Reconectando...');
+        console.warn('⚠️ Conexión perdida. Reconectando...');
         state.remotePeers.clear();
         showReconnectOverlay(true);
         updateUIStatus();
@@ -167,7 +178,6 @@ function broadcastPeersList() {
     if (!isHost) return;
     const peerIds = Array.from(connections.keys());
     peerIds.push(state.peerId);
-    console.log('📤 [HOST] Difundiendo lista de peers:', peerIds);
     
     connections.forEach((conn) => {
         if (conn.open) {
@@ -176,16 +186,32 @@ function broadcastPeersList() {
     });
 }
 
-// Función clave que fuerza al motor gráfico a redibujar los colores divididos
+function broadcastCursorMove(peerId, cursor) {
+    if (!isHost) return;
+    connections.forEach((conn, id) => {
+        if (id !== peerId && conn.open) {
+            conn.send({ type: 'CURSOR_MOVE', peerId, cursor });
+        }
+    });
+}
+
+// Función global para que tu app principal pueda enviar la posición de su cursor a la red P2P
+window.sendMyCursor = function(x, y) {
+    const payload = { type: 'CURSOR_MOVE', peerId: state.peerId, cursor: {x, y} };
+    if (isHost) {
+        connections.forEach((conn) => { if (conn.open) conn.send(payload); });
+    } else if (hostConnection && hostConnection.open) {
+        hostConnection.send(payload);
+    }
+};
+
 function triggerVisualUpdate() {
     if (typeof buildParticles === 'function') {
-        buildParticles(); // Reconstruye o actualiza los buffers de Three.js
-    } else if (typeof updateParticleColors === 'function') {
-        updateParticleColors();
+        buildParticles();
     }
 }
 
-// Función encargada de pintar el buffer de partículas en partes iguales según los peers
+// Asignación inteligente de colores al búfer para garantizar visibilidad total
 function applySwarmColorsToBuffer(colorsArray, totalCount, peerMap) {
     if (!state.p2pEnabled || state.mode !== 'swarm') return;
     
@@ -193,13 +219,14 @@ function applySwarmColorsToBuffer(colorsArray, totalCount, peerMap) {
     if (!peers.includes(state.peerId)) {
         peers.push(state.peerId);
     }
-    peers.sort(); // Orden alfabético idéntico en todas las PCs
+    peers.sort();
 
     const totalParties = peers.length;
     const chunkSize = Math.floor(totalCount / totalParties);
 
     peers.forEach((pId, index) => {
         const startIdx = index * chunkSize;
+        // Aseguramos que el último usuario abarque hasta el final exacto del array (reparando el bug de las 50 partículas)
         const endIdx = (index === totalParties - 1) ? totalCount : startIdx + chunkSize;
         
         const c = (pId === state.peerId) 
