@@ -1,10 +1,10 @@
-// network-swarm.js - P2P Automático con Sincronización Bidireccional de Colores
+// network-swarm.js - P2P Robusto con Auto-Recuperación y Control de Overlay
 
 let peer = null;
-let connections = new Map(); // Conexiones activas en el Host
-let hostConnection = null;   // Conexión al Host desde el Cliente
+let connections = new Map(); // Para el Host
+let hostConnection = null;   // Para el Cliente
 let isHost = false;
-const GLOBAL_ROOM_ID = "micro-universo-global-room-v1";
+const GLOBAL_ROOM_ID = "micro-universo-global-room-v2"; // Versión actualizada para evitar caché vieja del servidor
 
 const peerConfig = {
     config: {
@@ -31,25 +31,43 @@ function updateUIStatus() {
     }
 }
 
+function showReconnectOverlay(show) {
+    const overlay = document.getElementById('reconnect-overlay');
+    if (overlay) {
+        overlay.style.display = show ? 'flex' : 'none';
+    }
+}
+
 function initP2P() {
     if (!state.p2pEnabled) return;
+    showReconnectOverlay(false);
     tryAutoConnect();
 }
 
 function tryAutoConnect() {
+    if (peer) {
+        try { peer.destroy(); } catch(e) {}
+    }
+
+    // Intentamos ser el Host de la sala global
     peer = new Peer(GLOBAL_ROOM_ID, peerConfig);
 
     peer.on('open', (id) => {
         isHost = true;
         state.peerId = id;
         console.log('👑 [HOST] Servidor activo:', id);
+        showReconnectOverlay(false);
         updateUIStatus();
     });
 
     peer.on('error', (err) => {
         if (err.type === 'unavailable-id') {
+            // Si el ID está ocupado, nos conectamos como clientes
+            console.log('🌐 Sala ocupada. Conectando como cliente...');
             connectAsAutomaticClient();
         } else {
+            console.warn('Aviso P2P Host:', err);
+            showReconnectOverlay(true);
             setTimeout(tryAutoConnect, 4000);
         }
     });
@@ -70,12 +88,14 @@ function connectAsAutomaticClient() {
     peer = new Peer(clientId, peerConfig);
 
     peer.on('open', () => {
-        console.log('🌐 [CLIENTE] Conectando al host...');
+        console.log('🌐 [CLIENTE] Conectando al host global...');
         const conn = peer.connect(GLOBAL_ROOM_ID, { reliable: true });
         setupClientConnection(conn);
     });
 
     peer.on('error', (err) => {
+        console.warn('Error como cliente:', err);
+        showReconnectOverlay(true);
         setTimeout(tryAutoConnect, 4000);
     });
 }
@@ -86,6 +106,7 @@ function setupHostConnection(conn) {
     conn.on('open', () => {
         console.log('👤 [HOST] Nuevo peer conectado:', conn.peer);
         state.remotePeers.set(conn.peer, { color: calculatePeerColor(conn.peer) });
+        showReconnectOverlay(false);
         updateUIStatus();
         broadcastPeersList();
         if (typeof buildParticles === 'function') buildParticles();
@@ -111,20 +132,20 @@ function setupClientConnection(conn) {
 
     conn.on('open', () => {
         console.log('🚀 [CLIENTE] ¡Conectado al servidor con éxito!');
+        showReconnectOverlay(false);
         updateUIStatus();
-        // Apenas conectamos, le pedimos o enviamos señal al host
         conn.send({ type: 'REQUEST_SYNC' });
     });
 
     conn.on('data', (data) => {
         if (data.type === 'PEERS_UPDATE') {
             state.remotePeers.clear();
-            // Guardamos todos los peers que el host nos dice que están conectados (excluyéndonos a nosotros)
             data.peers.forEach(pId => {
                 if (pId !== state.peerId) {
                     state.remotePeers.set(pId, { color: calculatePeerColor(pId) });
                 }
             });
+            showReconnectOverlay(false);
             updateUIStatus();
             if (typeof buildParticles === 'function') buildParticles();
         }
@@ -133,14 +154,14 @@ function setupClientConnection(conn) {
     conn.on('close', () => {
         console.warn('⚠️ Conexión perdida con el servidor. Reconectando...');
         state.remotePeers.clear();
+        showReconnectOverlay(true);
         updateUIStatus();
-        setTimeout(tryAutoConnect, 2000);
+        setTimeout(tryAutoConnect, 3000);
     });
 }
 
 function broadcastPeersList() {
     if (!isHost) return;
-    // Recopilamos todos los IDs: el del host + todos los clientes conectados
     const peerIds = Array.from(connections.keys());
     peerIds.push(state.peerId);
     
@@ -151,16 +172,14 @@ function broadcastPeersList() {
     });
 }
 
-// Función encargada de dividir las partículas y asignar colores únicos por usuario
 function applySwarmColorsToBuffer(colorsArray, totalCount, peerMap) {
     if (!state.p2pEnabled || state.mode !== 'swarm') return;
     
-    // Unimos nuestros propios datos con los peers remotos recibidos
     const peers = Array.from(peerMap.keys());
     if (!peers.includes(state.peerId)) {
         peers.push(state.peerId);
     }
-    peers.sort(); // Mismo orden alfabético en todas las computadoras
+    peers.sort();
 
     const totalParties = peers.length;
     const chunkSize = Math.floor(totalCount / totalParties);
@@ -169,7 +188,6 @@ function applySwarmColorsToBuffer(colorsArray, totalCount, peerMap) {
         const startIdx = index * chunkSize;
         const endIdx = (index === totalParties - 1) ? totalCount : startIdx + chunkSize;
         
-        // Color único derivado del HSL del ID del usuario
         const c = (pId === state.peerId) 
             ? calculatePeerColor(state.peerId) 
             : (peerMap.get(pId)?.color || calculatePeerColor(pId));
