@@ -1,20 +1,15 @@
-// network-swarm.js - P2P Robusto con STUN Servers y Failover Estable
+// network-swarm.js - P2P 100% Automático y Transparente (Sin IDs manuales)
 
 let peer = null;
-let connections = new Map(); // Para el Host
-let hostConnection = null;   // Para el Cliente
+let connections = new Map();
 let isHost = false;
-let currentRoomIndex = 1;
-const MAX_USERS_PER_ROOM = 50;
-const ROOM_PREFIX = "micro-universo-sala-";
+const GLOBAL_ROOM_ID = "micro-universo-global-room-v1"; // ID único estandarizado para la app
 
-// Configuración de servidores STUN públicos para atravesar firewalls y redes distintas
 const peerConfig = {
     config: {
         iceServers: [
             { urls: 'stun:stun.l.google.com:19302' },
-            { urls: 'stun:stun1.l.google.com:19302' },
-            { urls: 'stun:stun2.l.google.com:19302' }
+            { urls: 'stun:stun1.l.google.com:19302' }
         ]
     },
     debug: 0
@@ -29,83 +24,70 @@ function calculatePeerColor(peerId) {
 
 function updateUIStatus() {
     const totalUsers = isHost ? (connections.size + 1) : (state.remotePeers.size + 1);
-    const counterEl = document.getElementById('swarm-counter');
-    if (counterEl) {
-        counterEl.innerText = `🟢 ${totalUsers} / ${MAX_USERS_PER_ROOM} usuarios conectados (Sala ${currentRoomIndex})`;
-    }
-}
-
-function showReconnectOverlay(show) {
-    const overlay = document.getElementById('reconnect-overlay');
-    if (overlay) {
-        overlay.style.display = show ? 'flex' : 'none';
+    const statusText = document.getElementById('p2p-status-text');
+    if (statusText) {
+        statusText.innerText = `🟢 ${totalUsers} / 50 usuarios conectados`;
     }
 }
 
 function initP2P() {
     if (!state.p2pEnabled) return;
-    tryConnectToRoom(currentRoomIndex);
+    
+    console.log("Iniciando red P2P automática...");
+    tryAutoConnect();
 }
 
-function tryConnectToRoom(roomIdx) {
-    currentRoomIndex = roomIdx;
-    const roomId = ROOM_PREFIX + roomIdx;
-    
-    if (peer) {
-        try { peer.destroy(); } catch(e) {}
-    }
-
-    // Intentamos ser Host de la sala con la config STUN
-    peer = new Peer(roomId, peerConfig);
+function tryAutoConnect() {
+    // Intentamos registrar el ID global. Si nadie abrió la web antes, nos convertimos en el Host.
+    peer = new Peer(GLOBAL_ROOM_ID, peerConfig);
 
     peer.on('open', (id) => {
         isHost = true;
         state.peerId = id;
-        console.log(`[HOST] Me convertí en servidor de la ${roomId}`);
-        showReconnectOverlay(false);
+        console.log('👑 Me he convertido en el SERVIDOR de la sala global:', id);
         updateUIStatus();
     });
 
     peer.on('error', (err) => {
         if (err.type === 'unavailable-id') {
-            // La sala ya existe, nos unimos como cliente
-            tryJoinAsClient(roomId);
+            // El ID ya está ocupado por otro Host. Nos conectamos automáticamente como clientes.
+            console.log('🌐 Sala global ocupada. Conectándome como cliente al servidor existente...');
+            connectAsAutomaticClient();
         } else {
-            console.warn('Error P2P Host:', err);
-            // Reintentar tras un breve lapso si hay error de red
-            setTimeout(() => tryConnectToRoom(currentRoomIndex), 3000);
+            console.warn('Aviso P2P:', err);
+            // Reintentar en unos segundos si hubo un fallo de red transitorio
+            setTimeout(tryAutoConnect, 4000);
         }
     });
 
+    // Si somos host, esperamos las conexiones de los demás
     peer.on('connection', (conn) => {
-        if (connections.size >= MAX_USERS_PER_ROOM - 1) {
-            conn.on('open', () => {
-                conn.send({ type: 'ROOM_FULL' });
-                setTimeout(() => conn.close(), 500);
-            });
-            return;
-        }
         setupHostConnection(conn);
     });
 }
 
-function tryJoinAsClient(roomId) {
-    isHost = false;
+function connectAsAutomaticClient() {
+    // Destruimos la instancia anterior fallida y creamos un ID aleatorio de cliente
+    if (peer) {
+        try { peer.destroy(); } catch(e) {}
+    }
+
     const clientId = 'client-' + Math.random().toString(36).substring(2, 8);
     state.peerId = clientId;
 
     peer = new Peer(clientId, peerConfig);
 
     peer.on('open', () => {
-        console.log(`[CLIENTE] Conectándome al host de ${roomId}...`);
-        const conn = peer.connect(roomId, { reliable: true });
+        console.log('Mi ID de cliente temporal es:', clientId);
+        // Nos conectamos de forma transparente al Host global fijo
+        const conn = peer.connect(GLOBAL_ROOM_ID, { reliable: true });
         setupClientConnection(conn);
     });
 
     peer.on('error', (err) => {
-        console.warn('Error como cliente:', err);
-        showReconnectOverlay(true);
-        setTimeout(() => tryConnectToRoom(currentRoomIndex), 3000);
+        console.warn('Error al conectar como cliente:', err);
+        // Si el host se cayó justo, reintentamos todo el proceso para ver si nos toca ser host
+        setTimeout(tryAutoConnect, 4000);
     });
 }
 
@@ -113,6 +95,7 @@ function setupHostConnection(conn) {
     connections.set(conn.peer, conn);
 
     conn.on('open', () => {
+        console.log('Nuevo usuario conectado al servidor:', conn.peer);
         state.remotePeers.set(conn.peer, { color: calculatePeerColor(conn.peer) });
         updateUIStatus();
         broadcastPeersList();
@@ -120,6 +103,7 @@ function setupHostConnection(conn) {
     });
 
     conn.on('close', () => {
+        console.log('Usuario desconectado:', conn.peer);
         connections.delete(conn.peer);
         state.remotePeers.delete(conn.peer);
         updateUIStatus();
@@ -129,24 +113,13 @@ function setupHostConnection(conn) {
 }
 
 function setupClientConnection(conn) {
-    hostConnection = conn;
-
     conn.on('open', () => {
-        console.log('¡Conectado al servidor con éxito!');
-        showReconnectOverlay(false);
+        console.log('¡Conectado exitosamente al servidor global!');
         updateUIStatus();
     });
 
-    conn.on('error', (err) => {
-        console.warn('Error en la conexión con el host:', err);
-        showReconnectOverlay(true);
-    });
-
     conn.on('data', (data) => {
-        if (data.type === 'ROOM_FULL') {
-            showReconnectOverlay(true);
-            tryConnectToRoom(currentRoomIndex + 1);
-        } else if (data.type === 'PEERS_UPDATE') {
+        if (data.type === 'PEERS_UPDATE') {
             state.remotePeers.clear();
             data.peers.forEach(pId => {
                 if (pId !== state.peerId) {
@@ -159,13 +132,9 @@ function setupClientConnection(conn) {
     });
 
     conn.on('close', () => {
-        console.warn('⚠️ Se perdió la conexión con el servidor. Reintentando...');
-        showReconnectOverlay(true);
-        
-        // Intentar reclamar el puesto o reconectar tras 2 segundos
-        setTimeout(() => {
-            tryConnectToRoom(currentRoomIndex);
-        }, 2000);
+        console.warn('⚠️ Se perdió la conexión con el servidor. Buscando nuevo servidor...');
+        // Si el servidor se desconecta, intentamos reconectarnos automáticamente (podríamos convertirnos en host nosotros)
+        setTimeout(tryAutoConnect, 2000);
     });
 }
 
