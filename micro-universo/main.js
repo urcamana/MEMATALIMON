@@ -7,7 +7,7 @@ const state = {
     count: 6000,
     speed: 0.015,
     timeDilation: 1.0,
-    particleSize: 0.2,
+    particleSize: 0.4,
     attraction: 0.0,
     mouseAttractionEnabled: true,
     theme: 'cyan',
