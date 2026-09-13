@@ -1,4 +1,4 @@
-// network-swarm.js - Enjambre Colectivo con Cuotas Fijas por Usuario
+// network-swarm.js - Enjambre Colectivo con Control de UI y Densidad Bloqueada en P2P
 
 let peer = null;
 let connections = new Map(); // Para el Host
@@ -25,31 +25,66 @@ function calculatePeerColor(peerId) {
     return new THREE.Color(`hsl(${hue}, 90%, 65%)`);
 }
 
+// Control inteligente de la interfaz gráfica (UI)
 function updateUIStatus() {
+    const counterEl = document.getElementById('p2p-status-text') || document.getElementById('swarm-counter');
+    
+    if (!state.p2pEnabled) {
+        // Si el P2P está apagado, ocultamos por completo el cartel de usuarios
+        if (counterEl) {
+            counterEl.style.display = 'none';
+        }
+        setDensitySelectDisabled(false);
+        return;
+    }
+
+    // Si el P2P está activo, mostramos el contador y calculamos el total
     const totalUsers = isHost ? (connections.size + 1) : (state.remotePeers.size + 1);
-    const statusText = document.getElementById('p2p-status-text');
-    if (statusText) {
-        statusText.innerText = `🟢 ${totalUsers} / 50 usuarios conectados`;
-    } else {
-        const counterEl = document.getElementById('swarm-counter');
-        if (counterEl) counterEl.innerText = `🟢 ${totalUsers} / 50 usuarios conectados`;
+    
+    if (counterEl) {
+        counterEl.style.display = 'block'; // O 'flex' según tu diseño original
+        counterEl.innerText = `🟢 ${totalUsers} / 50 usuarios conectados`;
+    }
+
+    // Bloqueamos la densidad manual para que la mande el P2P
+    setDensitySelectDisabled(true);
+}
+
+// Bloquea o desbloquea el selector de densidad de partículas en el menú lateral
+function setDensitySelectDisabled(disabled) {
+    // Buscamos el selector de densidad por ID o por su etiqueta/clase común en tu app
+    const densitySelect = document.getElementById('particle-density') || 
+                          document.querySelector('select[name="density"]') ||
+                          document.querySelector('.density-select'); // Ajusta el selector si difiere en tu HTML
+                          
+    if (densitySelect) {
+        densitySelect.disabled = disabled;
+        densitySelect.style.opacity = disabled ? '0.5' : '1.0';
+        densitySelect.style.cursor = disabled ? 'not-allowed' : 'pointer';
     }
 }
 
 function showReconnectOverlay(show) {
     const overlay = document.getElementById('reconnect-overlay');
     if (overlay) {
-        overlay.style.display = show ? 'flex' : 'none';
+        overlay.style.display = (show && state.p2pEnabled) ? 'flex' : 'none';
     }
 }
 
 function initP2P() {
-    if (!state.p2pEnabled) return;
+    if (!state.p2pEnabled) {
+        updateUIStatus();
+        if (peer) { try { peer.destroy(); } catch(e) {} }
+        return;
+    }
+    
+    updateUIStatus();
     showReconnectOverlay(false);
     tryAutoConnect();
 }
 
 function tryAutoConnect() {
+    if (!state.p2pEnabled) return;
     if (peer) {
         try { peer.destroy(); } catch(e) {}
     }
@@ -58,6 +93,7 @@ function tryAutoConnect() {
     peer = new Peer(ROOM_NAME, peerConfig);
 
     peer.on('open', (id) => {
+        if (!state.p2pEnabled) return;
         isHost = true;
         state.peerId = id;
         console.log('👑 [HOST] Servidor maestro activo:', id);
@@ -67,6 +103,7 @@ function tryAutoConnect() {
     });
 
     peer.on('error', (err) => {
+        if (!state.p2pEnabled) return;
         if (err.type === 'unavailable-id') {
             connectAsClientNow();
         } else {
@@ -76,11 +113,13 @@ function tryAutoConnect() {
     });
 
     peer.on('connection', (conn) => {
+        if (!state.p2pEnabled) return;
         setupHostConnection(conn);
     });
 }
 
 function connectAsClientNow() {
+    if (!state.p2pEnabled) return;
     if (peer) {
         try { peer.destroy(); } catch(e) {}
     }
@@ -91,12 +130,14 @@ function connectAsClientNow() {
     peer = new Peer(clientId, peerConfig);
 
     peer.on('open', () => {
+        if (!state.p2pEnabled) return;
         console.log('🌐 [CLIENTE] Conectado con ID temporal:', clientId);
         const conn = peer.connect(ROOM_NAME, { reliable: true });
         setupClientConnection(conn);
     });
 
     peer.on('error', (err) => {
+        if (!state.p2pEnabled) return;
         showReconnectOverlay(true);
         setTimeout(tryAutoConnect, 3000);
     });
@@ -175,8 +216,9 @@ function broadcastPeersList() {
     });
 }
 
-// Ajusta el total de partículas dinámicamente según la cantidad de usuarios conectados
+// Ajusta el total de partículas automáticamente según los usuarios conectados en P2P
 function updateParticleCountBasedOnPeers() {
+    if (!state.p2pEnabled) return;
     const totalUsers = isHost ? (connections.size + 1) : (state.remotePeers.size + 1);
     const targetCount = totalUsers * PARTICLES_PER_USER;
     
@@ -184,12 +226,12 @@ function updateParticleCountBasedOnPeers() {
         state.count = targetCount;
         if (typeof buildParticles === 'function') {
             buildParticles();
-            console.log(`✨ [SWARM] Total de usuarios: ${totalUsers}. Partículas ajustadas a: ${state.count}`);
+            console.log(`✨ [SWARM P2P] Total usuarios: ${totalUsers} | Partículas automáticas: ${state.count}`);
         }
     }
 }
 
-// Asigna a cada usuario sus 120 partículas dedicadas con su color correspondiente
+// Asigna las cuotas de color a cada bloque de 120 partículas por usuario
 function applySwarmColorsToBuffer(colorsArray, totalCount, peerMap) {
     if (!state.p2pEnabled || state.mode !== 'swarm') return;
     
@@ -197,7 +239,7 @@ function applySwarmColorsToBuffer(colorsArray, totalCount, peerMap) {
     if (!peers.includes(state.peerId)) {
         peers.push(state.peerId);
     }
-    peers.sort(); // Orden alfabético idéntico en todas las PCs
+    peers.sort();
 
     peers.forEach((pId, index) => {
         const startIdx = index * PARTICLES_PER_USER;
