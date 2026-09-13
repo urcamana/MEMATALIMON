@@ -1,4 +1,4 @@
-// network-swarm.js - P2P Avanzado con Sincronización de Posiciones y Colmena Unificada
+// network-swarm.js - Enjambre Colectivo con Cuotas Fijas por Usuario
 
 let peer = null;
 let connections = new Map(); // Para el Host
@@ -6,6 +6,7 @@ let hostConnection = null;   // Para el Cliente
 let isHost = false;
 
 const ROOM_NAME = "micro-universo-swarm-2026";
+const PARTICLES_PER_USER = 120; // Cada usuario aporta exactamente 120 partículas
 
 const peerConfig = {
     config: {
@@ -62,7 +63,7 @@ function tryAutoConnect() {
         console.log('👑 [HOST] Servidor maestro activo:', id);
         showReconnectOverlay(false);
         updateUIStatus();
-        triggerVisualUpdate();
+        updateParticleCountBasedOnPeers();
     });
 
     peer.on('error', (err) => {
@@ -106,24 +107,16 @@ function setupHostConnection(conn) {
 
     conn.on('open', () => {
         console.log('👤 [HOST] Peer conectado:', conn.peer);
-        state.remotePeers.set(conn.peer, { color: calculatePeerColor(conn.peer), cursor: {x:0, y:0} });
+        state.remotePeers.set(conn.peer, { color: calculatePeerColor(conn.peer) });
         showReconnectOverlay(false);
         updateUIStatus();
         broadcastPeersList();
-        triggerVisualUpdate();
+        updateParticleCountBasedOnPeers();
     });
 
     conn.on('data', (data) => {
         if (data.type === 'REQUEST_SYNC') {
             broadcastPeersList();
-        } else if (data.type === 'CURSOR_MOVE') {
-            // Actualizamos la posición del cursor remoto en el host
-            const peerData = state.remotePeers.get(data.peerId);
-            if (peerData) {
-                peerData.cursor = data.cursor;
-            }
-            // Reenviamos el movimiento del cursor a los demás clientes
-            broadcastCursorMove(data.peerId, data.cursor);
         }
     });
 
@@ -132,7 +125,7 @@ function setupHostConnection(conn) {
         state.remotePeers.delete(conn.peer);
         updateUIStatus();
         broadcastPeersList();
-        triggerVisualUpdate();
+        updateParticleCountBasedOnPeers();
     });
 }
 
@@ -151,17 +144,12 @@ function setupClientConnection(conn) {
             state.remotePeers.clear();
             data.peers.forEach(pId => {
                 if (pId !== state.peerId) {
-                    state.remotePeers.set(pId, { color: calculatePeerColor(pId), cursor: {x:0, y:0} });
+                    state.remotePeers.set(pId, { color: calculatePeerColor(pId) });
                 }
             });
             showReconnectOverlay(false);
             updateUIStatus();
-            triggerVisualUpdate();
-        } else if (data.type === 'CURSOR_MOVE') {
-            const peerData = state.remotePeers.get(data.peerId);
-            if (peerData) {
-                peerData.cursor = data.cursor;
-            }
+            updateParticleCountBasedOnPeers();
         }
     });
 
@@ -170,6 +158,7 @@ function setupClientConnection(conn) {
         state.remotePeers.clear();
         showReconnectOverlay(true);
         updateUIStatus();
+        updateParticleCountBasedOnPeers();
         setTimeout(tryAutoConnect, 3000);
     });
 }
@@ -186,32 +175,21 @@ function broadcastPeersList() {
     });
 }
 
-function broadcastCursorMove(peerId, cursor) {
-    if (!isHost) return;
-    connections.forEach((conn, id) => {
-        if (id !== peerId && conn.open) {
-            conn.send({ type: 'CURSOR_MOVE', peerId, cursor });
+// Ajusta el total de partículas dinámicamente según la cantidad de usuarios conectados
+function updateParticleCountBasedOnPeers() {
+    const totalUsers = isHost ? (connections.size + 1) : (state.remotePeers.size + 1);
+    const targetCount = totalUsers * PARTICLES_PER_USER;
+    
+    if (state.count !== targetCount) {
+        state.count = targetCount;
+        if (typeof buildParticles === 'function') {
+            buildParticles();
+            console.log(`✨ [SWARM] Total de usuarios: ${totalUsers}. Partículas ajustadas a: ${state.count}`);
         }
-    });
-}
-
-// Función global para que tu app principal pueda enviar la posición de su cursor a la red P2P
-window.sendMyCursor = function(x, y) {
-    const payload = { type: 'CURSOR_MOVE', peerId: state.peerId, cursor: {x, y} };
-    if (isHost) {
-        connections.forEach((conn) => { if (conn.open) conn.send(payload); });
-    } else if (hostConnection && hostConnection.open) {
-        hostConnection.send(payload);
-    }
-};
-
-function triggerVisualUpdate() {
-    if (typeof buildParticles === 'function') {
-        buildParticles();
     }
 }
 
-// Asignación inteligente de colores al búfer para garantizar visibilidad total
+// Asigna a cada usuario sus 120 partículas dedicadas con su color correspondiente
 function applySwarmColorsToBuffer(colorsArray, totalCount, peerMap) {
     if (!state.p2pEnabled || state.mode !== 'swarm') return;
     
@@ -219,16 +197,14 @@ function applySwarmColorsToBuffer(colorsArray, totalCount, peerMap) {
     if (!peers.includes(state.peerId)) {
         peers.push(state.peerId);
     }
-    peers.sort();
-
-    const totalParties = peers.length;
-    const chunkSize = Math.floor(totalCount / totalParties);
+    peers.sort(); // Orden alfabético idéntico en todas las PCs
 
     peers.forEach((pId, index) => {
-        const startIdx = index * chunkSize;
-        // Aseguramos que el último usuario abarque hasta el final exacto del array (reparando el bug de las 50 partículas)
-        const endIdx = (index === totalParties - 1) ? totalCount : startIdx + chunkSize;
+        const startIdx = index * PARTICLES_PER_USER;
+        const endIdx = Math.min(startIdx + PARTICLES_PER_USER, totalCount);
         
+        if (startIdx >= totalCount) return;
+
         const c = (pId === state.peerId) 
             ? calculatePeerColor(state.peerId) 
             : (peerMap.get(pId)?.color || calculatePeerColor(pId));
