@@ -59,18 +59,24 @@ function calculateAttractorVector(x, y, z, mode, originalPos, attractionFactor, 
 // Reemplaza tu case 'swarm' actual en attractors.js por este:
 case 'swarm': {
     const time = performance.now() * 0.001;
-    const activePeers = (typeof state !== 'undefined' && state.remotePeers) ? state.remotePeers.size + 1 : 1;
-    const clusterIndex = (typeof particleIndex !== 'undefined' ? particleIndex : 0) % Math.max(1, activePeers);
-    const angleOffset = clusterIndex * ((Math.PI * 2) / Math.max(1, activePeers));
     const orbitRadius = 4.0;
     
-    const cx = Math.cos(time * 0.6 + angleOffset) * orbitRadius;
-    const cz = Math.sin(time * 0.6 + angleOffset) * orbitRadius;
-    const cy = Math.sin(time * 1.2 + clusterIndex) * 1.5;
+    // Centro orbital base
+    let cx = Math.cos(time * 0.6) * orbitRadius;
+    let cz = Math.sin(time * 0.6) * orbitRadius;
+    let cy = Math.sin(time * 1.2) * 1.5;
     
-    dx = (cx - x) * 0.03;
-    dy = (cy - y) * 0.03;
-    dz = (cz - z) * 0.03;
+    // Si el mouse 3D está activo, desplaza fuertemente el centro orbital
+    if (window.mouse3D && window.mouse3D.active) {
+        const pull = 0.15 * Math.max(0.5, attractionFactor || 1.0);
+        cx += (window.mouse3D.x - cx) * pull;
+        cy += (window.mouse3D.y - cy) * pull;
+        cz += (window.mouse3D.z - cz) * pull;
+    }
+    
+    dx = (cx - x) * 0.08;
+    dy = (cy - y) * 0.08;
+    dz = (cz - z) * 0.08;
     break;
 }
         case 'lorenz': {

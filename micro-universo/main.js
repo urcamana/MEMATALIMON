@@ -221,11 +221,12 @@ function updatePhysics() {
         const origPos = { x: originalPositions[idx], y: originalPositions[idx+1], z: originalPositions[idx+2] };
         const targPos = { x: targetPositions[idx], y: targetPositions[idx+1], z: targetPositions[idx+2] };
 
-        let vector = { dx: 0, dy: 0, dz: 0 };
-        if (typeof calculateAttractorVector === 'function') {
-let vector = calculateAttractorVector(x, y, z, state.mode, origPos, attractionFactor, targPos);        }
+let vector = { dx: 0, dy: 0, dz: 0 };
+if (typeof calculateAttractorVector === 'function') {
+    vector = calculateAttractorVector(x, y, z, state.mode, origPos, attractionFactor, targPos);
+}
 
-        let dx = vector.dx + camFlow.x;
+let dx = vector.dx + camFlow.x;
         let dy = vector.dy + camFlow.y;
         let dz = vector.dz;
 
