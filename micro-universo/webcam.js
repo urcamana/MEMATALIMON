@@ -7,6 +7,7 @@ let videoElement = null;
 let webcamCanvas = null, webcamCtx = null;
 let webcamActive = false;
 let opticalVector = { x: 0, y: 0 };
+let webcamSensitivity = 1.8;
 
 async function initWebcamTracking() {
     if (!videoElement) {
@@ -60,8 +61,8 @@ function analyzeWebcamMotion() {
 
         if (count > 10) {
             // High amplification factor (1.8) so movement is clearly visible on screen
-            opticalVector.x = (diffX / count) * 1.8;
-            opticalVector.y = -(diffY / count) * 1.8;
+            opticalVector.x = (diffX / count) * webcamSensitivity;
+            opticalVector.y = -(diffY / count) * webcamSensitivity;
         } else {
             opticalVector.x *= 0.85;
             opticalVector.y *= 0.85;
@@ -75,3 +76,5 @@ function analyzeWebcamMotion() {
 function getOpticalFlowVector() {
     return opticalVector;
 }
+function setWebcamSensitivity(value) { webcamSensitivity = Math.max(0, Number(value) || 0); }
+window.setWebcamSensitivity = setWebcamSensitivity;

@@ -6,7 +6,7 @@ let hostConnection = null;   // Para el Cliente
 let isHost = false;
 
 const ROOM_NAME = "micro-universo-swarm-2026";
-const PARTICLES_PER_USER = 120; // Cada usuario aporta exactamente 120 partículas
+const MAX_USERS = 50; // Límite de usuarios; la cantidad de partículas es global.
 
 const peerConfig = {
     config: {
@@ -39,11 +39,30 @@ function updateUIStatus() {
     }
 
     // Si el P2P está activo, mostramos el contador y calculamos el total
-    const totalUsers = isHost ? (connections.size + 1) : (state.remotePeers.size + 1);
+    const totalUsers = isHost ? (connections.size + 1) : Math.max(1, state.remotePeers.size + 1);
     
     if (counterEl) {
         counterEl.style.display = 'block'; // O 'flex' según tu diseño original
         counterEl.innerText = `🟢 ${totalUsers} / 50 usuarios conectados`;
+        const top = document.getElementById('connectedUsersVal');
+        if (top) top.innerText = `${totalUsers} / 50`;
+        const topPower = document.getElementById('topPowerVal');
+        if (topPower && window.SwarmAgents) { const r = window.SwarmAgents.getRoleById(window.SwarmAgents.getAgentState().role); topPower.innerText = `${r.icon} ${r.name}`; }
+    }
+
+    // Lista compacta de jugadores/poderes. Se actualiza con el roster sincronizado.
+    const rosterEl = document.getElementById('p2pRoster');
+    if (rosterEl && window.SwarmAgents) {
+        const roster = getAgentRoster();
+        const ids = Object.keys(roster).sort();
+        rosterEl.innerHTML = ids.map((id) => {
+            const agent = roster[id] || {};
+            const role = window.SwarmAgents.getRoleById(agent.role);
+            const label = id === state.peerId ? 'Tú' : `Jugador ${Math.max(1, ids.indexOf(id) + 1)}`;
+            const active = agent.cursor?.active ? '●' : '○';
+            const energy = Math.round(Number(agent.energy) || 0);
+            return `<div style="display:flex;justify-content:space-between;gap:6px;line-height:1.45;"><span>${active} ${label}</span><span>${role.icon} ${role.name} · ${energy}%</span></div>`;
+        }).join('');
     }
 
     // Bloqueamos la densidad manual para que la mande el P2P
@@ -53,7 +72,7 @@ function updateUIStatus() {
 // Bloquea o desbloquea el selector de densidad de partículas en el menú lateral
 function setDensitySelectDisabled(disabled) {
     // Buscamos el selector de densidad por ID o por su etiqueta/clase común en tu app
-    const densitySelect = document.getElementById('particle-density') || 
+    const densitySelect = document.getElementById('particleDensity') || 
                           document.querySelector('select[name="density"]') ||
                           document.querySelector('.density-select'); // Ajusta el selector si difiere en tu HTML
                           
@@ -80,6 +99,7 @@ function initP2P() {
     
     updateUIStatus();
     showReconnectOverlay(false);
+    if (window.SwarmAgents) window.SwarmAgents.ensureLocalRole(false);
     tryAutoConnect();
 }
 
@@ -144,6 +164,7 @@ function connectAsClientNow() {
 }
 
 function setupHostConnection(conn) {
+    if (connections.size >= MAX_USERS - 1) { try { conn.close(); } catch (e) {} return; }
     connections.set(conn.peer, conn);
 
     conn.on('open', () => {
@@ -158,6 +179,10 @@ function setupHostConnection(conn) {
     conn.on('data', (data) => {
         if (data.type === 'REQUEST_SYNC') {
             broadcastPeersList();
+        } else if (data.type === 'AGENT_STATE') {
+            const info = state.remotePeers.get(conn.peer) || { color: calculatePeerColor(conn.peer) };
+            info.agent = data.agent;
+            state.remotePeers.set(conn.peer, info);
         }
     });
 
@@ -183,9 +208,12 @@ function setupClientConnection(conn) {
     conn.on('data', (data) => {
         if (data.type === 'PEERS_UPDATE') {
             state.remotePeers.clear();
+            if (data.agents) { state.remoteAgents = data.agents || {}; }
             data.peers.forEach(pId => {
                 if (pId !== state.peerId) {
-                    state.remotePeers.set(pId, { color: calculatePeerColor(pId) });
+                    const info = state.remotePeers.get(pId) || { color: calculatePeerColor(pId) };
+                    if (state.remoteAgents && state.remoteAgents[pId]) info.agent = state.remoteAgents[pId];
+                    state.remotePeers.set(pId, info);
                 }
             });
             showReconnectOverlay(false);
@@ -204,6 +232,13 @@ function setupClientConnection(conn) {
     });
 }
 
+function getAgentRoster() {
+    const roster = {};
+    if (state.peerId && window.SwarmAgents) roster[state.peerId] = window.SwarmAgents.getAgentState();
+    state.remotePeers.forEach((peerInfo, id) => { if (peerInfo.agent) roster[id] = peerInfo.agent; });
+    return roster;
+}
+
 function broadcastPeersList() {
     if (!isHost) return;
     const peerIds = Array.from(connections.keys());
@@ -211,54 +246,53 @@ function broadcastPeersList() {
     
     connections.forEach((conn) => {
         if (conn.open) {
-            conn.send({ type: 'PEERS_UPDATE', peers: peerIds });
+            conn.send({ type: 'PEERS_UPDATE', peers: peerIds, agents: getAgentRoster() });
         }
     });
 }
 
 // Ajusta el total de partículas automáticamente según los usuarios conectados en P2P
 function updateParticleCountBasedOnPeers() {
-    if (!state.p2pEnabled) return;
-    const totalUsers = isHost ? (connections.size + 1) : (state.remotePeers.size + 1);
-    const targetCount = totalUsers * PARTICLES_PER_USER;
-    
-    if (state.count !== targetCount) {
-        state.count = targetCount;
-        if (typeof buildParticles === 'function') {
-            buildParticles();
-            console.log(`✨ [SWARM P2P] Total usuarios: ${totalUsers} | Partículas automáticas: ${state.count}`);
-        }
-    }
+    // Intentionally empty: P2P shares ONE fixed-size universe.
+    // Never rebuild or multiply the particle count because users joined.
 }
 
-// Asigna las cuotas de color a cada bloque de 120 partículas por usuario
 function applySwarmColorsToBuffer(colorsArray, totalCount, peerMap) {
-    if (!state.p2pEnabled || state.mode !== 'swarm') return;
-    
-    const peers = Array.from(peerMap.keys());
-    if (!peers.includes(state.peerId)) {
-        peers.push(state.peerId);
-    }
-    peers.sort();
-
-    peers.forEach((pId, index) => {
-        const startIdx = index * PARTICLES_PER_USER;
-        const endIdx = Math.min(startIdx + PARTICLES_PER_USER, totalCount);
-        
-        if (startIdx >= totalCount) return;
-
-        const c = (pId === state.peerId) 
-            ? calculatePeerColor(state.peerId) 
-            : (peerMap.get(pId)?.color || calculatePeerColor(pId));
-        
-        for (let i = startIdx; i < endIdx; i++) {
-            colorsArray[i * 3]     = c.r;
-            colorsArray[i * 3 + 1] = c.g;
-            colorsArray[i * 3 + 2] = c.b;
-        }
-    });
+    // Keep the universe's normal palette. Per-user coloring belongs to the
+    // future agent layer and must not change particle density or core rendering.
 }
+
+
+function broadcastAgentState() {
+    if (!state.p2pEnabled || !window.SwarmAgents) return;
+    const agent = window.SwarmAgents.getAgentState();
+    if (isHost) {
+        if (state.peerId) { const me = state.remotePeers.get(state.peerId) || {}; me.agent = agent; state.remotePeers.set(state.peerId, me); }
+        broadcastPeersList();
+    } else if (hostConnection && hostConnection.open) {
+        hostConnection.send({ type: 'AGENT_STATE', agent });
+    }
+}
+
+function stopP2P() {
+    if (peer) {
+        try { peer.destroy(); } catch (e) {}
+    }
+    peer = null;
+    hostConnection = null;
+    connections.clear();
+    isHost = false;
+    if (typeof state !== 'undefined' && state.remotePeers) state.remotePeers.clear();
+    if (typeof state !== 'undefined') state.remoteAgents = {};
+    showReconnectOverlay(false);
+    updateUIStatus();
+}
+
+window.stopP2P = stopP2P;
 
 window.initP2P = initP2P;
 window.applySwarmColorsToBuffer = applySwarmColorsToBuffer;
 window.calculatePeerColor = calculatePeerColor;
+setInterval(() => { if (typeof state !== 'undefined' && state.p2pEnabled) broadcastAgentState(); }, 100);
+setInterval(() => { if (typeof state !== 'undefined' && state.p2pEnabled && isHost) broadcastPeersList(); }, 100);
+window.broadcastAgentState = broadcastAgentState;

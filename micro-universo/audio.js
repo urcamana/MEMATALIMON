@@ -1,5 +1,5 @@
-// audio.js
-export class AudioReactive {
+// audio.js - Reactive audio helper (classic script)
+class AudioReactive {
     constructor() {
         this.analyser = null;
         this.dataArray = null;
@@ -17,7 +17,8 @@ export class AudioReactive {
         if (!this.analyser) return 0;
         this.analyser.getByteFrequencyData(this.dataArray);
         let sum = 0;
-        for (let i = 0; i < 4; i++) sum += this.dataArray[i]; // Primeras 4 bandas = graves
+        for (let i = 0; i < 4; i++) sum += this.dataArray[i];
         return (sum / 4) / 255.0;
     }
 }
+window.AudioReactive = AudioReactive;
