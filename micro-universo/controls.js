@@ -5,9 +5,51 @@
 
 window.mouse3D = { x: 0, y: 0, z: 0, active: false };
 
+function updateMouse3DFromEvent(e, domElement, camera) {
+    const rect = domElement.getBoundingClientRect();
+    const mouseNormX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    const mouseNormY = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+    window.mouseScreen = { x: mouseNormX, y: mouseNormY, active: true };
+
+    const targetCenter = camera.positionCenter || new THREE.Vector3(0, 0, 0);
+    const camDir = new THREE.Vector3();
+    camera.getWorldDirection(camDir);
+    const plane = new THREE.Plane().setFromNormalAndCoplanarPoint(camDir, targetCenter);
+    const raycaster = new THREE.Raycaster();
+    raycaster.setFromCamera(new THREE.Vector2(mouseNormX, mouseNormY), camera);
+    const hitPoint = new THREE.Vector3();
+
+    // En Multiplayer primero intentamos localizar una partícula realmente visible
+    // bajo el cursor. Esto evita que el poder se aplique en un plano 3D distinto
+    // al que el usuario está viendo al hacer zoom.
+    let particleHit = null;
+    if (typeof state !== 'undefined' && state.p2pEnabled && window.particleSystem) {
+        const particleRaycaster = new THREE.Raycaster();
+        particleRaycaster.setFromCamera(new THREE.Vector2(mouseNormX, mouseNormY), camera);
+        particleRaycaster.params.Points.threshold = Math.max(0.65, (window.particleVisualSize || 0.8) * 1.6);
+        const hits = particleRaycaster.intersectObject(window.particleSystem, false);
+        if (hits && hits.length) particleHit = hits[0];
+    }
+
+    if (particleHit && particleHit.point) {
+        hitPoint.copy(particleHit.point);
+    } else {
+        const hit = raycaster.ray.intersectPlane(plane, hitPoint);
+        if (!hit || !Number.isFinite(hitPoint.x)) {
+            const dist = camera.position.distanceTo(targetCenter);
+            raycaster.ray.at(Math.max(dist, 10), hitPoint);
+        }
+    }
+    window.mouse3D.x = Number.isFinite(hitPoint.x) ? hitPoint.x : 0;
+    window.mouse3D.y = Number.isFinite(hitPoint.y) ? hitPoint.y : 0;
+    window.mouse3D.z = Number.isFinite(hitPoint.z) ? hitPoint.z : 0;
+}
+
 function setupControls(camera, domElement, onDoubleClickSupernova) {
     let isLeftDragging = false;
+    let isMiddleDragging = false;
     let isRightDragging = false;
+    let powerMouseDown = false;
     let previousMousePosition = { x: 0, y: 0 };
     
     // Center point that camera looks at (used for panning & orbit)
@@ -21,52 +63,52 @@ function setupControls(camera, domElement, onDoubleClickSupernova) {
     domElement.addEventListener('contextmenu', (e) => e.preventDefault());
 
     domElement.addEventListener('mousedown', (e) => {
-        if (e.button === 0) { // Left click -> Orbit rotation
-            isLeftDragging = true;
+        previousMousePosition = { x: e.clientX, y: e.clientY };
+
+        if (e.button === 0) {
+            // Botón izquierdo: interacción con partículas SOLO cuando la atracción/repulsión
+            // está activada. La cámara nunca usa el izquierdo.
+            if (typeof state !== 'undefined' && state.p2pEnabled) {
+                isLeftDragging = false;
+                powerMouseDown = true;
+                updateMouse3DFromEvent(e, domElement, camera);
+                window.mouse3D.active = true;
+                if (window.SwarmAgents && typeof window.SwarmAgents.activatePower === 'function') {
+                    window.SwarmAgents.activatePower();
+                }
+                return;
+            }
+            if (typeof state !== 'undefined' && state.mouseAttractionEnabled) {
+                powerMouseDown = true;
+                updateMouse3DFromEvent(e, domElement, camera);
+                window.mouse3D.active = true;
+            }
+        } else if (e.button === 1) { // Botón central -> rotar cámara en TODOS los modos
+            isMiddleDragging = true;
         } else if (e.button === 2) { // Right click -> Pan (X/Y translation)
             isRightDragging = true;
         }
-        previousMousePosition = { x: e.clientX, y: e.clientY };
     });
 
 domElement.addEventListener('mousemove', (e) => {
-    const rect = domElement.getBoundingClientRect();
-    const mouseNormX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-    const mouseNormY = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-
-    window.mouseScreen = { x: mouseNormX, y: mouseNormY, active: true };
-
-    const targetCenter = camera.positionCenter || new THREE.Vector3(0, 0, 0);
-    const camDir = new THREE.Vector3();
-    camera.getWorldDirection(camDir);
-    
-    const plane = new THREE.Plane().setFromNormalAndCoplanarPoint(camDir, targetCenter);
-    const tempRaycaster = new THREE.Raycaster();
-    tempRaycaster.setFromCamera(new THREE.Vector2(mouseNormX, mouseNormY), camera);
-    
-    const hitPoint = new THREE.Vector3();
-    const hit = tempRaycaster.ray.intersectPlane(plane, hitPoint);
-    
-    if (hit && Number.isFinite(hitPoint.x)) {
-        window.mouse3D.x = hitPoint.x;
-        window.mouse3D.y = hitPoint.y;
-        window.mouse3D.z = hitPoint.z;
+    updateMouse3DFromEvent(e, domElement, camera);
+    // Las coordenadas se actualizan siempre, pero la fuerza solo se activa mientras
+    // se mantiene presionado el botón izquierdo (o el poder multiplayer).
+    if (typeof state !== 'undefined' && state.p2pEnabled) {
+        window.mouse3D.active = powerMouseDown;
     } else {
-        const dist = camera.position.distanceTo(targetCenter);
-        tempRaycaster.ray.at(Math.max(dist, 10), hitPoint);
-        window.mouse3D.x = Number.isFinite(hitPoint.x) ? hitPoint.x : 0;
-        window.mouse3D.y = Number.isFinite(hitPoint.y) ? hitPoint.y : 0;
-        window.mouse3D.z = Number.isFinite(hitPoint.z) ? hitPoint.z : 0;
+        window.mouse3D.active = powerMouseDown && !!state?.mouseAttractionEnabled;
     }
-    window.mouse3D.active = true;
 
-    // Manejar arrastre (orbit / pan)
-    if (!isLeftDragging && !isRightDragging) return;
+    // Manejar arrastre (orbit / pan). En Multiplayer: izquierdo=poder, central=cámara.
+    if (typeof state !== 'undefined' && state.p2pEnabled) {
+        if (!isMiddleDragging && !isRightDragging) return;
+    } else if (!isLeftDragging && !isMiddleDragging && !isRightDragging) return;
 
     const deltaX = e.clientX - previousMousePosition.x;
     const deltaY = e.clientY - previousMousePosition.y;
 
-    if (isLeftDragging) {
+    if (isLeftDragging || isMiddleDragging) {
         const radius = camera.position.distanceTo(camera.positionCenter);
         let theta = Math.atan2(camera.position.x - camera.positionCenter.x, camera.position.z - camera.positionCenter.z);
         let phi = Math.acos(Math.max(-1, Math.min(1, (camera.position.y - camera.positionCenter.y) / radius)));
@@ -96,9 +138,22 @@ domElement.addEventListener('mousemove', (e) => {
     previousMousePosition = { x: e.clientX, y: e.clientY };
 });
 
-    window.addEventListener('mouseup', () => { 
-        isLeftDragging = false; 
-        isRightDragging = false; 
+    window.addEventListener('mouseup', (e) => { 
+        if (e.button === 0) {
+            isLeftDragging = false;
+            if (typeof state !== 'undefined' && state.p2pEnabled && powerMouseDown) {
+                powerMouseDown = false;
+                window.mouse3D.active = false;
+                if (window.SwarmAgents && typeof window.SwarmAgents.deactivatePower === 'function') {
+                    window.SwarmAgents.deactivatePower();
+                }
+            } else {
+                powerMouseDown = false;
+                window.mouse3D.active = false;
+            }
+        }
+        if (e.button === 1) isMiddleDragging = false;
+        if (e.button === 2) isRightDragging = false;
     });
 
     domElement.addEventListener('mouseleave', () => { 
@@ -121,9 +176,7 @@ domElement.addEventListener('mousemove', (e) => {
         }
     }, { passive: false });
 
-    domElement.addEventListener('dblclick', () => {
-        if (typeof onDoubleClickSupernova === 'function') {
-            onDoubleClickSupernova();
-        }
-    });
+    // Doble click ya no dispara explosión/supernova.
+    // Se reserva para interacción futura del laboratorio multiplayer.
+
 }

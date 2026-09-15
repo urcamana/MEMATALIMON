@@ -32,7 +32,7 @@ function calculateAttractorVector(x, y, z, mode, originalPos, attractionFactor, 
 
     // Amplified mouse interaction influence (multiplied range for intense push/pull)
     let mouseDx = 0, mouseDy = 0, mouseDz = 0;
-    if (window.mouse3D && window.mouse3D.active) {
+    if (window.mouse3D && window.mouse3D.active && typeof state !== 'undefined' && state.mouseAttractionEnabled !== false) {
         const mDistX = window.mouse3D.x - x;
         const mDistY = window.mouse3D.y - y;
         const mDistZ = window.mouse3D.z - z;
@@ -59,24 +59,29 @@ function calculateAttractorVector(x, y, z, mode, originalPos, attractionFactor, 
 // Reemplaza tu case 'swarm' actual en attractors.js por este:
 case 'swarm': {
     const time = performance.now() * 0.001;
-    const orbitRadius = 4.0;
-    
-    // Centro orbital base
-    let cx = Math.cos(time * 0.6) * orbitRadius;
-    let cz = Math.sin(time * 0.6) * orbitRadius;
-    let cy = Math.sin(time * 1.2) * 1.5;
-    
-    // Si el mouse 3D está activo, desplaza fuertemente el centro orbital
-    if (window.mouse3D && window.mouse3D.active) {
-        const pull = 0.15 * Math.max(0.5, attractionFactor || 1.0);
-        cx += (window.mouse3D.x - cx) * pull;
-        cy += (window.mouse3D.y - cy) * pull;
-        cz += (window.mouse3D.z - cz) * pull;
+    // En Multiplayer no hay fuerza de retorno al centro: el universo queda abierto.
+    // Se conserva únicamente un campo orbital suave para que las partículas no queden estáticas.
+    if (typeof state !== 'undefined' && state.p2pEnabled) {
+        const tangential = 0.018;
+        const vertical = 0.0025;
+        dx = -y * tangential + Math.sin(z * 0.06 + time * 0.8) * vertical;
+        dy =  x * tangential + Math.cos(z * 0.05 - time * 0.6) * vertical;
+        dz = Math.sin((x + y) * 0.035 + time) * vertical;
+    } else {
+        const orbitRadius = 4.0;
+        let cx = Math.cos(time * 0.6) * orbitRadius;
+        let cz = Math.sin(time * 0.6) * orbitRadius;
+        let cy = Math.sin(time * 1.2) * 1.5;
+        if (window.mouse3D && window.mouse3D.active && typeof state !== 'undefined' && state.mouseAttractionEnabled !== false) {
+            const pull = 0.15 * Math.max(0.5, attractionFactor || 1.0);
+            cx += (window.mouse3D.x - cx) * pull;
+            cy += (window.mouse3D.y - cy) * pull;
+            cz += (window.mouse3D.z - cz) * pull;
+        }
+        dx = (cx - x) * 0.08;
+        dy = (cy - y) * 0.08;
+        dz = (cz - z) * 0.08;
     }
-    
-    dx = (cx - x) * 0.08;
-    dy = (cy - y) * 0.08;
-    dz = (cz - z) * 0.08;
     break;
 }
         case 'lorenz': {
@@ -119,6 +124,72 @@ case 'swarm': {
             dx = y - p1 * x + q * y * z;
             dy = r * y - x * z + z;
             dz = s * x * y - e * z;
+            break;
+        }
+        case 'blackHole': {
+            // Agujero negro: espiral de acreción estable.
+            // La fuerza combina caída radial + velocidad tangencial alrededor del eje Y.
+            // Se mantiene suficiente tiempo en el disco para que la espiral sea visible.
+            const rawR2 = x*x + y*y + z*z;
+            const r = Math.sqrt(rawR2) + 0.0001;
+            const softR = r + 2.6;
+
+            // Caída hacia el horizonte: más intensa al acercarse, pero suave a distancia.
+            const radial = 5.6 / softR;
+
+            // Rotación orbital: genera la trayectoria helicoidal/espiral.
+            // El eje de giro es Y; el disco de acreción vive principalmente en XZ.
+            const tangential = 8.8 / (r + 3.0);
+
+            // Compresión vertical suave hacia el plano ecuatorial del disco.
+            const vertical = 0.055 + 0.12 / (r + 2.0);
+
+            // Vector radial horizontal (plano XZ) y tangente horizontal.
+            const hR = Math.sqrt(x*x + z*z) + 0.0001;
+            const rx = x / hR;
+            const rz = z / hR;
+            const tx = -z / hR;
+            const tz = x / hR;
+
+            dx = -rx * radial + tx * tangential;
+            dz = -rz * radial + tz * tangential;
+            dy = -y * vertical;
+
+            // Cerca del horizonte, la caída aumenta progresivamente.
+            if (r < 3.2) {
+                const capture = (3.2 - r) * 0.95;
+                dx += -rx * capture;
+                dz += -rz * capture;
+                dy += -y * capture * 0.45;
+            }
+            break;
+        }
+        case 'doubleVortex': {
+            const c = x >= 0 ? 5.0 : -5.0;
+            const lx = x - c;
+            const r2 = lx*lx + y*y + z*z + 1.2;
+            dx = -lx * 1.2 - y * (2.0 / r2);
+            dy = -y * 1.2 + lx * (2.0 / r2);
+            dz = -z * 0.7 + Math.sin(x * 0.35) * 0.5;
+            break;
+        }
+        case 'harmonic': {
+            dx = -0.9 * x + Math.sin(y * 1.4) * 1.4;
+            dy = -0.9 * y + Math.sin(z * 1.2) * 1.4;
+            dz = -0.9 * z + Math.sin(x * 1.1) * 1.4;
+            break;
+        }
+        case 'plasma': {
+            const r = Math.sqrt(x*x + y*y + z*z) + 0.001;
+            dx = Math.sin(y * 0.65 + z * 0.25) * 2.2 - x * 0.055;
+            dy = Math.cos(z * 0.55 + x * 0.22) * 2.2 - y * 0.055;
+            dz = Math.sin(x * 0.45 + y * 0.3) * 2.2 - z * 0.045 + Math.sin(r) * 0.35;
+            break;
+        }
+        case 'strange': {
+            dx = Math.sin(y) * 1.8 - x * 0.12;
+            dy = Math.sin(z) * 1.8 - y * 0.12;
+            dz = Math.sin(x) * 1.8 - z * 0.12 + Math.sin(x*y*0.12) * 0.8;
             break;
         }
         case 'navierStokes': { // Stable simplified pseudo-fluid vortex

@@ -183,3 +183,85 @@ input[type="range"]::-webkit-slider-thumb {
     background: rgba(0, 255, 204, 0.35);
     box-shadow: 0 0 8px rgba(0, 255, 204, 0.5);
 }
+#canvas-container canvas { display:block; width:100%; height:100%; }
+
+/* Camera Lab: isolated HUD; no impact on the canvas or particle engine. */
+#cameraLabGizmo {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  width: 174px;
+  padding: 8px;
+  z-index: 20;
+  border: 1px solid rgba(0,255,204,.28);
+  border-radius: 8px;
+  background: rgba(2,4,12,.82);
+  backdrop-filter: blur(5px);
+  box-sizing: border-box;
+  font-family: monospace;
+  pointer-events: auto;
+}
+#cameraLabGizmo .camera-lab-title {
+  color: #00ffcc;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  margin-bottom: 2px;
+}
+#cameraLabCanvas { display:block; width:150px; height:150px; }
+#cameraLabGizmo .camera-lab-readout {
+  color: rgba(255,255,255,.72);
+  font-size: 9px;
+  white-space: nowrap;
+  margin: 2px 0 6px;
+}
+#cameraLabReset {
+  width: 100%;
+  padding: 5px 7px;
+  color: #00ffcc;
+  background: rgba(0,255,204,.06);
+  border: 1px solid rgba(0,255,204,.35);
+  border-radius: 4px;
+  cursor: pointer;
+  font: 10px monospace;
+}
+@media (max-width: 700px) {
+  #cameraLabGizmo { right: 8px; bottom: 8px; transform: scale(.82); transform-origin: bottom right; }
+}
+
+/* Observatory Lab — isolated camera/field inspector */
+#observatoryPanel {
+  position: fixed;
+  right: 204px;
+  bottom: 16px;
+  width: 250px;
+  z-index: 20;
+  padding: 9px;
+  border: 1px solid rgba(0,255,204,.25);
+  border-radius: 8px;
+  background: rgba(2,4,12,.84);
+  backdrop-filter: blur(6px);
+  color: #dff;
+  font-family: monospace;
+  font-size: 9px;
+  pointer-events: auto;
+}
+#observatoryPanel .observatory-title { color:#00ffcc; letter-spacing:1.5px; margin-bottom:6px; font-size:10px; }
+#observatoryPanel .obs-grid { display:grid; grid-template-columns:auto 1fr auto 1fr; gap:3px 7px; align-items:center; }
+#observatoryPanel .obs-grid span { color:#8aa; }
+#observatoryPanel .obs-grid b { color:#00ffcc; text-align:right; font-weight:500; }
+#observatoryPanel .obs-target { margin-top:6px; padding-top:5px; border-top:1px solid rgba(0,255,204,.12); color:#9ac; }
+#observatoryPanel .obs-actions { display:flex; gap:5px; margin-top:7px; }
+#observatoryPanel button { flex:1; padding:5px; color:#00ffcc; background:rgba(0,255,204,.05); border:1px solid rgba(0,255,204,.3); border-radius:4px; cursor:pointer; font:9px monospace; }
+#observatoryPanel .obs-selected { margin-top:6px; color:#fff; line-height:1.35; }
+#observatoryPanel .obs-note { margin-top:5px; color:#687f8f; }
+#observatoryPanel.expanded { box-shadow:0 0 18px rgba(0,255,204,.10); }
+@media (max-width: 900px) {
+  #observatoryPanel { right: 10px; bottom: 165px; width: 230px; }
+}
+#cameraLabGizmo .camera-lab-actions { display:flex; gap:4px; }
+#cameraLabGizmo .camera-lab-actions button { flex:1; }
+#cameraLabViews { width:100%; margin-top:4px; padding:4px 5px; color:#00ffcc; background:rgba(0,0,0,.65); border:1px solid rgba(0,255,204,.25); border-radius:4px; font:9px monospace; }
+
+/* Manassero Coil mode */
+#ovilloPanel input[type="number"] { box-sizing:border-box; width:100%; }
+#ovilloPanel input[type="range"] { width:100%; }
