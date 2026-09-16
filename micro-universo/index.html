@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Micro-Universo | Chaos Sandbox & Entropy Lab v1.5 (Full Suite)</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Three.js & Post-Processing Dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/webxr/VRButton.js"></script>
+    <!-- PeerJS para conexión P2P real -->
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+</head>
+<body>
+<div id="canvas-container"></div>
+    
+    <div id="multiplayer-status" style="display:none; position:fixed; top:14px; right:14px; z-index:20; min-width:190px; padding:10px 12px; background:rgba(0,0,0,.72); border:1px solid rgba(0,255,204,.55); border-radius:8px; box-shadow:0 0 18px rgba(0,255,204,.12); color:#dff; font-size:12px; backdrop-filter:blur(6px);">
+        <div style="display:flex; justify-content:space-between; gap:12px;"><span>👥 Conectados</span><strong id="connectedUsersVal">1 / 50</strong></div>
+        <div style="margin-top:5px; display:flex; justify-content:space-between; gap:12px;"><span>⚡ Tu poder</span><strong id="topPowerVal">—</strong></div>
+    </div>
+    <div id="hud">
+        <h1>MICRO-UNIVERSO</h1>
+        <p class="subtitle">Full Suite v1.9.6 (Multiplayer Chaos Laboratory)</p>
+        
+        <!-- Botón de Reinicio rápido debajo de densidad o en la botonera -->
+        <div class="control-group" style="margin-top: 10px;">
+            <button id="btnResetView" style="width: 100%; background: rgba(0,255,204,0.1); border: 1px solid #00ffcc; color: #00ffcc; padding: 8px; border-radius: 4px; cursor: pointer; font-weight: bold;">🔄 Reiniciar Posiciones & Cámara</button>
+        </div>
+
+        <div class="control-panel">
+            <label for="mode">Modo del Sistema / Atractor:</label>
+            <select id="mode">
+                <option value="swarm" selected>Colmena P2P (Especial Multi-usuario)</option>
+                <option value="vortex">Vórtice Galáctico (Singularidad)</option>
+                <option value="lorenz">Atractor de Lorenz (Caos 3D)</option>
+                <option value="aizawa">Atractor de Aizawa (Plasma Toroidal)</option>
+                <option value="thomas">Atractor de Thomas (Laberinto Cíclico)</option>
+                <option value="chen">Atractor de Chen (Doble Scroll)</option>
+                <option value="halvorsen">Atractor de Halvorsen (Simetría 3)</option>
+                <option value="dadras">Atractor de Dadras (Multiespiral)</option>
+                <option value="cryptoPhase">Matriz de Fase Criptográfica (Byte-3D)</option>
+                <option value="vectorField">Campo de Vectores Fluidos (Navier-Stokes)</option>
+                <option value="waves">Ondas de Fluido Estocástico</option>
+                <option value="blackHole">Agujero Negro (Singularidad)</option>
+                <option value="doubleVortex">Doble Vórtice (Binario)</option>
+                <option value="harmonic">Campo Armónico</option>
+                <option value="plasma">Plasma Turbulento</option>
+                <option value="strange">Atractor Strange</option>
+                <option value="customMath">Fórmula Matemática Personalizada (Sandbox)</option>
+            </select>
+
+            <!-- Panel de Fórmulas Matemáticas Predefinidas y Personalizadas -->
+            <div id="mathSandboxContainer" class="control-group" style="display: none; flex-direction: column; gap: 6px; background: rgba(0,255,204,0.05); padding: 8px; border-radius: 6px; border: 1px dashed #00ffcc;">
+
+                <label style="font-size: 11px; color: #00ffcc;">Atractores Matemáticos (Presets Fijos):</label>
+                <select id="mathPresetSelect" style="background: #111; color: #00ffcc; border: 1px solid #00ffcc; padding: 4px; border-radius: 4px; font-size: 11px;">
+                    <option value="-y - z, x + 0.2*y, 0.2 + z*(x - 5.7)">Atractor de Rössler (Caos Clásico)</option>
+                    <option value="10*(y - x), x*(28 - z) - y, x*y - (8/3)*z">Atractor de Lorenz (Mariposa)</option>
+                    <option value="sin(y) - 0.2*x, sin(z) - 0.2*y, sin(x) - 0.2*z">Atractor de Thomas (Laberinto)</option>
+                    <option value="-1.89*x - 4*y - 4*z - y*y, -1.89*y - 4*z - 4*x - z*z, -1.89*z - 4*x - 4*y - x*x">Atractor de Halvorsen (Simetría 3D)</option>
+                </select>
+                <label style="font-size: 11px;">Ecuación Personalizada (dx, dy, dz):</label>
+                <input type="text" id="customMathExpr" value="-y - z, x + 0.2*y, 0.2 + z*(x - 5.7)" style="background: #000; color: #0f0; border: 1px solid #333; padding: 4px; font-family: monospace;">
+            </div>
+
+
+            <div class="row-inline" style="margin-top: 4px;">
+                <label for="p2pToggle">Modo Multijugador P2P:</label>
+                <input type="checkbox" id="p2pToggle" style="width: auto;">
+            </div>
+
+            <div id="p2p-panel" style="display:none; padding:8px; background:rgba(0,255,204,0.05); border:1px solid rgba(0,255,204,0.2); border-radius:6px;">
+                <div style="display:flex; justify-content:space-between; gap:8px;"><span>Usuarios</span><strong id="p2p-status-text">🟢 1 / 50</strong></div>
+                <div style="margin-top:7px; display:flex; justify-content:space-between; gap:8px;"><span>⚡ Tu poder</span><strong id="myPowerVal">—</strong></div>
+                <div style="margin-top:5px; display:flex; justify-content:space-between; gap:8px;"><span>🔋 Energía</span><strong id="myPowerEnergy">100%</strong></div>
+                <div style="height:5px; margin-top:4px; background:rgba(255,255,255,.08); border-radius:4px; overflow:hidden;"><div id="myPowerEnergyBar" style="height:100%; width:100%; background:#00ffcc; transition:width .2s;"></div></div>
+                <div id="powerMouseHint" style="margin-top:7px; padding:7px; text-align:center; border:1px solid rgba(0,255,204,.25); border-radius:5px; color:#00ffcc; font-size:10px;">🖱️ Click izquierdo: usar poder · botón central: cámara</div>
+                <div id="p2pRoster" style="margin-top:7px; padding:6px; max-height:150px; overflow:auto; background:rgba(0,0,0,.18); border-radius:5px; font-size:10px; color:#dff;">Tú · esperando sincronización…</div>
+                <div style="margin-top:5px; font-size:10px; color:#9ac;">Un solo universo global. Los poderes se sincronizan entre jugadores.</div>
+            </div>
+
+            <label for="particleDensity">Densidad de Partículas (Escalable):</label>
+            <select id="particleDensity">
+                <option value="3000">3,000 (Alto Rendimiento)</option>
+                <option value="6000" selected>6,000 (Balanceado)</option>
+                <option value="15000">15,000 (Alta Densidad)</option>
+                <option value="30000">30,000 (Modo Ultra CPU)</option>
+            </select>
+
+            <div class="control-group" style="background:rgba(0,255,204,0.04); padding:8px; border:1px solid rgba(0,255,204,0.15); border-radius:6px;">
+                <label>Semilla del Universo:</label>
+                <div style="display:flex; gap:5px;">
+                    <input type="number" id="seedInput" value="133742" min="0" step="1" style="flex:1;">
+                    <button id="seedRandomBtn" type="button" style="width:92px;">🎲 Nueva</button>
+                </div>
+                <div style="font-size:10px; color:#7fa; margin-top:4px;">Misma semilla + mismos parámetros = mismo nacimiento del universo.</div>
+            </div>
+
+            <div class="control-group">
+  <label>Rendimiento:</label>
+  <select id="renderTierSelect">
+    <option value="cpu">Modo Notebook (CPU Segura - 15k)</option>
+    <option value="auto" selected>Auto-Adaptacion</option>
+    <option value="gpgpu">Forzar GPGPU (150k+)</option>
+  </select>
+  <div class="row-inline" style="margin-top:5px;">
+    <label for="autoOptimizeToggle">Auto-optimización:</label>
+    <input type="checkbox" id="autoOptimizeToggle" checked style="width:auto;">
+  </div>
+</div>
+
+            <label for="speed">Velocidad del Cómputo:</label>
+            <input type="range" id="speed" min="0.001" max="0.1" step="0.001" value="0.015">
+
+            <label for="timeDilation">Dilatación Temporal (Bullet Time):</label>
+            <input type="range" id="timeDilation" min="0.05" max="1.5" step="0.05" value="1.0">
+            
+            <label for="particleSize">Tamaño Partículas:</label>
+            <input type="range" id="particleSize" min="0.01" max="2.0" step="0.01" value="0.2">
+
+            <div class="control-group">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <label>Fuerza Atracción Cursor:</label>
+                    <label style="font-size: 11px; cursor: pointer; color: #00ffcc;">
+                        <input type="checkbox" id="mouseAttractionToggle" style="accent-color: #00ffcc;"> Activa
+                    </label>
+                </div>
+                <input type="range" id="attraction" min="-0.5" max="0.5" step="0.001" value="0.0">
+            </div>
+            <div class="control-group" style="background:rgba(0,255,204,0.04); padding:8px; border:1px solid rgba(0,255,204,0.15); border-radius:6px; margin-top:6px;">
+                <label style="margin-bottom:5px;">🎚️ Force Mixer</label>
+                <div class="stats-row"><span>🖱️ Cursor</span><strong id="forceMouseVal">100%</strong></div>
+                <input type="range" id="forceMouse" min="0" max="1" step="0.01" value="1">
+                <div class="stats-row"><span>🎵 Audio</span><strong id="forceAudioVal">100%</strong></div>
+                <input type="range" id="forceAudio" min="0" max="1" step="0.01" value="1">
+                <div class="stats-row"><span>🖐️ Webcam</span><strong id="forceWebcamVal">100%</strong></div>
+                <input type="range" id="forceWebcam" min="0" max="1" step="0.01" value="1">
+            </div>
+
+            
+            <label for="themeSelect">Paleta Cromática:</label>
+            <select id="themeSelect">
+                <option value="cyan" selected>Neón Estelar (Cian/Azul)</option>
+                <option value="matrix">Matriz Verde (Hacker)</option>
+                <option value="fire">Plasma Solar (Fuego/Oro)</option>
+                <option value="violet">Vacío Cuántico (Violeta/Magenta)</option>
+                <option value="neutron">Supernova Neutrón (Oro/Azul Real)</option>
+                <option value="emerald">Radiactividad Esmeralda (Verde/Incandescente)</option>
+            </select>
+
+            <div class="row-inline">
+                <label for="bloomToggle">Efecto Post-Bloom (Neón Glow):</label>
+                <input type="checkbox" id="bloomToggle" checked style="width: auto;">
+            </div>
+
+            <div class="row-inline">
+                <label for="midiToggle">Controlador Web MIDI:</label>
+                <input type="checkbox" id="midiToggle" style="width: auto;">
+            </div>
+
+            <div class="control-group" style="background:rgba(0,255,204,0.04); padding:8px; border:1px solid rgba(0,255,204,0.15); border-radius:6px;">
+                <label>MIDI Learn:</label>
+                <div style="display:flex; gap:5px;">
+                    <select id="midiLearnTarget" style="flex:1;">
+                        <option value="speed">Velocidad</option>
+                        <option value="timeDilation">Dilatación temporal</option>
+                        <option value="particleSize">Tamaño partículas</option>
+                        <option value="attraction">Fuerza cursor</option>
+                    </select>
+                    <button id="midiLearnBtn" type="button" style="width:90px;">🎛️ Learn</button>
+                </div>
+                <div id="midiLearnStatus" style="font-size:10px; color:#7fa; margin-top:4px;">Sin aprendizaje activo</div>
+                <div id="midiMappingList" style="font-size:10px; color:#9ac; margin-top:3px;">Sin mappings aprendidos</div>
+            </div>
+
+            <div class="row-inline">
+                <label for="webcamToggle">Tracking Óptico (Webcam):</label>
+                <input type="checkbox" id="webcamToggle" style="width: auto;">
+            </div>
+
+            <div class="control-group" style="background:rgba(0,255,204,0.04); padding:8px; border:1px solid rgba(0,255,204,0.15); border-radius:6px;">
+                <label for="webcamSensitivity">Sensibilidad de Interacción Cam:</label>
+                <input type="range" id="webcamSensitivity" min="0" max="3" step="0.1" value="1.8">
+            </div>
+
+            <div class="row-inline">
+                <label for="autoRotate">Auto-Rotación Cinemática:</label>
+                <input type="checkbox" id="autoRotate" checked style="width: auto;">
+            </div>
+
+            <div class="row-inline">
+                <label for="audioToggle">Sintetizador Sonoro:</label>
+                <input type="checkbox" id="audioToggle" style="width: auto;">
+            </div>
+
+            <div class="stats" style="margin-top:6px;">
+                <div class="stats-row"><span>Audio Bass</span><strong id="audioBassVal">0.00</strong></div>
+                <div class="stats-row"><span>Audio Mid / High</span><strong id="audioMidHighVal">0.00 / 0.00</strong></div>
+                <div class="stats-row"><span>Beat</span><strong id="audioBeatVal">0%</strong></div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid rgba(0,255,204,0.15); margin: 4px 0;">
+
+            <label for="entropyInput">Inyector Criptográfico / Entropía:</label>
+            <input type="text" id="entropyInput" placeholder="Clave, Texto o Hash SHA-256...">
+
+            <div class="btn-group">
+                <button id="btnBin">Binario</button>
+                <button id="btnHash">Hash Caos</button>
+                <button id="btnSnap" style="border-color: #ff0096; color: #ff0096;">Captura PNG</button>
+                <button id="btnRecord" style="border-color: #00ffcc; color: #00ffcc;">🔴 Grabar Clip</button>
+            </div>
+            
+            <div class="btn-group">
+                <button id="btnExportJSON">Guardar Preset</button>
+                <button id="btnImportJSON">Cargar Preset</button>
+                <input type="file" id="jsonFileInput" accept=".json" style="display: none;">
+            </div>
+        </div>
+
+        <div class="stats" id="telemetryPanel">
+            <div class="stats-row"><span>FPS</span><strong id="fpsVal">60 FPS</strong></div>
+            <div class="stats-row"><span>Energía dinámica</span><strong id="energyVal">0.015</strong></div>
+            <div class="stats-row"><span>Índice de caos</span><strong id="chaosVal">0.000</strong></div>
+            <div class="stats-row"><span>Calidad render</span><strong id="qualityVal">100%</strong></div>
+        </div>
+
+        <div class="hint-box">
+            🖱️ Clic Izq: Rotar | Rueda: Zoom | MIDI/Cam Activos
+        </div>
+
+        <div class="stats">
+            <div class="stats-row">
+                <span>Entropía Shannon: <strong id="entropyVal">0.00 bit</strong></span>
+                <span>Partículas: <strong id="particleCountVal">6,000</strong></span>
+            </div>
+            <div class="stats-row">
+                <span>MIDI / HW: <strong id="midiStatusVal">Desconectado</strong></span>
+                <span>Visión Cam: <strong id="camStatusVal">Inactiva</strong></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Módulos de la Suite Completa -->
+    <script src="crypto.js"></script>
+    <script src="attractors.js"></script>
+    <script src="controls.js"></script>
+    <script src="audio.js"></script>     <!-- <-- Faltaba -->
+    <script src="storage.js"></script>
+    <script src="midi.js"></script>
+    <script src="webcam.js"></script>
+    <script src="vision.js"></script>
+    <script src="postprocessing.js"></script>
+    <script src="recorder.js"></script>
+    <script src="compute-engine.js"></script>
+    <script src="xr-support.js"></script>
+    <script src="swarm-agents.js"></script>
+    <script src="network-swarm.js"></script>
+    <script src="audio-synth.js"></script>
+    <script src="export-seq.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
