@@ -1435,3 +1435,85 @@ function procesarParametroProductoURL() {
 
 // Ejecutamos la función inmediatamente después de que el catálogo principal se pinta
 procesarParametroProductoURL();
+
+// --- FILTRAR AUTOMÁTICAMENTE DESDE LA URL AL INICIAR ---
+const urlParams = new URLSearchParams(window.location.search);
+const categoriaBuscada = urlParams.get('categoria');
+
+if (categoriaBuscada && typeof datos !== 'undefined' && datos.length > 0) {
+  const catBusq = decodeURIComponent(categoriaBuscada).trim().toLowerCase();
+  
+  // Buscamos si la categoría existe en nuestros datos
+  let categoriaEncontrada = "";
+  datos.forEach(prod => {
+    if (prod.Categoria && prod.Categoria.trim().toLowerCase() === catBusq) {
+      categoriaEncontrada = prod.Categoria; // Respetamos las mayúsculas/minúsculas originales
+    }
+  });
+
+  if (categoriaEncontrada) {
+    // Aplicamos exactamente el mismo filtro que hace tu menú desplegable
+    FILTROS = categoriaEncontrada;
+
+    while (fragmento2.firstChild) fragmento2.removeChild(fragmento2.firstChild);
+    while (fragmento.firstChild) fragmento.removeChild(fragmento.firstChild);
+
+    datos.forEach((producto) => {
+      if (producto.Inventario >= 1 && (producto.Categoria === FILTROS)) {
+        contenedorId = 0;
+        fragmento2 = MostrarEnCatalogo(producto, contenedorId);
+      }
+      mBotones.mostrarBotones();
+    });
+
+    let clone = document.importNode(template, true);
+    fragmento.appendChild(clone);
+
+    const contenedorCatalogo = document.getElementById('contenedorCatalogo');
+    if (contenedorCatalogo) {
+      contenedorCatalogo.innerHTML = '';
+      contenedorCatalogo.appendChild(fragmento);
+    }
+
+    const target = document.getElementById(contenedorId);
+    if (target) {
+      target.appendChild(fragmento2);
+    }
+
+    descu.porDeDescuento();
+    varianteDeMedidas.cambiarVariantes();
+    subirScroll.subir();
+    
+    console.log("Categoría aplicada por URL con éxito:", categoriaEncontrada);
+  }
+}
+
+// --- FILTRADO AUTOMÁTICO DE CATEGORÍA DESDE LA URL (ROBUSTO) ---
+window.addEventListener('load', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const categoriaBuscada = urlParams.get('categoria');
+
+  if (!categoriaBuscada) return;
+
+  // Damos un margen de 1 segundo para asegurar que el DOM, los templates y los datos estén listos
+  setTimeout(() => {
+    const catBusq = decodeURIComponent(categoriaBuscada).trim().toLowerCase();
+    
+    // Buscamos directamente en los botones de categoría renderizados
+    const botones = document.querySelectorAll('.categoria-btn, .filtro-cat-nav, .porCategoriaUl button');
+    let encontrado = false;
+
+    botones.forEach(btn => {
+      const textoBtn = btn.textContent.trim().toLowerCase();
+      // Verificamos si coincide la categoría (ej: "auriculares")
+      if (textoBtn === catBusq) {
+        btn.click();
+        encontrado = true;
+      }
+    });
+
+    if (!encontrado) {
+      console.warn("No se encontró un botón de categoría exacto para:", categoriaBuscada);
+    }
+  }, 1000);
+});
