@@ -1390,3 +1390,48 @@ document.addEventListener('click', event => {
     toggleFavorito(parseInt(articuloId));
   }
 });
+
+// --- AUTO-SCROLL Y RESALTE INTEGRADO AL FLUJO DE CARGA ---
+function procesarParametroProductoURL() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const idProductoBuscado = urlParams.get('producto');
+
+  if (!idProductoBuscado) return;
+
+  // Damos un pequeño respiro de 300ms para que el DOM termine de procesar las tarjetas
+  setTimeout(() => {
+    const carousels = document.querySelectorAll('.carousel[data-articulo]');
+    let tarjetaBuscada = null;
+
+    carousels.forEach(carousel => {
+      if (String(carousel.dataset.articulo) === String(idProductoBuscado)) {
+        tarjetaBuscada = carousel;
+      }
+    });
+
+    if (tarjetaBuscada) {
+      // Hacemos scroll suave hasta centrar el producto
+      tarjetaBuscada.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      
+      // Resaltado visual con borde y sombra roja
+      const cardContainer = tarjetaBuscada.closest('.card') || tarjetaBuscada;
+      if (cardContainer) {
+        cardContainer.style.transition = "all 0.4s ease-in-out";
+        cardContainer.style.boxShadow = "0 0 30px 10px rgba(255, 71, 87, 0.9)";
+        cardContainer.style.border = "3px solid #ff4757";
+        cardContainer.style.borderRadius = "10px";
+
+        // Quitamos el efecto a los 5 segundos
+        setTimeout(() => {
+          cardContainer.style.boxShadow = "";
+          cardContainer.style.border = "";
+        }, 5000);
+      }
+    } else {
+      console.warn("No se encontró la tarjeta para el producto:", idProductoBuscado);
+    }
+  }, 300);
+}
+
+// Ejecutamos la función inmediatamente después de que el catálogo principal se pinta
+procesarParametroProductoURL();
