@@ -676,7 +676,7 @@ eventCerrCanvas.eventCerrCanvas();
 // Función para generar el enlace de WhatsApp
 function generarEnlaceWhatsApp() {
 
-  const telefono = "5493751588752"; // Reemplaza con el número de teléfono deseado
+  const telefono = "5493751588753"; // Reemplaza con el número de teléfono deseado
 
     // 1. Validar de forma obligatoria que haya seleccionado un método de pago antes de continuar
   const selectorPago = document.getElementById('metodoPago');
