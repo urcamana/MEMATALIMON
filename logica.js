@@ -29,6 +29,32 @@ import { iniciarAnimLogo } from './animLogo.js';
 
 iniciarAnimLogo();
 
+// Declaramos el botón de WhatsApp UNA SOLA VEZ al inicio (evita error de inicialización)
+const enlaceWhatsApp = document.createElement("a");
+enlaceWhatsApp.className = "btn btn-success btn-lg w-100 fw-bold shadow-sm rounded-pill my-3 d-flex align-items-center justify-content-center gap-2";
+enlaceWhatsApp.textContent = "Enviar carrito por WhatsApp";
+
+enlaceWhatsApp.addEventListener('click', function (event) {
+  event.preventDefault();
+  actualizarEnlaceWhatsApp();
+  const urlActual = enlaceWhatsApp.getAttribute("href");
+  if (!urlActual || urlActual === `https://wa.me/` || urlActual.endsWith('text=')) {
+    alertas.alertAgrego("Atención", "Seleccioná un método de pago antes de enviar", "alert-warning");
+    return;
+  }
+  window.open(urlActual, '_blank');
+  localStorage.removeItem('datosCarrito');
+});
+
+// Inyectar en el contenedor del carrito cuando exista
+(function inyectarBotonWhatsApp() {
+  const contenedorWhats = document.getElementById("whats");
+  if (contenedorWhats && !contenedorWhats.contains(enlaceWhatsApp)) {
+    contenedorWhats.appendChild(enlaceWhatsApp);
+  }
+})();
+
+
 // ==========================================
 // MÓDULO DE FAVORITOS MEJORADO
 // ==========================================
@@ -228,8 +254,21 @@ function MostrarEnCatalogo(datos, contenedorId) {
   const btnFavCard = template2.querySelector(".btn-favorito-card");
   if (btnFavCard) {
     btnFavCard.dataset.articulo = datos.Artículo;
-btnFavCard.className = "btn-favorito-card btn btn-sm position-absolute top-0 end-0 m-2 fs-3 border-0 bg-transparent";
+    btnFavCard.className = "btn-favorito-card btn btn-sm position-absolute top-0 end-0 m-2 fs-3 border-0 bg-transparent";
     btnFavCard.innerHTML = listaFavoritos.includes(datos.Artículo) ? '❤️' : '🤍';
+  }
+
+  // Badge solo cuando queda exactamente 1 unidad (texto discreto)
+  const badgeStock = template2.querySelector(".badge-ultimas-unidades");
+  if (badgeStock) {
+    const stockNum = Number(datos.Inventario);
+    if (stockNum === 1) {
+      badgeStock.classList.remove("d-none");
+      badgeStock.textContent = "quedan pocas unidades";
+    } else {
+      badgeStock.classList.add("d-none");
+      badgeStock.textContent = "";
+    }
   }
 
   const h5Element = template2.querySelector("h5");
@@ -290,6 +329,12 @@ btnFavCard.className = "btn-favorito-card btn btn-sm position-absolute top-0 end
     addButton.setAttribute("id", "idbot" + (datos.Artículo));
   }
 
+  // Asignar data-articulo al botón "Comprar solamente este producto"
+  const btnComprarSolo = template2.querySelector(".btn-comprar-solo");
+  if (btnComprarSolo) {
+    btnComprarSolo.dataset.articulo = datos.Artículo;
+  }
+
   let clone2 = document.importNode(template2, true);
   fragmento2.appendChild(clone2);
   return fragmento2;
@@ -337,48 +382,17 @@ categoriasUnicas.forEach(categoria => {
   // Agregar evento de clic al botón
   boton.addEventListener("click", () => {
     FILTROS = boton.textContent;
-
-while (fragmento2.firstChild) fragmento2.removeChild(fragmento2.firstChild);
-while (fragmento.firstChild) fragmento.removeChild(fragmento.firstChild);
-
-datos.forEach((datos) => {
-  if (datos.Inventario >= 1 && (FILTROS === "VER TODOS" || datos.Categoria == FILTROS || (FILTROS === "CON DESCUENTOS" && datos.Descuento != 0))) {
-    contenedorId = 0;
-    fragmento2 = MostrarEnCatalogo(datos, contenedorId);
-  }
-  mBotones.mostrarBotones();
-});
-
-let clone = document.importNode(template, true);
-fragmento.appendChild(clone);
-
-const contenedorCatalogo = document.getElementById('contenedorCatalogo');
-if (contenedorCatalogo) {
-  contenedorCatalogo.innerHTML = ''; // Limpia únicamente el contenedor del catálogo
-  contenedorCatalogo.appendChild(fragmento);
-}
-
-const target = document.getElementById(contenedorId);
-if (target) {
-  target.appendChild(fragmento2);
-}
+    renderizarCatalogo(FILTROS);
 
     const botones = document.querySelectorAll(".categoria-btn");
-
     botones.forEach(btn => {
       btn.classList.remove("btn-dark");
       btn.classList.add("btn-outline-dark");
     });
-
     boton.classList.remove("btn-outline-dark");
     boton.classList.add("btn-dark");
 
-//la siguiente linea esta de mas? urca    
-var a = true;
-//la anterior
-    descu.porDeDescuento();
-    varianteDeMedidas.cambiarVariantes()
-    subirScroll.subir()
+    try { subirScroll.subir(); } catch (e) {}
   });
 
   lil.appendChild(boton);
@@ -437,36 +451,109 @@ let contenedorId = 0;
 
 
 
-// 1. Ordenar el array por la propiedad "Categoria":
-datos.sort((a, b) => a.Descripción.localeCompare(b.Descripción));
 
-// 2. Iterar sobre el array ordenado y agrupar por categoría:
-let descActual = '';
-datos.forEach(datos => {
-  if (datos.Descripción !== descActual && datos.Inventario >= 1) {
-
-    descActual = datos.Descripción;
-
-
+// =====================================================
+// HELPERS: precio final, ordenar y renderizar catálogo
+// =====================================================
+function precioFinalProducto(prod) {
+  let p = Number(String(prod.Venta).replace(/,/g, ".")) * Number(prod.DOLAR || 1);
+  if (prod.Descuento != 0 && prod.Descuento != "0") {
+    const d = Number(String(prod.Descuento).replace(/,/g, "."));
+    p = p * (1 - d);
   }
-  if (datos.Inventario >= 1) {
+  return p;
+}
 
-    contenedorId = 0
-    fragmento2 = MostrarEnCatalogo(datos, contenedorId);
+let ordenActual = "nombre-asc";
+
+function ordenarProductos(lista) {
+  const arr = [...lista];
+  switch (ordenActual) {
+    case "nombre-desc":
+      arr.sort((a, b) => String(b.Descripción).localeCompare(String(a.Descripción), "es"));
+      break;
+    case "precio-asc":
+      arr.sort((a, b) => precioFinalProducto(a) - precioFinalProducto(b));
+      break;
+    case "precio-desc":
+      arr.sort((a, b) => precioFinalProducto(b) - precioFinalProducto(a));
+      break;
+    case "descuento":
+      arr.sort((a, b) => {
+        const da = (a.Descuento != 0 && a.Descuento != "0") ? 1 : 0;
+        const db = (b.Descuento != 0 && b.Descuento != "0") ? 1 : 0;
+        if (db !== da) return db - da;
+        return String(a.Descripción).localeCompare(String(b.Descripción), "es");
+      });
+      break;
+    case "nombre-asc":
+    default:
+      arr.sort((a, b) => String(a.Descripción).localeCompare(String(b.Descripción), "es"));
+      break;
   }
+  return arr;
+}
+
+function renderizarCatalogo(filtroCategoria) {
+  // filtroCategoria: "VER TODOS" | "CON DESCUENTOS" | nombre de categoría
+  const filtro = filtroCategoria || FILTROS || "VER TODOS";
+
+  while (fragmento2.firstChild) fragmento2.removeChild(fragmento2.firstChild);
+  while (fragmento.firstChild) fragmento.removeChild(fragmento.firstChild);
+
+  let lista = datos.filter(p => {
+    if (Number(p.Inventario) < 1) return false;
+    if (filtro === "VER TODOS" || filtro === "TODOS" || !filtro) return true;
+    if (filtro === "CON DESCUENTOS") return p.Descuento != 0 && p.Descuento != "0";
+    return p.Categoria === filtro;
+  });
+
+  lista = ordenarProductos(lista);
+
+  lista.forEach(prod => {
+    contenedorId = 0;
+    fragmento2 = MostrarEnCatalogo(prod, contenedorId);
+  });
 
   mBotones.mostrarBotones();
 
-});
+  let clone = document.importNode(template, true);
+  fragmento.appendChild(clone);
 
-let clone = document.importNode(template, true);
-fragmento.appendChild(clone);
-document.body.appendChild(fragmento);//agregamos el contenedor padre
-document.getElementById(contenedorId).appendChild(fragmento2); //agregamos las cards
+  const contenedorCatalogo = document.getElementById("contenedorCatalogo");
+  if (contenedorCatalogo) {
+    contenedorCatalogo.innerHTML = "";
+    contenedorCatalogo.appendChild(fragmento);
+    const target = document.getElementById(String(contenedorId));
+    if (target) target.appendChild(fragmento2);
+  } else {
+    document.body.appendChild(fragmento);
+    const target = document.getElementById(String(contenedorId));
+    if (target) target.appendChild(fragmento2);
+  }
 
-// Ocultamos el loader inicial: el catálogo ya está pintado
-const loaderInicial = document.getElementById('loaderCatalogo');
-if (loaderInicial) loaderInicial.remove();
+  // Quitar loader si todavía está
+  const loaderInicial = document.getElementById("loaderCatalogo");
+  if (loaderInicial) loaderInicial.remove();
+
+  try { descu.porDeDescuento(); } catch (e) {}
+  try { varianteDeMedidas.cambiarVariantes(); } catch (e) {}
+}
+
+// Listener del selector de orden (módulo ES: DOM ya está listo)
+(function initOrdenSelect() {
+  const sel = document.getElementById("selectOrden");
+  if (sel) {
+    sel.addEventListener("change", () => {
+      ordenActual = sel.value;
+      renderizarCatalogo(FILTROS || "VER TODOS");
+    });
+  }
+})();
+
+// Carga inicial del catálogo (con orden y skeleton)
+FILTROS = "VER TODOS";
+renderizarCatalogo("VER TODOS");
 escucharBotones(); // Esta es la única llamada a escucharBotones que debe existir.
 descu.porDeDescuento();
 
@@ -625,6 +712,14 @@ function agregar(da, da2) {
   let tipoAlert = "alert-success";
   alertas.alertAgrego(da, suceso, tipoAlert);
 
+  // Animación del ícono del carrito en el navbar
+  const btnCarritoNav = document.getElementById('listaInteres');
+  if (btnCarritoNav) {
+    btnCarritoNav.classList.remove('carrito-animado');
+    void btnCarritoNav.offsetWidth; // force reflow
+    btnCarritoNav.classList.add('carrito-animado');
+  }
+
   actualizarCarrito();
   actualizarEnlaceWhatsApp();
 }
@@ -686,33 +781,31 @@ function generarEnlaceWhatsApp() {
       return ""; // Frena la ejecución si no hay método de pago
   }
 
-  // Construir el texto del mensaje con la información de los duplicados y los precios
-  let textoCarrito = "Hola! Me interesan estos productos de la web:";
+  // Construir el texto del mensaje
+  let textoCarrito = "¡Hola! Quiero hacer el siguiente pedido desde la web:\n";
   let UnidadesProductosTotales = 0;
-
 
   itemCarrito.forEach(producto => {
     var precioCatalogo = (producto.Venta.replace(/,/g, ".") * producto.DOLAR * producto.Unidades);
-    precioCatalogo = new Intl.NumberFormat('es-Mx', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo);
+    precioCatalogo = new Intl.NumberFormat('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(precioCatalogo);
 
-    textoCarrito += `\n\n ${producto.Unidades} - ${producto.Descripción} -  $${precioCatalogo}`;
-
+    textoCarrito += `\n• ${producto.Unidades} x ${producto.Descripción}  →  $${precioCatalogo}`;
     UnidadesProductosTotales += producto.Unidades;
   });
+
   let tota = total();
-  textoCarrito += `\n\n--- IMPORTE TOTAL DEL CARRITO: ${tota} `; // Agregar un salto de línea adicional
-  textoCarrito += `\n\n--- Total de productos: ${UnidadesProductosTotales} \n`;
+  textoCarrito += `\n\n────────────────────`;
+  textoCarrito += `\n*IMPORTE TOTAL:* ${tota}`;
+  textoCarrito += `\n*Total de productos:* ${UnidadesProductosTotales}`;
 
-  textoCarrito += `\n--- DATOS DE ENTREGA ---`;
-
-  // 1. Capturar el método de entrega seleccionado (Radio buttons)
+  // --- DATOS DE ENTREGA ---
+  textoCarrito += `\n\n── DATOS DE ENTREGA ──`;
   const opcionEntrega = document.querySelector('input[name="metodoEntrega"]:checked');
   const metodo = opcionEntrega ? opcionEntrega.value : 'No seleccionado';
 
   if (metodo === "retiro") {
     textoCarrito += `\n*Método:* Retirar personalmente`;
   } else if (metodo === "envio") {
-    // 2. Si es envío, capturar la dirección ingresada
     const direccion = document.getElementById('direccionEnvio') ? document.getElementById('direccionEnvio').value : '';
     textoCarrito += `\n*Método:* Envío a domicilio`;
     textoCarrito += `\n*Dirección:* ${direccion || 'No especificada'}`;
@@ -720,18 +813,27 @@ function generarEnlaceWhatsApp() {
     textoCarrito += `\n*Método:* No especificado`;
   }
 
-    // --- ADICIONAL: MÉTODO DE PAGO ---
-  textoCarrito += `\n\n--- DATOS DE PAGO ---`;
+  // --- DATOS DE PAGO ---
+  textoCarrito += `\n\n── DATOS DE PAGO ──`;
   textoCarrito += `\n*Forma de pago:* ${pagoElegido}`;
-  
-  // 3. Capturar el cuadro de observaciones
+
+  // --- CÓDIGO PROMOCIONAL ---
+  const campoCodigo = document.getElementById('codigoPromocional');
+  const codigoPromo = campoCodigo ? campoCodigo.value.trim() : '';
+  if (codigoPromo) {
+    textoCarrito += `\n\n── CÓDIGO PROMOCIONAL ──`;
+    textoCarrito += `\n*Código:* ${codigoPromo}`;
+  }
+
+  // --- OBSERVACIONES / PERSONALIZACIÓN ---
   const campoObservaciones = document.getElementById('observacionesPedido');
   const observaciones = campoObservaciones ? campoObservaciones.value.trim() : '';
   if (observaciones) {
-    textoCarrito += `\n*Observaciones:* ${observaciones}`;
+    textoCarrito += `\n\n── OBSERVACIONES / PERSONALIZACIÓN ──`;
+    textoCarrito += `\n${observaciones}`;
   }
-  
-  textoCarrito += `\n\n`; // Espaciado final de cierre
+
+  textoCarrito += `\n\n¡Gracias!`;
 
   const enlace = `https://wa.me/${telefono}/?text=${encodeURIComponent(textoCarrito)}`;
   return enlace;
@@ -750,33 +852,8 @@ function actualizarEnlaceWhatsApp() {
 
 }
 
-// Declaramos el botón de WhatsApp una sola vez de forma global
-const enlaceWhatsApp = document.createElement("a"); // O "button", pero preferible "a" para que maneje bien el href
-enlaceWhatsApp.className = "btn btn-success btn-lg w-100 fw-bold shadow-sm rounded-pill my-3 d-flex align-items-center justify-content-center gap-2";
-enlaceWhatsApp.textContent = "Enviar carrito por WhatsApp";
 
-enlaceWhatsApp.addEventListener('click', function (event) {
-  event.preventDefault(); // Evita la redirección automática
-
-  actualizarEnlaceWhatsApp(); 
-  const urlActual = enlaceWhatsApp.getAttribute("href");
-  if (!urlActual || urlActual === `https://wa.me/` || urlActual.endsWith('text=')) {
-      alertas.alertAgrego("Atención", "Seleccioná un método de pago antes de enviar", "alert-warning");
-      return; 
-  }
-  
-  window.open(urlActual, '_blank');
-  localStorage.removeItem('datosCarrito');
-});
-
-// Lo inyectamos en el contenedor correspondiente del HTML
-const contenedorWhats = document.getElementById("whats");
-if (contenedorWhats) {
-  contenedorWhats.appendChild(enlaceWhatsApp);
-}
-
-enlaceWhatsApp.textContent = "Enviar carrito por WhatsApp";
-document.getElementById("whats").appendChild(enlaceWhatsApp);
+// (enlaceWhatsApp se declara al inicio del archivo)
 
 // Ejemplo de modificación del array y actualización del enlace
 
@@ -1171,37 +1248,9 @@ function poblarMenuDesplegableProductos(categorias) {
     item.addEventListener("click", (e) => {
       e.preventDefault();
       const categoriaSeleccionada = e.target.getAttribute("data-cat");
-
       FILTROS = categoriaSeleccionada === "TODOS" ? "VER TODOS" : categoriaSeleccionada;
-
-      while (fragmento2.firstChild) fragmento2.removeChild(fragmento2.firstChild);
-      while (fragmento.firstChild) fragmento.removeChild(fragmento.firstChild);
-
-      datos.forEach((producto) => {
-        if (producto.Inventario >= 1 && (FILTROS === "VER TODOS" || producto.Categoria === FILTROS || (FILTROS === "CON DESCUENTOS" && producto.Descuento != 0))) {
-          contenedorId = 0;
-          fragmento2 = MostrarEnCatalogo(producto, contenedorId);
-        }
-        mBotones.mostrarBotones();
-      });
-
-      let clone = document.importNode(template, true);
-      fragmento.appendChild(clone);
-
-      const contenedorCatalogo = document.getElementById('contenedorCatalogo');
-      if (contenedorCatalogo) {
-        contenedorCatalogo.innerHTML = '';
-        contenedorCatalogo.appendChild(fragmento);
-      }
-
-      const target = document.getElementById(contenedorId);
-      if (target) {
-        target.appendChild(fragmento2);
-      }
-
-      descu.porDeDescuento();
-      varianteDeMedidas.cambiarVariantes();
-      subirScroll.subir();
+      renderizarCatalogo(FILTROS);
+      try { subirScroll.subir(); } catch (err) {}
 
       const offcanvasElement = document.getElementById("offcanvasDarkNavbar");
       if (offcanvasElement) {
@@ -1325,6 +1374,76 @@ document.addEventListener('click', function (e) {
   } else {
     infoContainer.classList.add('d-none');
     btn.textContent = '+ Info';
+  }
+});
+
+
+// =====================================================
+// BOTÓN "COMPRAR SOLAMENTE ESTE PRODUCTO"
+// Vacía el carrito, agrega solo este producto y abre el carrito
+// =====================================================
+document.addEventListener('click', function (e) {
+  const btn = e.target.closest('.btn-comprar-solo');
+  if (!btn) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+
+  const articuloId = parseInt(btn.dataset.articulo);
+  if (!articuloId) return;
+
+  // Buscar el input de cantidad de esta tarjeta
+  const tarjeta = btn.closest('.card-body') || btn.closest('.card');
+  let unidades = 1;
+  if (tarjeta) {
+    const inputCant = tarjeta.querySelector('.cantidad');
+    if (inputCant) unidades = Math.max(1, parseInt(inputCant.value) || 1);
+  }
+
+  // Datos del producto
+  const tit = buscarDatos.buscarId(articuloId);
+  const pre = buscarDatos.buscarIdPrecio(articuloId);
+  const dol = buscarDatos.buscarIdDol(articuloId);
+  const stock = buscarDatos.buscarStock(articuloId);
+  const desc = buscarDatos.buscarDescuento(articuloId);
+
+  if (unidades > stock) {
+    alertas.alertAgrego(tit, "NO HAY STOCK SUFICIENTE", "alert-danger");
+    return;
+  }
+
+  // Vaciar carrito actual
+  itemCarrito.length = 0;
+
+  // Agregar solo este producto (mismo criterio de descuento que el resto del sistema)
+  let ventaFinal = pre;
+  if (desc != 0 && desc != "0") {
+    const descNum = Number(String(desc).replace(/,/g, "."));
+    // Si el descuento es < 1 (ej: 0.1) es fracción; si es >= 1 es porcentaje
+    const factor = descNum < 1 ? (1 - descNum) : (1 - descNum / 100);
+    ventaFinal = (Number(String(pre).replace(/,/g, ".")) * factor).toString();
+  }
+
+  itemCarrito.push({
+    Artículo: articuloId,
+    Descripción: tit,
+    Venta: ventaFinal.toString(),
+    DOLAR: dol,
+    Unidades: unidades,
+    ImagenId: articuloId
+  });
+
+  localStor.guardarEnLocalStorage(itemCarrito);
+  actualizarCarrito();
+  actualizarEnlaceWhatsApp();
+
+  alertas.alertAgrego(tit, "Carrito listo con este producto. Completá los datos y enviá por WhatsApp.", "alert-success");
+
+  // Abrir el carrito usando el mismo sistema de la web (clases show/hide)
+  const canvasInteres = document.getElementById('offcanvasDark');
+  if (canvasInteres) {
+    canvasInteres.classList.remove('hide', 'show');
+    canvasInteres.classList.add('show');
   }
 });
 

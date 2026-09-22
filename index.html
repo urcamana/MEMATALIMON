@@ -182,6 +182,8 @@
         <div class="card-group tarjetas2">
             <div class="card">
             <div class="card position-relative">
+    <!-- Badge últimas unidades -->
+    <span class="badge-ultimas-unidades position-absolute top-0 start-0 m-2 d-none" style="z-index: 10;"></span>
     <!-- BOTÓN DE FAVORITO EN LA TARJETA -->
     <button type="button" class="btn btn-sm btn-favorito-card position-absolute top-0 end-0 m-2 shadow-sm" style="z-index: 10; background: rgba(255,255,255,0.85); border-radius: 50%; padding: 4px 8px;">
         🤍
@@ -233,13 +235,18 @@
                             </p>
 
                             <button type="button"
-                                class="btn btn-dark inter d-block mx-auto botonaparecer">
+                                class="btn btn-dark inter d-block mx-auto botonaparecer mb-2">
                                 Agregar
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                     fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
                                     <path
                                         d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
                                 </svg>
+                            </button>
+
+                            <!-- Botón comprar solo este producto -->
+                            <button type="button" class="btn btn-outline-success btn-sm d-block mx-auto btn-comprar-solo" style="font-size: 0.78rem; padding: 4px 10px;">
+                                Comprar solamente este producto
                             </button>
                         </div>
                     </div>
@@ -305,15 +312,29 @@
                             </div>
 
                         </div>
+
+                        <!-- Controles de ordenamiento -->
+                        <div id="controlesOrden" class="d-flex flex-wrap justify-content-center align-items-center gap-2 mt-2 mb-2 px-2">
+                            <label for="selectOrden" class="form-label mb-0 small fw-semibold text-secondary">Ordenar:</label>
+                            <select id="selectOrden" class="form-select form-select-sm" style="width: auto; min-width: 180px; border-color: #d1bfe3;">
+                                <option value="nombre-asc">Nombre A-Z</option>
+                                <option value="nombre-desc">Nombre Z-A</option>
+                                <option value="precio-asc">Precio: menor a mayor</option>
+                                <option value="precio-desc">Precio: mayor a menor</option>
+                                <option value="descuento">Con descuento primero</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
             </div>
-            <div id="loaderCatalogo">
-                <div class="spinner-border text-dark" role="status">
-                    <span class="visually-hidden">Cargando...</span>
-                </div>
-                <p>Cargando productos...</p>
+            <div id="loaderCatalogo" class="row justify-content-center g-3 px-2">
+                <div class="col-6 col-md-4 col-lg-3"><div class="skeleton-card"></div></div>
+                <div class="col-6 col-md-4 col-lg-3"><div class="skeleton-card"></div></div>
+                <div class="col-6 col-md-4 col-lg-3"><div class="skeleton-card"></div></div>
+                <div class="col-6 col-md-4 col-lg-3"><div class="skeleton-card"></div></div>
+                <div class="col-6 col-md-4 col-lg-3 d-none d-md-block"><div class="skeleton-card"></div></div>
+                <div class="col-6 col-md-4 col-lg-3 d-none d-md-block"><div class="skeleton-card"></div></div>
             </div>
             <!-- Contenedor fijo donde logica.js inserta las tarjetas del catálogo.
                  Antes las tarjetas se agregaban con document.body.appendChild(),
@@ -415,10 +436,17 @@
                                         </select>
                                     </div>
 
-                                    <!-- Campo para Observaciones -->
+                                    <!-- Campo para Código promocional -->
+                                    <div class="mb-3">
+                                        <label for="codigoPromocional" class="form-label fw-semibold">Código promocional (opcional):</label>
+                                        <input type="text" class="form-control" id="codigoPromocional" placeholder="Ej: LIMON10, BIENVENIDO..." style="border-color: #d1bfe3;">
+                                        <div class="form-text" style="color: #6a4c7c;">El código se enviará junto al pedido y será validado manualmente.</div>
+                                    </div>
+
+                                    <!-- Campo para Observaciones / Personalización -->
                                     <div class="mb-2">
-                                        <label for="observacionesPedido" class="form-label fw-semibold">Observaciones y/o codigo de descuento:</label>
-                                        <textarea class="form-control" id="observacionesPedido" rows="2" placeholder="Ej: Codigo: DESC10%, Tocar timbre, casa rosa, etc." style="border-color: #d1bfe3;"></textarea>
+                                        <label for="observacionesPedido" class="form-label fw-semibold">Observaciones / Personalización (grabados, notas, etc.):</label>
+                                        <textarea class="form-control" id="observacionesPedido" rows="2" placeholder="Ej: Grabar nombre 'María', tocar timbre, casa rosa..." style="border-color: #d1bfe3;"></textarea>
                                     </div>
                                 </div>
 

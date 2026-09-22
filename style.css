@@ -1220,3 +1220,110 @@ padding: 10px 20px !important;
   color: #333333 !important;
   border-color: #e2d1f0 !important;
 }
+/* ===================================================== */
+/* NUEVAS MEJORAS - Primera entrega                      */
+/* ===================================================== */
+
+/* Botón "Comprar solamente este producto" */
+.btn-comprar-solo {
+  transition: all 0.2s ease;
+  border-color: #28a745 !important;
+  color: #28a745 !important;
+  font-weight: 600;
+}
+
+.btn-comprar-solo:hover {
+  background-color: #28a745 !important;
+  color: white !important;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(40, 167, 69, 0.3);
+}
+
+/* Animación sutil al agregar al carrito */
+@keyframes carritoSalto {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.25); }
+  60% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+.carrito-animado {
+  animation: carritoSalto 0.45s ease;
+}
+
+/* Skeleton loader básico */
+.skeleton-card {
+  background: linear-gradient(90deg, #f0e6f5 25%, #e8d9f0 50%, #f0e6f5 75%);
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.4s infinite;
+  border-radius: 12px;
+  height: 380px;
+  margin-bottom: 1rem;
+}
+
+@keyframes skeletonShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Campo de código promocional */
+#codigoPromocional:focus {
+  border-color: #a370b9 !important;
+  box-shadow: 0 0 0 0.2rem rgba(163, 112, 185, 0.25);
+}
+
+/* ===================================================== */
+/* SEGUNDA ENTREGA: skeleton, orden, últimas unidades    */
+/* ===================================================== */
+
+.badge-ultimas-unidades {
+  background: linear-gradient(135deg, #e74c3c, #c0392b) !important;
+  color: #fff !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  padding: 4px 8px !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 6px rgba(192, 57, 43, 0.35);
+  letter-spacing: 0.2px;
+  max-width: 70%;
+  white-space: normal;
+  line-height: 1.2;
+}
+
+#controlesOrden {
+  background: rgba(243, 235, 252, 0.6);
+  border-radius: 12px;
+  padding: 8px 12px !important;
+}
+
+#selectOrden {
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+#selectOrden:focus {
+  border-color: #a370b9 !important;
+  box-shadow: 0 0 0 0.15rem rgba(163, 112, 185, 0.25);
+}
+
+/* Skeleton mejorado */
+.skeleton-card {
+  background: linear-gradient(90deg, #f0e6f5 25%, #e8d9f0 50%, #f0e6f5 75%);
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.4s infinite linear;
+  border-radius: 12px;
+  height: 360px;
+  width: 100%;
+  box-shadow: 0 2px 8px rgba(115, 123, 191, 0.08);
+}
+
+@keyframes skeletonShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+#loaderCatalogo {
+  min-height: 200px;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
