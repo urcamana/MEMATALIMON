@@ -21,81 +21,88 @@
     </div>
 
 <header class="col-12 table-responsive">
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" id="nav1">
-        <div class="container-fluid">
-<!-- Logo / Marca con tamaño aumentado, bordes redondeados y sombra -->
-<a class="navbar-brand d-flex align-items-center" href="index.html">
-    <img src="IMG/logo_principal.jpg" alt="Me Mata Limón!" class="rounded-3 shadow-sm bg-white p-1 border border-light" style="height: 55px; width: auto; object-fit: contain;">
-</a>
+    <nav class="navbar fixed-top" id="nav1">
+        <div class="container-fluid nav-main-row">
 
-            <!-- Botón carrito y Total -->
-            <button id="listaInteres" type="button" class="btn btn-dark btn-sm">Carrito
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
-                    <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
-                </svg>
-                <span id="cantCarrito" class="badge text-bg-secondary bg-danger"></span>
-            </button>
-            <div id="totalCarritoNavb" class="text-bg-dark">$ 0.00</div>
+            <!-- 1. Logo -->
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <img src="IMG/logo_principal.jpg" alt="Me Mata Limón!" class="rounded-3 shadow-sm bg-white p-1 border border-light logo-nav-img">
+            </a>
 
-<!-- Botón Favoritos en la barra superior -->
-<button id="btnFavoritosNav" type="button" class="btn btn-outline-danger btn-sm me-2 position-relative" data-bs-toggle="offcanvas" data-bs-target="#offcanvasFavoritos">
-    ❤️ Favoritos 
-    <span id="cantFavoritos" class="badge text-bg-danger rounded-pill">0</span>
-</button>
+            <!-- 2. Carrito + Total + Favoritos -->
+            <div class="nav-acciones">
+                <button id="listaInteres" type="button" class="btn btn-dark btn-sm btn-nav-compact">
+                    <span class="nav-label-texto">Carrito</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
+                        <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                    </svg>
+                    <span id="cantCarrito" class="badge text-bg-secondary bg-danger"></span>
+                </button>
+                <div id="totalCarritoNavb">$ 0.00</div>
+                <button id="btnFavoritosNav" type="button" class="btn btn-outline-danger btn-sm position-relative btn-nav-compact" data-bs-toggle="offcanvas" data-bs-target="#offcanvasFavoritos">
+                    ❤️ <span class="nav-label-texto">Favoritos</span>
+                    <span id="cantFavoritos" class="badge text-bg-danger rounded-pill">0</span>
+                </button>
+            </div>
 
-            <!-- Botón Hamburguesa Móvil -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar" aria-label="Toggle navigation">
+            <!-- 3. Búsqueda (único id="formulario") -->
+            <div class="barra-busqueda-wrap">
+                <form role="search" onsubmit="return false;">
+                    <input id="formulario" class="form-control" type="search" placeholder="Buscar producto..." aria-label="Buscar producto" autocomplete="off">
+                </form>
+            </div>
+
+            <!-- 4. Links solo escritorio -->
+            <ul class="nav-links-desktop">
+                <li><a class="nav-link-desk active" href="index.html">Inicio</a></li>
+                <li class="dropdown">
+                    <a class="nav-link-desk dropdown-toggle" href="#" id="navbarDropdownProductos" role="button" data-bs-toggle="dropdown" aria-expanded="false">Productos</a>
+                    <ul class="dropdown-menu dropdown-menu-dark" id="listaCategoriasMenu" aria-labelledby="navbarDropdownProductos">
+                        <li><a class="dropdown-item filtro-cat" href="#" data-cat="TODOS">Ver todos los productos</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                    </ul>
+                </li>
+                <li><a class="nav-link-desk" href="politicas.html">Políticas</a></li>
+                <li><a class="nav-link-desk" href="contacto.html">Contacto</a></li>
+            </ul>
+
+            <!-- 5. Hamburguesa solo móvil -->
+            <button class="btn-menu-movil" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar" aria-label="Menú">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
-            <!-- Menú Desplegable Offcanvas -->
-            <div class="offcanvas offcanvas-end text-bg-dark rounded" tabindex="-1" id="offcanvasDarkNavbar" aria-labelledby="offcanvasDarkNavbarLabel">
-                <div class="offcanvas-header">
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                </div>
-
-                <div class="offcanvas-body canv-as">
-                    <!-- Buscador (mantiene ID exacto para logica.js) -->
-                    <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-                        <li>
-                            <form class="d-flex justify-content-center" role="search" onsubmit="return false;" style="width: 100%; max-width: 600px; margin: 0 auto;">
-                                <input id="formulario" class="form-control me-2" type="search" placeholder="Buscar producto" aria-label="Buscar producto">
-                            </form>
-                        </li>
-                    </ul>
-
-                    <!-- Menú de navegación principal con desplegable de Productos -->
-                    <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="index.html">Inicio</a>
-                        </li>
-
-                        <!-- DESPLEGABLE PRODUCTOS (NUEVO) -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProductos" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Productos
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-dark" id="listaCategoriasMenu" aria-labelledby="navbarDropdownProductos">
-                                <li><a class="dropdown-item filtro-cat" href="#" data-cat="TODOS">Ver todos los productos</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <!-- Aquí JS insertará dinámicamente las categorías -->
-                            </ul>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="politicas.html">Politicas de venta</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="contacto.html">Contacto</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
         </div>
     </nav>
 
-    <!-- Banner y Portada -->
-    <div class="bg-gray py-5 heroTitulo">
+    <!-- Offcanvas menú móvil: FUERA de la fila flex, no interfiere en escritorio -->
+    <div class="offcanvas offcanvas-end text-bg-dark rounded" tabindex="-1" id="offcanvasDarkNavbar" aria-labelledby="offcanvasDarkNavbarLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabel">Menú</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body canv-as">
+            <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                <li class="nav-item">
+                    <a class="nav-link active" href="index.html">Inicio</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProductosMovil" role="button" data-bs-toggle="dropdown" aria-expanded="false">Productos</a>
+                    <ul class="dropdown-menu dropdown-menu-dark" id="listaCategoriasMenuMovil" aria-labelledby="navbarDropdownProductosMovil">
+                        <li><a class="dropdown-item filtro-cat" href="#" data-cat="TODOS">Ver todos los productos</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="politicas.html">Políticas de venta</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="contacto.html">Contacto</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+<!-- Banner y Portada -->
+    <div class="bg-gray py-5 heroTitulo ocultar-en-busqueda">
         <div class="container-fluid px-md-5 my-5">
             <div class="text-center text-white">
                 <h1 class="display-4 fw-bolder">Me Mata Limón!</h1>
@@ -286,9 +293,9 @@
             <div class="row">
                 <div class="col">
 
-                    <h2>TIENDA ONLINE</h2>
+                    <h2 class="ocultar-en-busqueda">TIENDA ONLINE</h2>
                     
-                    <div class="py-2" style="background-color: transparent;">
+                    <div class="py-2 ocultar-en-busqueda" style="background-color: transparent;">
                         <div class="d-md-none text-center mb-2">
                             <button class="btn btn-dark" type="button" data-bs-toggle="collapse"
                                 data-bs-target="#filtrosCategoria" aria-expanded="false">

@@ -442,27 +442,19 @@ li form {
 
 /* }   */
 
+.img-prod {
+  cursor: pointer; /* indica que se puede hacer click para ver la siguiente foto */
+}
+
 .img-prod:hover {
-  transform: scale(1);
+  transform: scale(1.02);
   z-index: 1;
-
+  transition: transform 0.15s ease;
 }
 
-.img-prod:active {
-  position: fixed !;
-  /* La imagen se posicionará en relación a la ventana */
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(2);
-  z-index: 99999999 !important;
-  /* Asegúrate de que esté por encima de otros elementos */
-  transform: scale(2);
-  z-index: 1;
-  margin: -5px;
-  /* Agrega un margen negativo para crear espacio */
-  object-fit: cover;
-  transition: transform 0.3s ease-in-out;
-}
+/* El zoom con :active se desactivó: el click izquierdo ahora pasa a la
+   siguiente imagen del carrusel (ver logica.js). El click derecho sigue
+   bloqueado para no abrir el menú del navegador. */
 
 h7 {
   color: red;
@@ -860,14 +852,16 @@ padding: 10px 20px !important;
 }
 
 #nav1 .navbar-brand,
-#nav1 .nav-link {
+#nav1 .nav-link,
+#nav1 .nav-link-desk {
   color: var(--texto-general) !important;
 }
 
 #nav1 .nav-link:hover,
-#nav1 .nav-link.active {
+#nav1 .nav-link.active,
+#nav1 .nav-link-desk:hover,
+#nav1 .nav-link-desk.active {
   color: #ffffff !important;
-  /* Color de resaltado al pasar el mouse */
 }
 
 /* Botón "Carrito" del Navbar */
@@ -1326,4 +1320,223 @@ padding: 10px 20px !important;
   min-height: 200px;
   margin-top: 1rem;
   margin-bottom: 2rem;
+}
+
+/* ===================================================== */
+/* MEJORA NAVBAR v3 — escritorio limpio + móvil con búsqueda */
+/* ===================================================== */
+
+#nav1 {
+  padding: 0 !important;
+  min-height: auto;
+}
+
+.logo-nav-img {
+  height: 48px !important;
+  width: auto !important;
+  object-fit: contain !important;
+}
+
+/* Fila principal */
+#nav1 .nav-main-row {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center !important;
+  gap: 8px 10px;
+  padding: 8px 12px;
+}
+
+#nav1 .navbar-brand {
+  margin: 0 !important;
+  padding: 0 !important;
+  flex-shrink: 0;
+}
+
+/* Carrito / favoritos */
+#nav1 .nav-acciones {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+#nav1 .btn-nav-compact {
+  white-space: nowrap;
+  padding: 4px 8px !important;
+  font-size: 0.85rem;
+}
+
+#totalCarritoNavb {
+  white-space: nowrap;
+  font-size: 0.85rem !important;
+  padding: 0 4px;
+  background: transparent !important;
+  font-weight: bold;
+}
+
+/* Búsqueda */
+#nav1 .barra-busqueda-wrap {
+  flex: 1 1 160px;
+  min-width: 120px;
+  max-width: 360px;
+}
+
+#nav1 .barra-busqueda-wrap form {
+  margin: 0;
+  width: 100%;
+}
+
+#nav1 .barra-busqueda-wrap #formulario {
+  width: 100%;
+  border-radius: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  padding: 7px 14px;
+  font-size: 0.9rem;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+#nav1 .barra-busqueda-wrap #formulario:focus {
+  outline: none;
+  border-color: #a370b9;
+  box-shadow: 0 0 0 0.15rem rgba(163, 112, 185, 0.25);
+}
+
+/* Links escritorio */
+#nav1 .nav-links-desktop {
+  display: none; /* oculto por defecto; se muestra en desktop */
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 4px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+#nav1 .nav-links-desktop .nav-link-desk {
+  display: inline-block;
+  white-space: nowrap !important;
+  padding: 4px 10px;
+  text-decoration: none;
+  color: inherit;
+  font-size: 0.92rem;
+  border-radius: 6px;
+}
+
+#nav1 .nav-links-desktop .nav-link-desk:hover,
+#nav1 .nav-links-desktop .nav-link-desk.active {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+/* Hamburguesa móvil */
+#nav1 .btn-menu-movil {
+  display: none; /* se muestra solo en móvil */
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  background: transparent;
+  border-radius: 6px;
+  padding: 4px 8px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+#nav1 .btn-menu-movil .navbar-toggler-icon {
+  width: 1.2em;
+  height: 1.2em;
+  display: inline-block;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%280, 0, 0, 0.7%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+}
+
+/* Offcanvas: nunca participa del layout de la barra */
+#offcanvasDarkNavbar {
+  position: fixed !important;
+  z-index: 1055 !important;
+}
+
+/* ========== ESCRITORIO (≥ 768px) ========== */
+@media (min-width: 768px) {
+  #nav1 .nav-label-texto {
+    display: inline !important;
+  }
+
+  #nav1 .nav-main-row {
+    flex-wrap: nowrap !important;
+  }
+
+  #nav1 .nav-links-desktop {
+    display: flex !important;
+    margin-left: auto;
+  }
+
+  #nav1 .btn-menu-movil {
+    display: none !important;
+  }
+
+  #nav1 .barra-busqueda-wrap {
+    flex: 1 1 auto;
+    max-width: 320px;
+    margin: 0 12px;
+  }
+
+  /* Orden: logo | acciones | búsqueda | links */
+  #nav1 .navbar-brand { order: 1; }
+  #nav1 .nav-acciones { order: 2; }
+  #nav1 .barra-busqueda-wrap { order: 3; }
+  #nav1 .nav-links-desktop { order: 4; }
+}
+
+/* ========== MÓVIL (< 768px) ========== */
+@media (max-width: 767.98px) {
+  #nav1 .nav-label-texto {
+    display: none !important;
+  }
+
+  #nav1 .logo-nav-img {
+    height: 42px !important;
+  }
+
+  #nav1 .btn-nav-compact {
+    padding: 4px 6px !important;
+  }
+
+  #totalCarritoNavb {
+    font-size: 0.8rem !important;
+  }
+
+  #nav1 .nav-links-desktop {
+    display: none !important;
+  }
+
+  #nav1 .btn-menu-movil {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Fila 1: logo | acciones | menú */
+  #nav1 .navbar-brand { order: 1; }
+  #nav1 .nav-acciones { order: 2; margin-left: auto; }
+  #nav1 .btn-menu-movil { order: 3; }
+
+  /* Fila 2: búsqueda full width */
+  #nav1 .barra-busqueda-wrap {
+    order: 4;
+    flex: 1 1 100%;
+    max-width: 100%;
+    min-width: 100%;
+  }
+
+  .tarjetas {
+    margin-top: 8px;
+  }
+
+  header .heroTitulo,
+  .bg-gray.py-5.heroTitulo {
+    padding-top: 0.5rem !important;
+    margin-top: 0 !important;
+  }
 }

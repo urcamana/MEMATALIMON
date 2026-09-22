@@ -353,6 +353,48 @@ document.addEventListener('contextmenu', function (event) {
   }
 });
 
+// Click izquierdo en la imagen del producto → siguiente foto del carrusel
+document.addEventListener('click', function (event) {
+  const img = event.target.closest('.img-prod');
+  if (!img) return;
+  // No interferir si el click fue en controles del carrusel
+  if (event.target.closest('.carousel-control-prev, .carousel-control-next')) return;
+  // Solo en catálogo (no miniaturas del carrito)
+  if (img.classList.contains('carrito-item-img')) return;
+
+  const carouselElem = img.closest('.carousel');
+  if (!carouselElem) return;
+
+  event.preventDefault();
+
+  const avanzar = () => {
+    try {
+      const inst = bootstrap.Carousel.getOrCreateInstance(carouselElem, { interval: false, ride: false });
+      inst.next();
+    } catch (err) {
+      const items = carouselElem.querySelectorAll('.carousel-item');
+      if (items.length < 2) return;
+      let idx = 0;
+      items.forEach((it, i) => { if (it.classList.contains('active')) idx = i; });
+      items[idx].classList.remove('active');
+      items[(idx + 1) % items.length].classList.add('active');
+    }
+  };
+
+  // Cargar imágenes secundarias si aún no están, y luego avanzar
+  const articuloId = carouselElem.dataset.articulo;
+  const descripcion = carouselElem.dataset.descripcion || '';
+  if (articuloId && carouselElem.dataset.cargado !== 'true') {
+    try {
+      cargarImagenesSecundariasLazy(articuloId, carouselElem.id, descripcion);
+    } catch (err) {}
+    // Esperar un momento a que se agreguen slides (carga async de B/C/D/E.jpg)
+    setTimeout(avanzar, 200);
+  } else {
+    avanzar();
+  }
+});
+
 var FILTROS = "";
 let unidades = 1;
 
@@ -871,13 +913,30 @@ filtrarConBusqueda()
 
 function filtrarConBusqueda() {
   const formulario = document.querySelector('#formulario');
+  // Si por algún motivo no existe el input, no rompemos el resto de la web
+  if (!formulario) {
+    console.warn('No se encontró #formulario');
+    return;
+  }
 
   let debounceBusqueda;
 
   const filtrar = () => {
 
-    const texto = formulario.value.toLowerCase();
+    const texto = formulario.value.toLowerCase().trim();
     let coincidencias = 0;
+
+    // Al buscar: ocultar banners y categorías para que los resultados queden arriba
+    // Al borrar la búsqueda: volver a mostrarlos
+    const hayBusqueda = texto.length > 0;
+    document.querySelectorAll('.ocultar-en-busqueda').forEach(el => {
+      if (hayBusqueda) {
+        el.classList.add('d-none');
+      } else {
+        el.classList.remove('d-none');
+      }
+    });
+
     for (let producto of datos) {
       let Descripcion = producto.Descripción.toLowerCase();
       //BORRAMOS LOS ELEMENTOS DEL CATALOGO
@@ -932,7 +991,16 @@ if (target) {
 
     // Eliminamos la llamada redundante a escucharBotones() aquí
     // escucharBotones();
-    subirScroll.subir();
+    if (texto.length > 0) {
+      // Llevar al usuario directo a los resultados (sin banners arriba)
+      const dest = document.getElementById('contenedorCatalogo') || document.querySelector('.tarjetas.contenedor');
+      if (dest) {
+        const y = dest.getBoundingClientRect().top + window.pageYOffset - 90;
+        window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+      }
+    } else {
+      try { subirScroll.subir(); } catch (e) {}
+    }
 
   };
 
@@ -1227,36 +1295,44 @@ function actualizarBotonWhatsAppFinal() {
   contenedorAbajo.classList.add('show');
 }
 // Función para poblar el desplegable de Productos en el Navbar
+// Mejora: también rellena el menú móvil (#listaCategoriasMenuMovil) si existe
 function poblarMenuDesplegableProductos(categorias) {
-  const menuContainer = document.getElementById("listaCategoriasMenu");
-  if (!menuContainer) return;
+  const menus = [
+    document.getElementById("listaCategoriasMenu"),
+    document.getElementById("listaCategoriasMenuMovil")
+  ].filter(Boolean);
 
-  menuContainer.innerHTML = `
+  if (menus.length === 0) return;
+
+  const htmlBase = `
     <li><a class="dropdown-item filtro-cat-nav" href="#" data-cat="TODOS">Ver todos los productos</a></li>
     <li><hr class="dropdown-divider"></li>
   `;
 
+  let extras = "";
   categorias.forEach(cat => {
     if (cat && cat !== "VER TODOS" && cat !== "CON DESCUENTOS") {
-      const li = document.createElement("li");
-      li.innerHTML = `<a class="dropdown-item filtro-cat-nav" href="#" data-cat="${cat}">${cat}</a>`;
-      menuContainer.appendChild(li);
+      extras += `<li><a class="dropdown-item filtro-cat-nav" href="#" data-cat="${cat}">${cat}</a></li>`;
     }
   });
 
-  menuContainer.querySelectorAll(".filtro-cat-nav").forEach(item => {
-    item.addEventListener("click", (e) => {
-      e.preventDefault();
-      const categoriaSeleccionada = e.target.getAttribute("data-cat");
-      FILTROS = categoriaSeleccionada === "TODOS" ? "VER TODOS" : categoriaSeleccionada;
-      renderizarCatalogo(FILTROS);
-      try { subirScroll.subir(); } catch (err) {}
+  menus.forEach(menuContainer => {
+    menuContainer.innerHTML = htmlBase + extras;
 
-      const offcanvasElement = document.getElementById("offcanvasDarkNavbar");
-      if (offcanvasElement) {
-        const bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvasElement);
-        if (bsOffcanvas) bsOffcanvas.hide();
-      }
+    menuContainer.querySelectorAll(".filtro-cat-nav").forEach(item => {
+      item.addEventListener("click", (e) => {
+        e.preventDefault();
+        const categoriaSeleccionada = e.target.getAttribute("data-cat");
+        FILTROS = categoriaSeleccionada === "TODOS" ? "VER TODOS" : categoriaSeleccionada;
+        renderizarCatalogo(FILTROS);
+        try { subirScroll.subir(); } catch (err) {}
+
+        const offcanvasElement = document.getElementById("offcanvasDarkNavbar");
+        if (offcanvasElement) {
+          const bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvasElement);
+          if (bsOffcanvas) bsOffcanvas.hide();
+        }
+      });
     });
   });
 }
