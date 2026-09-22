@@ -1540,3 +1540,16 @@ padding: 10px 20px !important;
     margin-top: 0 !important;
   }
 }
+/* Aseguramos espacio fijo arriba para que el navbar nunca tape el contenido */
+body {
+  padding-top: 90px !important; /* Espacio predeterminado para escritorio */
+}
+
+@media (max-width: 768px) {
+  body {
+    padding-top: 130px !important; /* Espacio mayor en celulares donde el navbar ocupa más altura */
+  }
+  .tarjetas {
+    margin-top: 0px !important; /* Evitamos acumular márgenes excesivos */
+  }
+}
