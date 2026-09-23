@@ -335,6 +335,19 @@ function MostrarEnCatalogo(datos, contenedorId) {
     btnComprarSolo.dataset.articulo = datos.Artículo;
   }
 
+  // Botón compartir + id en la tarjeta para link directo ?p=ID
+  const btnShare = template2.querySelector(".btn-compartir-prod");
+  if (btnShare) {
+    btnShare.dataset.articulo = datos.Artículo;
+    btnShare.dataset.nombre = typeof datos.Descripción === 'string' ? datos.Descripción : 'Producto';
+  }
+  // Marcar la columna de la tarjeta con data-producto-id (después del clone se aplica al root)
+  const colRoot = template2.querySelector('.col-sm-6, .col-6, .col-md-6') || template2.firstElementChild;
+  if (colRoot) {
+    colRoot.dataset.productoId = datos.Artículo;
+    colRoot.id = 'producto-' + datos.Artículo;
+  }
+
   let clone2 = document.importNode(template2, true);
   fragmento2.appendChild(clone2);
   return fragmento2;
@@ -598,6 +611,8 @@ FILTROS = "VER TODOS";
 renderizarCatalogo("VER TODOS");
 escucharBotones(); // Esta es la única llamada a escucharBotones que debe existir.
 descu.porDeDescuento();
+abrirProductoDesdeURL(); // Si viene ?p=ID desde un link compartido
+
 
 
 
@@ -1250,7 +1265,7 @@ function borrarCarritoCompleto() {
   }
 
   const btnBorrarCarrito = document.createElement("button");
-  btnBorrarCarrito.setAttribute("class", "btn btn-outline-danger");
+  btnBorrarCarrito.setAttribute("class", "btn btn-outline-danger btn-vaciar-carrito w-100 mt-2");
   btnBorrarCarrito.setAttribute("id", "btbc");
   btnBorrarCarrito.innerHTML = "🗑 Vaciar carrito";
 
@@ -1453,6 +1468,97 @@ document.addEventListener('click', function (e) {
   }
 });
 
+
+
+// =====================================================
+// COMPARTIR PRODUCTO + LINK DIRECTO (?p=ID)
+// =====================================================
+function urlProductoCompartible(articuloId) {
+  const u = new URL(window.location.href);
+  let path = u.pathname;
+  if (/contacto\.html|politicas\.html/i.test(path)) {
+    path = path.replace(/contacto\.html|politicas\.html/i, 'index.html');
+  }
+  u.pathname = path;
+  u.search = '';
+  u.hash = '';
+  u.searchParams.set('p', String(articuloId));
+  return u.toString();
+}
+
+function precioTextoParaShare(articuloId) {
+  try {
+    const prod = datos.find(d => String(d.Artículo) === String(articuloId));
+    if (!prod) return '';
+    let p = Number(String(prod.Venta).replace(/,/g, '.')) * Number(prod.DOLAR || 1);
+    if (prod.Descuento != 0 && prod.Descuento != '0') {
+      const d = Number(String(prod.Descuento).replace(/,/g, '.'));
+      p = p * (1 - d);
+    }
+    return new Intl.NumberFormat('es-AR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(p);
+  } catch (e) {
+    return '';
+  }
+}
+
+async function compartirProducto(articuloId, nombre) {
+  const url = urlProductoCompartible(articuloId);
+  const precio = precioTextoParaShare(articuloId);
+  const titulo = nombre || 'Producto Me Mata Limón';
+  const texto = precio
+    ? `Mirá este producto en Me Mata Limón: ${titulo} — $${precio}`
+    : `Mirá este producto en Me Mata Limón: ${titulo}`;
+
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: titulo, text: texto, url });
+      return;
+    } catch (err) {
+      if (err && err.name === 'AbortError') return;
+    }
+  }
+
+  // Fallback: copiar link + opción WhatsApp
+  try {
+    await navigator.clipboard.writeText(url);
+    alertas.alertAgrego('Link copiado', 'Ya podés pegarlo y mandárselo a alguien.', 'alert-success');
+  } catch (e) {
+    // Último recurso: WhatsApp con el link
+    const wa = `https://wa.me/?text=${encodeURIComponent(texto + '\\n' + url)}`;
+    window.open(wa, '_blank');
+  }
+}
+
+function abrirProductoDesdeURL() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('p') || params.get('producto');
+  if (!id) return;
+
+  // Esperar a que el catálogo esté en el DOM
+  const tryScroll = (intentos) => {
+    const el = document.getElementById('producto-' + id) ||
+      document.querySelector(`[data-producto-id="${id}"]`);
+    if (el) {
+      el.classList.add('producto-destacado');
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => el.classList.remove('producto-destacado'), 3500);
+      return;
+    }
+    if (intentos > 0) setTimeout(() => tryScroll(intentos - 1), 200);
+  };
+  setTimeout(() => tryScroll(25), 300);
+}
+
+// Click en botón compartir
+document.addEventListener('click', function (e) {
+  const btn = e.target.closest('.btn-compartir-prod');
+  if (!btn) return;
+  e.preventDefault();
+  e.stopPropagation();
+  const id = btn.dataset.articulo;
+  const nombre = btn.dataset.nombre || '';
+  if (id) compartirProducto(id, nombre);
+});
 
 // =====================================================
 // BOTÓN "COMPRAR SOLAMENTE ESTE PRODUCTO"

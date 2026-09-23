@@ -1,0 +1,32 @@
+{
+  "name": "Me Mata Limón!",
+  "short_name": "Me Mata Limón",
+  "description": "Accesorios, electrónica y grabados personalizados",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#a88cd7",
+  "theme_color": "#a88cd7",
+  "lang": "es-AR",
+  "icons": [
+    {
+      "src": "IMG/logo_principal.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "IMG/logo_principal.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "IMG/logo.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
