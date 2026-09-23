@@ -1826,3 +1826,29 @@ body.pagina-secundaria section {
     object-fit: contain !important;
   }
 }
+
+/* Compartir: solo sobre la foto del carrusel (no pisa "Comprar solamente...") */
+.card .carousel.position-relative {
+  position: relative !important;
+}
+
+.card .carousel .btn-compartir-prod {
+  position: absolute !important;
+  right: 8px;
+  bottom: 8px;
+  z-index: 5;
+  width: 32px;
+  height: 32px;
+  margin: 0 !important;
+}
+
+/* En celular un poco más arriba del borde inferior de la foto */
+@media (max-width: 576px) {
+  .card .carousel .btn-compartir-prod {
+    right: 6px;
+    bottom: 10px;
+    width: 30px;
+    height: 30px;
+    font-size: 0.9rem;
+  }
+}
