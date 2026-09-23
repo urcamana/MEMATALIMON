@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#a88cd7">
+  <meta name="description" content="Recomendaciones, opiniones de clientes y fotos - Me Mata Limón Eldorado.">
+  <title>Recomendaciones y Opiniones | Me Mata Limón</title>
+  <link rel="shortcut icon" href="IMG/logo.png" type="image/x-icon">
+  <link rel="apple-touch-icon" href="IMG/logo_principal.jpg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="pagina-secundaria">
+
+  <header>
+    <nav class="navbar fixed-top" id="nav1">
+      <div class="container-fluid nav-main-row">
+        <a class="navbar-brand d-flex align-items-center" href="index.html">
+          <img src="IMG/logo_principal.jpg" alt="Me Mata Limón!" class="logo-nav-img rounded-3 shadow-sm bg-white p-1 border">
+        </a>
+        <div class="nav-links-desktop d-none d-md-flex align-items-center gap-3 ms-auto">
+          <a class="nav-link-desk" href="index.html">Inicio</a>
+          <a class="nav-link-desk" href="politicas.html">Políticas de venta</a>
+          <a class="nav-link-desk" href="contacto.html">Contacto</a>
+          <a class="nav-link-desk active" href="testimonios.html">Opiniones</a>
+        </div>
+        <button class="btn-menu-movil" type="button" data-bs-toggle="offcanvas"
+          data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar" aria-label="Menú">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </nav>
+    <div class="offcanvas offcanvas-end text-bg-dark rounded" tabindex="-1" id="offcanvasDarkNavbar">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title">Menú</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <ul class="navbar-nav flex-grow-1 pe-3">
+          <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="politicas.html">Políticas de venta</a></li>
+          <li class="nav-item"><a class="nav-link" href="contacto.html">Contacto</a></li>
+          <li class="nav-item"><a class="nav-link active" href="testimonios.html">Recomendaciones y Opiniones</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <main class="pagina-main">
+    <div class="pagina-contenido testimonios-page">
+      <h1 class="h3 fw-bold mb-2 text-center">Recomendaciones y Opiniones</h1>
+      <p class="text-center text-secondary mb-4">Productos que destacamos, fotos que nos envian ustedes y algunas nuestras de productos que usamos en el día a día .</p>
+
+      <!-- SECCIÓN 1: Productos recomendados -->
+      <section class="mb-5">
+        <h2 class="h5 fw-bold mb-3">Productos que recomendamos:</h2>
+        <div id="listaRecomendados" class="row g-3">
+          <div class="col-12 text-center text-secondary py-4">Cargando recomendaciones…</div>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 2: Ustedes (fotos) -->
+      <section class="mb-5">
+        <h2 class="h5 fw-bold mb-3">¡Ustedes!</h2>
+        <p class="small text-secondary mb-2">Caputuras de los mensajes que recibimos:</p>
+        <div id="carruselUstedes" class="carousel slide galeria-carrusel shadow-sm rounded-3 overflow-hidden" data-bs-ride="false" data-bs-interval="false">
+          <div class="carousel-inner" id="ustedesInner">
+            <div class="carousel-item active">
+              <div class="galeria-placeholder">Agregár fotos en la carpeta <strong>ustedes/</strong> como 1.jpg, 2.jpg, 3.jpg…</div>
+            </div>
+          </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#carruselUstedes" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Anterior</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carruselUstedes" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Siguiente</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 3: Productos que también usamos nosotros -->
+      <section class="mb-4">
+        <h2 class="h5 fw-bold mb-3">¡Nosotros!</h2>
+        <p class="small text-secondary mb-2">Productos que usamos...</p>
+        <div id="carruselNosotros" class="carousel slide galeria-carrusel shadow-sm rounded-3 overflow-hidden" data-bs-ride="false" data-bs-interval="false">
+          <div class="carousel-inner" id="nosotrosInner">
+            <div class="carousel-item active">
+              <div class="galeria-placeholder">Agregár fotos en la carpeta <strong>nosotros/</strong> como 1.jpg, 2.jpg, 3.jpg…</div>
+            </div>
+          </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#carruselNosotros" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Anterior</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carruselNosotros" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Siguiente</span>
+          </button>
+        </div>
+      </section>
+
+      <div class="text-center mt-4">
+        <a href="index.html" class="btn btn-dark rounded-pill px-4">Volver a la tienda</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="redes">
+      <a href="https://wa.me/5493751588752" target="_blank" rel="noopener"><img src="IMG/w.png" alt="WhatsApp"></a>
+      <a href="https://www.instagram.com/accesorioslimonok" target="_blank" rel="noopener"><img src="IMG/i.png" alt="Instagram"></a>
+      <a href="https://www.facebook.com/memata.limon.7" target="_blank" rel="noopener"><img src="IMG/f.png" alt="Facebook"></a>
+      <a href="https://www.youtube.com/@Mematalimonok" target="_blank" rel="noopener"><img src="IMG/y.png" alt="YouTube" onerror="this.style.display='none'"></a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+  <script src="testimonios.js"></script>
+</body>
+</html>

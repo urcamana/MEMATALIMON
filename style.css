@@ -1962,3 +1962,175 @@ body.pagina-secundaria section {
     bottom: 80px !important;
   }
 }
+
+/* ===================================================== */
+/* Testimonios + sugerencias de búsqueda                 */
+/* ===================================================== */
+
+.link-recomendaciones {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #6b4a9a;
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(107, 74, 154, 0.45);
+}
+.link-recomendaciones:hover {
+  color: #4a2d7a;
+  border-bottom-style: solid;
+}
+
+.sugerencias-busqueda {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 2000;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(140, 100, 180, 0.25);
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 6px;
+}
+.sugerencia-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: transparent;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  color: #333;
+  cursor: pointer;
+}
+.sugerencia-item:hover,
+.sugerencia-item:focus {
+  background: #f3ebfc;
+  color: #4a2d7a;
+}
+
+.rec-card {
+  border: 1px solid rgba(140, 100, 180, 0.15);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.rec-img {
+  height: 180px;
+  object-fit: contain;
+  background: #fafafa;
+}
+/* Carrusel de fotos (ustedes / nosotros): orientado a fotos verticales o capturas */
+.galeria-carrusel {
+  background: #f3ebfc;
+  max-width: 100%;
+  border: 1px solid rgba(140, 100, 180, 0.18);
+}
+
+.galeria-carrusel .carousel-inner {
+  background: #f3ebfc;
+}
+
+.galeria-carrusel .carousel-item {
+  text-align: center;
+  background: #f3ebfc;
+  min-height: 320px;
+  /* NO poner display:flex acá: rompe el show/hide de Bootstrap */
+}
+.galeria-carrusel .carousel-item.active {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+.galeria-img {
+  width: auto !important;
+  max-width: 100%;
+  height: auto !important;
+  max-height: min(70vh, 560px);
+  object-fit: contain !important;
+  margin: 0 auto;
+  display: block;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(80, 40, 120, 0.12);
+}
+
+/* Flechas visibles sobre fondo claro */
+.galeria-carrusel .carousel-control-prev,
+.galeria-carrusel .carousel-control-next {
+  width: 12%;
+  opacity: 0.85;
+}
+.galeria-carrusel .carousel-control-prev-icon,
+.galeria-carrusel .carousel-control-next-icon {
+  filter: invert(30%) sepia(40%) saturate(600%) hue-rotate(230deg) !important;
+  background-color: rgba(255, 255, 255, 0.75);
+  border-radius: 50%;
+  padding: 18px;
+  background-size: 50% 50%;
+}
+
+.galeria-placeholder {
+  min-height: 220px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  color: #666;
+  background: #f0eaf7;
+}
+
+@media (max-width: 576px) {
+  .galeria-carrusel .carousel-item {
+    min-height: 260px;
+  }
+  .galeria-img {
+    max-height: min(65vh, 480px);
+  }
+}
+
+
+/* Compartir producto: en celular solo icono redondo (sin texto que se desborda) */
+@media (max-width: 576px) {
+  .card .carousel .btn-compartir-prod {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    justify-content: center !important;
+    gap: 0 !important;
+  }
+  .card .carousel .btn-compartir-prod .btn-compartir-txt {
+    display: none !important;
+  }
+  .card .carousel .btn-compartir-prod svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Badge "De tus favoritos" en recomendaciones */
+.rec-card {
+  position: relative;
+}
+.badge-rec-fav {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+  background: #e74c3c;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+.rec-card-fav {
+  border-color: rgba(231, 76, 60, 0.35) !important;
+  box-shadow: 0 4px 16px rgba(231, 76, 60, 0.12) !important;
+}

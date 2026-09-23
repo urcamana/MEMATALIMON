@@ -1055,6 +1055,80 @@ if (target) {
 
 
 
+
+// =====================================================
+// SUGERENCIAS DEL BUSCADOR (mientras escriben)
+// =====================================================
+(function initSugerenciasBusqueda() {
+  const input = document.getElementById('formulario');
+  const box = document.getElementById('sugerenciasBusqueda');
+  if (!input || !box) return;
+
+  let timer = null;
+
+  function ocultar() {
+    box.classList.add('d-none');
+    box.innerHTML = '';
+  }
+
+  function mostrarSugerencias() {
+    const q = input.value.toLowerCase().trim();
+    if (q.length < 2) {
+      ocultar();
+      return;
+    }
+    const matches = [];
+    for (let i = 0; i < datos.length && matches.length < 8; i++) {
+      const p = datos[i];
+      if (Number(p.Inventario) < 1) continue;
+      const nom = String(p.Descripción || '');
+      if (nom.toLowerCase().indexOf(q) !== -1) {
+        matches.push(p);
+      }
+    }
+    if (!matches.length) {
+      ocultar();
+      return;
+    }
+    box.innerHTML = matches.map(p => {
+      const nom = String(p.Descripción).replace(/</g, '&lt;');
+      return '<button type="button" class="sugerencia-item" data-id="' + p.Artículo + '" data-nombre="' + nom.replace(/"/g, '&quot;') + '">' + nom + '</button>';
+    }).join('');
+    box.classList.remove('d-none');
+  }
+
+  input.addEventListener('input', () => {
+    clearTimeout(timer);
+    timer = setTimeout(mostrarSugerencias, 180);
+  });
+
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') ocultar();
+  });
+
+  box.addEventListener('click', (e) => {
+    const btn = e.target.closest('.sugerencia-item');
+    if (!btn) return;
+    const id = btn.dataset.id;
+    const nombre = btn.dataset.nombre || '';
+    input.value = nombre;
+    ocultar();
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    setTimeout(() => {
+      const el = document.getElementById('producto-' + id) || document.querySelector('[data-producto-id="' + id + '"]');
+      if (el) {
+        el.classList.add('producto-destacado');
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => el.classList.remove('producto-destacado'), 3000);
+      }
+    }, 450);
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.barra-busqueda-wrap')) ocultar();
+  });
+})();
+
 // funcion ocultar canvas
 function ocultarCanvasBusqueda() {
   // Obtenemos los elementos
