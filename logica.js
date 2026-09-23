@@ -1506,8 +1506,8 @@ async function compartirProducto(articuloId, nombre) {
   const precio = precioTextoParaShare(articuloId);
   const titulo = nombre || 'Producto Me Mata Limón';
   const texto = precio
-    ? `Mirá este producto en Me Mata Limón: ${titulo} — $${precio}`
-    : `Mirá este producto en Me Mata Limón: ${titulo}`;
+    ? `¡Mirá esto de Me Mata Limón!\n${titulo}\nPrecio: $${precio}\n${url}`
+    : `¡Mirá esto de Me Mata Limón!\n${titulo}\n${url}`;
 
   if (navigator.share) {
     try {
@@ -1518,16 +1518,40 @@ async function compartirProducto(articuloId, nombre) {
     }
   }
 
-  // Fallback: copiar link + opción WhatsApp
   try {
-    await navigator.clipboard.writeText(url);
-    alertas.alertAgrego('Link copiado', 'Ya podés pegarlo y mandárselo a alguien.', 'alert-success');
+    await navigator.clipboard.writeText(texto);
+    alertas.alertAgrego('Listo para compartir', 'Se copió el texto con el link. Pegalo donde quieras.', 'alert-success');
   } catch (e) {
-    // Último recurso: WhatsApp con el link
-    const wa = `https://wa.me/?text=${encodeURIComponent(texto + '\\n' + url)}`;
-    window.open(wa, '_blank');
+    window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
   }
 }
+
+async function compartirTienda() {
+  const url = 'https://mematalimon.com.ar/';
+  const texto = '¡Mirá la tienda Me Mata Limón! Accesorios, electrónica y grabados en Eldorado.\n' + url;
+
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: 'Me Mata Limón', text: texto, url });
+      return;
+    } catch (err) {
+      if (err && err.name === 'AbortError') return;
+    }
+  }
+  try {
+    await navigator.clipboard.writeText(texto);
+    alertas.alertAgrego('Link de la tienda', 'Copiado. Ya podés mandárselo a alguien.', 'alert-success');
+  } catch (e) {
+    window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
+  }
+}
+
+document.addEventListener('click', function (e) {
+  const btn = e.target.closest('.btn-compartir-tienda');
+  if (!btn) return;
+  e.preventDefault();
+  compartirTienda();
+});
 
 function abrirProductoDesdeURL() {
   const params = new URLSearchParams(window.location.search);
