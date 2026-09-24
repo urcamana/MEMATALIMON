@@ -35,8 +35,16 @@
 
 <body class="row">
     <div id="fondo">
-        <img id="fondo2" alt="" src="IMG/logo blanco.jpg">
-
+        <div id="splashLogo">
+            <img id="fondo2" alt="" src="IMG/logo blanco.jpg">
+        </div>
+        <div id="splashMensaje" class="d-none" role="dialog" aria-modal="true" aria-labelledby="splashTitulo">
+            <div class="splash-msg-box">
+                <h2 id="splashTitulo">Aviso</h2>
+                <p id="splashTexto"></p>
+                <button type="button" id="splashOk">OK</button>
+            </div>
+        </div>
     </div>
 
 <header class="col-12 table-responsive">
@@ -85,9 +93,13 @@
                     </ul>
                 </li>
 		<li><a class="nav-link-desk" href="testimonios.html">Recomendaciones</a></li>
+                <li><a class="nav-link-desk" href="obsequios/obsequios.html">Regalos</a></li>
+                <li><a class="nav-link-desk" href="guia-compra.html">Guía</a></li>
                 <li><a class="nav-link-desk" href="politicas.html">Políticas</a></li>
                 <li><a class="nav-link-desk" href="contacto.html">Contacto</a></li>
+<!-- 
                 <li><button type="button" class="nav-link-desk btn-compartir-tienda" id="btnCompartirTiendaDesk" title="Compartir la tienda">Compartir</button></li>
+   --> 
             </ul>
 
             <!-- 5. Hamburguesa solo móvil -->
@@ -119,6 +131,15 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="testimonios.html">Recomendaciones</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="obsequios/obsequios.html">Ideas para regalar</a>
+                </li>
+
+
+
+                <li class="nav-item">
+                    <a class="nav-link" href="guia-compra.html">Guía de compra</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="politicas.html">Políticas de venta</a>
@@ -382,6 +403,10 @@
                 </button>
                 <div class="mt-2">
                     <a href="testimonios.html" class="link-recomendaciones">Recomendaciones y Opiniones</a>
+                    <span class="text-muted mx-1">·</span>
+                    <a href="obsequios/obsequios.html" class="link-recomendaciones">Ideas para regalar</a>
+                    <span class="text-muted mx-1">·</span>
+                    <a href="guia-compra.html" class="link-recomendaciones">Guía de compra</a>
                 </div>
                 <div class="collapse" id="panelComoComprar">
                     <div class="como-comprar-panel mx-auto mt-2">
@@ -645,6 +670,44 @@
     <!-- <script type="module" src="agrega3.js"></script> -->
 
     <!-- <script type="module" src="agrega.js"></script> -->
+    <script>
+      // Mensaje de aviso (mensaje.json). Si activo=true, reemplaza el logo de inicio.
+      (function () {
+        function ocultarSplash() {
+          var fondo = document.getElementById('fondo');
+          if (fondo) {
+            fondo.style.display = 'none';
+            fondo.style.opacity = '0';
+            fondo.style.pointerEvents = 'none';
+          }
+        }
+        function mostrarMensaje(data) {
+          var logo = document.getElementById('splashLogo');
+          var msg = document.getElementById('splashMensaje');
+          if (logo) logo.classList.add('d-none');
+          if (!msg) return;
+          msg.classList.remove('d-none');
+          var t = document.getElementById('splashTitulo');
+          var p = document.getElementById('splashTexto');
+          var b = document.getElementById('splashOk');
+          if (t) t.textContent = data.titulo || 'Aviso';
+          if (p) p.textContent = data.texto || '';
+          if (b) {
+            b.textContent = data.boton || 'OK';
+            b.addEventListener('click', ocultarSplash);
+          }
+        }
+        fetch('./mensaje.json')
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (data) {
+            if (data && data.activo === true && (data.texto || data.titulo)) {
+              mostrarMensaje(data);
+            }
+            // Si no hay mensaje activo, animLogo / el propio CSS del logo siguen como siempre
+          })
+          .catch(function () {});
+      })();
+    </script>
     <script type="module" src="logica.js"></script>
     <script>
       if ('serviceWorker' in navigator) {

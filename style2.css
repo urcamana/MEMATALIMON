@@ -1004,3 +1004,41 @@ h11 {
  background-color: var(--tema-canvas) !important;
 
 } 
+
+/* ===================================================== */
+/* AJUSTES DE LAS FLECHAS Y TAMAÑO DE TARJETAS           */
+/* ===================================================== */
+
+/* 1. Hace que las flechas del carrusel se vean (fondo oscuro/filtro) */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  filter: invert(100%) drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.8)) !important;
+}
+
+/* 2. Agranda el contenedor de la imagen/carrusel */
+.card .carousel,
+.card .carousel-inner,
+.card .carousel-item {
+  height: 250px !important; /* Agranda la imagen */
+}
+
+.card .carousel-item img {
+  height: 250px !important;
+  object-fit: contain !important;
+}
+
+/* 3. Achica el cuadro blanco inferior (card-body) para que no sobre espacio */
+.card-body {
+  min-height: auto !important; /* Quita la altura gigante que tenía antes */
+  padding: 8px 12px !important; /* Reduce el espacio/relleno blanco */
+}
+
+/* Ajusta los márgenes de los textos dentro de la tarjeta */
+.card-body h5 {
+  margin-bottom: 4px !important;
+}
+
+.card-body h7, 
+.card-body h11 {
+  margin-bottom: 2px !important;
+}

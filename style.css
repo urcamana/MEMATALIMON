@@ -2134,3 +2134,91 @@ body.pagina-secundaria section {
   border-color: rgba(231, 76, 60, 0.35) !important;
   box-shadow: 0 4px 16px rgba(231, 76, 60, 0.12) !important;
 }
+
+/* ===================================================== */
+/* Guía de compra + Obsequios + Splash mensaje            */
+/* ===================================================== */
+
+.guia-card {
+  border-radius: 16px;
+  background: #fff;
+}
+
+.btn-obsequio-titulo {
+  background: linear-gradient(135deg, #a88cd7, #8e66cf) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 14px !important;
+  padding: 14px 20px !important;
+  font-weight: 700 !important;
+  font-size: 1.05rem !important;
+  box-shadow: 0 4px 14px rgba(142, 102, 207, 0.35);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn-obsequio-titulo:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(142, 102, 207, 0.45);
+  color: #fff !important;
+}
+
+.btn-obsequio-titulo .obsequio-chevron {
+  font-size: 0.75rem;
+  opacity: 0.9;
+  margin-left: 6px;
+}
+
+.obsequio-panel {
+  background: rgba(243, 235, 252, 0.5);
+  border-radius: 0 0 14px 14px;
+  padding: 0 8px 8px;
+}
+
+/* Splash mensaje (reemplaza logo de inicio cuando mensaje.json activo) */
+#splashMensaje {
+  position: fixed;
+  inset: 0;
+  z-index: 9999999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(168, 140, 215, 0.92);
+  padding: 20px;
+}
+
+#splashMensaje .splash-msg-box {
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px 24px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+
+#splashMensaje .splash-msg-box h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+#splashMensaje .splash-msg-box p {
+  color: #555;
+  margin-bottom: 20px;
+  white-space: pre-line;
+}
+
+#splashMensaje .splash-msg-box button {
+  background: #8e66cf;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 28px;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+#splashMensaje .splash-msg-box button:hover {
+  background: #7a54b8;
+}
