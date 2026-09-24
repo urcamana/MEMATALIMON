@@ -64,68 +64,205 @@
     <section class="card shadow-sm border-0 mb-4 guia-card">
       <div class="card-body p-4">
         <h2 class="h5 fw-bold mb-3">1. Identificá tu tipo de ficha (Conector)</h2>
-        <p class="mb-4 text-secondary">Antes de mirar la lista de marcas, necesitás saber cómo se llama la entrada de tu teléfono o accesorio (parlantes, auriculares, etc.). Estas son las que manejamos en el local:</p>
+        <p class="mb-4 text-secondary">Antes de mirar la lista de marcas y modelos de celulares que esta debajo, necesitás saber cómo se llama la entrada de tu teléfono, parlante, televisor o accesorio:</p>
 
-        <div class="table-responsive">
-          <table class="table table-hover align-middle mb-0">
-            <thead class="table-light">
-              <tr>
-                <th style="min-width: 140px;">Ficha</th>
-                <th>¿Cómo reconocerla rápido?</th>
-                <th>¿En qué dispositivos se usa?</th>
-                <th class="text-center" style="min-width: 150px;">¿Qué cable buscás?</th>
-              </tr>
-            </thead>
-            <tbody>
-  <!-- FILA 1: TIPO C -->
-  <tr>
-    <td>
-      <span class="fs-5 me-1">🔄</span> <strong class="fs-5">TIPO C</strong> 
-      <br><span class="text-secondary fw-semibold">(USB-C / Ficha Moderna)</span>
-    </td>
-    <td>Es <strong>ovalada</strong> y simétrica. No importa cómo la gires, entra y calza de ambos lados.</td>
-    <td>Todos los Android nuevos, iPhone 15 y 16, y la mayoría de parlantes o auriculares actuales.</td>
-    <td class="text-center"><span class="badge bg-success rounded-pill px-2 py-1">Cable Tipo C</span></td>
-  </tr>
-  
-  <!-- FILA 2: IPHONE -->
-  <tr>
-    <td>
-      <span class="fs-5 me-1">🍏</span> <strong class="fs-5">IPHONE</strong> 
-      <br><span class="text-secondary fw-semibold">(Lightning / Ficha Apple)</span>
-    </td>
-    <td>Es una ficha <strong>chata y plana</strong> con los pines dorados visibles por fuera.</td>
-    <td>Exclusiva de Apple. Se usa desde el iPhone 5 hasta el iPhone 14 inclusive.</td>
-    <td class="text-center"><span class="badge bg-warning text-dark rounded-pill px-2 py-1">Cable iPhone / Lightning</span></td>
-  </tr>
-  
-  <!-- FILA 3: V8 -->
-  <tr>
-    <td>
-      <span class="fs-5 me-1">📐</span> <strong class="fs-5">V8</strong> 
-      <br><span class="text-secondary fw-semibold">(Micro-USB / Ficha Chica)</span>
-    </td>
-    <td>Tiene forma de <strong>trapecio</strong> (más ancha abajo). Solo entra de un solo lado.</td>
-    <td>Celulares de gama baja o anteriores a 2020, parlantes portátiles chicos y cargadores de linternas.</td>
-    <td class="text-center"><span class="badge bg-secondary rounded-pill px-2 py-1">Cable V8 / Micro-USB</span></td>
-  </tr>
-  
-  <!-- FILA 4: USB COMÚN -->
-  <tr>
-    <td>
-      <span class="fs-5 me-1">🔌</span> <strong class="fs-5">USB COMÚN</strong> 
-      <br><span class="text-secondary fw-semibold">(USB-A / Ficha Grande)</span>
-    </td>
-    <td>La ficha <strong>rectangular grande</strong> común de toda la vida.</td>
-    <td>Es la que se conecta al cabezal de pared tradicional, a la computadora o al estéreo del auto.</td>
-    <td class="text-center"><span class="badge bg-dark rounded-pill px-2 py-1">USB Común</span></td>
-  </tr>
-</tbody>
+        <!-- GRILLA DE RECUADROS: 3 POR FILA EN PANTALLA GRANDE -->
+        <div class="row g-3">
+          
+          <!-- ================= FILA 1: CABLES COMUNES DE CELULAR ================= -->
+          <!-- Tarjeta 1: USB A V8 -->
+          <div class="col-md-4 col-sm-6">
+            <div class="p-3 rounded-3 border h-100 text-center" style="background: #f8f9fa;">
+              <div class="mb-3 d-flex align-items-center justify-content-center" style="height: 130px;">
+                <img src="img_guia/usb_v8.jpg" alt="Cable USB-A a V8" class="img-fluid rounded-2 object-fit-contain h-100 shadow-sm border">
+              </div>
+              <h3 class="h6 fw-bold mb-1 text-uppercase text-primary">USB A V8</h3>
+              <p class="text-secondary small mb-2 fw-semibold">Cable “USB Común” a “Micro-USB”</p>
+              <p class="text-muted mb-0 text-start small" style="font-size: 0.85rem;"><strong>Se encuentra en:</strong> Celulares antiguos, parlantes bluetooth tradicionales, auriculares inalámbricos y joysticks de PS4.</p>
+            </div>
+          </div>
 
-          </table>
-        </div>
-      </div>
-    </section>
+          <!-- Tarjeta 2: USB A TIPO C -->
+          <div class="col-md-4 col-sm-6">
+            <div class="p-3 rounded-3 border h-100 text-center" style="background: #f8f9fa;">
+              <div class="mb-3 d-flex align-items-center justify-content-center" style="height: 130px;">
+                <img src="img_guia/usb_tipoc.jpg" alt="Cable USB-A a Tipo C" class="img-fluid rounded-2 object-fit-contain h-100 shadow-sm border">
+              </div>
+              <h3 class="h6 fw-bold mb-1 text-uppercase text-success">USB A TIPO C</h3>
+              <p class="text-secondary small mb-2 fw-semibold">Cable “USB Común” a “Tipo C”</p>
+              <p class="text-muted mb-0 text-start small" style="font-size: 0.85rem;"><strong>Se encuentra en:</strong> Celulares Android intermedios y modernos, tablets, cargadores comunes y joysticks de PS5 o Switch.</p>
+            </div>
+          </div>
+
+          <!-- Tarjeta 3: USB A LIGHTNING -->
+          <div class="col-md-4 col-sm-6">
+            <div class="p-3 rounded-3 border h-100 text-center" style="background: #f8f9fa;">
+              <div class="mb-3 d-flex align-items-center justify-content-center" style="height: 130px;">
+                <img src="img_guia/usb_iphone.jpg" alt="Cable USB-A a Lightning" class="img-fluid rounded-2 object-fit-contain h-100 shadow-sm border">
+              </div>
+              <h3 class="h6 fw-bold mb-1 text-uppercase text-warning">USB A LIGHTNING</h3>
+              <p class="text-secondary small mb-2 fw-semibold">Cable “USB Común” a “Ficha Apple”</p>
+              <p class="text-muted mb-0 text-start small" style="font-size: 0.85rem;"><strong>Se encuentra en:</strong> Modelos de iPhone desde el 5 hasta el 14 inclusive, iPads antiguos y algunos accesorios de iphone, auriculares...</p>
+            </div>
+          </div>
+
+          <!-- ================= FILA 2: USB DE PERIFÉRICOS E IMPRESORAS ================= -->
+          <!-- Tarjeta 4: USB-A USB-A -->
+          <div class="col-md-4 col-sm-6">
+            <div class="p-3 rounded-3 border h-100 text-center" style="background: #f8f9fa;">
+              <div class="mb-3 d-flex align-items-center justify-content-center" style="height: 130px;">
+                <img src="img_guia/usb_a.jpg" alt="Cable USB-A a USB-A" class="img-fluid rounded-2 object-fit-contain h-100 shadow-sm border">
+              </div>
+              <h3 class="h6 fw-bold mb-1 text-uppercase text-dark">USB-A USB-A</h3>
+              <p class="text-secondary small mb-2 fw-semibold">Cable “Macho a Macho” Común</p>
+              <p class="text-muted mb-0 text-start small" style="font-size: 0.85rem;"><strong>Se encuentra en:</strong> Conexiones especiales entre notebooks, coolers de laptops, lectores de disco, alargues USB (macho-hembra) y algunos decodificadores de TV.</p>
+            </div>
+          </div>
+
+          <!-- Tarjeta 5: USB-A A USB-B -->
+          <div class="col-md-4 col-sm-6">
+            <div class="p-3 rounded-3 border h-100 text-center" style="background: #f8f9fa;">
+              <div class="mb-3 d-flex align-items-center justify-content-center" style="height: 130px;">
+                <img src="img_guia/usb_b.jpg" alt="Cable de Impresora USB-B" class="img-fluid rounded-2 object-fit-contain h-100 shadow-sm border">
+              </div>
+              <h3 class="h6 fw-bold mb-1 text-uppercase text-dark">USB-A A USB-B</h3>
+              <p class="text-secondary small mb-2 fw-semibold">Cable de Impresora Común</p>
+              <p class="text-muted mb-0 text-start small" style="font-size: 0.85rem;"><strong>Se encuentra en:</strong> Impresoras de todo tipo, escáneres, controladores MIDI, teclados musicales y placas de sonido para PC.</p>
+            </div>
+          </div>
+
+          <!-- Tarjeta 6: USB-A A V3 -->
+          <div class="col-md-4 col-sm-6">
+            <div class="p-3 rounded-3 border h-100 text-center" style="background: #f8f9fa;">
+              <div class="mb-3 d-flex align-items-center justify-content-center" style="height: 130px;">
+                <img src="img_guia/usb_v3.jpg" alt="Cable Mini-USB V3" class="img-fluid rounded-2 object-fit-contain h-100 shadow-sm border">
+              </div>
+              <h3 class="h6 fw-bold mb-1 text-uppercase text-primary">USB-A A V3</h3>
+              <p class="text-secondary small mb-2 fw-semibold">Cable “USB Común” a “Mini-USB”</p>
+              <p class="text-muted mb-0 text-start small" style="font-size: 0.85rem;"><strong>Se encuentra en:</strong> GPS antiguos para auto, reproductores MP3/MP4 viejos, cámaras de fotos digitales y joysticks de PS3.</p>
+            </div>
+          </div>
+
+          <!-- ================= FILA 3: CARGA RÁPIDA MODERNA Y RED ================= -->
+          <!-- Tarjeta 7: TIPO C A TIPO C -->
+          <div class="col-md-4 col-sm-6">
+            <div class="p-3 rounded-3 border h-100 text-center" style="background: #f8f9fa;">
+              <div class="mb-3 d-flex align-items-center justify-content-center" style="height: 130px;">
+                <img src="img_guia/tipoc_tipoc.jpg" alt="Cable Tipo C a Tipo C" class="img-fluid rounded-2 object-fit-contain h-100 shadow-sm border">
+              </div>
+              <h3 class="h6 fw-bold mb-1 text-uppercase text-success">TIPO C A TIPO C</h3>
+              <p class="text-secondary small mb-2 fw-semibold">Cable Tipo C en ambas puntas</p>
+              <p class="text-muted mb-0 text-start small" style="font-size: 0.85rem;"><strong>Se encuentra en:</strong> Celulares de gama media/alta, iPhones 15/16 y cargadores modernos de pared. Es obligatorio para carga rápida de alta potencia.</p>
+            </div>
+          </div>
+
+          <!-- Tarjeta 8: TIPO C A LIGHTNING -->
+          <div class="col-md-4 col-sm-6">
+            <div class="p-3 rounded-3 border h-100 text-center" style="background: #f8f9fa;">
+              <div class="mb-3 d-flex align-items-center justify-content-center" style="height: 130px;">
+                <img src="img_guia/tipoc_iphone.jpg" alt="Cable Tipo C a Lightning" class="img-fluid rounded-2 object-fit-contain h-100 shadow-sm border">
+              </div>
+              <h3 class="h6 fw-bold mb-1 text-uppercase text-warning">TIPO C A LIGHTNING</h3>
+              <p class="text-secondary small mb-2 fw-semibold">Cable Tipo C a Ficha Apple</p>
+              <p class="text-muted mb-0 text-start small" style="font-size: 0.85rem;"><strong>Se encuentra en:</strong> Cabezales de carga rápida modernos especiales para iPhones (Ideales en modelos del 7 PLUS hasta el 14 inclusive).</p>
+            </div>
+          </div>
+
+          <!-- Tarjeta 9: RED RJ45 -->
+          <div class="col-md-4 col-sm-6">
+            <div class="p-3 rounded-3 border h-100 text-center" style="background: #f8f9fa;">
+              <div class="mb-3 d-flex align-items-center justify-content-center" style="height: 130px;">
+                <img src="img_guia/rj45.jpg" alt="Cable de Red RJ45" class="img-fluid rounded-2 object-fit-contain h-100 shadow-sm border">
+              </div>
+              <h3 class="h6 fw-bold mb-1 text-uppercase text-dark">RED RJ45</h3>
+              <p class="text-secondary small mb-2 fw-semibold">Cable de Internet Común</p>
+              <p class="text-muted mb-0 text-start small" style="font-size: 0.85rem;"><strong>Se encuentra en:</strong> Conexiones fijas entre el módem/rúter de internet, computadoras de escritorio, Smart TVs, consolas de juegos y notebooks.</p>
+            </div>
+          </div>
+
+          <!-- ================= FILA 4: AUXILIARES DE AUDIO ================= -->
+          <!-- Tarjeta 10: AUXILIAR PLUG 3.5MM MONO -->
+          <div class="col-md-4 col-sm-6">
+            <div class="p-3 rounded-3 border h-100 text-center" style="background: #f8f9fa;">
+              <div class="mb-3 d-flex align-items-center justify-content-center" style="height: 130px;">
+                <img src="img_guia/aux_mono.jpg" alt="Plug 3.5mm Mono" class="img-fluid rounded-2 object-fit-contain h-100 shadow-sm border">
+              </div>
+              <h3 class="h6 fw-bold mb-1 text-uppercase text-info">3.5MM MONO</h3>
+              <p class="text-secondary small mb-2 fw-semibold">Cable Auxiliar de 1 Canal</p>
+              <p class="text-muted mb-0 text-start small" style="font-size: 0.85rem;"><strong>Se encuentra en:</strong> Micrófonos simples de mano, equipos de radio antiguos, sensores de alarmas caseras y disparadores de cámaras.</p>
+            </div>
+          </div>
+
+          <!-- Tarjeta 11: PLUG 3.5MM STEREO -->
+          <div class="col-md-4 col-sm-6">
+            <div class="p-3 rounded-3 border h-100 text-center" style="background: #f8f9fa;">
+              <div class="mb-3 d-flex align-items-center justify-content-center" style="height: 130px;">
+                <img src="img_guia/aux_stereo.jpg" alt="Plug 3.5mm Stereo" class="img-fluid rounded-2 object-fit-contain h-100 shadow-sm border">
+              </div>
+              <h3 class="h6 fw-bold mb-1 text-uppercase text-info">3.5MM STEREO</h3>
+              <p class="text-secondary small mb-2 fw-semibold">Cable Auxiliar de Audio Común</p>
+              <p class="text-muted mb-0 text-start small" style="font-size: 0.85rem;"><strong>Se encuentra en:</strong> Auriculares estándar con cable, salidas de audio de celulares/PC y la entrada AUX del estéreo del auto o parlantes.</p>
+            </div>
+          </div>
+
+          <!-- Tarjeta 12: 3.5MM CON MICROFONO/VIDEO -->
+          <div class="col-md-4 col-sm-6">
+            <div class="p-3 rounded-3 border h-100 text-center" style="background: #f8f9fa;">
+              <div class="mb-3 d-flex align-items-center justify-content-center" style="height: 130px;">
+                <img src="img_guia/aux_video.jpg" alt="Plug 3.5mm con Video" class="img-fluid rounded-2 object-fit-contain h-100 shadow-sm border">
+              </div>
+              <h3 class="h6 fw-bold mb-1 text-uppercase text-info">3.5MM CON MICROFONO/VIDEO</h3>
+              <p class="text-secondary small mb-2 fw-semibold">Cable Auxiliar Audio y Video (TRRS)</p>
+              <p class="text-muted mb-0 text-start small" style="font-size: 0.85rem;"><strong>Se encuentra en:</strong> Auriculares de celular con micrófono integrado (manos libres), decodificadores de TV antiguos y videocámaras portátiles.</p>
+            </div>
+          </div>
+
+          <!-- ================= FILA 5: CONECTORES RCA AUDIO/VIDEO ================= -->
+          <!-- Tarjeta 13: 2 RCA -->
+          <div class="col-md-4 col-sm-6">
+            <div class="p-3 rounded-3 border h-100 text-center" style="background: #f8f9fa;">
+              <div class="mb-3 d-flex align-items-center justify-content-center" style="height: 130px;">
+                <img src="img_guia/2rca.jpg" alt="Cable 2 RCA" class="img-fluid rounded-2 object-fit-contain h-100 shadow-sm border">
+              </div>
+              <h3 class="h6 fw-bold mb-1 text-uppercase text-danger">2 RCA</h3>
+              <p class="text-secondary small mb-2 fw-semibold">Cable de Audio (Blanco y Rojo)</p>
+              <p class="text-muted mb-0 text-start small" style="font-size: 0.85rem;"><strong>Se encuentra en:</strong> Equipos de música para el hogar, amplificadores de sonido, minicomponentes viejos, mezcladoras de DJ y reproductores de audio.</p>
+            </div>
+          </div>
+
+          <!-- Tarjeta 14: 3 RCA -->
+          <div class="col-md-4 col-sm-6">
+            <div class="p-3 rounded-3 border h-100 text-center" style="background: #f8f9fa;">
+              <div class="mb-3 d-flex align-items-center justify-content-center" style="height: 130px;">
+                <img src="img_guia/3rca.jpg" alt="Cable 3 RCA" class="img-fluid rounded-2 object-fit-contain h-100 shadow-sm border">
+              </div>
+              <h3 class="h6 fw-bold mb-1 text-uppercase text-danger">3 RCA</h3>
+              <p class="text-secondary small mb-2 fw-semibold">Cable Audio/Video (Amarillo, Blanco, Rojo)</p>
+              <p class="text-muted mb-0 text-start small" style="font-size: 0.85rem;"><strong>Se encuentra en:</strong> Reproductores de DVD, televisores de tubo antiguos, videocaseteras VHS y consolas de juegos viejas (PS2, Wii).</p>
+            </div>
+          </div>
+
+          <!-- Tarjeta 15: 5 RCA -->
+          <div class="col-md-4 col-sm-6">
+            <div class="p-3 rounded-3 border h-100 text-center" style="background: #f8f9fa;">
+              <div class="mb-3 d-flex align-items-center justify-content-center" style="height: 130px;">
+                <img src="img_guia/5rca.jpg" alt="Cable 5 RCA" class="img-fluid rounded-2 object-fit-contain h-100 shadow-sm border">
+              </div>
+              <h3 class="h6 fw-bold mb-1 text-uppercase text-danger">5 RCA</h3>
+              <p class="text-secondary small mb-2 fw-semibold">Cable Video por Componentes</p>
+              <p class="text-muted mb-0 text-start small" style="font-size: 0.85rem;"><strong>Se encuentra en:</strong> Reproductores de DVD de alta gama, home theaters, sintonizadores satelitales antiguos y primeros televisores LCD.</p>
+            </div>
+          </div>
+
+        </div> <!-- Cierra el row g-3 -->
+      </div> <!-- Cierra el card-body -->
+    </section> <!-- Cierra el section de la Tarjeta 1 completa -->
+
+
+
+
+
+
 
 
     <!-- NUEVA SECCIÓN EXCLUSIVA PARA EL LISTADO DE MODELOS -->

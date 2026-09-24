@@ -2222,3 +2222,35 @@ body.pagina-secundaria section {
 #splashMensaje .splash-msg-box button:hover {
   background: #7a54b8;
 }
+
+/* adiciones para guia */
+/* 1. Evitar desbordamientos en las tarjetas y corregir márgenes en móviles */
+@media (max-width: 575.98px) {
+  main.container {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+    margin-top: 60px !important; /* Ajusta la separación si la barra es más baja */
+  }
+
+  /* Reduce un poco el tamaño de los títulos principales para que no queden gigantes */
+  h1.h3 {
+    font-size: 1.35rem !important;
+  }
+  
+  h3.h3 {
+    font-size: 1.5rem !important;
+  }
+
+  /* Ajusta los recuadros internos de las fichas para optimizar espacio */
+  .guia-card .card-body {
+    padding: 1.25rem !important; /* Espaciado interno más cómodo en celular */
+  }
+}
+
+/* 2. Optimización para las imágenes de los cables */
+.guia-card img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
