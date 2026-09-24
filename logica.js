@@ -27,7 +27,9 @@ import * as varianteDeMedidas from './varianteDeMedidas.js';
 import { iniciarAnimLogo } from './animLogo.js';
 
 
-iniciarAnimLogo();
+if (window.mensajeActivo !== true) {
+    iniciarAnimLogo();
+}
 
 // Declaramos el botón de WhatsApp UNA SOLA VEZ al inicio (evita error de inicialización)
 const enlaceWhatsApp = document.createElement("a");
@@ -1368,6 +1370,9 @@ function borrarCarritoCompleto() {
 };
 
 function actualizarBotonWhatsAppFinal() {
+
+if (window.mensajeActivo === true) return;
+
   const contenedorAbajo = document.getElementById('borrarCarr');
   if (!contenedorAbajo) return;
 

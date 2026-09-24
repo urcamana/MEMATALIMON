@@ -670,44 +670,55 @@
     <!-- <script type="module" src="agrega3.js"></script> -->
 
     <!-- <script type="module" src="agrega.js"></script> -->
-    <script>
-      // Mensaje de aviso (mensaje.json). Si activo=true, reemplaza el logo de inicio.
-      (function () {
-        function ocultarSplash() {
-          var fondo = document.getElementById('fondo');
-          if (fondo) {
-            fondo.style.display = 'none';
-            fondo.style.opacity = '0';
-            fondo.style.pointerEvents = 'none';
-          }
+ <script>
+  // Mensaje de aviso (mensaje.json). Si activo=true, reemplaza el logo de inicio.
+  
+  // 1. Declaramos la variable GLOBAL inmediatamente al inicio del script
+  window.mensajeActivo = false;
+
+  (function () {
+    function ocultarSplash() {
+      var fondo = document.getElementById('fondo');
+      if (fondo) {
+        fondo.style.display = 'none';
+        fondo.style.opacity = '0';
+        fondo.style.pointerEvents = 'none';
+        
+        // Al hacer clic en OK y cerrarse, liberamos la bandera
+        window.mensajeActivo = false;
+      }
+    }
+    function mostrarMensaje(data) {
+      // 2. Si hay un aviso en el JSON, activamos la bandera
+      window.mensajeActivo = true; 
+
+      var logo = document.getElementById('splashLogo');
+      var msg = document.getElementById('splashMensaje');
+      if (logo) logo.classList.add('d-none');
+      if (!msg) return;
+      msg.classList.remove('d-none');
+      var t = document.getElementById('splashTitulo');
+      var p = document.getElementById('splashTexto');
+      var b = document.getElementById('splashOk');
+      if (t) t.textContent = data.titulo || 'Aviso';
+      if (p) p.textContent = data.texto || '';
+      if (b) {
+        b.textContent = data.boton || 'OK';
+        b.addEventListener('click', ocultarSplash);
+      }
+    }
+    fetch('./mensaje.json')
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) {
+        if (data && data.activo === true && (data.texto || data.titulo)) {
+          mostrarMensaje(data);
         }
-        function mostrarMensaje(data) {
-          var logo = document.getElementById('splashLogo');
-          var msg = document.getElementById('splashMensaje');
-          if (logo) logo.classList.add('d-none');
-          if (!msg) return;
-          msg.classList.remove('d-none');
-          var t = document.getElementById('splashTitulo');
-          var p = document.getElementById('splashTexto');
-          var b = document.getElementById('splashOk');
-          if (t) t.textContent = data.titulo || 'Aviso';
-          if (p) p.textContent = data.texto || '';
-          if (b) {
-            b.textContent = data.boton || 'OK';
-            b.addEventListener('click', ocultarSplash);
-          }
-        }
-        fetch('./mensaje.json')
-          .then(function (r) { return r.ok ? r.json() : null; })
-          .then(function (data) {
-            if (data && data.activo === true && (data.texto || data.titulo)) {
-              mostrarMensaje(data);
-            }
-            // Si no hay mensaje activo, animLogo / el propio CSS del logo siguen como siempre
-          })
-          .catch(function () {});
-      })();
-    </script>
+      })
+      .catch(function () {});
+  })();
+</script>
+
+
     <script type="module" src="logica.js"></script>
     <script>
       if ('serviceWorker' in navigator) {
