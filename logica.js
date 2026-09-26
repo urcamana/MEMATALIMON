@@ -1433,45 +1433,69 @@ if (window.mensajeActivo === true) return;
   contenedorAbajo.classList.remove('hide');
   contenedorAbajo.classList.add('show');
 }
-// Función para poblar el desplegable de Productos en el Navbar
-// Mejora: también rellena el menú móvil (#listaCategoriasMenuMovil) si existe
 function poblarMenuDesplegableProductos(categorias) {
-  const menus = [
-    document.getElementById("listaCategoriasMenu"),
-    document.getElementById("listaCategoriasMenuMovil")
-  ].filter(Boolean);
-
-  if (menus.length === 0) return;
+  const menuDesktop = document.getElementById("listaCategoriasMenu");
+  const menuMovil = document.getElementById("listaCategoriasMenuMovil");
 
   const htmlBase = `
     <li><a class="dropdown-item filtro-cat-nav" href="#" data-cat="TODOS">Ver todos los productos</a></li>
     <li><hr class="dropdown-divider"></li>
   `;
 
-  let extras = "";
-  categorias.forEach(cat => {
-    if (cat && cat !== "VER TODOS" && cat !== "CON DESCUENTOS") {
-      extras += `<li><a class="dropdown-item filtro-cat-nav" href="#" data-cat="${cat}">${cat}</a></li>`;
-    }
+  if (menuDesktop) {
+    let extrasDesktop = "";
+    categorias.forEach(cat => {
+      if (cat && cat !== "VER TODOS" && cat !== "CON DESCUENTOS") {
+        extrasDesktop += `<li><a class="dropdown-item filtro-cat-nav" href="#" data-cat="${cat}">${cat}</a></li>`;
+      }
+    });
+    menuDesktop.innerHTML = htmlBase + extrasDesktop;
+  }
+
+  if (menuMovil) {
+    let extrasMovil = "";
+    categorias.forEach(cat => {
+      if (cat && cat !== "VER TODOS" && cat !== "CON DESCUENTOS") {
+        extrasMovil += `
+          <li>
+            <div class="d-flex align-items-center justify-content-between px-3 py-1">
+              <a class="dropdown-item filtro-cat-nav p-0 flex-grow-1 text-white" href="#" data-cat="${cat}">${cat}</a>
+              <button type="button" class="btn btn-sm btn-outline-light border-0 py-0 px-2 btn-compartir-cat" data-cat="${cat}" title="Compartir categoría">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5m-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3"/>
+                </svg>
+              </button>
+            </div>
+          </li>`;
+      }
+    });
+    menuMovil.innerHTML = htmlBase + extrasMovil;
+  }
+
+  // Eventos para filtrar catálogo al hacer clic en el nombre
+  document.querySelectorAll(".filtro-cat-nav").forEach(item => {
+    item.addEventListener("click", (e) => {
+      e.preventDefault();
+      const categoriaSeleccionada = e.target.getAttribute("data-cat");
+      FILTROS = categoriaSeleccionada === "TODOS" ? "VER TODOS" : categoriaSeleccionada;
+      renderizarCatalogo(FILTROS);
+      try { subirScroll.subir(); } catch (err) {}
+
+      const offcanvasElement = document.getElementById("offcanvasDarkNavbar");
+      if (offcanvasElement) {
+        const bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvasElement);
+        if (bsOffcanvas) bsOffcanvas.hide();
+      }
+    });
   });
 
-  menus.forEach(menuContainer => {
-    menuContainer.innerHTML = htmlBase + extras;
-
-    menuContainer.querySelectorAll(".filtro-cat-nav").forEach(item => {
-      item.addEventListener("click", (e) => {
-        e.preventDefault();
-        const categoriaSeleccionada = e.target.getAttribute("data-cat");
-        FILTROS = categoriaSeleccionada === "TODOS" ? "VER TODOS" : categoriaSeleccionada;
-        renderizarCatalogo(FILTROS);
-        try { subirScroll.subir(); } catch (err) {}
-
-        const offcanvasElement = document.getElementById("offcanvasDarkNavbar");
-        if (offcanvasElement) {
-          const bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvasElement);
-          if (bsOffcanvas) bsOffcanvas.hide();
-        }
-      });
+  // Eventos para el botón de compartir categoría en móvil
+  document.querySelectorAll(".btn-compartir-cat").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const cat = btn.getAttribute("data-cat");
+      if (cat) compartirCategoria(cat);
     });
   });
 }
@@ -1967,3 +1991,33 @@ window.addEventListener('load', () => {
     }
   }, 1000);
 });
+
+function urlCategoriaCompartible(categoria) {
+  const u = new URL(window.location.href);
+  u.search = '';
+  u.hash = '';
+  u.searchParams.set('categoria', categoria);
+  return u.toString();
+}
+
+async function compartirCategoria(categoria) {
+  const url = urlCategoriaCompartible(categoria);
+  const titulo = `Categoría ${categoria} - Me Mata Limón`;
+  const texto = `¡Mirá todos los productos de la categoría *${categoria}* en Me Mata Limón!\n${url}`;
+
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: titulo, text: texto, url });
+      return;
+    } catch (err) {
+      if (err && err.name === 'AbortError') return;
+    }
+  }
+
+  try {
+    await navigator.clipboard.writeText(texto);
+    alertas.alertAgrego('Link de categoría', 'Se copió el link para compartir.', 'alert-success');
+  } catch (e) {
+    window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
+  }
+}
