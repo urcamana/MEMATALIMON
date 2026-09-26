@@ -1653,12 +1653,15 @@ async function compartirProducto(articuloId, nombre) {
   const url = urlProductoCompartible(articuloId);
   const precio = precioTextoParaShare(articuloId);
   const titulo = nombre || 'Producto Me Mata Limón';
+  
+  // Texto descriptivo limpio sin la URL metida a la fuerza
   const texto = precio
-    ? `¡Mirá esto de Me Mata Limón!\n${titulo}\nPrecio: $${precio}\n${url}`
-    : `¡Mirá esto de Me Mata Limón!\n${titulo}\n${url}`;
+    ? `¡Mirá esto que tiene Me Mata Limón!\n${titulo}\nPrecio: $${precio}`
+    : `¡Mirá esto dque tiene Me Mata Limón!\n${titulo}`;
 
   if (navigator.share) {
     try {
+      // Le pasamos la URL por su parámetro oficial para que las apps armen la tarjeta sin duplicar
       await navigator.share({ title: titulo, text: texto, url });
       return;
     } catch (err) {
@@ -1666,11 +1669,13 @@ async function compartirProducto(articuloId, nombre) {
     }
   }
 
+  // Para cuando se copia al portapapeles o va por WhatsApp, unimos el texto y el link de forma ordenada
+  const textoConUrl = `${texto}\n${url}`;
   try {
-    await navigator.clipboard.writeText(texto);
+    await navigator.clipboard.writeText(textoConUrl);
     alertas.alertAgrego('Listo para compartir', 'Se copió el texto con el link. Pegalo donde quieras.', 'alert-success');
   } catch (e) {
-    window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
+    window.open('https://wa.me/?text=' + encodeURIComponent(textoConUrl), '_blank');
   }
 }
 
@@ -2003,7 +2008,7 @@ function urlCategoriaCompartible(categoria) {
 async function compartirCategoria(categoria) {
   const url = urlCategoriaCompartible(categoria);
   const titulo = `Categoría ${categoria} - Me Mata Limón`;
-  const texto = `¡Mirá todos los productos de la categoría *${categoria}* en Me Mata Limón!\n${url}`;
+  const texto = `¡Mirá todos los productos de la categoría *${categoria}* !`;
 
   if (navigator.share) {
     try {
