@@ -1,10 +1,11 @@
-/* Service Worker básico - Me Mata Limón PWA */
-const CACHE = 'mematalimon-v1';
+/* Service Worker - Me Mata Limón PWA */
+const CACHE = 'mematalimon-v5';
 const PRECACHE = [
   './',
   './index.html',
   './contacto.html',
   './politicas.html',
+  './testimonios.html',
   './style.css',
   './manifest.webmanifest'
 ];
@@ -27,10 +28,10 @@ self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET') return;
 
-  // Red primero para HTML/JS de la tienda (stock y precios actualizados)
   const url = new URL(req.url);
   const isNav = req.mode === 'navigate';
-  const isAppShell = /\.(html|js|json|webmanifest)$/i.test(url.pathname);
+  // HTML, JS, CSS, JSON: red primero (evita CSS/JS viejos en F5)
+  const isAppShell = /\.(html|js|css|json|webmanifest)$/i.test(url.pathname);
 
   if (isNav || isAppShell) {
     event.respondWith(
@@ -45,7 +46,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Resto (imágenes, CSS): cache primero
+  // Imágenes y resto: cache primero
   event.respondWith(
     caches.match(req).then((cached) => {
       const fetched = fetch(req)

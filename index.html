@@ -150,6 +150,9 @@
                 <li class="nav-item">
                     <button type="button" class="nav-link btn btn-link text-start text-white text-decoration-none btn-compartir-tienda" id="btnCompartirTiendaMovil">Compartir tienda</button>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://wa.me/5493751588753?text=Hola%2C%20quiero%20ejercer%20el%20derecho%20de%20arrepentimiento%20sobre%20un%20pedido." target="_blank" rel="noopener">Botón de arrepentimiento</a>
+                </li>
             </ul>
         </div>
     </div>
@@ -296,9 +299,13 @@
 
                         </div>
                         <div>
-                            <p class="cantidadParaAgregar">Cantidad:
-                                <input type="number" name="cantidad" id="" class="cantidad" value="1"
-                                    min="1" max="">
+                            <p class="cantidadParaAgregar d-flex align-items-center justify-content-center gap-2 flex-wrap mb-2">
+                                <span>Cantidad:</span>
+                                <span class="qty-stepper">
+                                    <button type="button" class="btn btn-qty btn-qty-minus" aria-label="Menos">−</button>
+                                    <input type="number" name="cantidad" id="" class="cantidad" value="1" min="1" max="" inputmode="numeric">
+                                    <button type="button" class="btn btn-qty btn-qty-plus" aria-label="Más">+</button>
+                                </span>
                             </p>
 
                             <button type="button"
@@ -407,6 +414,9 @@
                     <a href="obsequios/obsequios.html" class="link-recomendaciones">Ideas para regalar</a>
                     <span class="text-muted mx-1">·</span>
                     <a href="guia-compra.html" class="link-recomendaciones">Guía de compra</a>
+                </div>
+                <div class="mt-2">
+                    <a class="link-arrepentimiento" href="https://wa.me/5493751588753?text=Hola%2C%20quiero%20ejercer%20el%20derecho%20de%20arrepentimiento%20sobre%20un%20pedido." target="_blank" rel="noopener">Botón de arrepentimiento</a>
                 </div>
                 <div class="collapse" id="panelComoComprar">
                     <div class="como-comprar-panel mx-auto mt-2">

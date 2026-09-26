@@ -2254,3 +2254,108 @@ body.pagina-secundaria section {
   object-fit: contain;
 }
 
+
+/* Arrepentimiento + qty + testimonios cards */
+.link-arrepentimiento {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6b4a9a;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.link-arrepentimiento:hover {
+  color: #4a2d7a;
+}
+
+.qty-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid rgba(140, 100, 180, 0.35);
+  border-radius: 999px;
+  padding: 2px 6px;
+  background: #fff;
+}
+.qty-stepper .cantidad {
+  width: 42px !important;
+  text-align: center;
+  border: none !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+  padding: 2px 0 !important;
+  -moz-appearance: textfield;
+}
+.qty-stepper .cantidad::-webkit-outer-spin-button,
+.qty-stepper .cantidad::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.btn-qty {
+  width: 28px;
+  height: 28px;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  border: none !important;
+  background: #f3ebfc !important;
+  color: #5c3d8a !important;
+  font-weight: 700;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-qty:active {
+  background: #e4d4f7 !important;
+}
+
+/* Zona de imagen de recomendados / vistos */
+.rec-img-wrap {
+  position: relative !important;
+  width: 100%;
+  background: #fafafa;
+  overflow: hidden;
+}
+.rec-img-wrap .rec-img {
+  display: block;
+  width: 100%;
+  height: 180px;
+  object-fit: contain;
+  margin: 0;
+}
+
+.btn-fav-rec,
+.btn-share-rec {
+  position: absolute !important;
+  z-index: 5;
+  width: 34px;
+  height: 34px;
+  border-radius: 50% !important;
+  border: 1px solid rgba(140, 100, 180, 0.35) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  padding: 0 !important;
+  cursor: pointer;
+  line-height: 1;
+}
+.btn-fav-rec {
+  top: 8px;
+  right: 8px;
+  font-size: 1rem;
+}
+.btn-share-rec {
+  bottom: 8px;
+  right: 8px;
+  color: #5c3d8a !important;
+  top: auto !important;
+}
+.badge-rec-fav {
+  top: 8px;
+  left: 8px;
+  right: auto;
+}
+.texto-capturas-ustedes {
+  max-width: 640px;
+}

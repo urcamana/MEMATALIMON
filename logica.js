@@ -72,10 +72,27 @@ try {
   listaFavoritos = [];
 }
 
+
 function guardarFavoritosLS() {
   localStorage.setItem('favoritos_limon', JSON.stringify(listaFavoritos));
   actualizarVistaFavoritos();
 }
+
+/** Últimos productos vistos/interactuados (localStorage). Máx 12, más reciente primero. */
+function registrarVisto(articuloId) {
+  const idNum = parseInt(articuloId, 10);
+  if (isNaN(idNum)) return;
+  let lista = [];
+  try {
+    lista = JSON.parse(localStorage.getItem('vistos_limon') || '[]');
+    if (!Array.isArray(lista)) lista = [];
+  } catch (e) { lista = []; }
+  lista = lista.map(Number).filter(n => !isNaN(n) && n !== idNum);
+  lista.unshift(idNum);
+  if (lista.length > 12) lista = lista.slice(0, 12);
+  localStorage.setItem('vistos_limon', JSON.stringify(lista));
+}
+
 
 function toggleFavorito(articuloId) {
   const idNum = parseInt(articuloId);
@@ -88,6 +105,7 @@ function toggleFavorito(articuloId) {
     listaFavoritos.splice(index, 1);
     alertas.alertAgrego("Favoritos", "Eliminado de tus favoritos 💔", "alert-warning");
   }
+  try { registrarVisto(idNum); } catch (e) {}
 
   guardarFavoritosLS();
 
@@ -770,6 +788,7 @@ function agregar(da, da2) {
   let suceso = "Se agregó al carrito";
   let tipoAlert = "alert-success";
   alertas.alertAgrego(da, suceso, tipoAlert);
+  try { if (da2 != null) registrarVisto(da2); } catch (e) {}
 
   // Animación del ícono del carrito en el navbar
   const btnCarritoNav = document.getElementById('listaInteres');
@@ -1061,6 +1080,25 @@ if (target) {
 // =====================================================
 // SUGERENCIAS DEL BUSCADOR (mientras escriben)
 // =====================================================
+
+// +/- cantidad en tarjetas del catálogo (útil en celular)
+document.addEventListener('click', function (e) {
+  const minus = e.target.closest('.btn-qty-minus');
+  const plus = e.target.closest('.btn-qty-plus');
+  if (!minus && !plus) return;
+  e.preventDefault();
+  e.stopPropagation();
+  const wrap = (minus || plus).closest('.qty-stepper') || (minus || plus).closest('.cantidadParaAgregar');
+  if (!wrap) return;
+  const input = wrap.querySelector('input.cantidad');
+  if (!input) return;
+  let v = parseInt(input.value, 10) || 1;
+  const max = parseInt(input.getAttribute('max'), 10) || 999;
+  if (minus) v = Math.max(1, v - 1);
+  if (plus) v = Math.min(max, v + 1);
+  input.value = v;
+});
+
 (function initSugerenciasBusqueda() {
   const input = document.getElementById('formulario');
   const box = document.getElementById('sugerenciasBusqueda');
@@ -1080,7 +1118,7 @@ if (target) {
       return;
     }
     const matches = [];
-    for (let i = 0; i < datos.length && matches.length < 8; i++) {
+    for (let i = 0; i < datos.length; i++) {
       const p = datos[i];
       if (Number(p.Inventario) < 1) continue;
       const nom = String(p.Descripción || '');
@@ -1092,10 +1130,16 @@ if (target) {
       ocultar();
       return;
     }
-    box.innerHTML = matches.map(p => {
-      const nom = String(p.Descripción).replace(/</g, '&lt;');
-      return '<button type="button" class="sugerencia-item" data-id="' + p.Artículo + '" data-nombre="' + nom.replace(/"/g, '&quot;') + '">' + nom + '</button>';
-    }).join('');
+    // Una sola sugerencia: priorizar favoritos, luego últimos vistos, si no el primero
+    let favs = [];
+    let vistos = [];
+    try { favs = JSON.parse(localStorage.getItem('favoritos_limon') || '[]').map(Number); } catch (e) {}
+    try { vistos = JSON.parse(localStorage.getItem('vistos_limon') || '[]').map(Number); } catch (e) {}
+    let elegido = matches.find(p => favs.includes(Number(p.Artículo)))
+      || matches.find(p => vistos.includes(Number(p.Artículo)))
+      || matches[0];
+    const nom = String(elegido.Descripción).replace(/</g, '&lt;');
+    box.innerHTML = '<button type="button" class="sugerencia-item" data-id="' + elegido.Artículo + '" data-nombre="' + nom.replace(/"/g, '&quot;') + '">' + nom + '</button>';
     box.classList.remove('d-none');
   }
 
@@ -1115,6 +1159,7 @@ if (target) {
     const nombre = btn.dataset.nombre || '';
     input.value = nombre;
     ocultar();
+    try { registrarVisto(id); } catch (e) {}
     input.dispatchEvent(new Event('input', { bubbles: true }));
     setTimeout(() => {
       const el = document.getElementById('producto-' + id) || document.querySelector('[data-producto-id="' + id + '"]');
@@ -1644,6 +1689,7 @@ function abrirProductoDesdeURL() {
     if (el) {
       el.classList.add('producto-destacado');
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      try { registrarVisto(id); } catch (e) {}
       setTimeout(() => el.classList.remove('producto-destacado'), 3500);
       return;
     }
@@ -1660,7 +1706,7 @@ document.addEventListener('click', function (e) {
   e.stopPropagation();
   const id = btn.dataset.articulo;
   const nombre = btn.dataset.nombre || '';
-  if (id) compartirProducto(id, nombre);
+  if (id) { try { registrarVisto(id); } catch (e) {} compartirProducto(id, nombre); }
 });
 
 // =====================================================
