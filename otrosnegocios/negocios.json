@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "nombre": "Me Mata Limón!",
+    "descripcion": "Articulos electrónicos y Accesorios varios (Auriculares, cargadores, relojes, joyas de acero quirurgico, etc...) Estamos en Eldorado KM3 - Avenida San Martin Oeste 1885. Envianos un mensaje o entra en nuestra web! [mematalimon.com.ar]",
+    "rubro": "Accesorios",
+    "link": "https://wa.me/5493751588752",
+    "actualizado": "2026-09-30",
+    "preferencia": 0,
+    "recomendado": false,
+    "ubicacion": true,
+    "mapa": "https://maps.google.com/?q=Av.+San+Martin+Oeste+1885,+Eldorado,+Misiones"
+  },
+  {
+    "id": 2,
+    "nombre": "Espacio Disponible",
+    "descripcion": "Si queres aparecer en este listado gratuitamente escribinos y lo vamos a incorporar lo mas pronto posible!",
+    "categoria": "Todos",
+    "link": "https://wa.me/5493751588753?text=Me%20interesa%20agregar%20mi%20negocio%20a%20la%20web%20de%20mematalimon.com.ar%20%20%C2%BFComo%20debo%20hacer%3F",
+    "actualizado": "2026-09-30",
+    "preferencia": 1,
+    "recomendado": false,
+    "ubicacion": false,
+    "mapa": ""
+  }
+]

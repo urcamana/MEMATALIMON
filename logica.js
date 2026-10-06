@@ -3,6 +3,21 @@
 //datos carga el Json en variable (datos)
 import data from './jADatos.js';
 const datos = Array.from(data);
+
+// Modelos de celular para búsqueda en la barra principal (modelos.json)
+let _modelosCelular = null;
+async function cargarModelosCelular() {
+  if (_modelosCelular) return _modelosCelular;
+  try {
+    const r = await fetch('./modelos.json?v=' + Date.now());
+    _modelosCelular = await r.json();
+  } catch (e) {
+    console.warn('No se pudo cargar modelos.json', e);
+    _modelosCelular = [];
+  }
+  return _modelosCelular;
+}
+cargarModelosCelular();
 //mBotones muestra los botones Agregar al carrito con movimiento
 import * as mBotones from './mBotones.js';
 //alertas muestras las alertas!
@@ -499,6 +514,10 @@ fragmento.appendChild(clone);
 const contenedorCatalogo = document.getElementById('contenedorCatalogo');
 if (contenedorCatalogo) {
   contenedorCatalogo.innerHTML = '';
+  if (window.__avisoModeloBusqueda) {
+    contenedorCatalogo.appendChild(window.__avisoModeloBusqueda);
+    window.__avisoModeloBusqueda = null;
+  }
   contenedorCatalogo.appendChild(fragmento);
 }
 
@@ -539,11 +558,21 @@ function precioFinalProducto(prod) {
   return p;
 }
 
-let ordenActual = "nombre-asc";
+let ordenActual = "aleatorio";
 
 function ordenarProductos(lista) {
   const arr = [...lista];
   switch (ordenActual) {
+    case "aleatorio": {
+      // Fisher–Yates: orden distinto en cada carga / cada vez que se elige "Aleatorio"
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const tmp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = tmp;
+      }
+      break;
+    }
     case "nombre-desc":
       arr.sort((a, b) => String(b.Descripción).localeCompare(String(a.Descripción), "es"));
       break;
@@ -569,6 +598,115 @@ function ordenarProductos(lista) {
   return arr;
 }
 
+// --- Paginación / scroll infinito ---
+const PAGE_SIZE = 30;
+let listaCatalogoActual = [];
+let indiceCatalogo = 0;
+let cargandoMasCatalogo = false;
+
+function asegurarSentinelCatalogo() {
+  let s = document.getElementById("sentinelCatalogo");
+  if (!s) {
+    s = document.createElement("div");
+    s.id = "sentinelCatalogo";
+    s.setAttribute("aria-hidden", "true");
+    s.style.cssText = "width:100%;height:1px;margin:0;padding:0;";
+  }
+  let wrap = document.getElementById("loaderMasProductos");
+  if (!wrap) {
+    wrap = document.createElement("div");
+    wrap.id = "loaderMasProductos";
+    wrap.className = "col-12 text-center py-3 d-none";
+    wrap.innerHTML = '<span class="text-muted small">Cargando más productos…</span>';
+  }
+  const cont = document.getElementById("contenedorCatalogo");
+  if (cont) {
+    // poner al final del área de catálogo
+    const parent = cont.parentElement || cont;
+    if (!document.getElementById("loaderMasProductos")) parent.appendChild(wrap);
+    if (!document.getElementById("sentinelCatalogo")) parent.appendChild(s);
+  }
+  return s;
+}
+
+function appendProductosAlDom(prods) {
+  if (!prods.length) return;
+  // Usar el mismo contenedor de tarjetas que MostrarEnCatalogo
+  contenedorId = 0;
+  let fragLocal = document.createDocumentFragment();
+  // MostrarEnCatalogo acumula en fragmento2 global; lo usamos igual
+  while (fragmento2.firstChild) fragmento2.removeChild(fragmento2.firstChild);
+  prods.forEach(prod => {
+    MostrarEnCatalogo(prod, contenedorId);
+  });
+  let target = document.getElementById(String(contenedorId));
+  if (!target) {
+    // primera vez: montar template de fila
+    while (fragmento.firstChild) fragmento.removeChild(fragmento.firstChild);
+    const clone = document.importNode(template, true);
+    fragmento.appendChild(clone);
+    const contenedorCatalogo = document.getElementById("contenedorCatalogo");
+    if (contenedorCatalogo) {
+      contenedorCatalogo.appendChild(fragmento);
+    }
+    target = document.getElementById(String(contenedorId));
+  }
+  if (target) {
+    target.appendChild(fragmento2);
+  }
+  try { mBotones.mostrarBotones(); } catch (e) {}
+  try { descu.porDeDescuento(); } catch (e) {}
+  try { varianteDeMedidas.cambiarVariantes(); } catch (e) {}
+}
+
+function cargarSiguientePagina() {
+  if (cargandoMasCatalogo) return;
+  if (indiceCatalogo >= listaCatalogoActual.length) return;
+  cargandoMasCatalogo = true;
+  const loader = document.getElementById("loaderMasProductos");
+  if (loader) loader.classList.remove("d-none");
+
+  const slice = listaCatalogoActual.slice(indiceCatalogo, indiceCatalogo + PAGE_SIZE);
+  indiceCatalogo += slice.length;
+  appendProductosAlDom(slice);
+
+  if (loader) {
+    if (indiceCatalogo >= listaCatalogoActual.length) {
+      loader.classList.add("d-none");
+    } else {
+      loader.classList.add("d-none");
+    }
+  }
+  cargandoMasCatalogo = false;
+}
+
+function initScrollInfinitoCatalogo() {
+  if (window.__scrollCatalogoInit) return;
+  window.__scrollCatalogoInit = true;
+  const onScroll = () => {
+    if (cargandoMasCatalogo) return;
+    if (indiceCatalogo >= listaCatalogoActual.length) return;
+    const scrollPos = window.innerHeight + window.pageYOffset;
+    const docH = Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight
+    );
+    // cerca del final (400px)
+    if (scrollPos >= docH - 400) {
+      cargarSiguientePagina();
+    }
+  };
+  window.addEventListener("scroll", onScroll, { passive: true });
+  // IntersectionObserver de respaldo
+  try {
+    const s = asegurarSentinelCatalogo();
+    const io = new IntersectionObserver((entries) => {
+      if (entries.some(e => e.isIntersecting)) cargarSiguientePagina();
+    }, { rootMargin: "200px" });
+    io.observe(s);
+  } catch (e) {}
+}
+
 function renderizarCatalogo(filtroCategoria) {
   // filtroCategoria: "VER TODOS" | "CON DESCUENTOS" | nombre de categoría
   const filtro = filtroCategoria || FILTROS || "VER TODOS";
@@ -585,34 +723,21 @@ function renderizarCatalogo(filtroCategoria) {
 
   lista = ordenarProductos(lista);
 
-  lista.forEach(prod => {
-    contenedorId = 0;
-    fragmento2 = MostrarEnCatalogo(prod, contenedorId);
-  });
-
-  mBotones.mostrarBotones();
-
-  let clone = document.importNode(template, true);
-  fragmento.appendChild(clone);
+  // Scroll infinito: guardar lista completa y mostrar solo la primera página
+  listaCatalogoActual = lista;
+  indiceCatalogo = 0;
+  cargandoMasCatalogo = false;
 
   const contenedorCatalogo = document.getElementById("contenedorCatalogo");
-  if (contenedorCatalogo) {
-    contenedorCatalogo.innerHTML = "";
-    contenedorCatalogo.appendChild(fragmento);
-    const target = document.getElementById(String(contenedorId));
-    if (target) target.appendChild(fragmento2);
-  } else {
-    document.body.appendChild(fragmento);
-    const target = document.getElementById(String(contenedorId));
-    if (target) target.appendChild(fragmento2);
-  }
+  if (contenedorCatalogo) contenedorCatalogo.innerHTML = "";
 
-  // Quitar loader si todavía está
+  // Quitar loader inicial
   const loaderInicial = document.getElementById("loaderCatalogo");
   if (loaderInicial) loaderInicial.remove();
 
-  try { descu.porDeDescuento(); } catch (e) {}
-  try { varianteDeMedidas.cambiarVariantes(); } catch (e) {}
+  asegurarSentinelCatalogo();
+  initScrollInfinitoCatalogo();
+  cargarSiguientePagina(); // primeros PAGE_SIZE
 }
 
 // Listener del selector de orden (módulo ES: DOM ya está listo)
@@ -957,8 +1082,8 @@ function filtrarConBusqueda() {
 
   let debounceBusqueda;
 
-  const filtrar = () => {
-
+  const filtrar = async () => {
+    await cargarModelosCelular();
     const texto = formulario.value.toLowerCase().trim();
     let coincidencias = 0;
 
@@ -973,47 +1098,75 @@ function filtrarConBusqueda() {
       }
     });
 
-    for (let producto of datos) {
-      let Descripcion = producto.Descripción.toLowerCase();
-      //BORRAMOS LOS ELEMENTOS DEL CATALOGO
+    // --- Búsqueda por modelo + texto; con paginación (mismos PAGE_SIZE) ---
+    const idsYaMostrados = new Set();
+    const listaBusqueda = [];
+    window.__avisoModeloBusqueda = null;
 
-      //lo siguiente elimina tarjetas container, pero borra todos.
-      // const element2 = document.querySelector(".tarjetas");
-      // element2.remove();
-      //VEMOS SI COINCIDEN CON EL TEXTO BUSCADO, SI TIENE INVENTARIO Y NO TIENE DESCUENTO
-      if (Descripcion.indexOf(texto) !== -1 /*&& producto.Descuento == 0*/ && producto.Inventario >= 1) {
-
-        contenedorId = 0;
-        //mostramos los datos en el catalogo!!! <--------------------------------------------------
-        fragmento2 = MostrarEnCatalogo(producto, contenedorId);
-        coincidencias++;
+    let modelosMatch = [];
+    if (texto.length >= 2 && typeof window.CompatModelo !== 'undefined' && _modelosCelular && _modelosCelular.length) {
+      modelosMatch = window.CompatModelo.findModelos(_modelosCelular, texto);
+      if (modelosMatch.length) {
+        const modeloElegido = modelosMatch[0];
+        const productosModelo = window.CompatModelo.productosCompatibles(datos, modeloElegido);
+        for (const producto of productosModelo) {
+          const id = Number(producto.Artículo);
+          if (idsYaMostrados.has(id)) continue;
+          if (Number(producto.Inventario) < 1) continue;
+          listaBusqueda.push(producto);
+          idsYaMostrados.add(id);
+        }
+        try {
+          const aviso = document.createElement('div');
+          aviso.className = 'col-12 mb-2';
+          aviso.innerHTML = '<div class="alert alert-light border small mb-2 py-2 px-3" style="border-radius:12px;">' +
+            'Resultados para <strong>' + (modeloElegido.marca || '') + ' ' + (modeloElegido.modelo || '') + '</strong>' +
+            ' · mín. ' + (modeloElegido.potencia || '') + 'W · ficha ' + (modeloElegido.fichas || '') +
+            ' <span class="text-muted">(compatibles primero)</span></div>';
+          window.__avisoModeloBusqueda = aviso;
+        } catch (e) {}
       }
     }
 
-// ✅ AHORA
-let clone = document.importNode(template, true);
-fragmento.appendChild(clone);
+    for (let producto of datos) {
+      let Descripcion = String(producto.Descripción || '').toLowerCase();
+      const id = Number(producto.Artículo);
+      if (idsYaMostrados.has(id)) continue;
+      // texto vacío → todos (comportamiento original indexOf(""))
+      if (Descripcion.indexOf(texto) !== -1 && producto.Inventario >= 1) {
+        listaBusqueda.push(producto);
+        idsYaMostrados.add(id);
+      }
+    }
 
-const contenedorCatalogo = document.getElementById('contenedorCatalogo');
-if (contenedorCatalogo) {
-  contenedorCatalogo.innerHTML = '';
-  contenedorCatalogo.appendChild(fragmento);
-}
+    // Si hay búsqueda de texto (no vacío) y no hay match de modelo, aplicar orden actual
+    // Si texto vacío, renderizarCatalogo normal ya se usa vía refiltrar; acá igual listamos
+    listaCatalogoActual = listaBusqueda;
+    indiceCatalogo = 0;
+    cargandoMasCatalogo = false;
 
-const target = document.getElementById(contenedorId);
-if (target) {
-  target.appendChild(fragmento2);
-}
+    const contenedorCatalogo = document.getElementById('contenedorCatalogo');
+    if (contenedorCatalogo) contenedorCatalogo.innerHTML = '';
+    if (window.__avisoModeloBusqueda && contenedorCatalogo) {
+      contenedorCatalogo.appendChild(window.__avisoModeloBusqueda);
+      window.__avisoModeloBusqueda = null;
+    }
 
-    // Si no hubo coincidencias, mostramos un aviso en vez de dejar la sección vacía
-    if (coincidencias === 0) {
-      const contenedorResultados = document.getElementById(contenedorId);
+    while (fragmento2.firstChild) fragmento2.removeChild(fragmento2.firstChild);
+    while (fragmento.firstChild) fragmento.removeChild(fragmento.firstChild);
+
+    asegurarSentinelCatalogo();
+    initScrollInfinitoCatalogo();
+
+    if (listaCatalogoActual.length === 0) {
       const sinResultados = document.createElement('div');
-      sinResultados.className = 'sin-resultados';
+      sinResultados.className = 'sin-resultados col-12';
       sinResultados.textContent = texto
         ? `No encontramos productos que coincidan con "${formulario.value}"`
         : 'No hay productos disponibles.';
-      contenedorResultados.appendChild(sinResultados);
+      if (contenedorCatalogo) contenedorCatalogo.appendChild(sinResultados);
+    } else {
+      cargarSiguientePagina();
     }
 
     mBotones.mostrarBotones();
@@ -1117,6 +1270,23 @@ document.addEventListener('click', function (e) {
       ocultar();
       return;
     }
+    const items = [];
+
+    // Sugerencias de modelos de celular (hasta 3)
+    if (typeof window.CompatModelo !== 'undefined' && _modelosCelular && _modelosCelular.length) {
+      const mods = window.CompatModelo.findModelos(_modelosCelular, q).slice(0, 3);
+      mods.forEach(m => {
+        const label = (m.marca || '') + ' ' + (m.modelo || '');
+        items.push({
+          tipo: 'modelo',
+          id: '',
+          nombre: label,
+          extra: (m.potencia || '') + 'W · ' + (m.fichas || '')
+        });
+      });
+    }
+
+    // Sugerencias de productos
     const matches = [];
     for (let i = 0; i < datos.length; i++) {
       const p = datos[i];
@@ -1126,20 +1296,34 @@ document.addEventListener('click', function (e) {
         matches.push(p);
       }
     }
-    if (!matches.length) {
-      ocultar();
-      return;
-    }
-    // Una sola sugerencia: priorizar favoritos, luego últimos vistos, si no el primero
     let favs = [];
     let vistos = [];
     try { favs = JSON.parse(localStorage.getItem('favoritos_limon') || '[]').map(Number); } catch (e) {}
     try { vistos = JSON.parse(localStorage.getItem('vistos_limon') || '[]').map(Number); } catch (e) {}
-    let elegido = matches.find(p => favs.includes(Number(p.Artículo)))
-      || matches.find(p => vistos.includes(Number(p.Artículo)))
-      || matches[0];
-    const nom = String(elegido.Descripción).replace(/</g, '&lt;');
-    box.innerHTML = '<button type="button" class="sugerencia-item" data-id="' + elegido.Artículo + '" data-nombre="' + nom.replace(/"/g, '&quot;') + '">' + nom + '</button>';
+    matches.sort((a, b) => {
+      const sa = favs.includes(Number(a.Artículo)) ? 0 : vistos.includes(Number(a.Artículo)) ? 1 : 2;
+      const sb = favs.includes(Number(b.Artículo)) ? 0 : vistos.includes(Number(b.Artículo)) ? 1 : 2;
+      return sa - sb;
+    });
+    matches.slice(0, 5).forEach(p => {
+      items.push({
+        tipo: 'producto',
+        id: p.Artículo,
+        nombre: String(p.Descripción || ''),
+        extra: ''
+      });
+    });
+
+    if (!items.length) {
+      ocultar();
+      return;
+    }
+    box.innerHTML = items.map(it => {
+      const nom = String(it.nombre).replace(/</g, '&lt;').replace(/"/g, '&quot;');
+      const extra = it.extra ? ' <span class="text-muted small">(' + it.extra.replace(/</g, '') + ')</span>' : '';
+      const badge = it.tipo === 'modelo' ? '<span class="badge bg-secondary me-1" style="font-size:0.65rem">Modelo</span> ' : '';
+      return '<button type="button" class="sugerencia-item" data-tipo="' + it.tipo + '" data-id="' + (it.id || '') + '" data-nombre="' + nom + '">' + badge + nom + extra + '</button>';
+    }).join('');
     box.classList.remove('d-none');
   }
 
@@ -1157,18 +1341,23 @@ document.addEventListener('click', function (e) {
     if (!btn) return;
     const id = btn.dataset.id;
     const nombre = btn.dataset.nombre || '';
+    const tipo = btn.dataset.tipo || 'producto';
     input.value = nombre;
     ocultar();
-    try { registrarVisto(id); } catch (e) {}
+    if (tipo === 'producto' && id) {
+      try { registrarVisto(id); } catch (e) {}
+    }
     input.dispatchEvent(new Event('input', { bubbles: true }));
-    setTimeout(() => {
-      const el = document.getElementById('producto-' + id) || document.querySelector('[data-producto-id="' + id + '"]');
-      if (el) {
-        el.classList.add('producto-destacado');
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        setTimeout(() => el.classList.remove('producto-destacado'), 3000);
-      }
-    }, 450);
+    if (tipo === 'producto' && id) {
+      setTimeout(() => {
+        const el = document.getElementById('producto-' + id) || document.querySelector('[data-producto-id="' + id + '"]');
+        if (el) {
+          el.classList.add('producto-destacado');
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          setTimeout(() => el.classList.remove('producto-destacado'), 3000);
+        }
+      }, 450);
+    }
   });
 
   document.addEventListener('click', (e) => {

@@ -1,61 +1,101 @@
 (function () {
-  // Fechas de referencia (Argentina). Ventana: 30 días antes → 7 días después.
-  // always: true = siempre visible
+  /**
+   * Ideas para regalar — Argentina
+   * Ventana: 30 días antes → 7 días después.
+   * always: true = siempre visible (van primero en las pestañas).
+   * tipoFecha: 'fijo' | 'tercer_domingo' (Madre/Padre).
+   */
   const EVENTOS = [
+    // --- Siempre visibles (primero) ---
     { id: 'cumple', archivo: 'cumple.json', titulo: 'Cumpleaños', always: true },
     { id: 'graduaciones', archivo: 'graduaciones.json', titulo: 'Graduaciones', always: true },
     { id: 'aniversarios', archivo: 'aniversarios.json', titulo: 'Aniversarios', always: true },
     { id: 'amigo_invisible', archivo: 'amigo_invisible.json', titulo: 'Amigo invisible', always: true },
-    { id: 'enamorados', archivo: 'enamorados.json', titulo: 'San Valentín / Enamorados', always: false, mes: 2, dia: 14 },
-    { id: 'padre', archivo: 'padre.json', titulo: 'Día del Padre', always: false, mes: 6, dia: 15 }, // 3er domingo ~junio
-    { id: 'amigo', archivo: 'amigo.json', titulo: 'Día del Amigo', always: false, mes: 7, dia: 20 },
-    { id: 'peques', archivo: 'peques.json', titulo: 'Día del Niño', always: false, mes: 8, dia: 10 }, // 2do domingo ~agosto
-    { id: 'profe', archivo: 'profe.json', titulo: 'Día del Maestro', always: false, mes: 9, dia: 11 },
-    { id: 'madre', archivo: 'madre.json', titulo: 'Día de la Madre', always: false, mes: 10, dia: 18 }, // 3er domingo ~octubre
-    { id: 'navidad', archivo: 'navidad.json', titulo: 'Navidad y Reyes', always: false, mes: 12, dia: 25 }
+    { id: 'peques', archivo: 'peques.json', titulo: 'Para peques', always: true },
+    // --- Temporada (al final; se ocultan fuera de ventana) ---
+    { id: 'enamorados', archivo: 'enamorados.json', titulo: 'San Valentín / Enamorados', always: false, tipoFecha: 'fijo', mes: 2, dia: 14 },
+    { id: 'padre', archivo: 'padre.json', titulo: 'Día del Padre', always: false, tipoFecha: 'tercer_domingo', mes: 6 },
+    { id: 'amigo', archivo: 'amigo.json', titulo: 'Día del Amigo', always: false, tipoFecha: 'fijo', mes: 7, dia: 20 },
+    { id: 'profe', archivo: 'profe.json', titulo: 'Día del Maestro', always: false, tipoFecha: 'fijo', mes: 9, dia: 11 },
+    { id: 'madre', archivo: 'madre.json', titulo: 'Día de la Madre', always: false, tipoFecha: 'tercer_domingo', mes: 10 },
+    { id: 'navidad', archivo: 'navidad.json', titulo: 'Navidad', always: false, tipoFecha: 'fijo', mes: 12, dia: 25 }
   ];
 
   const DIAS_ANTES = 30;
   const DIAS_DESPUES = 7;
 
-  function precioAR(prod) {
-    let p = Number(String(prod.Venta).replace(/,/g, '.')) * Number(prod.DOLAR || 1);
-    if (prod.Descuento != 0 && prod.Descuento != '0') {
-      const d = Number(String(prod.Descuento).replace(/,/g, '.'));
-      p = p * (1 - d);
+  /** 3.er domingo del mes (1–12), año y */
+  function tercerDomingo(anio, mes) {
+    var d = new Date(anio, mes - 1, 1);
+    var domingoCount = 0;
+    while (d.getMonth() === mes - 1) {
+      if (d.getDay() === 0) {
+        domingoCount++;
+        if (domingoCount === 3) return new Date(anio, mes - 1, d.getDate());
+      }
+      d.setDate(d.getDate() + 1);
     }
-    return new Intl.NumberFormat('es-AR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(p);
+    return new Date(anio, mes - 1, 15);
   }
 
-  function fechaEventoEsteAnio(mes, dia, ref) {
-    const y = ref.getFullYear();
-    let d = new Date(y, mes - 1, dia);
-    // Si ya pasó la ventana de "después", usar el del año siguiente
-    const fin = new Date(d);
-    fin.setDate(fin.getDate() + DIAS_DESPUES);
-    if (ref > fin) {
-      d = new Date(y + 1, mes - 1, dia);
+  function fechaEvento(ev, ref) {
+    var y = ref.getFullYear();
+    var d;
+    if (ev.tipoFecha === 'tercer_domingo') {
+      d = tercerDomingo(y, ev.mes);
+      var fin = new Date(d);
+      fin.setDate(fin.getDate() + DIAS_DESPUES);
+      if (ref > fin) d = tercerDomingo(y + 1, ev.mes);
+    } else {
+      d = new Date(y, (ev.mes || 1) - 1, ev.dia || 1);
+      var fin2 = new Date(d);
+      fin2.setDate(fin2.getDate() + DIAS_DESPUES);
+      if (ref > fin2) d = new Date(y + 1, (ev.mes || 1) - 1, ev.dia || 1);
     }
     return d;
   }
 
   function estaEnVentana(ev, hoy) {
     if (ev.always) return true;
-    const evento = fechaEventoEsteAnio(ev.mes, ev.dia, hoy);
-    const inicio = new Date(evento);
+    var evento = fechaEvento(ev, hoy);
+    var inicio = new Date(evento);
     inicio.setDate(inicio.getDate() - DIAS_ANTES);
-    const fin = new Date(evento);
+    var fin = new Date(evento);
     fin.setDate(fin.getDate() + DIAS_DESPUES);
     return hoy >= inicio && hoy <= fin;
   }
 
+  function formatearFecha(d) {
+    try {
+      return d.toLocaleDateString('es-AR', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      });
+    } catch (e) {
+      return d.getDate() + '/' + (d.getMonth() + 1) + '/' + d.getFullYear();
+    }
+  }
+
+  function precioAR(prod) {
+    try {
+      var venta = Number(String(prod.Venta || 0).replace(/,/g, '.'));
+      var desc = Number(String(prod.Descuento || 0).replace(/,/g, '.'));
+      var final = desc ? venta * (1 - desc) : venta;
+      return Math.round(final).toLocaleString('es-AR');
+    } catch (e) {
+      return prod.Venta || '—';
+    }
+  }
+
   function tarjeta(prod, texto) {
-    const id = prod.Artículo;
-    const nombre = prod.Descripción || 'Producto';
-    const img = '../imgcarrito/' + id + '.jpg';
-    const link = '../index.html?p=' + encodeURIComponent(id);
+    var id = prod.Artículo;
+    var nombre = prod.Descripción || 'Producto';
+    var img = '../imgcarrito/' + id + '.jpg';
+    var link = '../index.html?p=' + encodeURIComponent(id);
     return (
-      '<div class="col-12 col-sm-6 col-md-4">' +
+      '<div class="col-6 col-md-4">' +
         '<div class="card h-100 rec-card shadow-sm">' +
           '<img src="' + img + '" class="card-img-top rec-img" alt="' + String(nombre).replace(/"/g, '&quot;') + '" onerror="this.src=\'../imgcarrito/IMGND.jpg\'">' +
           '<div class="card-body d-flex flex-column">' +
@@ -69,97 +109,176 @@
     );
   }
 
+  /** Devuelve { html, productos: [{prod, texto}] } */
   async function cargarProductosEvento(archivo, articulos) {
-    const res = await fetch('./' + archivo);
+    var res = await fetch('./' + archivo);
     if (!res.ok) throw new Error('No se pudo cargar ' + archivo);
-    const lista = await res.json();
-    const mapa = {};
+    var lista = await res.json();
+    var mapa = {};
     articulos.forEach(function (p) { mapa[p.Artículo] = p; });
 
-    const cols = [];
+    var cols = [];
+    var productos = [];
     (lista || []).forEach(function (item) {
-      const prod = mapa[item.id];
+      var prod = mapa[item.id];
       if (!prod) return;
       if (Number(prod.Inventario) < 1) return;
       cols.push(tarjeta(prod, item.texto));
+      productos.push({ prod: prod, texto: item.texto || '' });
     });
     if (!cols.length) {
-      return '<div class="col-12 text-muted small">Por ahora no hay productos cargados para esta ocasión (revisá el JSON o el stock).</div>';
+      return {
+        html: '<div class="col-12 text-muted small">Por ahora no hay productos cargados para esta ocasión (revisá el JSON o el stock).</div>',
+        productos: []
+      };
     }
-    return cols.join('');
+    return { html: cols.join(''), productos: productos };
   }
 
   async function init() {
-    const cont = document.getElementById('listaEventos');
-    const sin = document.getElementById('sinEventos');
-    if (!cont) return;
+    var tabsEl = document.getElementById('tabsEventos');
+    var panelEl = document.getElementById('panelEvento');
+    var sin = document.getElementById('sinEventos');
+    var ruletaResultado = document.getElementById('ruletaResultado');
+    var btnRuleta = document.getElementById('btnRuletaRegalo');
+    if (!tabsEl || !panelEl) return;
 
-    const hoy = new Date();
+    var hoy = new Date();
     hoy.setHours(12, 0, 0, 0);
 
-    const visibles = EVENTOS.filter(function (ev) { return estaEnVentana(ev, hoy); });
+    // Orden del array EVENTOS ya es: always primero, temporada al final
+    var visibles = EVENTOS.filter(function (ev) { return estaEnVentana(ev, hoy); });
     if (!visibles.length) {
       if (sin) sin.classList.remove('d-none');
       return;
     }
 
-    let articulos = [];
+    var articulos = [];
     try {
-      const r = await fetch('../articulos.json');
+      var r = await fetch('../articulos.json');
       articulos = await r.json();
     } catch (e) {
-      cont.innerHTML = '<div class="alert alert-warning">No se pudo cargar el catálogo (<code>articulos.json</code>).</div>';
+      panelEl.innerHTML = '<div class="alert alert-warning">No se pudo cargar el catálogo (<code>articulos.json</code>).</div>';
       return;
     }
 
-    cont.innerHTML = '';
+    var activoId = 'cumple';
+    if (!visibles.some(function (e) { return e.id === activoId; })) {
+      activoId = visibles[0].id;
+    }
 
-    visibles.forEach(function (ev) {
-      const bloque = document.createElement('div');
-      bloque.className = 'obsequio-evento';
-      bloque.innerHTML =
-        '<button type="button" class="btn btn-obsequio-titulo w-100" aria-expanded="false" data-ev="' + ev.id + '">' +
-          ev.titulo +
-          ' <span class="obsequio-chevron">▼</span>' +
-        '</button>' +
-        '<div class="obsequio-panel d-none">' +
-          '<div class="row g-3 justify-content-center py-3" data-panel="' + ev.id + '">' +
-            '<div class="col-12 text-center text-muted small">Cargando…</div>' +
-          '</div>' +
-        '</div>';
-      cont.appendChild(bloque);
+    var cache = {}; // id -> { html, productos }
+    var productosActivos = [];
 
-      const btn = bloque.querySelector('button');
-      const panel = bloque.querySelector('.obsequio-panel');
-      const grid = bloque.querySelector('[data-panel]');
-      let cargado = false;
+    function actualizarRuletaUI() {
+      if (!btnRuleta) return;
+      if (productosActivos.length < 1) {
+        btnRuleta.disabled = true;
+        btnRuleta.title = 'No hay productos en esta ocasión';
+      } else {
+        btnRuleta.disabled = false;
+        btnRuleta.title = 'Elegí un regalo al azar de esta pestaña';
+      }
+      if (ruletaResultado) ruletaResultado.innerHTML = '';
+    }
 
-      btn.addEventListener('click', async function () {
-        const abierto = !panel.classList.contains('d-none');
-        // Cerrar otros
-        cont.querySelectorAll('.obsequio-panel').forEach(function (p) { p.classList.add('d-none'); });
-        cont.querySelectorAll('.btn-obsequio-titulo').forEach(function (b) {
-          b.setAttribute('aria-expanded', 'false');
-          const ch = b.querySelector('.obsequio-chevron');
-          if (ch) ch.textContent = '▼';
-        });
-        if (abierto) return;
+    function renderTabs() {
+      tabsEl.innerHTML = '';
+      visibles.forEach(function (ev) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'obsequio-tab' + (ev.id === activoId ? ' active' : '');
+        btn.setAttribute('role', 'tab');
+        btn.dataset.tab = ev.id;
 
-        panel.classList.remove('d-none');
-        btn.setAttribute('aria-expanded', 'true');
-        const ch = btn.querySelector('.obsequio-chevron');
-        if (ch) ch.textContent = '▲';
+        var label = document.createElement('span');
+        label.className = 'd-block';
+        label.textContent = ev.titulo;
+        btn.appendChild(label);
 
-        if (!cargado) {
-          try {
-            grid.innerHTML = await cargarProductosEvento(ev.archivo, articulos);
-            cargado = true;
-          } catch (err) {
-            grid.innerHTML = '<div class="col-12 text-danger small">No se pudo cargar <code>' + ev.archivo + '</code>.</div>';
-          }
+        // Fecha solo en eventos de calendario (no always)
+        if (!ev.always) {
+          var fe = fechaEvento(ev, hoy);
+          var sub = document.createElement('span');
+          sub.className = 'd-block small';
+          sub.style.fontWeight = '500';
+          sub.style.opacity = '0.85';
+          sub.style.fontSize = '0.7rem';
+          sub.style.marginTop = '0.15rem';
+          sub.textContent = formatearFecha(fe);
+          btn.appendChild(sub);
         }
+
+        btn.addEventListener('click', function () {
+          activoId = ev.id;
+          renderTabs();
+          mostrarPanel(ev);
+        });
+        tabsEl.appendChild(btn);
       });
-    });
+    }
+
+    async function mostrarPanel(ev) {
+      panelEl.innerHTML = '<div class="text-center text-muted small py-4">Cargando…</div>';
+      productosActivos = [];
+      actualizarRuletaUI();
+      try {
+        if (!cache[ev.id]) {
+          cache[ev.id] = await cargarProductosEvento(ev.archivo, articulos);
+        }
+        var data = cache[ev.id];
+        panelEl.innerHTML = '<div class="row g-3 justify-content-center">' + data.html + '</div>';
+        productosActivos = data.productos || [];
+        actualizarRuletaUI();
+      } catch (err) {
+        panelEl.innerHTML = '<div class="text-danger small">No se pudo cargar <code>' + ev.archivo + '</code>.</div>';
+        productosActivos = [];
+        actualizarRuletaUI();
+      }
+    }
+
+    if (btnRuleta) {
+      btnRuleta.addEventListener('click', function () {
+        if (!productosActivos.length || !ruletaResultado) return;
+        btnRuleta.disabled = true;
+        ruletaResultado.innerHTML = '<p class="text-muted small mb-0">Eligiendo…</p>';
+
+        var pasos = 12 + Math.floor(Math.random() * 8);
+        var i = 0;
+        var timer = setInterval(function () {
+          var idx = i % productosActivos.length;
+          var p = productosActivos[idx].prod;
+          ruletaResultado.innerHTML =
+            '<div class="ruleta-spin text-muted small">' + (p.Descripción || '') + '</div>';
+          i++;
+          if (i >= pasos) {
+            clearInterval(timer);
+            var elegido = productosActivos[Math.floor(Math.random() * productosActivos.length)];
+            var prod = elegido.prod;
+            var id = prod.Artículo;
+            var nombre = prod.Descripción || 'Producto';
+            var img = '../imgcarrito/' + id + '.jpg';
+            var link = '../index.html?p=' + encodeURIComponent(id);
+            ruletaResultado.innerHTML =
+              '<div class="card ruleta-card shadow-sm mx-auto" style="max-width:280px;">' +
+                '<img src="' + img + '" class="card-img-top" alt="" style="height:160px;object-fit:contain;background:#f5f5f5;" onerror="this.src=\'../imgcarrito/IMGND.jpg\'">' +
+                '<div class="card-body text-center">' +
+                  '<p class="small text-muted mb-1">Tu idea de regalo</p>' +
+                  '<h3 class="h6 fw-bold">' + nombre + '</h3>' +
+                  '<p class="text-danger fw-semibold mb-2">$' + precioAR(prod) + '</p>' +
+                  (elegido.texto ? '<p class="small text-secondary">' + elegido.texto + '</p>' : '') +
+                  '<a href="' + link + '" class="btn btn-dark btn-sm rounded-pill">Ver en la tienda</a>' +
+                '</div>' +
+              '</div>';
+            btnRuleta.disabled = false;
+          }
+        }, 80);
+      });
+    }
+
+    renderTabs();
+    var inicial = visibles.find(function (e) { return e.id === activoId; }) || visibles[0];
+    mostrarPanel(inicial);
   }
 
   init();

@@ -75,7 +75,7 @@
             <!-- 3. Búsqueda (único id="formulario") -->
             <div class="barra-busqueda-wrap position-relative">
                 <form role="search" onsubmit="return false;">
-                    <input id="formulario" class="form-control" type="search" placeholder="Buscar producto..." aria-label="Buscar producto" autocomplete="off">
+                    <input id="formulario" class="form-control" type="search" placeholder="Buscar producto o modelo (ej: J7 Pro, Moto G52)..." aria-label="Buscar producto" autocomplete="off">
                 </form>
                 <div id="sugerenciasBusqueda" class="sugerencias-busqueda d-none" role="listbox" aria-label="Sugerencias"></div>
             </div>
@@ -83,7 +83,7 @@
             <!-- 4. Links solo escritorio -->
             <ul class="nav-links-desktop">
 <!-- 
-                <li><a class="nav-link-desk active" href="index.html">Inicio</a></li>
+<li><a class="nav-link-desk" href="index.html">Inicio</a></li>
    --> 
                 <li class="dropdown">
                     <a class="nav-link-desk dropdown-toggle" href="#" id="navbarDropdownProductos" role="button" data-bs-toggle="dropdown" aria-expanded="false">Productos</a>
@@ -92,10 +92,10 @@
                         <li><hr class="dropdown-divider"></li>
                     </ul>
                 </li>
-		<li><a class="nav-link-desk" href="testimonios.html">Recomendaciones</a></li>
-                <li><a class="nav-link-desk" href="obsequios/obsequios.html">Regalos</a></li>
-                <li><a class="nav-link-desk" href="guia-compra.html">Guía</a></li>
-                <li><a class="nav-link-desk" href="politicas.html">Políticas</a></li>
+                <li><a class="nav-link-desk active" href="index.html">Inicio</a></li>
+                <li><a class="nav-link-desk" href="mas.html">Más</a></li>
+
+                <li><a class="nav-link-desk" href="politicas.html">Politicas</a></li>
                 <li><a class="nav-link-desk" href="contacto.html">Contacto</a></li>
 <!-- 
                 <li><button type="button" class="nav-link-desk btn-compartir-tienda" id="btnCompartirTiendaDesk" title="Compartir la tienda">Compartir</button></li>
@@ -130,19 +130,24 @@
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="testimonios.html">Recomendaciones</a>
+                    <a class="nav-link" href="index.html">Inicio</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="obsequios/obsequios.html">Ideas para regalar</a>
+                    <a class="nav-link" href="mas.html">Más</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="otrosnegocios/productos.html">Productos recomendados de otras páginas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="otrosnegocios/cursos.html">Cursos recomendados de otras páginas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="otrosnegocios/libros.html">Libros y ebooks recomendados de otras páginas</a>
                 </li>
 
 
-
                 <li class="nav-item">
-                    <a class="nav-link" href="guia-compra.html">Guía de compra</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="politicas.html">Políticas de venta</a>
+                    <a class="nav-link" href="politicas.html">Políticas</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="contacto.html">Contacto</a>
@@ -164,6 +169,12 @@
                 <h1 class="display-4 fw-bolder">Me Mata Limón!</h1>
                 <p class="lead fw-normal text-white-40 mb-0">Accesorios y electronica</p>
                 <p class="lead fw-normal text-white-40 mb-0">Grabados personalizados</p>
+                <div id="estadoLocal" class="mt-3 mb-2" aria-live="polite">
+                  <span id="badgeAbierto" class="badge rounded-pill px-3 py-2 fw-semibold"
+                        style="font-size:1.05rem; letter-spacing:0.02em; box-shadow:0 2px 8px rgba(0,0,0,.25);"></span>
+                  <p id="horarioHoy" class="mt-2 mb-0 fw-medium"
+                     style="font-size:1rem; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.45);"></p>
+                </div>
 
                 <!-- CARRUSEL DE BANNERS DINÁMICOS -->
                <!-- CARRUSEL DE BANNERS MEJORADO Y MÁS COMPACTO -->
@@ -391,6 +402,7 @@
                         <div id="controlesOrden" class="d-flex flex-wrap justify-content-center align-items-center gap-2 mt-2 mb-2 px-2">
                             <label for="selectOrden" class="form-label mb-0 small fw-semibold text-secondary">Ordenar:</label>
                             <select id="selectOrden" class="form-select form-select-sm" style="width: auto; min-width: 180px; border-color: #d1bfe3;">
+                                <option value="aleatorio" selected>Aleatorio</option>
                                 <option value="nombre-asc">Nombre A-Z</option>
                                 <option value="nombre-desc">Nombre Z-A</option>
                                 <option value="precio-asc">Precio: menor a mayor</option>
@@ -729,6 +741,62 @@
 </script>
 
 
+    
+<script>
+(function () {
+  // Horario Eldorado: mar–sáb 9:30–13 y 16–19; dom 9:30–13; lun cerrado
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+  function minutosAhora(d) {
+    return d.getHours() * 60 + d.getMinutes();
+  }
+  function enRango(min, desde, hasta) {
+    return min >= desde && min < hasta;
+  }
+  var ahora = new Date();
+  var dia = ahora.getDay(); // 0 dom … 6 sáb
+  var min = minutosAhora(ahora);
+  var badge = document.getElementById('badgeAbierto');
+  var horario = document.getElementById('horarioHoy');
+  if (!badge) return;
+
+  var abierto = false;
+  var textoHorario = '';
+
+  if (dia === 1) {
+    // lunes
+    abierto = false;
+    textoHorario = 'Hoy lunes no atendemos. Volvemos martes de 9:30 a 13 hs y de 16 a 19 hs.';
+  } else if (dia === 0) {
+    // domingo
+    abierto = enRango(min, 9 * 60 + 30, 13 * 60);
+    textoHorario = 'Hoy domingo atendemos de 9:30 a 13 hs.';
+  } else {
+    // mar–sáb
+    abierto = enRango(min, 9 * 60 + 30, 13 * 60) || enRango(min, 16 * 60, 19 * 60);
+    textoHorario = 'Hoy atendemos de 9:30 a 13 hs y de 16 a 19 hs.';
+  }
+
+  if (abierto) {
+    badge.textContent = 'Abierto ahora';
+    badge.style.background = '#157347';
+    badge.style.color = '#fff';
+    badge.style.border = '2px solid #fff';
+  } else if (dia === 1) {
+    badge.textContent = 'Cerrado hoy';
+    badge.style.background = '#343a40';
+    badge.style.color = '#fff';
+    badge.style.border = '2px solid #fff';
+  } else {
+    badge.textContent = 'Cerrado ahora';
+    badge.style.background = '#b02a37';
+    badge.style.color = '#fff';
+    badge.style.border = '2px solid #fff';
+  }
+  if (horario) horario.textContent = textoHorario;
+})();
+</script>
+
+    <script src="compat-modelo.js"></script>
     <script type="module" src="logica.js"></script>
     <script>
       if ('serviceWorker' in navigator) {

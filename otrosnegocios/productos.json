@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "nombre": "Espacio Disponible",
+    "descripcion": "Si queres que te recomendemos algun tipo de curso o ebook escribinos y lo vamos a incorporar lo mas pronto posible!",
+    "categoria": "Todos",
+    "link": "https://wa.me/5493751588753?text=Hola%20me%20gustaria%20que%20me%20recomienden%20algo%20en%20la%20web%20de%20mematalimon.com.ar%20%20Por%20favor",
+    "actualizado": "2026-09-30"
+  },
+  {
+    "id": 2,
+    "nombre": "Mouse Gamer Inalámbrico Marvo M803 4800DPI 7 Botones LED RGB",
+    "descripcion": "Sensor preciso, luces RGB y diseño ergonómico.",
+    "categoria": "Periféricos",
+    "link": "https://www.mercadolibre.com.ar/p/MLA45452743?matt_tool=89488245&pdp_filters=item_id:MLA1994463632&ua=ji950O6pIh9VhAAEAEo8fbC3346B45QnpPg9dKQ#origin=share&sid=share&wid=MLA1994463632&action=copy",
+    "actualizado": "2026-09-24"
+  },
+  {
+    "id": 3,
+    "nombre": "Teclado Mecánico Carrello Nerf68 para Juegos con Membrana LED OEM con Cable para PC y Portátil 68 Teclas Tipo C",
+    "descripcion": "ideal para escribir y jugar.",
+    "categoria": "Periféricos",
+    "link": "https://www.mercadolibre.com.ar/p/MLA75784503?matt_tool=89488245&pdp_filters=item_id:MLA3678756494&ua=K7P3QsKxBLiSZ85p1JLpwB2ZXVcLbyCTVKqtRQw#origin=share&sid=share&wid=MLA3678756494&action=copy",
+    "actualizado": "2026-09-23"
+  },
+  {
+    "id": 4,
+    "nombre": "Auriculares Redmi Buds 8 Pro Blanco",
+    "descripcion": "Buen sonido, batería de larga duración y sobre todo ORIGINAL.",
+    "categoria": "Auriculares",
+    "link": "https://www.mercadolibre.com.ar/p/MLA66081934?matt_tool=89488245&pdp_filters=item_id:MLA3822338734&ua=HjmIzA2vwaZmDaADy6jdIwBBKIBRTmGb_cOLElk#origin=share&sid=share&wid=MLA3822338734&action=copy",
+    "actualizado": "2026-09-25"
+  }
+]

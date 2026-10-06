@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Productos afiliados · Me Mata Limón</title>
+  <meta name="description" content="Productos recomendados con enlaces de compra de afiliados.">
+  <meta name="theme-color" content="#a88cd7">
+  <link rel="shortcut icon" href="../IMG/icono.png" type="image/png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    body.otros-page {
+      font-family: 'Inter', system-ui, sans-serif;
+      background-color: #f9f9f9;
+      padding-top: 4.25rem;
+    }
+    body.otros-page h1, body.otros-page h2, body.otros-page h3, body.otros-page h5 {
+      font-family: 'Playfair Display', serif;
+    }
+    #nav1.otros-nav {
+      background-color: var(--tema-principal, #a88cd7) !important;
+    }
+    #nav1.otros-nav .navbar-brand,
+    #nav1.otros-nav .nav-link {
+      color: #fff !important;
+    }
+    #nav1.otros-nav .nav-link:hover { opacity: 0.9; }
+
+    #nav1.otros-nav .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: nowrap;
+      gap: 0.5rem;
+    }
+    #nav1.otros-nav .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-shrink: 0;
+      min-width: 0;
+    }
+    #nav1.otros-nav .nav-left .navbar-brand {
+      margin-right: 0;
+      padding-top: 0.35rem;
+      padding-bottom: 0.35rem;
+    }
+    #nav1.otros-nav .nav-left .nav-link {
+      white-space: nowrap;
+    }
+    #nav1.otros-nav .nav-links-right {
+      margin-left: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      flex-shrink: 1;
+      min-width: 0;
+    }
+    #nav1.otros-nav .nav-sep {
+      color: rgba(255,255,255,0.45);
+      font-weight: 300;
+      user-select: none;
+      padding: 0 1px;
+    }
+    #nav1.otros-nav .nav-link.active,
+    #nav1.otros-nav a.nav-link[aria-current="page"] {
+      background: rgba(255,255,255,0.22) !important;
+      border-radius: 6px;
+      font-weight: 600 !important;
+      padding: 2px 8px !important;
+    }
+    @media (max-width: 575.98px) {
+      #nav1.otros-nav .container {
+        padding-left: 0.6rem;
+        padding-right: 0.6rem;
+      }
+      #nav1.otros-nav .nav-left {
+        gap: 0.35rem;
+      }
+      #nav1.otros-nav .nav-left .navbar-brand span {
+        font-size: 0.85rem;
+      }
+      #nav1.otros-nav .nav-left .nav-link {
+        font-size: 0.7rem !important;
+        padding: 2px 4px !important;
+      }
+      #nav1.otros-nav .nav-links-right {
+        gap: 0.2rem;
+        max-width: 55%;
+      }
+      #nav1.otros-nav .nav-links-right .nav-link {
+        font-size: 0.68rem !important;
+        padding: 2px 4px !important;
+      }
+      #nav1.otros-nav .nav-sep { font-size: 0.6rem; }
+    }
+
+    @media (max-width: 575.98px) {
+      #nav1.otros-nav .nav-link {
+        font-size: 0.68rem !important;
+        padding: 2px 4px !important;
+      }
+    }
+
+    #contenedorTarjetas .card {
+      border: none;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+      transition: transform .15s ease, box-shadow .15s ease;
+      background: #fff;
+    }
+    #contenedorTarjetas .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(115, 123, 191, 0.15);
+    }
+    #contenedorTarjetas .card-img-top,
+    #contenedorTarjetas .carousel .img-item {
+      width: 100%;
+      height: 180px;
+      object-fit: contain;
+      background: #f5f5f5;
+    }
+    @media (min-width: 768px) {
+      #contenedorTarjetas .card-img-top,
+      #contenedorTarjetas .carousel .img-item { height: 200px; }
+    }
+    #contenedorTarjetas .card-body {
+      min-height: auto;
+      padding: 0.85rem 1rem 1rem;
+    }
+    #contenedorTarjetas .card-title { font-size: 1rem; margin-bottom: 0.35rem; }
+    #contenedorTarjetas .badge-rubro {
+      background-color: var(--tema-categoria, #a1009c81);
+      color: var(--texto-categoria, #f1eaea);
+      font-weight: 500;
+      font-size: 0.7rem;
+    }
+    #contenedorTarjetas .btn-ver {
+      background-color: var(--tema-principal, #a88cd7);
+      border: none;
+      color: #fff;
+      font-weight: 500;
+    }
+    #contenedorTarjetas .btn-ver:hover {
+      background-color: var(--tema-acento-hover, #624a62);
+      color: #fff;
+    }
+    /* Botón compartir — mismo estilo que la tienda principal */
+    #contenedorTarjetas .carousel {
+      position: relative;
+    }
+    #contenedorTarjetas .carousel .btn-compartir-prod {
+      position: absolute !important;
+      right: 8px;
+      bottom: 8px;
+      z-index: 5;
+      width: auto !important;
+      height: auto !important;
+      min-height: 32px;
+      padding: 4px 10px !important;
+      border-radius: 999px !important;
+      display: inline-flex !important;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.72rem !important;
+      font-weight: 700 !important;
+      background: rgba(255, 255, 255, 0.95) !important;
+      border: 1px solid rgba(140, 100, 180, 0.4) !important;
+      color: #5c3d8a !important;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+      cursor: pointer;
+    }
+    #contenedorTarjetas .carousel .btn-compartir-prod:hover {
+      background: #fff !important;
+      color: #4a2d6a !important;
+    }
+    #contenedorTarjetas .carousel .btn-compartir-prod svg {
+      flex-shrink: 0;
+      pointer-events: none;
+    }
+    .btn-compartir-txt {
+      line-height: 1;
+    }
+    @media (max-width: 576px) {
+      #contenedorTarjetas .carousel .btn-compartir-prod {
+        right: 6px;
+        bottom: 8px;
+        padding: 5px 8px !important;
+        font-size: 0.68rem !important;
+      }
+    }
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+      background-color: rgba(0,0,0,.35);
+      border-radius: 50%;
+      padding: 10px;
+    }
+    #buscador:focus {
+      border-color: var(--tema-principal, #a88cd7);
+      box-shadow: 0 0 0 0.2rem rgba(168, 140, 215, 0.25);
+    }
+    .aviso-legal {
+      background: #fff;
+      border: 1px solid rgba(168, 140, 215, 0.25);
+      border-radius: 8px;
+      font-size: 0.8rem;
+    }
+    footer.otros-footer {
+      border-top: 1px solid rgba(168, 140, 215, 0.2);
+    }
+  </style>
+</head>
+<body class="otros-page" data-page="productos">
+
+    <nav class="navbar navbar-expand-lg fixed-top otros-nav" id="nav1">
+    <div class="container">
+      <div class="nav-left">
+        <a class="navbar-brand d-flex align-items-center gap-2 m-0" href="https://mematalimon.com.ar/index.html">
+        <img src="../IMG/icono.png" alt="" width="28" height="28" class="rounded" onerror="this.style.display='none'">
+        <span>Me Mata Limón</span>
+      </a>
+      </div>
+      <div class="nav-links-right">
+        <a class="nav-link small" href="https://mematalimon.com.ar/index.html">Inicio</a>
+        <span class="nav-sep" aria-hidden="true">·</span>
+        <a class="nav-link small" href="negocios.html" data-nav="negocios">Negocios</a>
+        <span class="nav-sep" aria-hidden="true">·</span>
+        <a class="nav-link small" href="servicios.html" data-nav="servicios">Servicios</a>
+        <span class="nav-sep" aria-hidden="true">·</span>
+        <a class="nav-link small active" href="productos.html" data-nav="productos" aria-current="page">Productos</a>
+        <span class="nav-sep" aria-hidden="true">·</span>
+        <a class="nav-link small" href="cursos.html" data-nav="cursos">Cursos</a>
+        <span class="nav-sep" aria-hidden="true">·</span>
+        <a class="nav-link small" href="libros.html" data-nav="libros">Libros</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container py-3 py-md-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 gap-md-3 mb-3">
+      <div>
+        <h1 class="h4 mb-1">Productos afiliados de otras páginas</h1>
+        <p class="text-muted small mb-0">Enlaces de compra · Algunos pueden ser de afiliados</p>
+      </div>
+      <div class="w-100" style="max-width: 300px;">
+        <input type="search" id="buscador" class="form-control form-control-sm"
+               placeholder="Buscar por nombre o categoría..." autocomplete="off">
+      </div>
+    </div>
+
+    <p id="mensajeEstado" class="small text-muted mb-3"></p>
+
+    <div id="contenedorTarjetas" class="row g-3"></div>
+
+    <div class="aviso-legal mt-4 p-3">
+      <strong>Aviso:</strong> Algunos enlaces de esta página pueden ser de afiliados. Si comprás a través de ellos, podemos recibir una comisión sin costo extra para vos. Los precios y la disponibilidad dependen del vendedor.
+    </div>
+    <p class="small text-muted mt-2 mb-0" style="font-size:0.72rem;">
+      Cualquier reclamo, duda o problema con una compra debe gestionarse con el vendedor o la plataforma de venta (Mercado Libre, Hotmart, etc.). Recomendar un enlace no implica que seamos responsables del producto, el pago ni la entrega.
+    </p>
+
+  </main>
+
+  <footer class="otros-footer text-center py-3 mt-auto">
+    <small class="text-muted">Me mata limón! - Eldorado Km3, Misiones.</small>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+          crossorigin="anonymous"></script>
+  <script src="./otrosnegocios.js"></script>
+</body>
+</html>

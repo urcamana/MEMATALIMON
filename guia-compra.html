@@ -12,6 +12,17 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <link rel="stylesheet" href="style.css">
+
+  <style>
+    .guia-prod-card { border: none; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,.06); height: 100%; }
+    .guia-prod-card img { height: 140px; object-fit: contain; background: #f5f5f5; width: 100%; }
+    .guia-prod-actions { display: flex; flex-wrap: wrap; gap: .35rem; }
+    .guia-prod-actions .btn { font-size: 0.78rem; }
+    #sugerenciasModelo .list-group-item { cursor: pointer; }
+    #sugerenciasModelo .list-group-item:hover,
+    #sugerenciasModelo .list-group-item.active { background: #f3eefb; }
+  </style>
+
 </head>
 <body class="pagina-secundaria">
 
@@ -22,9 +33,8 @@
           <img src="IMG/logo_principal.jpg" alt="Me Mata Limón!" class="logo-nav-img rounded-3 shadow-sm bg-white p-1 border">
         </a>
         <div class="nav-links-desktop d-none d-md-flex align-items-center gap-3 ms-auto">
-          <a class="nav-link-desk" href="index.html">Inicio</a>
+<a class="nav-link-desk" href="index.html">Inicio</a>
    <!--  
-          <a class="nav-link-desk" href="obsequios/obsequios.html">Ideas para regalar</a>
           <a class="nav-link-desk active" href="guia-compra.html">Guía de compra</a>
   -->
           <a class="nav-link-desk" href="contacto.html">Contacto</a>
@@ -43,9 +53,8 @@
       <div class="offcanvas-body">
         <ul class="navbar-nav flex-grow-1 pe-3">
           <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
    <!-- 
-          <li class="nav-item"><a class="nav-link" href="testimonios.html">Recomendaciones</a></li>
-          <li class="nav-item"><a class="nav-link" href="obsequios/obsequios.html">Ideas para regalar</a></li>
           <li class="nav-item"><a class="nav-link active" href="guia-compra.html">Guía de compra</a></li>
   -->
           <li class="nav-item"><a class="nav-link" href="politicas.html">Políticas de venta</a></li>
@@ -57,6 +66,26 @@
   </header>
 
   <main class="container py-4" style="max-width: 900px; margin-top: 70px;">
+
+    <!-- Búsqueda por modelo de celular -->
+    <section class="card shadow-sm border-0 mb-4 guia-card" id="busquedaModelo">
+      <div class="card-body p-4">
+        <h2 class="h5 fw-bold mb-2" style="color:#5c3d8a;">Buscá por modelo de celular</h2>
+        <p class="text-secondary small mb-3">
+          Introducí tu modelo exacto de celular y te decimos qué cable/cargador disponible es compatible con tu dispositivo.
+        </p>
+        <div class="position-relative mb-3">
+          <input type="search" id="inputModelo" class="form-control form-control-lg"
+                 placeholder="Ej: Samsung J7, Motorola G52, iPhone 15…"
+                 autocomplete="off" aria-autocomplete="list" aria-controls="sugerenciasModelo">
+          <div id="sugerenciasModelo" class="list-group position-absolute w-100 shadow-sm d-none"
+               style="z-index:20; max-height:260px; overflow-y:auto;"></div>
+        </div>
+        <div id="infoModeloElegido" class="small text-muted mb-3 d-none"></div>
+        <div id="resultadosCompatibles" class="row g-3"></div>
+      </div>
+    </section>
+
     <h1 class="h3 text-center fw-bold mb-2">Información para comprar correctamente cables y/o cargadores</h1>
     <p class="text-center text-secondary mb-4">Guía rápida de cables, fichas y potencia de carga. Si tenés dudas, escribinos por WhatsApp.</p>
 
@@ -780,5 +809,8 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
     crossorigin="anonymous"></script>
+
+  <script src="guia-modelo.js"></script>
+
 </body>
 </html>

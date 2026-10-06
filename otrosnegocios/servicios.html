@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Servicios profesionales · Eldorado · Me Mata Limón</title>
+  <meta name="description" content="Servicios a domicilio y profesionales en Eldorado: motomandados, electricistas, mantenimiento, auxilios y más.">
+  <meta name="theme-color" content="#a88cd7">
+  <link rel="shortcut icon" href="../IMG/icono.png" type="image/png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    body.otros-page {
+      font-family: 'Inter', system-ui, sans-serif;
+      background-color: #f9f9f9;
+      padding-top: 4.25rem;
+    }
+    body.otros-page h1, body.otros-page h2, body.otros-page h3, body.otros-page h5 {
+      font-family: 'Playfair Display', serif;
+    }
+    #nav1.otros-nav {
+      background-color: var(--tema-principal, #a88cd7) !important;
+    }
+    #nav1.otros-nav .navbar-brand,
+    #nav1.otros-nav .nav-link {
+      color: #fff !important;
+    }
+    #nav1.otros-nav .nav-link:hover { opacity: 0.9; }
+
+    #nav1.otros-nav .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: nowrap;
+      gap: 0.5rem;
+    }
+    #nav1.otros-nav .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-shrink: 0;
+      min-width: 0;
+    }
+    #nav1.otros-nav .nav-left .navbar-brand {
+      margin-right: 0;
+      padding-top: 0.35rem;
+      padding-bottom: 0.35rem;
+    }
+    #nav1.otros-nav .nav-left .nav-link {
+      white-space: nowrap;
+    }
+    #nav1.otros-nav .nav-links-right {
+      margin-left: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      flex-shrink: 1;
+      min-width: 0;
+    }
+    #nav1.otros-nav .nav-sep {
+      color: rgba(255,255,255,0.45);
+      font-weight: 300;
+      user-select: none;
+      padding: 0 1px;
+    }
+    #nav1.otros-nav .nav-link.active,
+    #nav1.otros-nav a.nav-link[aria-current="page"] {
+      background: rgba(255,255,255,0.22) !important;
+      border-radius: 6px;
+      font-weight: 600 !important;
+      padding: 2px 8px !important;
+    }
+    @media (max-width: 575.98px) {
+      #nav1.otros-nav .container {
+        padding-left: 0.6rem;
+        padding-right: 0.6rem;
+      }
+      #nav1.otros-nav .nav-left {
+        gap: 0.35rem;
+      }
+      #nav1.otros-nav .nav-left .navbar-brand span {
+        font-size: 0.85rem;
+      }
+      #nav1.otros-nav .nav-left .nav-link {
+        font-size: 0.7rem !important;
+        padding: 2px 4px !important;
+      }
+      #nav1.otros-nav .nav-links-right {
+        gap: 0.2rem;
+        max-width: 55%;
+      }
+      #nav1.otros-nav .nav-links-right .nav-link {
+        font-size: 0.68rem !important;
+        padding: 2px 4px !important;
+      }
+      #nav1.otros-nav .nav-sep { font-size: 0.6rem; }
+    }
+
+    @media (max-width: 575.98px) {
+      #nav1.otros-nav .nav-link {
+        font-size: 0.68rem !important;
+        padding: 2px 4px !important;
+      }
+    }
+
+    #contenedorTarjetas .card {
+      border: none;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+      transition: transform .15s ease, box-shadow .15s ease;
+      background: #fff;
+    }
+    #contenedorTarjetas .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(115, 123, 191, 0.15);
+    }
+    #contenedorTarjetas .card-img-top,
+    #contenedorTarjetas .carousel .img-item {
+      width: 100%;
+      height: 180px;
+      object-fit: contain;
+      background: #f5f5f5;
+    }
+    @media (min-width: 768px) {
+      #contenedorTarjetas .card-img-top,
+      #contenedorTarjetas .carousel .img-item { height: 200px; }
+    }
+    #contenedorTarjetas .card-body {
+      min-height: auto;
+      padding: 0.85rem 1rem 1rem;
+    }
+    #contenedorTarjetas .card-title { font-size: 1rem; margin-bottom: 0.35rem; }
+    #contenedorTarjetas .badge-rubro {
+      background-color: var(--tema-categoria, #a1009c81);
+      color: var(--texto-categoria, #f1eaea);
+      font-weight: 500;
+      font-size: 0.7rem;
+    }
+    #contenedorTarjetas .btn-ver {
+      background-color: var(--tema-principal, #a88cd7);
+      border: none;
+      color: #fff;
+      font-weight: 500;
+    }
+    #contenedorTarjetas .btn-ver:hover {
+      background-color: var(--tema-acento-hover, #624a62);
+      color: #fff;
+    }
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+      background-color: rgba(0,0,0,.35);
+      border-radius: 50%;
+      padding: 10px;
+    }
+    #buscador:focus {
+      border-color: var(--tema-principal, #a88cd7);
+      box-shadow: 0 0 0 0.2rem rgba(168, 140, 215, 0.25);
+    }
+    .aviso-legal {
+      background: #fff;
+      border: 1px solid rgba(168, 140, 215, 0.25);
+      border-radius: 8px;
+      font-size: 0.8rem;
+    }
+    footer.otros-footer {
+      border-top: 1px solid rgba(168, 140, 215, 0.2);
+    }
+    /* Botón flotante WhatsApp */
+    .btn-whatsapp-float {
+      position: fixed;
+      bottom: 1.25rem;
+      right: 1.25rem;
+      z-index: 1050;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #25d366;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(37, 211, 102, 0.45);
+      text-decoration: none;
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .btn-whatsapp-float:hover {
+      transform: scale(1.08);
+      color: #fff;
+      box-shadow: 0 6px 18px rgba(37, 211, 102, 0.55);
+    }
+
+    .badge-recomendado {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 6;
+      background: linear-gradient(135deg, #a88cd7, #8e66cf);
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.2);
+      letter-spacing: 0.02em;
+      max-width: calc(100% - 50px);
+      line-height: 1.2;
+    }
+    .btn-whatsapp-float svg { width: 28px; height: 28px; fill: currentColor; }
+  </style>
+</head>
+<body class="otros-page" data-page="servicios">
+
+  <nav class="navbar navbar-expand-lg fixed-top otros-nav" id="nav1">
+    <div class="container">
+      <div class="nav-left">
+        <a class="navbar-brand d-flex align-items-center gap-2 m-0" href="https://mematalimon.com.ar/index.html">
+        <img src="../IMG/icono.png" alt="" width="28" height="28" class="rounded" onerror="this.style.display='none'">
+        <span>Me Mata Limón</span>
+      </a>
+      </div>
+      <div class="nav-links-right">
+        <a class="nav-link small" href="https://mematalimon.com.ar/index.html">Inicio</a>
+        <span class="nav-sep" aria-hidden="true">·</span>
+        <a class="nav-link small" href="negocios.html" data-nav="negocios">Negocios</a>
+        <span class="nav-sep" aria-hidden="true">·</span>
+        <a class="nav-link small active" href="servicios.html" data-nav="servicios" aria-current="page">Servicios</a>
+        <span class="nav-sep" aria-hidden="true">·</span>
+        <a class="nav-link small" href="productos.html" data-nav="productos">Productos</a>
+        <span class="nav-sep" aria-hidden="true">·</span>
+        <a class="nav-link small" href="cursos.html" data-nav="cursos">Cursos</a>
+        <span class="nav-sep" aria-hidden="true">·</span>
+        <a class="nav-link small" href="libros.html" data-nav="libros">Libros</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container py-3 py-md-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 gap-md-3 mb-2">
+      <div>
+        <h1 class="h4 mb-1">Servicios profesionales</h1>
+        <p class="text-muted small mb-1">Motomandados, electricistas, mantenimiento, auxilios y más · Espacio gratuito</p>
+                <p class="small text-muted mb-2" style="max-width: 40rem;">
+          Si coordinás un servicio a domicilio o un encuentro, tomá precauciones razonables: confirmá identidad, pedí referencias si hace falta y no adelantes montos altos a quien no conozcas. La mayoría de los profesionales son serios; el aviso es preventivo, no una señal de alarma.
+        </p>
+        <p class="small mb-0" style="max-width: 36rem;">
+          Si ofrecés un servicio en Eldorado (motomandados, oficios, mantenimiento, etc.) y querés aparecer en este listado <strong>gratuitamente (sin costo)</strong>,
+          envianos WhatsApp al <strong>3751 588753</strong> o presioná el botón de WhatsApp abajo a la derecha.
+        </p>
+      </div>
+      <div class="w-100" style="max-width: 300px;">
+        <input type="search" id="buscador" class="form-control form-control-sm"
+               placeholder="Buscar por nombre o rubro del servicio..." autocomplete="off">
+      </div>
+    </div>
+
+    <p id="mensajeEstado" class="small text-muted mb-3"></p>
+
+    <div id="contenedorTarjetas" class="row g-3"></div>
+
+    <div class="aviso-legal mt-4 p-3">
+      <strong>Aviso:</strong> Este es un listado informativo. No nos hacemos responsables de la calidad de los servicios ofrecidos. Te recomendamos verificar la información y las condiciones directamente con cada profesional.
+    </div>
+  </main>
+
+  <footer class="otros-footer text-center py-3 mt-auto">
+    <small class="text-muted">Me mata limón! - Eldorado Km3, Misiones.</small>
+  </footer>
+
+  <!-- WhatsApp flotante -->
+  <a class="btn-whatsapp-float"
+     href="https://wa.me/5493751588753?text=Me%20interesa%20agregar%20mi%20servicio%20a%20la%20web%20de%20mematalimon.com.ar%20%C2%BFComo%20debo%20hacer%3F"
+     target="_blank" rel="noopener noreferrer"
+     title="Escribinos por WhatsApp"
+     aria-label="WhatsApp">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+          crossorigin="anonymous"></script>
+  <script src="./otrosnegocios.js"></script>
+</body>
+</html>
