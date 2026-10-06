@@ -1845,8 +1845,8 @@ async function compartirProducto(articuloId, nombre) {
   
   // Texto descriptivo limpio sin la URL metida a la fuerza
   const texto = precio
-    ? `¡Mirá esto que tiene Me Mata Limón!\n${titulo}\nPrecio: $${precio}`
-    : `¡Mirá esto dque tiene Me Mata Limón!\n${titulo}`;
+    ? `¡Mirá esto que tiene Me Mata Limón!\n${titulo}\nPrecio: $${precio}\n`
+    : `¡Mirá esto que tiene Me Mata Limón!\n${titulo}\n`;
 
   if (navigator.share) {
     try {
