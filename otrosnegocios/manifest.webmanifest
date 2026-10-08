@@ -1,0 +1,26 @@
+{
+  "name": "Me mata limón! - Adicionales",
+  "short_name": "Adicionales",
+  "description": "Directorio: negocios, servicios, cursos, libros y más",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#a88cd7",
+  "lang": "es-AR",
+  "icons": [
+    {
+      "src": "../IMG/icono.png",
+      "sizes": "500x500",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../IMG/icono.png",
+      "sizes": "500x500",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
