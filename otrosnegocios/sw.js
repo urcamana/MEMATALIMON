@@ -1,5 +1,5 @@
 /* Service Worker - Me Mata Limón · Más (hub) */
-const CACHE = 'mml-mas-v1';
+const CACHE = 'mml-mas-v2';
 const PRECACHE = [
   './',
   './index.html',
