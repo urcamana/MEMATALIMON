@@ -402,28 +402,28 @@
     "marca": "Honor",
     "modelo": "Honor X7",
     "potencia": 22,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 10
   },
   {
     "marca": "Honor",
     "modelo": "Honor X7a",
     "potencia": 22,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 10
   },
   {
     "marca": "Honor",
     "modelo": "Honor X8",
     "potencia": 22,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 10
   },
   {
     "marca": "Honor",
     "modelo": "Honor X8a",
     "potencia": 22,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 10
   },
   {
@@ -514,35 +514,35 @@
     "marca": "Huawei",
     "modelo": "Nova 5T",
     "potencia": 22,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 10
   },
   {
     "marca": "Huawei",
     "modelo": "P30 Lite",
     "potencia": 22,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 10
   },
   {
     "marca": "Huawei",
     "modelo": "P40 Lite",
     "potencia": 22,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 10
   },
   {
     "marca": "Huawei",
     "modelo": "Y7a",
     "potencia": 22,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 10
   },
   {
     "marca": "Huawei",
     "modelo": "Y9a",
     "potencia": 22,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 10
   },
   {
@@ -675,7 +675,7 @@
     "marca": "Infinix",
     "modelo": "Hot 12",
     "potencia": 18,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 3.6
   },
   {
@@ -717,7 +717,7 @@
     "marca": "Itel",
     "modelo": "S23",
     "potencia": 18,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 3.6
   },
   {
@@ -933,27 +933,34 @@
   {
     "marca": "Motorola",
     "modelo": "Edge 30 Ultra",
-    "potencia": 68,
+    "potencia": 125,
     "fichas": "Tipo C a Tipo C",
     "corriente": 10
   },
   {
     "marca": "Motorola",
     "modelo": "Edge 40 Pro",
-    "potencia": 68,
+    "potencia": 125,
     "fichas": "Tipo C a Tipo C",
     "corriente": 10
   },
   {
     "marca": "Motorola",
     "modelo": "Edge 50 Pro",
-    "potencia": 68,
+    "potencia": 125,
     "fichas": "Tipo C a Tipo C",
     "corriente": 10
   },
   {
     "marca": "Motorola",
     "modelo": "Edge 50 Ultra",
+    "potencia": 125,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Motorola",
+    "modelo": "Edge 50 Fusion",
     "potencia": 68,
     "fichas": "Tipo C a Tipo C",
     "corriente": 10
@@ -1018,112 +1025,112 @@
     "marca": "Motorola",
     "modelo": "G14",
     "potencia": 18,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 3.6
   },
   {
     "marca": "Motorola",
     "modelo": "G23",
     "potencia": 18,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 3.6
   },
   {
     "marca": "Motorola",
     "modelo": "G30",
     "potencia": 18,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 3.6
   },
   {
     "marca": "Motorola",
     "modelo": "G7",
     "potencia": 18,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 3.6
   },
   {
     "marca": "Motorola",
     "modelo": "G7 Plus",
     "potencia": 18,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 3.6
   },
   {
     "marca": "Motorola",
     "modelo": "G7 Power",
     "potencia": 18,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 3.6
   },
   {
     "marca": "Motorola",
     "modelo": "G8",
     "potencia": 18,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 3.6
   },
   {
     "marca": "Motorola",
     "modelo": "G8 Plus",
     "potencia": 18,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 3.6
   },
   {
     "marca": "Motorola",
     "modelo": "G8 Power",
     "potencia": 18,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 3.6
   },
   {
     "marca": "Motorola",
     "modelo": "G9",
     "potencia": 18,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 3.6
   },
   {
     "marca": "Motorola",
     "modelo": "G9 Play",
     "potencia": 18,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 3.6
   },
   {
     "marca": "Motorola",
     "modelo": "G9 Plus",
     "potencia": 18,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 3.6
   },
   {
     "marca": "Motorola",
     "modelo": "G9 Power",
     "potencia": 18,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 3.6
   },
   {
     "marca": "Motorola",
     "modelo": "One Action",
     "potencia": 18,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 3.6
   },
   {
     "marca": "Motorola",
     "modelo": "One Fusion",
     "potencia": 18,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 3.6
   },
   {
     "marca": "Motorola",
     "modelo": "One Vision",
     "potencia": 18,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 3.6
   },
   {
@@ -1240,6 +1247,48 @@
   },
   {
     "marca": "Motorola",
+    "modelo": "G24 Power",
+    "potencia": 30,
+    "fichas": "Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Motorola",
+    "modelo": "G55 5G",
+    "potencia": 30,
+    "fichas": "Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Motorola",
+    "modelo": "G85 5G",
+    "potencia": 30,
+    "fichas": "Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Motorola",
+    "modelo": "G34 5G",
+    "potencia": 18,
+    "fichas": "Tipo C",
+    "corriente": 3.6
+  },
+  {
+    "marca": "Motorola",
+    "modelo": "G04s",
+    "potencia": 15,
+    "fichas": "Tipo C",
+    "corriente": 3
+  },
+  {
+    "marca": "Motorola",
+    "modelo": "G04",
+    "potencia": 10,
+    "fichas": "Tipo C",
+    "corriente": 2
+  },
+  {
+    "marca": "Motorola",
     "modelo": "G4",
     "potencia": 10,
     "fichas": "V8",
@@ -1300,6 +1349,62 @@
     "potencia": 5,
     "fichas": "V8",
     "corriente": 1
+  },
+{
+    "marca": "Motorola",
+    "modelo": "Razr 2019",
+    "potencia": 15,
+    "fichas": "Tipo C",
+    "corriente": 3
+  },
+  {
+    "marca": "Motorola",
+    "modelo": "Razr 5G (2020)",
+    "potencia": 15,
+    "fichas": "Tipo C",
+    "corriente": 3
+  },
+  {
+    "marca": "Motorola",
+    "modelo": "Razr 2022",
+    "potencia": 30,
+    "fichas": "Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Motorola",
+    "modelo": "Razr 40",
+    "potencia": 30,
+    "fichas": "Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Motorola",
+    "modelo": "Razr 40 Ultra",
+    "potencia": 30,
+    "fichas": "Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Motorola",
+    "modelo": "Razr 50",
+    "potencia": 30,
+    "fichas": "Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Motorola",
+    "modelo": "Razr 50 Ultra",
+    "potencia": 45,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Motorola",
+    "modelo": "Razr 60 Ultra",
+    "potencia": 45,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
   },
   {
     "marca": "Oppo",
@@ -1429,7 +1534,70 @@
   },
   {
     "marca": "Samsung",
+    "modelo": "S20",
+    "potencia": 25,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Samsung",
+    "modelo": "S20+",
+    "potencia": 25,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+ {
+    "marca": "Samsung",
     "modelo": "S20 Ultra",
+    "potencia": 45,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Samsung",
+    "modelo": "S20 FE",
+    "potencia": 25,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Samsung",
+    "modelo": "S21",
+    "potencia": 25,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Samsung",
+    "modelo": "S21+",
+    "potencia": 25,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Samsung",
+    "modelo": "S21 Ultra",
+    "potencia": 25,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Samsung",
+    "modelo": "S21 FE",
+    "potencia": 25,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Samsung",
+    "modelo": "S22",
+    "potencia": 25,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Samsung",
+    "modelo": "S22+",
     "potencia": 45,
     "fichas": "Tipo C a Tipo C",
     "corriente": 10
@@ -1443,7 +1611,14 @@
   },
   {
     "marca": "Samsung",
-    "modelo": "S22+",
+    "modelo": "S23 FE",
+    "potencia": 25,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Samsung",
+    "modelo": "S23+",
     "potencia": 45,
     "fichas": "Tipo C a Tipo C",
     "corriente": 10
@@ -1457,7 +1632,21 @@
   },
   {
     "marca": "Samsung",
-    "modelo": "S23+",
+    "modelo": "S23",
+    "potencia": 25,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Samsung",
+    "modelo": "S24 FE",
+    "potencia": 25,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Samsung",
+    "modelo": "S24+",
     "potencia": 45,
     "fichas": "Tipo C a Tipo C",
     "corriente": 10
@@ -1471,8 +1660,50 @@
   },
   {
     "marca": "Samsung",
-    "modelo": "S24+",
+    "modelo": "S24",
+    "potencia": 25,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Samsung",
+    "modelo": "S25 FE",
     "potencia": 45,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Samsung",
+    "modelo": "S25+",
+    "potencia": 45,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Samsung",
+    "modelo": "S25 Ultra",
+    "potencia": 45,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Samsung",
+    "modelo": "S26 FE",
+    "potencia": 45,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Samsung",
+    "modelo": "S26+",
+    "potencia": 45,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Samsung",
+    "modelo": "S26 Ultra",
+    "potencia": 60,
     "fichas": "Tipo C a Tipo C",
     "corriente": 10
   },
@@ -1562,76 +1793,6 @@
   },
   {
     "marca": "Samsung",
-    "modelo": "S20",
-    "potencia": 25,
-    "fichas": "Tipo C a Tipo C",
-    "corriente": 10
-  },
-  {
-    "marca": "Samsung",
-    "modelo": "S20 FE",
-    "potencia": 25,
-    "fichas": "Tipo C a Tipo C",
-    "corriente": 10
-  },
-  {
-    "marca": "Samsung",
-    "modelo": "S20+",
-    "potencia": 25,
-    "fichas": "Tipo C a Tipo C",
-    "corriente": 10
-  },
-  {
-    "marca": "Samsung",
-    "modelo": "S21",
-    "potencia": 25,
-    "fichas": "Tipo C a Tipo C",
-    "corriente": 10
-  },
-  {
-    "marca": "Samsung",
-    "modelo": "S21 FE",
-    "potencia": 25,
-    "fichas": "Tipo C a Tipo C",
-    "corriente": 10
-  },
-  {
-    "marca": "Samsung",
-    "modelo": "S21 Ultra",
-    "potencia": 25,
-    "fichas": "Tipo C a Tipo C",
-    "corriente": 10
-  },
-  {
-    "marca": "Samsung",
-    "modelo": "S21+",
-    "potencia": 25,
-    "fichas": "Tipo C a Tipo C",
-    "corriente": 10
-  },
-  {
-    "marca": "Samsung",
-    "modelo": "S22",
-    "potencia": 25,
-    "fichas": "Tipo C a Tipo C",
-    "corriente": 10
-  },
-  {
-    "marca": "Samsung",
-    "modelo": "S23",
-    "potencia": 25,
-    "fichas": "Tipo C a Tipo C",
-    "corriente": 10
-  },
-  {
-    "marca": "Samsung",
-    "modelo": "S24",
-    "potencia": 25,
-    "fichas": "Tipo C a Tipo C",
-    "corriente": 10
-  },
-  {
-    "marca": "Samsung",
     "modelo": "Z Flip",
     "potencia": 25,
     "fichas": "Tipo C a Tipo C",
@@ -1667,6 +1828,13 @@
   },
   {
     "marca": "Samsung",
+    "modelo": "Z Flip 7",
+    "potencia": 25,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Samsung",
     "modelo": "Z Fold",
     "potencia": 25,
     "fichas": "Tipo C a Tipo C",
@@ -1696,6 +1864,13 @@
   {
     "marca": "Samsung",
     "modelo": "Z Fold 6",
+    "potencia": 25,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Samsung",
+    "modelo": "Z Fold 7",
     "potencia": 25,
     "fichas": "Tipo C a Tipo C",
     "corriente": 10
@@ -2152,14 +2327,14 @@
     "marca": "Tecno",
     "modelo": "Spark 10",
     "potencia": 18,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 3.6
   },
   {
     "marca": "Tecno",
     "modelo": "Spark 20",
     "potencia": 18,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 3.6
   },
   {
@@ -2306,63 +2481,63 @@
     "marca": "Xiaomi",
     "modelo": "Redmi 10",
     "potencia": 18,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 3.6
   },
   {
     "marca": "Xiaomi",
     "modelo": "Redmi 12",
     "potencia": 18,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 3.6
   },
   {
     "marca": "Xiaomi",
     "modelo": "Redmi 13C",
     "potencia": 18,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 3.6
   },
   {
     "marca": "Xiaomi",
     "modelo": "Redmi 9",
     "potencia": 18,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 3.6
   },
   {
     "marca": "Xiaomi",
     "modelo": "Redmi Note 8",
     "potencia": 18,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 3.6
   },
   {
     "marca": "Xiaomi",
     "modelo": "Redmi Note 8 Pro",
     "potencia": 18,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 3.6
   },
   {
     "marca": "Xiaomi",
     "modelo": "Redmi Note 8T",
     "potencia": 18,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 3.6
   },
   {
     "marca": "Xiaomi",
     "modelo": "Redmi Note 9",
     "potencia": 18,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 3.6
   },
   {
     "marca": "Xiaomi",
     "modelo": "Redmi Note 9 Pro",
     "potencia": 18,
-    "fichas": "Tipo C",
+    "fichas": "Tipo C a Tipo C",
     "corriente": 3.6
   },
   {
@@ -2455,5 +2630,278 @@
     "potencia": 5,
     "fichas": "V8",
     "corriente": 1
+  },
+  {
+    "marca": "Realme",
+    "modelo": "Note 60",
+    "potencia": 10,
+    "fichas": "Tipo C",
+    "corriente": 2
+  },
+  {
+    "marca": "Realme",
+    "modelo": "C21Y",
+    "potencia": 10,
+    "fichas": "V8",
+    "corriente": 2
+  },
+  {
+    "marca": "Realme",
+    "modelo": "C35",
+    "potencia": 18,
+    "fichas": "Tipo C",
+    "corriente": 2
+  },
+  {
+    "marca": "Realme",
+    "modelo": "Note 70",
+    "potencia": 33,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Realme",
+    "modelo": "C67",
+    "potencia": 33,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Realme",
+    "modelo": "13 Pro",
+    "potencia": 45,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Realme",
+    "modelo": "12 Pro",
+    "potencia": 67,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Realme",
+    "modelo": "13 Pro+",
+    "potencia": 80,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Realme",
+    "modelo": "GT 6",
+    "potencia": 120,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Realme",
+    "modelo": "GT Neo 3 (150W)",
+    "potencia": 150,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Realme",
+    "modelo": "GT3",
+    "potencia": 240,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+ {
+    "marca": "Vivo",
+    "modelo": "Y17s",
+    "potencia": 15,
+    "fichas": "Tipo C",
+    "corriente": 3
+  },
+  {
+    "marca": "Vivo",
+    "modelo": "Y22s",
+    "potencia": 18,
+    "fichas": "Tipo C",
+    "corriente": 3.6
+  },
+  {
+    "marca": "Vivo",
+    "modelo": "Y36",
+    "potencia": 44,
+    "fichas": "Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Vivo",
+    "modelo": "V30 Lite",
+    "potencia": 44,
+    "fichas": "Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Vivo",
+    "modelo": "V30",
+    "potencia": 80,
+    "fichas": "Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Vivo",
+    "modelo": "V40 Pro",
+    "potencia": 80,
+    "fichas": "Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "ZTE",
+    "modelo": "Blade L210",
+    "potencia": 5,
+    "fichas": "V8",
+    "corriente": 1
+  },
+  {
+    "marca": "ZTE",
+    "modelo": "Blade A31 Plus",
+    "potencia": 10,
+    "fichas": "V8",
+    "corriente": 2
+  },
+  {
+    "marca": "ZTE",
+    "modelo": "Blade A54",
+    "potencia": 10,
+    "fichas": "Tipo C",
+    "corriente": 2
+  },
+  {
+    "marca": "ZTE",
+    "modelo": "Blade V40 Vita",
+    "potencia": 22,
+    "fichas": "Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "ZTE",
+    "modelo": "Blade V50 Smart",
+    "potencia": 22,
+    "fichas": "Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Google",
+    "modelo": "Pixel 6",
+    "potencia": 21,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Google",
+    "modelo": "Pixel 6 Pro",
+    "potencia": 23,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Google",
+    "modelo": "Pixel 7",
+    "potencia": 20,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Google",
+    "modelo": "Pixel 7 Pro",
+    "potencia": 23,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Google",
+    "modelo": "Pixel 8",
+    "potencia": 27,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Google",
+    "modelo": "Pixel 8 Pro",
+    "potencia": 30,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Google",
+    "modelo": "Pixel 9",
+    "potencia": 27,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Google",
+    "modelo": "Pixel 9 Pro XL",
+    "potencia": 37,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+ {
+    "marca": "OnePlus",
+    "modelo": "Nord CE 3 Lite",
+    "potencia": 67,
+    "fichas": "Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "OnePlus",
+    "modelo": "11 5G",
+    "potencia": 100,
+    "fichas": "Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "OnePlus",
+    "modelo": "12",
+    "potencia": 100,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Sony",
+    "modelo": "Xperia 10 V",
+    "potencia": 21,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Sony",
+    "modelo": "Xperia 1 V",
+    "potencia": 30,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Sony",
+    "modelo": "Xperia 1 VI",
+    "potencia": 30,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Alcatel",
+    "modelo": "1 2021",
+    "potencia": 5,
+    "fichas": "V8",
+    "corriente": 1
+  },
+  {
+    "marca": "Alcatel",
+    "modelo": "1S",
+    "potencia": 10,
+    "fichas": "V8",
+    "corriente": 2
+  },
+  {
+    "marca": "Alcatel",
+    "modelo": "3X",
+    "potencia": 10,
+    "fichas": "Tipo C",
+    "corriente": 2
   }
 ]
