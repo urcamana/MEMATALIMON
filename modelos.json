@@ -2309,6 +2309,55 @@
     "fichas": "V8",
     "corriente": 1
   },
+ {
+    "marca": "Samsung",
+    "modelo": "A05",
+    "potencia": 25,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Samsung",
+    "modelo": "A06",
+    "potencia": 25,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Samsung",
+    "modelo": "A16 5G",
+    "potencia": 25,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Samsung",
+    "modelo": "M15 5G",
+    "potencia": 25,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Samsung",
+    "modelo": "M35 5G",
+    "potencia": 25,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Samsung",
+    "modelo": "M55 5G",
+    "potencia": 45,
+    "fichas": "Tipo C a Tipo C",
+    "corriente": 10
+  },
+  {
+    "marca": "Samsung",
+    "modelo": "A04e",
+    "potencia": 10,
+    "fichas": "Tipo C",
+    "corriente": 2
+  },
   {
     "marca": "Tecno",
     "modelo": "Pova 5",
