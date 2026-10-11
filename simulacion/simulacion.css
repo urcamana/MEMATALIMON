@@ -1,0 +1,1120 @@
+:root {
+  --lila: #a88cd7;
+  --lila-oscuro: #5c3d8a;
+  --fondo: #f7f4fb;
+}
+* { box-sizing: border-box; }
+body {
+  font-family: Inter, system-ui, sans-serif;
+  background: var(--fondo);
+  min-height: 100vh;
+  margin: 0;
+}
+.nav-sim {
+  background: var(--lila);
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+.nav-sim a { color: #fff; text-decoration: none; font-weight: 500; }
+.nav-sim a:hover { opacity: 0.9; }
+
+/* ===== Layout split ===== */
+.layout-sim {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: calc(100vh - 52px);
+}
+
+/* Panel preview */
+.panel-preview {
+  background: #efeaf7;
+  padding: 1rem 1rem 1.25rem;
+  border-bottom: 1px solid rgba(168,140,215,0.3);
+}
+.panel-preview h1 {
+  font-size: 1.15rem;
+  color: var(--lila-oscuro);
+  margin: 0 0 0.25rem;
+}
+.preview-wrap {
+  width: 100%;
+  max-width: 420px;
+  margin: 0.75rem auto 0;
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(92, 61, 138, 0.12);
+  user-select: none;
+  touch-action: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem;
+}
+/* El stage se ajusta EXACTAMENTE al tamaño dibujado del SVG:
+   la zona % queda anclada a la imagen, no al panel de la ventana */
+.preview-stage {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  line-height: 0;
+  vertical-align: top;
+}
+.preview-stage img#previewImg {
+  display: block;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  max-height: min(42vh, 360px);
+  background: #f0eeea;
+  pointer-events: none;
+}
+.zona-limite {
+  position: absolute;
+  box-sizing: border-box;
+  border: 1.5px dashed rgba(92, 61, 138, 0.5);
+  overflow: hidden;
+  background: transparent;
+}
+.zona-limite.forma-rect { border-radius: 4px; }
+.zona-limite.forma-ellipse { border-radius: 50%; }
+.zona-limite.forma-heart {
+  border: none;
+  clip-path: polygon(50% 95%, 5% 55%, 0% 30%, 10% 8%, 30% 0%, 50% 18%, 70% 0%, 90% 8%, 100% 30%, 95% 55%);
+  box-shadow: inset 0 0 0 1.5px rgba(92, 61, 138, 0.45);
+}
+
+.texto-capa {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(0deg);
+  width: auto;
+  max-width: 98%;
+  padding: 2px 4px;
+  margin: 0;
+  line-height: 1.1;
+  color: rgba(30, 30, 30, 0.92);
+  cursor: grab;
+  text-align: center;
+  pointer-events: auto;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+.texto-capa:active { cursor: grabbing; }
+.texto-capa.vacio { opacity: 0.35; }
+.texto-capa.arrastrando { z-index: 5; opacity: 0.95; }
+
+
+
+
+
+
+
+
+
+
+
+
+/* Panel editor */
+.panel-editor {
+  padding: 1rem 1rem 2rem;
+  overflow-y: auto;
+}
+
+.card-modelo {
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  transition: border-color .15s, box-shadow .15s;
+}
+.card-modelo:hover { border-color: #d4c4ef; }
+.card-modelo.active {
+  border-color: var(--lila);
+  box-shadow: 0 0 0 3px rgba(168,140,215,.25);
+}
+.card-modelo img,
+.card-modelo .card-modelo-img {
+  width: 100%;
+  height: 88px;
+  object-fit: contain;
+  object-position: center;
+  background: #fff;
+  display: block;
+  padding: 4px;
+}
+
+.bloque-texto {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid rgba(168,140,215,0.25);
+  margin-bottom: 0.75rem;
+  color: #212529;
+}
+.bloque-texto h3 {
+  font-size: 0.95rem;
+  color: var(--lila-oscuro);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.btn-quitar-texto {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid #dc3545;
+  background: #fff;
+  color: #dc3545;
+}
+.btn-quitar-texto:hover { background: #dc3545; color: #fff; }
+
+.btn-agregar-texto {
+  border: 2px dashed rgba(92, 61, 138, 0.45);
+  background: #fff;
+  color: var(--lila-oscuro);
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 0.65rem 1rem;
+  width: 100%;
+}
+.btn-agregar-texto:hover {
+  background: #f3eef9;
+  border-color: var(--lila);
+}
+
+.estilo-checks .form-check { margin-bottom: 0; min-height: auto; }
+.estilo-checks .form-check-label { font-size: 0.85rem; color: #212529; }
+
+.btn-whatsapp {
+  background: #25D366;
+  border: none;
+  color: #fff;
+  font-weight: 600;
+}
+.btn-whatsapp:hover { background: #1ebe57; color: #fff; }
+.btn-descarga {
+  background: #5c3d8a;
+  border: none;
+  color: #fff;
+  font-weight: 600;
+}
+.btn-descarga:hover { background: #4a3170; color: #fff; }
+
+.aviso-legal { font-size: 0.8rem; color: #6c757d; }
+.pasos-envio {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid rgba(168,140,215,0.25);
+  padding: 1rem 1.15rem;
+}
+
+/* Desktop: mitad y mitad, preview sticky a la izquierda */
+@media (min-width: 900px) {
+  .layout-sim {
+    grid-template-columns: minmax(340px, 42%) 1fr;
+    align-items: start;
+  }
+  .panel-preview {
+    position: sticky;
+    top: 52px;
+    height: calc(100vh - 52px);
+    overflow-y: auto;
+    border-bottom: none;
+    border-right: 1px solid rgba(168,140,215,0.3);
+    display: flex;
+    flex-direction: column;
+  }
+  .preview-wrap {
+    max-width: 100%;
+    flex: 0 0 auto;
+  }
+  .preview-stage img#previewImg {
+    max-height: min(52vh, 460px);
+  }
+  .panel-editor {
+    padding: 1.25rem 1.5rem 2.5rem;
+    max-height: calc(100vh - 52px);
+    overflow-y: auto;
+  }
+}
+
+/* Móvil: preview compacta arriba */
+@media (max-width: 899.98px) {
+  .preview-wrap {
+    max-width: 280px;
+  }
+  .preview-stage img#previewImg {
+    max-height: 28vh;
+  }
+  .panel-preview {
+    padding: 0.75rem 0.75rem 1rem;
+  }
+}
+
+/* Fuentes locales (1 por familia, peso más grueso) */
+@font-face {
+  font-family: "LB Alfa Slab One";
+  src: url("fonts/AlfaSlabOne-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Allura";
+  src: url("fonts/Allura-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Amatic SC";
+  src: url("fonts/AmaticSC-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Anton";
+  src: url("fonts/Anton-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Archivo Black";
+  src: url("fonts/ArchivoBlack-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Asset";
+  src: url("fonts/Asset-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Baloo 2";
+  src: url("fonts/Baloo2-ExtraBold.ttf") format("truetype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Bangers";
+  src: url("fonts/Bangers-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Barlow Condensed";
+  src: url("fonts/BarlowCondensed-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Bebas Neue";
+  src: url("fonts/BebasNeue-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Black Ops One";
+  src: url("fonts/BlackOpsOne-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Bona Nova SC";
+  src: url("fonts/BonaNovaSC-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Boogaloo";
+  src: url("fonts/Boogaloo-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Bowlby One SC";
+  src: url("fonts/BowlbyOneSC-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Bungee";
+  src: url("fonts/Bungee-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Caveat Brush";
+  src: url("fonts/CaveatBrush-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Charm";
+  src: url("fonts/Charm-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Chelsea Market";
+  src: url("fonts/ChelseaMarket-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Cherry Bomb One";
+  src: url("fonts/CherryBombOne-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Cinzel";
+  src: url("fonts/Cinzel-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Cinzel Decorative";
+  src: url("fonts/CinzelDecorative-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Cookie";
+  src: url("fonts/Cookie-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Courgette";
+  src: url("fonts/Courgette-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Damion";
+  src: url("fonts/Damion-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Dancing Script";
+  src: url("fonts/DancingScript-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Dokdo";
+  src: url("fonts/Dokdo-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Eagle Lake";
+  src: url("fonts/EagleLake-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Engagement";
+  src: url("fonts/Engagement-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Exo 2";
+  src: url("fonts/Exo2-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Fjalla One";
+  src: url("fonts/FjallaOne-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Fontdiner Swanky";
+  src: url("fonts/FontdinerSwanky-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Francois One";
+  src: url("fonts/FrancoisOne-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Freckle Face";
+  src: url("fonts/FreckleFace-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Fredoka";
+  src: url("fonts/Fredoka-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Ga Maamli";
+  src: url("fonts/GaMaamli-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Gloria Hallelujah";
+  src: url("fonts/GloriaHallelujah-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Great Vibes";
+  src: url("fonts/GreatVibes-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Grechen Fuemen";
+  src: url("fonts/GrechenFuemen-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Indie Flower";
+  src: url("fonts/IndieFlower-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Irish Grover";
+  src: url("fonts/IrishGrover-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Kalam";
+  src: url("fonts/Kalam-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Kanit";
+  src: url("fonts/Kanit-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Kaushan Script";
+  src: url("fonts/KaushanScript-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Libre Baskerville";
+  src: url("fonts/LibreBaskerville-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Lilita One";
+  src: url("fonts/LilitaOne-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Lobster";
+  src: url("fonts/Lobster-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Lobster Two";
+  src: url("fonts/LobsterTwo-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Luckiest Guy";
+  src: url("fonts/LuckiestGuy-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Lugrasimo";
+  src: url("fonts/Lugrasimo-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Matemasie";
+  src: url("fonts/Matemasie-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Meddon";
+  src: url("fonts/Meddon-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Metal Mania";
+  src: url("fonts/MetalMania-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Mochiy Pop P One";
+  src: url("fonts/MochiyPopPOne-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Montez";
+  src: url("fonts/Montez-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Montserrat";
+  src: url("fonts/Montserrat-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Mr Bedfort";
+  src: url("fonts/MrBedfort-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Mr Dafoe";
+  src: url("fonts/MrDafoe-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Niconne";
+  src: url("fonts/Niconne-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Norican";
+  src: url("fonts/Norican-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Nosifer";
+  src: url("fonts/Nosifer-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Nunito";
+  src: url("fonts/Nunito-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Oswald";
+  src: url("fonts/Oswald-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Pacifico";
+  src: url("fonts/Pacifico-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Passion One";
+  src: url("fonts/PassionOne-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Patrick Hand";
+  src: url("fonts/PatrickHand-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Patua One";
+  src: url("fonts/PatuaOne-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Permanent Marker";
+  src: url("fonts/PermanentMarker-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Playfair Display";
+  src: url("fonts/PlayfairDisplay-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Poppins";
+  src: url("fonts/Poppins-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Raleway";
+  src: url("fonts/Raleway-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Rammetto One";
+  src: url("fonts/RammettoOne-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Reem Kufi Ink";
+  src: url("fonts/ReemKufiInk-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Righteous";
+  src: url("fonts/Righteous-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Roboto Condensed";
+  src: url("fonts/RobotoCondensed-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Romanesco";
+  src: url("fonts/Romanesco-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Rubik Mono One";
+  src: url("fonts/RubikMonoOne-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Rubik Spray Paint";
+  src: url("fonts/RubikSprayPaint-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Rubik Wet Paint";
+  src: url("fonts/RubikWetPaint-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Russo One";
+  src: url("fonts/RussoOne-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Sacramento";
+  src: url("fonts/Sacramento-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Saira";
+  src: url("fonts/Saira-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Saira Condensed";
+  src: url("fonts/Saira_Condensed-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Saira Expanded";
+  src: url("fonts/Saira_Expanded-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Saira Extra Condensed";
+  src: url("fonts/Saira_ExtraCondensed-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Saira Semi Condensed";
+  src: url("fonts/Saira_SemiCondensed-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Saira Semi Expanded";
+  src: url("fonts/Saira_SemiExpanded-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Saira Stencil";
+  src: url("fonts/SairaStencil-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Saira Ultra Condensed";
+  src: url("fonts/Saira_UltraCondensed-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Sarina";
+  src: url("fonts/Sarina-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Satisfy";
+  src: url("fonts/Satisfy-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Sedgwick Ave Display";
+  src: url("fonts/SedgwickAveDisplay-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Shadows Into Light Two";
+  src: url("fonts/ShadowsIntoLightTwo-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Shojumaru";
+  src: url("fonts/Shojumaru-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Sigmar One";
+  src: url("fonts/SigmarOne-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Sonsie One";
+  src: url("fonts/SonsieOne-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Special Gothic Expanded One";
+  src: url("fonts/SpecialGothicExpandedOne-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Stalinist One";
+  src: url("fonts/StalinistOne-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Stick";
+  src: url("fonts/Stick-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Tagesschrift";
+  src: url("fonts/Tagesschrift-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Teko";
+  src: url("fonts/Teko-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Trade Winds";
+  src: url("fonts/TradeWinds-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Ultra";
+  src: url("fonts/Ultra-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Unifraktur Cook";
+  src: url("fonts/UnifrakturCook-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Unifraktur Maguntia";
+  src: url("fonts/UnifrakturMaguntia-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Yanone Kaffeesatz";
+  src: url("fonts/YanoneKaffeesatz-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Yellowtail";
+  src: url("fonts/Yellowtail-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LB Yesteryear";
+  src: url("fonts/Yesteryear-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+.f-alfaslaboneregular { font-family: "LB Alfa Slab One", sans-serif; font-weight: 400; }
+.f-alluraregular { font-family: "LB Allura", sans-serif; font-weight: 400; }
+.f-amaticscbold { font-family: "LB Amatic SC", sans-serif; font-weight: 700; }
+.f-antonregular { font-family: "LB Anton", sans-serif; font-weight: 400; }
+.f-archivoblackregular { font-family: "LB Archivo Black", sans-serif; font-weight: 400; }
+.f-assetregular { font-family: "LB Asset", sans-serif; font-weight: 400; }
+.f-baloo2extrabold { font-family: "LB Baloo 2", sans-serif; font-weight: 800; }
+.f-bangersregular { font-family: "LB Bangers", sans-serif; font-weight: 400; }
+.f-barlowcondensedblack { font-family: "LB Barlow Condensed", sans-serif; font-weight: 900; }
+.f-bebasneueregular { font-family: "LB Bebas Neue", sans-serif; font-weight: 400; }
+.f-blackopsoneregular { font-family: "LB Black Ops One", sans-serif; font-weight: 400; }
+.f-bonanovascbold { font-family: "LB Bona Nova SC", sans-serif; font-weight: 700; }
+.f-boogalooregular { font-family: "LB Boogaloo", sans-serif; font-weight: 400; }
+.f-bowlbyonescregular { font-family: "LB Bowlby One SC", sans-serif; font-weight: 400; }
+.f-bungeeregular { font-family: "LB Bungee", sans-serif; font-weight: 400; }
+.f-caveatbrushregular { font-family: "LB Caveat Brush", sans-serif; font-weight: 400; }
+.f-charmbold { font-family: "LB Charm", sans-serif; font-weight: 700; }
+.f-chelseamarketregular { font-family: "LB Chelsea Market", sans-serif; font-weight: 400; }
+.f-cherrybomboneregular { font-family: "LB Cherry Bomb One", sans-serif; font-weight: 400; }
+.f-cinzelblack { font-family: "LB Cinzel", sans-serif; font-weight: 900; }
+.f-cinzeldecorativeblack { font-family: "LB Cinzel Decorative", sans-serif; font-weight: 900; }
+.f-cookieregular { font-family: "LB Cookie", sans-serif; font-weight: 400; }
+.f-courgetteregular { font-family: "LB Courgette", sans-serif; font-weight: 400; }
+.f-damionregular { font-family: "LB Damion", sans-serif; font-weight: 400; }
+.f-dancingscriptbold { font-family: "LB Dancing Script", sans-serif; font-weight: 700; }
+.f-dokdoregular { font-family: "LB Dokdo", sans-serif; font-weight: 400; }
+.f-eaglelakeregular { font-family: "LB Eagle Lake", sans-serif; font-weight: 400; }
+.f-engagementregular { font-family: "LB Engagement", sans-serif; font-weight: 400; }
+.f-exo2black { font-family: "LB Exo 2", sans-serif; font-weight: 900; }
+.f-fjallaoneregular { font-family: "LB Fjalla One", sans-serif; font-weight: 400; }
+.f-fontdinerswankyregular { font-family: "LB Fontdiner Swanky", sans-serif; font-weight: 400; }
+.f-francoisoneregular { font-family: "LB Francois One", sans-serif; font-weight: 400; }
+.f-frecklefaceregular { font-family: "LB Freckle Face", sans-serif; font-weight: 400; }
+.f-fredokabold { font-family: "LB Fredoka", sans-serif; font-weight: 700; }
+.f-gamaamliregular { font-family: "LB Ga Maamli", sans-serif; font-weight: 400; }
+.f-gloriahallelujahregular { font-family: "LB Gloria Hallelujah", sans-serif; font-weight: 400; }
+.f-greatvibesregular { font-family: "LB Great Vibes", sans-serif; font-weight: 400; }
+.f-grechenfuemenregular { font-family: "LB Grechen Fuemen", sans-serif; font-weight: 400; }
+.f-indieflowerregular { font-family: "LB Indie Flower", sans-serif; font-weight: 400; }
+.f-irishgroverregular { font-family: "LB Irish Grover", sans-serif; font-weight: 400; }
+.f-kalambold { font-family: "LB Kalam", sans-serif; font-weight: 700; }
+.f-kanitblack { font-family: "LB Kanit", sans-serif; font-weight: 900; }
+.f-kaushanscriptregular { font-family: "LB Kaushan Script", sans-serif; font-weight: 400; }
+.f-librebaskervillebold { font-family: "LB Libre Baskerville", sans-serif; font-weight: 700; }
+.f-lilitaoneregular { font-family: "LB Lilita One", sans-serif; font-weight: 400; }
+.f-lobsterregular { font-family: "LB Lobster", sans-serif; font-weight: 400; }
+.f-lobstertwobold { font-family: "LB Lobster Two", sans-serif; font-weight: 700; }
+.f-luckiestguyregular { font-family: "LB Luckiest Guy", sans-serif; font-weight: 400; }
+.f-lugrasimoregular { font-family: "LB Lugrasimo", sans-serif; font-weight: 400; }
+.f-matemasieregular { font-family: "LB Matemasie", sans-serif; font-weight: 400; }
+.f-meddonregular { font-family: "LB Meddon", sans-serif; font-weight: 400; }
+.f-metalmaniaregular { font-family: "LB Metal Mania", sans-serif; font-weight: 400; }
+.f-mochiypopponeregular { font-family: "LB Mochiy Pop P One", sans-serif; font-weight: 400; }
+.f-montezregular { font-family: "LB Montez", sans-serif; font-weight: 400; }
+.f-montserratblack { font-family: "LB Montserrat", sans-serif; font-weight: 900; }
+.f-mrbedfortregular { font-family: "LB Mr Bedfort", sans-serif; font-weight: 400; }
+.f-mrdafoeregular { font-family: "LB Mr Dafoe", sans-serif; font-weight: 400; }
+.f-niconneregular { font-family: "LB Niconne", sans-serif; font-weight: 400; }
+.f-noricanregular { font-family: "LB Norican", sans-serif; font-weight: 400; }
+.f-nosiferregular { font-family: "LB Nosifer", sans-serif; font-weight: 400; }
+.f-nunitoblack { font-family: "LB Nunito", sans-serif; font-weight: 900; }
+.f-oswaldbold { font-family: "LB Oswald", sans-serif; font-weight: 700; }
+.f-pacificoregular { font-family: "LB Pacifico", sans-serif; font-weight: 400; }
+.f-passiononeblack { font-family: "LB Passion One", sans-serif; font-weight: 900; }
+.f-patrickhandregular { font-family: "LB Patrick Hand", sans-serif; font-weight: 400; }
+.f-patuaoneregular { font-family: "LB Patua One", sans-serif; font-weight: 400; }
+.f-permanentmarkerregular { font-family: "LB Permanent Marker", sans-serif; font-weight: 400; }
+.f-playfairdisplayblack { font-family: "LB Playfair Display", sans-serif; font-weight: 900; }
+.f-poppinsblack { font-family: "LB Poppins", sans-serif; font-weight: 900; }
+.f-ralewayblack { font-family: "LB Raleway", sans-serif; font-weight: 900; }
+.f-rammettooneregular { font-family: "LB Rammetto One", sans-serif; font-weight: 400; }
+.f-reemkufiinkregular { font-family: "LB Reem Kufi Ink", sans-serif; font-weight: 400; }
+.f-righteousregular { font-family: "LB Righteous", sans-serif; font-weight: 400; }
+.f-robotocondensedblack { font-family: "LB Roboto Condensed", sans-serif; font-weight: 900; }
+.f-romanescoregular { font-family: "LB Romanesco", sans-serif; font-weight: 400; }
+.f-rubikmonooneregular { font-family: "LB Rubik Mono One", sans-serif; font-weight: 400; }
+.f-rubikspraypaintregular { font-family: "LB Rubik Spray Paint", sans-serif; font-weight: 400; }
+.f-rubikwetpaintregular { font-family: "LB Rubik Wet Paint", sans-serif; font-weight: 400; }
+.f-russooneregular { font-family: "LB Russo One", sans-serif; font-weight: 400; }
+.f-sacramentoregular { font-family: "LB Sacramento", sans-serif; font-weight: 400; }
+.f-sairablack { font-family: "LB Saira", sans-serif; font-weight: 900; }
+.f-sairacondensedblack { font-family: "LB Saira Condensed", sans-serif; font-weight: 900; }
+.f-sairaexpandedblack { font-family: "LB Saira Expanded", sans-serif; font-weight: 900; }
+.f-sairaextracondensedblack { font-family: "LB Saira Extra Condensed", sans-serif; font-weight: 900; }
+.f-sairasemicondensedblack { font-family: "LB Saira Semi Condensed", sans-serif; font-weight: 900; }
+.f-sairasemiexpandedblack { font-family: "LB Saira Semi Expanded", sans-serif; font-weight: 900; }
+.f-sairastencilblack { font-family: "LB Saira Stencil", sans-serif; font-weight: 900; }
+.f-sairaultracondensedblack { font-family: "LB Saira Ultra Condensed", sans-serif; font-weight: 900; }
+.f-sarinaregular { font-family: "LB Sarina", sans-serif; font-weight: 400; }
+.f-satisfyregular { font-family: "LB Satisfy", sans-serif; font-weight: 400; }
+.f-sedgwickavedisplayregular { font-family: "LB Sedgwick Ave Display", sans-serif; font-weight: 400; }
+.f-shadowsintolighttworegular { font-family: "LB Shadows Into Light Two", sans-serif; font-weight: 400; }
+.f-shojumaruregular { font-family: "LB Shojumaru", sans-serif; font-weight: 400; }
+.f-sigmaroneregular { font-family: "LB Sigmar One", sans-serif; font-weight: 400; }
+.f-sonsieoneregular { font-family: "LB Sonsie One", sans-serif; font-weight: 400; }
+.f-specialgothicexpandedoneregular { font-family: "LB Special Gothic Expanded One", sans-serif; font-weight: 400; }
+.f-stalinistoneregular { font-family: "LB Stalinist One", sans-serif; font-weight: 400; }
+.f-stickregular { font-family: "LB Stick", sans-serif; font-weight: 400; }
+.f-tagesschriftregular { font-family: "LB Tagesschrift", sans-serif; font-weight: 400; }
+.f-tekobold { font-family: "LB Teko", sans-serif; font-weight: 700; }
+.f-tradewindsregular { font-family: "LB Trade Winds", sans-serif; font-weight: 400; }
+.f-ultraregular { font-family: "LB Ultra", sans-serif; font-weight: 400; }
+.f-unifrakturcookbold { font-family: "LB Unifraktur Cook", sans-serif; font-weight: 700; }
+.f-unifrakturmaguntiaregular { font-family: "LB Unifraktur Maguntia", sans-serif; font-weight: 400; }
+.f-yanonekaffeesatzbold { font-family: "LB Yanone Kaffeesatz", sans-serif; font-weight: 700; }
+.f-yellowtailregular { font-family: "LB Yellowtail", sans-serif; font-weight: 400; }
+.f-yesteryearregular { font-family: "LB Yesteryear", sans-serif; font-weight: 400; }

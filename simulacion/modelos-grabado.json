@@ -1,0 +1,226 @@
+[
+  {
+    "id": "circulo_dorado",
+    "nombre": "Círculo dorado 30mm",
+    "imagen": "img/circulo_dorado.svg",
+    "maxCaracteres": 24,
+    "fuenteDefault": "oswaldbold",
+    "forma": "ellipse",
+    "zona": {
+      "left": 16,
+      "top": 16,
+      "width": 68,
+      "height": 68
+    },
+    "miniatura": "img/circulo_dorado.jpg",
+    "activo": true
+  },
+  {
+    "id": "circulo_plateado",
+    "nombre": "Círculo plateado 30mm",
+    "imagen": "img/circulo_plateado.svg",
+    "maxCaracteres": 24,
+    "fuenteDefault": "oswaldbold",
+    "forma": "ellipse",
+    "zona": {
+      "left": 16,
+      "top": 16,
+      "width": 68,
+      "height": 68
+    },
+    "miniatura": "img/circulo_plateado.jpg",
+    "activo": true
+  },
+  {
+    "id": "cuadrado_dorado",
+    "nombre": "Cuadrado dorado 25mm",
+    "imagen": "img/cuadrado_dorado.svg",
+    "maxCaracteres": 28,
+    "fuenteDefault": "bebasneueregular",
+    "forma": "rect",
+    "zona": {
+      "left": 18,
+      "top": 18,
+      "width": 64,
+      "height": 64
+    },
+    "miniatura": "img/cuadrado_dorado.jpg",
+    "activo": true
+  },
+  {
+    "id": "cuadrado_plateado",
+    "nombre": "Cuadrado plateado 25mm",
+    "imagen": "img/cuadrado_plateado.svg",
+    "maxCaracteres": 28,
+    "fuenteDefault": "bebasneueregular",
+    "forma": "rect",
+    "zona": {
+      "left": 18,
+      "top": 18,
+      "width": 64,
+      "height": 64
+    },
+    "miniatura": "img/cuadrado_plateado.jpg",
+    "activo": false
+  },
+  {
+    "id": "rectangulo_dorado",
+    "nombre": "Rectángulo dorado 36x9mm",
+    "imagen": "img/rectangulo_dorado.svg",
+    "maxCaracteres": 36,
+    "fuenteDefault": "oswaldbold",
+    "forma": "rect",
+    "zona": {
+      "left": 15,
+      "top": 32,
+      "width": 78,
+      "height": 38
+    },
+    "miniatura": "img/rectangulo_dorado.jpg",
+    "activo": true
+  },
+  {
+    "id": "rectangulo_plateado",
+    "nombre": "Rectángulo plateado 36x9mm",
+    "imagen": "img/rectangulo_plateado.svg",
+    "maxCaracteres": 36,
+    "fuenteDefault": "oswaldbold",
+    "forma": "rect",
+    "zona": {
+      "left": 15,
+      "top": 32,
+      "width": 78,
+      "height": 38
+    },
+    "miniatura": "img/rectangulo_plateado.jpg",
+    "activo": true
+  },
+  {
+    "id": "rectangulo_grande_dorado",
+    "nombre": "Rectángulo grande dorado 25x40mm",
+    "imagen": "img/rectangulo_grande_dorado.svg",
+    "maxCaracteres": 32,
+    "fuenteDefault": "oswaldbold",
+    "forma": "rect",
+    "zona": {
+      "left": 12,
+      "top": 8,
+      "width": 76,
+      "height": 86
+    },
+    "miniatura": "img/rectangulo_grande_dorado.jpg",
+    "activo": false
+  },
+  {
+    "id": "rectangulo_grande_plateado",
+    "nombre": "Rectángulo grande plateado 25x40mm",
+    "imagen": "img/rectangulo_grande_plateado.svg",
+    "maxCaracteres": 32,
+    "fuenteDefault": "oswaldbold",
+    "forma": "rect",
+    "zona": {
+      "left": 12,
+      "top": 8,
+      "width": 76,
+      "height": 86
+    },
+    "miniatura": "img/rectangulo_grande_plateado.jpg",
+    "activo": true
+  },
+  {
+    "id": "rectangulo_ovalado_dorado",
+    "nombre": "Rectángulo (tipo Cápsula) dorada 28x46mm ",
+    "imagen": "img/rectangulo_ovalado_dorado.svg",
+    "maxCaracteres": 30,
+    "fuenteDefault": "bebasneueregular",
+    "forma": "rect",
+    "zona": {
+      "left": 16,
+      "top": 17,
+      "width": 68,
+      "height": 70
+    },
+    "miniatura": "img/rectangulo_ovalado_dorado.jpg",
+    "activo": true
+  },
+  {
+    "id": "rectangulo_ovalado_plateado",
+    "nombre": "Rectángulo (tipo Cápsula) plateada 28x46mm",
+    "imagen": "img/rectangulo_ovalado_plateado.svg",
+    "maxCaracteres": 30,
+    "fuenteDefault": "bebasneueregular",
+    "forma": "rect",
+    "zona": {
+      "left": 16,
+      "top": 17,
+      "width": 68,
+      "height": 70
+    },
+    "miniatura": "img/rectangulo_ovalado_plateado.jpg",
+    "activo": false
+  },
+  {
+    "id": "corazon_chico_dorado",
+    "nombre": "Corazón chico dorado 17x15mm(bxh)",
+    "imagen": "img/corazon_chico_dorado.svg",
+    "maxCaracteres": 20,
+    "fuenteDefault": "pacificoregular",
+    "forma": "heart",
+    "zona": {
+      "left": 18,
+      "top": 22,
+      "width": 64,
+      "height": 64
+    },
+    "miniatura": "img/corazon_chico_dorado.jpg",
+    "activo": true
+  },
+  {
+    "id": "corazon_chico_plateado",
+    "nombre": "Corazón chico plateado 17x15mm(bxh)",
+    "imagen": "img/corazon_chico_plateado.svg",
+    "maxCaracteres": 20,
+    "fuenteDefault": "pacificoregular",
+    "forma": "heart",
+    "zona": {
+      "left": 18,
+      "top": 22,
+      "width": 64,
+      "height": 64
+    },
+    "miniatura": "img/corazon_chico_plateado.jpg",
+    "activo": true
+  },
+  {
+    "id": "corazon_dorado",
+    "nombre": "Corazón dorado 25x23mm(bxh)",
+    "imagen": "img/corazon_dorado.svg",
+    "maxCaracteres": 22,
+    "fuenteDefault": "oswaldbold",
+    "forma": "heart",
+    "zona": {
+      "left": 14,
+      "top": 16,
+      "width": 72,
+      "height": 74
+    },
+    "miniatura": "img/corazon_dorado.jpg",
+    "activo": false
+  },
+  {
+    "id": "corazon_plateado",
+    "nombre": "Corazón plateado 25x23mm(bxh)",
+    "imagen": "img/corazon_plateado.svg",
+    "maxCaracteres": 22,
+    "fuenteDefault": "oswaldbold",
+    "forma": "heart",
+    "zona": {
+      "left": 14,
+      "top": 16,
+      "width": 72,
+      "height": 74
+    },
+    "miniatura": "img/corazon_plateado.jpg",
+    "activo": true
+  }
+]
