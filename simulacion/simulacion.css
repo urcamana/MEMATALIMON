@@ -75,6 +75,7 @@ body {
 }
 .zona-limite {
   position: absolute;
+  touch-action: none;
   box-sizing: border-box;
   border: 1.5px dashed rgba(92, 61, 138, 0.5);
   overflow: hidden;
@@ -95,7 +96,7 @@ body {
   transform: translate(-50%, -50%) rotate(0deg);
   width: auto;
   max-width: 98%;
-  padding: 2px 4px;
+  padding: 8px 10px; /* área táctil más grande en móvil */
   margin: 0;
   line-height: 1.1;
   color: rgba(30, 30, 30, 0.92);
@@ -104,6 +105,9 @@ body {
   pointer-events: auto;
   box-sizing: border-box;
   white-space: nowrap;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 .texto-capa:active { cursor: grabbing; }
 .texto-capa.vacio { opacity: 0.35; }
@@ -247,16 +251,40 @@ body {
   }
 }
 
-/* Móvil: preview compacta arriba */
+/* Móvil: preview fija arriba al scrollear el editor */
 @media (max-width: 899.98px) {
+  .panel-preview {
+    position: sticky;
+    top: 52px; /* debajo del nav */
+    z-index: 60;
+    padding: 0.5rem 0.6rem 0.6rem;
+    max-height: 42vh;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    box-shadow: 0 6px 16px rgba(92, 61, 138, 0.12);
+  }
+  .panel-preview h1 {
+    font-size: 1rem;
+    margin-bottom: 0;
+  }
+  .panel-preview > .small {
+    font-size: 0.7rem;
+  }
   .preview-wrap {
-    max-width: 280px;
+    max-width: 220px;
+    margin: 0.35rem auto 0;
+    padding: 0.35rem;
   }
   .preview-stage img#previewImg {
-    max-height: 28vh;
+    max-height: 22vh;
   }
-  .panel-preview {
-    padding: 0.75rem 0.75rem 1rem;
+  .panel-editor {
+    padding-top: 0.75rem;
+    padding-bottom: 3rem;
+    /* espacio de edición debajo de la preview fija */
+  }
+  .texto-capa {
+    padding: 10px 12px;
   }
 }
 

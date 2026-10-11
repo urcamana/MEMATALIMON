@@ -373,14 +373,26 @@
     });
   }
 
-  /* Arrastre */
+  /* Arrastre (mouse + touch móvil) */
   function getPoint(e, rect) {
-    var cx = e.touches ? e.touches[0].clientX : e.clientX;
-    var cy = e.touches ? e.touches[0].clientY : e.clientY;
+    var src = null;
+    if (e.touches && e.touches.length) src = e.touches[0];
+    else if (e.changedTouches && e.changedTouches.length) src = e.changedTouches[0];
+    else src = e;
+    var cx = src.clientX;
+    var cy = src.clientY;
     return {
       x: ((cx - rect.left) / rect.width) * 100,
       y: ((cy - rect.top) / rect.height) * 100
     };
+  }
+
+  function aplicarPosicionCapa(t) {
+    var el = zonaLimite.querySelector('.texto-capa[data-id="' + t.id + '"]');
+    if (!el) return;
+    el.style.left = t.x + "%";
+    el.style.top = t.y + "%";
+    el.style.transform = "translate(-50%, -50%) rotate(" + (t.rot || 0) + "deg)";
   }
 
   function onDown(e) {
@@ -388,27 +400,53 @@
     if (!el) return;
     var t = findTexto(el.dataset.id);
     if (!t) return;
+    // solo un dedo
+    if (e.touches && e.touches.length > 1) return;
     var rect = zonaLimite.getBoundingClientRect();
     var p = getPoint(e, rect);
-    drag = { id: t.id, startX: p.x, startY: p.y, x0: t.x, y0: t.y };
+    drag = {
+      id: t.id,
+      startX: p.x,
+      startY: p.y,
+      x0: t.x,
+      y0: t.y,
+      touchId: e.touches && e.touches[0] ? e.touches[0].identifier : null
+    };
     el.classList.add("arrastrando");
     e.preventDefault();
+    e.stopPropagation();
   }
 
   function onMove(e) {
     if (!drag) return;
+    // en multi-touch, seguir el dedo del drag
+    if (e.touches && e.touches.length && drag.touchId != null) {
+      var found = false;
+      for (var i = 0; i < e.touches.length; i++) {
+        if (e.touches[i].identifier === drag.touchId) { found = true; break; }
+      }
+      if (!found) return;
+    }
     var rect = zonaLimite.getBoundingClientRect();
     var p = getPoint(e, rect);
     var t = findTexto(drag.id);
     if (!t) return;
     t.x = Math.max(5, Math.min(95, drag.x0 + (p.x - drag.startX)));
     t.y = Math.max(8, Math.min(92, drag.y0 + (p.y - drag.startY)));
-    renderCapas();
+    // mover sin recrear el DOM (evita que el touch se "trabe")
+    aplicarPosicionCapa(t);
     e.preventDefault();
   }
 
-  function onUp() {
+  function onUp(e) {
     if (!drag) return;
+    if (e && e.changedTouches && drag.touchId != null) {
+      var match = false;
+      for (var i = 0; i < e.changedTouches.length; i++) {
+        if (e.changedTouches[i].identifier === drag.touchId) { match = true; break; }
+      }
+      if (!match) return;
+    }
     drag = null;
     renderCapas();
   }
@@ -419,6 +457,7 @@
   window.addEventListener("touchmove", onMove, { passive: false });
   window.addEventListener("mouseup", onUp);
   window.addEventListener("touchend", onUp);
+  window.addEventListener("touchcancel", onUp);
   window.addEventListener("resize", aplicarZonaTrasLayout);
   if (typeof ResizeObserver !== "undefined" && previewImg) {
     var ro = new ResizeObserver(function () { aplicarZonaTrasLayout(); });
