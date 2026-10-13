@@ -239,10 +239,18 @@
         '<div class="row g-2 align-items-end mb-2">' +
         '<div class="col-6 col-md-3"><label class="form-label small mb-0">Fuente</label>' +
         '<select class="form-select form-select-sm inp-fuente" data-id="' + t.id + '">' + opcionesFuente(t.fuente) + "</select></div>" +
-        '<div class="col-4 col-md-2"><label class="form-label small mb-0">Tamaño</label>' +
-        '<input type="number" class="form-control form-control-sm inp-size" data-id="' + t.id + '" min="8" max="120" value="' + t.size + '"></div>' +
-        '<div class="col-4 col-md-2"><label class="form-label small mb-0">Inclinación (°)</label>' +
-        '<input type="number" class="form-control form-control-sm inp-rot" data-id="' + t.id + '" min="-360" max="360" value="' + t.rot + '"></div>' +
+        '<div class="col-6 col-md-3"><label class="form-label small mb-0">Tamaño</label>' +
+        '<div class="input-group input-group-sm ctrl-num">' +
+        '<button type="button" class="btn btn-outline-secondary btn-size-menos" data-id="' + t.id + '" aria-label="Bajar tamaño">−</button>' +
+        '<input type="number" class="form-control form-control-sm inp-size text-center" data-id="' + t.id + '" min="8" max="120" step="1" inputmode="numeric" value="' + t.size + '">' +
+        '<button type="button" class="btn btn-outline-secondary btn-size-mas" data-id="' + t.id + '" aria-label="Subir tamaño">+</button>' +
+        '</div></div>' +
+        '<div class="col-6 col-md-3"><label class="form-label small mb-0">Inclinación (°)</label>' +
+        '<div class="input-group input-group-sm ctrl-num">' +
+        '<button type="button" class="btn btn-outline-secondary btn-rot-menos" data-id="' + t.id + '" aria-label="Bajar inclinación">−</button>' +
+        '<input type="number" class="form-control form-control-sm inp-rot text-center" data-id="' + t.id + '" min="-360" max="360" step="1" inputmode="numeric" value="' + t.rot + '">' +
+        '<button type="button" class="btn btn-outline-secondary btn-rot-mas" data-id="' + t.id + '" aria-label="Subir inclinación">+</button>' +
+        '</div></div>' +
         '<div class="col-4 col-md-5"><span class="small text-muted contador" data-id="' + t.id + '">' +
         t.text.length + " / " + max + "</span></div>" +
         "</div>" +
@@ -297,14 +305,44 @@
       if (el.value !== t.text) el.value = t.text;
       var c = listaTextosEl.querySelector('.contador[data-id="' + id + '"]');
       if (c) c.textContent = t.text.length + " / " + max;
-    } else if (el.classList.contains("inp-size")) {
-      t.size = clamp(el.value, 8, 120);
-      el.value = t.size;
-    } else if (el.classList.contains("inp-rot")) {
-      t.rot = clamp(el.value, -360, 360);
-      el.value = t.rot;
+      renderCapas();
+      return;
+    }
+    // Tamaño / inclinación: mientras escribe no forzamos el valor (evita trabarse en 8 o 200 en móvil)
+    if (el.classList.contains("inp-size") || el.classList.contains("inp-rot")) {
+      var raw = String(el.value).trim();
+      if (raw === "" || raw === "-" || raw === "+") {
+        return; // dejando borrar / escribir
+      }
+      var n = parseInt(raw, 10);
+      if (isNaN(n)) return;
+      if (el.classList.contains("inp-size")) {
+        if (n >= 8 && n <= 120) t.size = n;
+        // no reescribir el.value acá
+      } else {
+        if (n >= -360 && n <= 360) t.rot = n;
+      }
+      renderCapas();
+      return;
     }
     renderCapas();
+  });
+
+  // Al salir del campo, recién ahí clampeamos
+  listaTextosEl.addEventListener("focusout", function (e) {
+    var el = e.target;
+    if (!el || !el.dataset || !el.dataset.id) return;
+    var t = findTexto(el.dataset.id);
+    if (!t) return;
+    if (el.classList.contains("inp-size")) {
+      t.size = clamp(el.value === "" ? t.size : el.value, 8, 120);
+      el.value = t.size;
+      renderCapas();
+    } else if (el.classList.contains("inp-rot")) {
+      t.rot = clamp(el.value === "" ? t.rot : el.value, -360, 360);
+      el.value = t.rot;
+      renderCapas();
+    }
   });
 
   listaTextosEl.addEventListener("change", function (e) {
@@ -317,6 +355,31 @@
     if (el.classList.contains("inp-bold")) t.bold = el.checked;
     if (el.classList.contains("inp-italic")) t.italic = el.checked;
     if (el.classList.contains("inp-underline")) t.underline = el.checked;
+    renderCapas();
+  });
+
+  // Botones + / − de tamaño e inclinación (útiles en celular)
+  listaTextosEl.addEventListener("click", function (e) {
+    var btn = e.target.closest("button");
+    if (!btn || !btn.dataset.id) return;
+    var t = findTexto(btn.dataset.id);
+    if (!t) return;
+    var step = 1;
+    if (btn.classList.contains("btn-size-menos")) {
+      t.size = clamp(t.size - step, 8, 120);
+    } else if (btn.classList.contains("btn-size-mas")) {
+      t.size = clamp(t.size + step, 8, 120);
+    } else if (btn.classList.contains("btn-rot-menos")) {
+      t.rot = clamp(t.rot - 5, -360, 360);
+    } else if (btn.classList.contains("btn-rot-mas")) {
+      t.rot = clamp(t.rot + 5, -360, 360);
+    } else {
+      return;
+    }
+    var sizeInp = listaTextosEl.querySelector('.inp-size[data-id="' + t.id + '"]');
+    var rotInp = listaTextosEl.querySelector('.inp-rot[data-id="' + t.id + '"]');
+    if (sizeInp) sizeInp.value = t.size;
+    if (rotInp) rotInp.value = t.rot;
     renderCapas();
   });
 

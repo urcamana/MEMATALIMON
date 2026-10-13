@@ -288,6 +288,42 @@ body {
   }
 }
 
+
+/* Controles numéricos +/− (móvil y PC) */
+.ctrl-num .btn {
+  min-width: 2.25rem;
+  padding-left: 0.35rem;
+  padding-right: 0.35rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #5c3d8a;
+  border-color: rgba(168, 140, 215, 0.55);
+}
+.ctrl-num .inp-size,
+.ctrl-num .inp-rot {
+  min-width: 3.25rem;
+  -moz-appearance: textfield;
+}
+.ctrl-num .inp-size::-webkit-outer-spin-button,
+.ctrl-num .inp-size::-webkit-inner-spin-button,
+.ctrl-num .inp-rot::-webkit-outer-spin-button,
+.ctrl-num .inp-rot::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+@media (max-width: 899.98px) {
+  .ctrl-num .btn {
+    min-width: 2.6rem;
+    min-height: 2.4rem;
+    font-size: 1.15rem;
+  }
+  .ctrl-num .inp-size,
+  .ctrl-num .inp-rot {
+    min-height: 2.4rem;
+    font-size: 1rem;
+  }
+}
+
 /* Fuentes locales (1 por familia, peso más grueso) */
 @font-face {
   font-family: "LB Alfa Slab One";
