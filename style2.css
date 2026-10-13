@@ -1042,3 +1042,27 @@ h11 {
 .card-body h11 {
   margin-bottom: 2px !important;
 }
+
+
+/* Menú Productos: scroll si hay muchas categorías */
+#listaCategoriasMenu.dropdown-menu,
+#listaCategoriasMenuMovil.dropdown-menu,
+#nav1 .dropdown-menu.dropdown-menu-dark {
+  max-height: min(70vh, 420px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+/* Evitar que el menú se corte raro en móvil dentro del offcanvas */
+#offcanvasDarkNavbar #listaCategoriasMenuMovil.dropdown-menu {
+  max-height: min(55vh, 360px);
+  overflow-y: auto;
+  position: static !important;
+  float: none;
+  width: 100%;
+  transform: none !important;
+  border: none;
+  box-shadow: none;
+  margin-top: 0.25rem;
+  padding-left: 0.5rem;
+}
