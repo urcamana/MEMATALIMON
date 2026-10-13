@@ -753,10 +753,22 @@ function renderizarCatalogo(filtroCategoria) {
 
 // Carga inicial del catálogo (con orden y skeleton)
 FILTROS = "VER TODOS";
-renderizarCatalogo("VER TODOS");
+const _idLinkProducto = (new URLSearchParams(window.location.search)).get('p')
+  || (new URLSearchParams(window.location.search)).get('producto');
+if (_idLinkProducto) {
+  // Link compartido: no cargar las 30 primeras del catálogo completo (evita parpadeo)
+  while (fragmento2.firstChild) fragmento2.removeChild(fragmento2.firstChild);
+  while (fragmento.firstChild) fragmento.removeChild(fragmento.firstChild);
+  const _cc = document.getElementById("contenedorCatalogo");
+  if (_cc) _cc.innerHTML = "";
+  const _li = document.getElementById("loaderCatalogo");
+  if (_li) _li.remove();
+} else {
+  renderizarCatalogo("VER TODOS");
+}
 escucharBotones(); // Esta es la única llamada a escucharBotones que debe existir.
 descu.porDeDescuento();
-abrirProductoDesdeURL(); // Si viene ?p=ID desde un link compartido
+abrirProductoDesdeURL(); // Si viene ?p=ID → filtro de un solo producto
 
 
 
@@ -1899,21 +1911,97 @@ function abrirProductoDesdeURL() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get('p') || params.get('producto');
   if (!id) return;
+  if (typeof datos === 'undefined' || !Array.isArray(datos) || !datos.length) return;
 
-  // Esperar a que el catálogo esté en el DOM
-  const tryScroll = (intentos) => {
-    const el = document.getElementById('producto-' + id) ||
-      document.querySelector(`[data-producto-id="${id}"]`);
-    if (el) {
-      el.classList.add('producto-destacado');
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      try { registrarVisto(id); } catch (e) {}
-      setTimeout(() => el.classList.remove('producto-destacado'), 3500);
-      return;
+  const idNum = Number(id);
+  const producto = datos.find(p => Number(p.Artículo) === idNum || String(p.Artículo) === String(id));
+  if (!producto) {
+    console.warn('Producto de link ?p= no encontrado:', id);
+    return;
+  }
+
+  // Como un filtro de búsqueda: mostrar SOLO ese producto (no depende de la paginación)
+  try {
+    document.querySelectorAll('.ocultar-en-busqueda').forEach(el => el.classList.add('d-none'));
+  } catch (e) {}
+
+  listaCatalogoActual = [producto];
+  indiceCatalogo = 0;
+  cargandoMasCatalogo = false;
+
+  while (fragmento2.firstChild) fragmento2.removeChild(fragmento2.firstChild);
+  while (fragmento.firstChild) fragmento.removeChild(fragmento.firstChild);
+
+  const contenedorCatalogo = document.getElementById('contenedorCatalogo');
+  if (contenedorCatalogo) contenedorCatalogo.innerHTML = '';
+
+  // Aviso de producto compartido + botón para ver todo el catálogo
+  try {
+    const avisoWrap = document.createElement('div');
+    avisoWrap.className = 'col-12 mb-2';
+    avisoWrap.id = 'avisoProductoCompartido';
+    const nombre = (producto.Descripción || 'Producto').toString();
+    avisoWrap.innerHTML =
+      '<div class="alert alert-light border small mb-2 py-2 px-3 d-flex flex-wrap align-items-center justify-content-between gap-2" style="border-radius:12px;">' +
+      '<span>Estás viendo el producto compartido: <strong>' + nombre.replace(/</g, '&lt;') + '</strong></span>' +
+      '<button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" id="btnVerTodoCatalogo">Ver todo el catálogo</button>' +
+      '</div>';
+    if (contenedorCatalogo && contenedorCatalogo.parentElement) {
+      const parent = contenedorCatalogo.parentElement;
+      const prev = document.getElementById('avisoProductoCompartido');
+      if (prev) prev.remove();
+      parent.insertBefore(avisoWrap, contenedorCatalogo);
     }
-    if (intentos > 0) setTimeout(() => tryScroll(intentos - 1), 200);
-  };
-  setTimeout(() => tryScroll(25), 300);
+    const btnTodo = document.getElementById('btnVerTodoCatalogo');
+    if (btnTodo) {
+      btnTodo.addEventListener('click', function () {
+        // Quitar ?p= de la URL sin recargar
+        try {
+          const u = new URL(window.location.href);
+          u.searchParams.delete('p');
+          u.searchParams.delete('producto');
+          window.history.replaceState({}, '', u.pathname + (u.search || '') + u.hash);
+        } catch (e) {}
+        const av = document.getElementById('avisoProductoCompartido');
+        if (av) av.remove();
+        try {
+          document.querySelectorAll('.ocultar-en-busqueda').forEach(el => el.classList.remove('d-none'));
+        } catch (e) {}
+        const form = document.getElementById('formulario') || document.querySelector('input[type="search"], #buscar, .barra-busqueda input');
+        if (form) form.value = '';
+        FILTROS = 'VER TODOS';
+        renderizarCatalogo('VER TODOS');
+      });
+    }
+  } catch (e) {}
+
+  asegurarSentinelCatalogo();
+  // No hace falta scroll infinito: hay un solo ítem
+  cargarSiguientePagina();
+
+  try { registrarVisto(id); } catch (e) {}
+
+  // Resaltar la tarjeta cuando exista en el DOM
+  setTimeout(function () {
+    const el = document.getElementById('producto-' + id) ||
+      document.querySelector('[data-producto-id="' + id + '"]');
+    if (!el) return;
+    el.classList.add('producto-destacado');
+    const card = el.closest('.card') || el;
+    card.style.transition = 'box-shadow 0.35s ease, border 0.35s ease';
+    card.style.boxShadow = '0 0 0 3px rgba(168, 140, 215, 0.85), 0 8px 24px rgba(92, 61, 138, 0.25)';
+    card.style.border = '2px solid #a88cd7';
+    setTimeout(function () {
+      card.style.boxShadow = '';
+      card.style.border = '';
+      el.classList.remove('producto-destacado');
+    }, 4500);
+    // Llevar al catálogo (por si hay header)
+    try {
+      const y = el.getBoundingClientRect().top + window.pageYOffset - 90;
+      window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+    } catch (e) {}
+  }, 150);
 }
 
 // Click en botón compartir
@@ -2061,48 +2149,10 @@ document.addEventListener('click', event => {
 
 // --- AUTO-SCROLL Y RESALTE INTEGRADO AL FLUJO DE CARGA ---
 function procesarParametroProductoURL() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const idProductoBuscado = urlParams.get('producto');
-
-  if (!idProductoBuscado) return;
-
-  // Damos un pequeño respiro de 300ms para que el DOM termine de procesar las tarjetas
-  setTimeout(() => {
-    const carousels = document.querySelectorAll('.carousel[data-articulo]');
-    let tarjetaBuscada = null;
-
-    carousels.forEach(carousel => {
-      if (String(carousel.dataset.articulo) === String(idProductoBuscado)) {
-        tarjetaBuscada = carousel;
-      }
-    });
-
-    if (tarjetaBuscada) {
-      // Hacemos scroll suave hasta centrar el producto
-      tarjetaBuscada.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      
-      // Resaltado visual con borde y sombra roja
-      const cardContainer = tarjetaBuscada.closest('.card') || tarjetaBuscada;
-      if (cardContainer) {
-        cardContainer.style.transition = "all 0.4s ease-in-out";
-        cardContainer.style.boxShadow = "0 0 30px 10px rgba(255, 71, 87, 0.9)";
-        cardContainer.style.border = "3px solid #ff4757";
-        cardContainer.style.borderRadius = "10px";
-
-        // Quitamos el efecto a los 5 segundos
-        setTimeout(() => {
-          cardContainer.style.boxShadow = "";
-          cardContainer.style.border = "";
-        }, 5000);
-      }
-    } else {
-      console.warn("No se encontró la tarjeta para el producto:", idProductoBuscado);
-    }
-  }, 300);
+  // Compat: el deep-link ?p= lo resuelve abrirProductoDesdeURL() (filtro de 1 producto).
 }
 
-// Ejecutamos la función inmediatamente después de que el catálogo principal se pinta
-procesarParametroProductoURL();
+// procesarParametroProductoURL desactivado: usa abrirProductoDesdeURL()
 
 // --- FILTRAR AUTOMÁTICAMENTE DESDE LA URL AL INICIAR ---
 const urlParams = new URLSearchParams(window.location.search);
