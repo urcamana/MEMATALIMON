@@ -13,6 +13,18 @@
   },
   {
     "id": 2,
+    "nombre": "CM servicio de limpieza",
+    "descripcion": "Colchones, sillones, asientos de auto también techo interior de auto. Ubicación barrio Citricultores KM3. Se realiza trabajo a domicilio. Instagram: cm_limpiezaeldo",
+    "rubro": "Limpieza",
+    "link": "https://wa.me/5493751335575?text=¡Hola!%20Vi%20tu%20publicidad%20en%20la%20web%20de%20Me%20mata%20limon.%20Me%20interesa%20tu%20servicio.",
+    "actualizado": "2026-10-14",
+    "preferencia": 0,
+    "recomendado": false,
+    "ubicacion": false,
+    "mapa": ""
+  },
+  {
+    "id": 3,
     "nombre": "Espacio Disponible",
     "descripcion": "Si queres aparecer en este listado gratuitamente escribinos y lo vamos a incorporar lo mas pronto posible!",
     "rubro": "Todos",
