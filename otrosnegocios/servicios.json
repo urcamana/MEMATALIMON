@@ -25,6 +25,18 @@
   },
   {
     "id": 3,
+    "nombre": "Romi moto envíos",
+    "descripcion": "¡Tus pedidos en buenas manos! Compras, documentos, medicamentos, comidas y más...  Rapidez, seguridad y confianza.",
+    "rubro": "Motomandados",
+    "link": "https://wa.me/5493751574144?text=¡Hola!%20Vi%20tu%20publicidad%20en%20la%20web%20de%20Me%20mata%20limon.%20Me%20interesa%20tu%20servicio.",
+    "actualizado": "2026-10-14",
+    "preferencia": 0,
+    "recomendado": true,
+    "ubicacion": false,
+    "mapa": ""
+  },
+  {
+    "id": 0,
     "nombre": "Espacio Disponible",
     "descripcion": "Si queres aparecer en este listado gratuitamente escribinos y lo vamos a incorporar lo mas pronto posible!",
     "rubro": "Todos",
