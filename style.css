@@ -1047,7 +1047,11 @@ padding: 10px 20px !important;
 /* 1. Hace que las flechas del carrusel se vean (fondo oscuro/filtro) */
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
-  filter: invert(100%) drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.8)) !important;
+  /* sin invert: se ven sobre fondo blanco del producto */
+  filter: none !important;
+  width: 1.15rem;
+  height: 1.15rem;
+  background-size: 100% 100%;
 }
 /* ===================================================== */
 /* AJUSTES DE TAMAÑO DE IMAGEN Y ESPACIOS EN TARJETAS   */
@@ -1183,7 +1187,39 @@ padding: 10px 20px !important;
 /* Asegura que las flechas del carrusel tengan contraste sobre el fondo blanco en mobile y PC */
 .carousel-control-prev,
 .carousel-control-next {
-  filter: invert(100%) !important;
+  filter: none !important;
+  width: 38px !important;
+  height: 38px !important;
+  top: 50% !important;
+  bottom: auto !important;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: rgba(50, 30, 80, 0.55) !important;
+  opacity: 0.95;
+}
+.carousel-control-prev { left: 6px; }
+.carousel-control-next { right: 6px; }
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+  background: rgba(50, 30, 80, 0.8) !important;
+  opacity: 1;
+}
+/* Indicadores (rayitas/puntos) visibles sobre imagen clara */
+.card .carousel-indicators {
+  margin-bottom: 0.35rem;
+}
+.card .carousel-indicators [data-bs-target] {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: rgba(92, 61, 138, 0.45);
+  border: 1px solid rgba(255,255,255,0.8);
+  opacity: 1;
+}
+.card .carousel-indicators .active {
+  background-color: #5c3d8a;
+  width: 10px;
+  height: 10px;
 }
 
 /* Panel de Favoritos: fondo lila bien clarito y texto oscuro para contraste */

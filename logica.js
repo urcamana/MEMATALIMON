@@ -401,46 +401,84 @@ document.addEventListener('contextmenu', function (event) {
   }
 });
 
-// Click izquierdo en la imagen del producto → siguiente foto del carrusel
+// Lightbox de imagen de producto (click en foto → ver en grande)
+function asegurarLightboxCatalogo() {
+  if (document.getElementById('mmlLightbox')) return;
+  if (!document.getElementById('mmlLightboxStyles')) {
+    const st = document.createElement('style');
+    st.id = 'mmlLightboxStyles';
+    st.textContent = `
+      .img-prod { cursor: zoom-in; }
+      #mmlLightbox {
+        position: fixed; inset: 0; z-index: 3000;
+        background: rgba(0,0,0,0.92);
+        display: flex; align-items: center; justify-content: center;
+        padding: 0.5rem;
+      }
+      #mmlLightbox.d-none { display: none !important; }
+      #mmlLightbox img {
+        width: auto; height: auto;
+        max-width: 98vw; max-height: 96vh;
+        object-fit: contain;
+        border-radius: 8px;
+        box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+      }
+      #mmlLightbox .mml-lb-cerrar {
+        position: fixed; top: 12px; right: 14px; z-index: 3001;
+        width: 48px; height: 48px; border-radius: 50%;
+        border: none; background: rgba(255,255,255,0.2); color: #fff;
+        font-size: 2rem; line-height: 1; cursor: pointer;
+      }
+    `;
+    document.head.appendChild(st);
+  }
+  const div = document.createElement('div');
+  div.id = 'mmlLightbox';
+  div.className = 'd-none';
+  div.innerHTML = '<button type="button" class="mml-lb-cerrar" aria-label="Cerrar">&times;</button><img src="" alt="">';
+  document.body.appendChild(div);
+  div.addEventListener('click', function (e) {
+    if (e.target === div || e.target.classList.contains('mml-lb-cerrar')) {
+      div.classList.add('d-none');
+      div.querySelector('img').src = '';
+    }
+  });
+}
+
+function abrirLightboxCatalogo(src, alt) {
+  if (!src) return;
+  asegurarLightboxCatalogo();
+  const box = document.getElementById('mmlLightbox');
+  const img = box.querySelector('img');
+  img.src = src;
+  img.alt = alt || '';
+  box.classList.remove('d-none');
+}
+
+// Click en la imagen del producto → ampliar (no avanzar carrusel)
 document.addEventListener('click', function (event) {
   const img = event.target.closest('.img-prod');
   if (!img) return;
-  // No interferir si el click fue en controles del carrusel
-  if (event.target.closest('.carousel-control-prev, .carousel-control-next')) return;
-  // Solo en catálogo (no miniaturas del carrito)
+  if (event.target.closest('.carousel-control-prev, .carousel-control-next, .carousel-indicators')) return;
   if (img.classList.contains('carrito-item-img')) return;
 
   const carouselElem = img.closest('.carousel');
-  if (!carouselElem) return;
+  // Precargar fotos secundarias al hacer zoom (por si después usa flechas)
+  if (carouselElem) {
+    const articuloId = carouselElem.dataset.articulo;
+    const descripcion = carouselElem.dataset.descripcion || '';
+    if (articuloId && carouselElem.dataset.cargado !== 'true') {
+      try { cargarImagenesSecundariasLazy(articuloId, carouselElem.id, descripcion); } catch (err) {}
+    }
+  }
 
   event.preventDefault();
+  event.stopPropagation();
+  abrirLightboxCatalogo(img.currentSrc || img.src, img.alt || '');
+});
 
-  const avanzar = () => {
-    try {
-      const inst = bootstrap.Carousel.getOrCreateInstance(carouselElem, { interval: false, ride: false });
-      inst.next();
-    } catch (err) {
-      const items = carouselElem.querySelectorAll('.carousel-item');
-      if (items.length < 2) return;
-      let idx = 0;
-      items.forEach((it, i) => { if (it.classList.contains('active')) idx = i; });
-      items[idx].classList.remove('active');
-      items[(idx + 1) % items.length].classList.add('active');
-    }
-  };
-
-  // Cargar imágenes secundarias si aún no están, y luego avanzar
-  const articuloId = carouselElem.dataset.articulo;
-  const descripcion = carouselElem.dataset.descripcion || '';
-  if (articuloId && carouselElem.dataset.cargado !== 'true') {
-    try {
-      cargarImagenesSecundariasLazy(articuloId, carouselElem.id, descripcion);
-    } catch (err) {}
-    // Esperar un momento a que se agreguen slides (carga async de B/C/D/E.jpg)
-    setTimeout(avanzar, 200);
-  } else {
-    avanzar();
-  }
+document.addEventListener('DOMContentLoaded', function () {
+  try { asegurarLightboxCatalogo(); } catch (e) {}
 });
 
 var FILTROS = "";
@@ -1768,6 +1806,12 @@ function cargarImagenesSecundariasLazy(articuloId, carouselId, descripcion) {
         indNew.setAttribute("data-bs-target", "#" + carouselId);
         indNew.setAttribute("data-bs-slide-to", (totalItems - 1).toString());
         carouselIndicators.appendChild(indNew);
+      }
+      if (totalItems > 1) {
+        const btnPrev = carouselElem.querySelector(".carousel-control-prev");
+        const btnNext = carouselElem.querySelector(".carousel-control-next");
+        if (btnPrev) btnPrev.classList.remove("d-none");
+        if (btnNext) btnNext.classList.remove("d-none");
       }
     };
 
