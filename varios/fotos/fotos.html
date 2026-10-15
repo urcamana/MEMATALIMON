@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Fotos · Me Mata Limón</title>
+  <meta name="description" content="Collage, carnet, polaroid, antes/después y más, en el navegador." />
+  <meta name="theme-color" content="#a88cd7" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: { DEFAULT: '#a88cd7', dark: '#8e66cf', soft: '#f3eef9' },
+            ink: '#2d2a33'
+          },
+          fontFamily: { sans: ['Inter','system-ui','sans-serif'], display: ['Playfair Display','serif'] },
+          boxShadow: { soft: '0 4px 20px rgba(168,140,215,.18)', card: '0 8px 28px rgba(115,90,160,.12)' }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background: linear-gradient(160deg, #f8f5fc 0%, #efe8f8 50%, #f5f0fa 100%); min-height: 100vh; }
+    .mode.active { border-color: #8e66cf; background: #f3eef9; box-shadow: 0 0 0 2px rgba(142,102,207,.22); }
+    .drop { border: 2px dashed rgba(168,140,215,.45); }
+    .drop.drag { border-color: #8e66cf; background: #f3eef9; }
+    .step-num { width: 1.75rem; height: 1.75rem; border-radius: 9999px; display: inline-flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 700; background: linear-gradient(135deg,#a88cd7,#8e66cf); color: #fff; }
+  </style>
+</head>
+<body class="font-sans text-ink antialiased">
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-primary/15 shadow-sm">
+    <div class="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+      <div class="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white text-xs font-bold shadow-soft">IMG</div>
+      <div>
+        <h1 class="font-display text-lg text-primary-dark font-bold leading-tight">Fotos</h1>
+        <p class="text-[11px] text-gray-500">Collage · carnet · polaroid · más</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-2xl mx-auto px-4 py-5 pb-16 space-y-4">
+
+    <section class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
+      <div class="flex items-center gap-2"><span class="step-num">1</span><h2 class="font-semibold text-primary-dark">¿Qué querés hacer?</h2></div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" id="modes">
+        <button type="button" class="mode active rounded-xl border-2 border-primary/30 p-3 text-left" data-mode="collage" data-min="2" data-max="9">
+          <div class="font-bold text-sm text-primary-dark">Collage</div>
+          <div class="text-[10px] text-gray-500 mt-0.5">2 a 9 fotos en grilla</div>
+        </button>
+        <button type="button" class="mode rounded-xl border border-primary/15 p-3 text-left" data-mode="carnet" data-min="1" data-max="1">
+          <div class="font-bold text-sm">Foto carnet</div>
+          <div class="text-[10px] text-gray-500 mt-0.5">Recorte cuadrado + varias en A4</div>
+        </button>
+        <button type="button" class="mode rounded-xl border border-primary/15 p-3 text-left" data-mode="polaroid" data-min="1" data-max="6">
+          <div class="font-bold text-sm">Polaroids</div>
+          <div class="text-[10px] text-gray-500 mt-0.5">Marco blanco + texto</div>
+        </button>
+        <button type="button" class="mode rounded-xl border border-primary/15 p-3 text-left" data-mode="marco" data-min="1" data-max="1">
+          <div class="font-bold text-sm">Marco</div>
+          <div class="text-[10px] text-gray-500 mt-0.5">Foto con borde de color</div>
+        </button>
+        <button type="button" class="mode rounded-xl border border-primary/15 p-3 text-left" data-mode="antes" data-min="2" data-max="2">
+          <div class="font-bold text-sm">Antes / después</div>
+          <div class="text-[10px] text-gray-500 mt-0.5">2 fotos lado a lado</div>
+        </button>
+        <button type="button" class="mode rounded-xl border border-primary/15 p-3 text-left" data-mode="tira" data-min="2" data-max="4">
+          <div class="font-bold text-sm">Tira fotomatón</div>
+          <div class="text-[10px] text-gray-500 mt-0.5">2 a 4 fotos en columna</div>
+        </button>
+      </div>
+      <p id="mode-hint" class="text-xs text-gray-500"></p>
+    </section>
+
+    <section class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
+      <div class="flex items-center gap-2"><span class="step-num">2</span><h2 class="font-semibold text-primary-dark">Imágenes</h2></div>
+      <div id="drop" class="drop rounded-xl p-6 text-center cursor-pointer">
+        <input type="file" id="file" accept="image/*" class="hidden" multiple />
+        <p class="text-2xl mb-1">🖼️</p>
+        <p class="font-semibold text-sm">Tocá o arrastrá fotos</p>
+      </div>
+      <div id="list" class="flex flex-wrap gap-2"></div>
+    </section>
+
+    <section id="opts" class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
+      <div class="flex items-center gap-2"><span class="step-num">3</span><h2 class="font-semibold text-primary-dark">Opciones</h2></div>
+      <div id="options" class="space-y-3"></div>
+    </section>
+
+    <section class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
+      <div class="flex items-center gap-2"><span class="step-num">4</span><h2 class="font-semibold text-primary-dark">Resultado</h2></div>
+      <button type="button" id="go" disabled class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-primary to-primary-dark text-white font-semibold shadow-soft disabled:opacity-40">Generar</button>
+      <div id="preview" class="hidden">
+        <img id="result-img" alt="Resultado" class="w-full rounded-xl border border-primary/10 shadow-card" />
+        <a id="dl" href="#" download="fotos-mematalimon.png" class="mt-3 inline-flex w-full justify-center py-3 rounded-2xl bg-gradient-to-r from-primary to-primary-dark text-white text-sm font-semibold">Descargar imagen</a>
+      </div>
+      <p id="status" class="text-xs text-center text-gray-400"></p>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
