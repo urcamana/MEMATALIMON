@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>PDF · Me Mata Limón</title>
+  <meta name="description" content="Uní, dividí, convertí y editá PDFs en el navegador." />
+  <meta name="theme-color" content="#a88cd7" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: { DEFAULT: '#a88cd7', dark: '#8e66cf', light: '#c4b0e8', soft: '#f3eef9' },
+            accent: '#fa87f1', ink: '#2d2a33'
+          },
+          fontFamily: { sans: ['Inter','system-ui','sans-serif'], display: ['Playfair Display','serif'] },
+          boxShadow: { soft: '0 4px 20px rgba(168,140,215,.18)', card: '0 8px 28px rgba(115,90,160,.12)' }
+        }
+      }
+    }
+    if (window.pdfjsLib) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+  </script>
+  <style>
+    body { background: linear-gradient(160deg, #f8f5fc 0%, #efe8f8 50%, #f5f0fa 100%); min-height: 100vh; }
+    .task.active { border-color: #8e66cf; background: #f3eef9; box-shadow: 0 0 0 2px rgba(142,102,207,.22); }
+    .drop { border: 2px dashed rgba(168,140,215,.45); transition: .15s; }
+    .drop.drag { border-color: #8e66cf; background: #f3eef9; }
+    .step-num { width: 1.75rem; height: 1.75rem; border-radius: 9999px; display: inline-flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 700; }
+    .step-num.on { background: linear-gradient(135deg,#a88cd7,#8e66cf); color: #fff; }
+    .step-num.off { background: #e8e0f0; color: #8a7a9a; }
+    .safe-bottom { padding-bottom: max(1.25rem, env(safe-area-inset-bottom)); }
+  </style>
+</head>
+<body class="font-sans text-ink antialiased">
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-primary/15 shadow-sm">
+    <div class="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+      <div class="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white text-xs font-bold shadow-soft">PDF</div>
+      <div class="min-w-0">
+        <h1 class="font-display text-lg text-primary-dark font-bold leading-tight">PDF</h1>
+        <p class="text-[11px] text-gray-500 truncate">Unir · dividir · convertir · girar · extraer</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-2xl mx-auto px-4 py-5 safe-bottom space-y-4">
+
+    <!-- 1. Tarea -->
+    <section class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
+      <div class="flex items-center gap-2">
+        <span class="step-num on">1</span>
+        <h2 class="font-semibold text-primary-dark">¿Qué querés hacer?</h2>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" id="tasks">
+        <button type="button" class="task active rounded-xl border-2 border-primary/30 p-3 text-left" data-mode="merge">
+          <div class="font-bold text-sm text-primary-dark">Unir PDFs</div>
+          <div class="text-[10px] text-gray-500 mt-0.5 leading-snug">Varios PDF → un solo archivo</div>
+        </button>
+        <button type="button" class="task rounded-xl border border-primary/15 p-3 text-left" data-mode="split">
+          <div class="font-bold text-sm">Dividir PDF</div>
+          <div class="text-[10px] text-gray-500 mt-0.5 leading-snug">Cada hoja → un PDF aparte</div>
+        </button>
+        <button type="button" class="task rounded-xl border border-primary/15 p-3 text-left" data-mode="extract">
+          <div class="font-bold text-sm">Extraer páginas</div>
+          <div class="text-[10px] text-gray-500 mt-0.5 leading-snug">Elegí hojas y armá un PDF nuevo</div>
+        </button>
+        <button type="button" class="task rounded-xl border border-primary/15 p-3 text-left" data-mode="rotate">
+          <div class="font-bold text-sm">Girar páginas</div>
+          <div class="text-[10px] text-gray-500 mt-0.5 leading-snug">Rotá todas las hojas del PDF</div>
+        </button>
+        <button type="button" class="task rounded-xl border border-primary/15 p-3 text-left" data-mode="pdf2img">
+          <div class="font-bold text-sm">PDF → imágenes</div>
+          <div class="text-[10px] text-gray-500 mt-0.5 leading-snug">Cada hoja a JPG</div>
+        </button>
+        <button type="button" class="task rounded-xl border border-primary/15 p-3 text-left" data-mode="img2pdf">
+          <div class="font-bold text-sm">Imágenes → PDF</div>
+          <div class="text-[10px] text-gray-500 mt-0.5 leading-snug">Una o más fotos → un PDF</div>
+        </button>
+      </div>
+    </section>
+
+    <!-- 2. Archivos -->
+    <section id="step2" class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
+      <div class="flex items-center gap-2">
+        <span class="step-num on">2</span>
+        <h2 class="font-semibold text-primary-dark">Archivos</h2>
+      </div>
+      <p id="file-hint" class="text-xs text-gray-500"></p>
+      <div id="drop" class="drop rounded-xl p-6 text-center cursor-pointer">
+        <input type="file" id="file" class="hidden" multiple />
+        <p class="text-3xl mb-1">📄</p>
+        <p class="font-semibold text-sm text-ink">Tocá o arrastrá acá</p>
+        <p class="text-[11px] text-gray-400 mt-1" id="accept-hint"></p>
+      </div>
+      <div id="file-list" class="space-y-2"></div>
+    </section>
+
+    <!-- 3. Opciones -->
+    <section id="step3" class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3 hidden">
+      <div class="flex items-center gap-2">
+        <span class="step-num on">3</span>
+        <h2 class="font-semibold text-primary-dark">Opciones</h2>
+      </div>
+      <div id="options" class="space-y-3"></div>
+    </section>
+
+    <!-- 4. Generar -->
+    <section id="step4" class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
+      <div class="flex items-center gap-2">
+        <span class="step-num on">4</span>
+        <h2 class="font-semibold text-primary-dark">Generar</h2>
+      </div>
+      <button type="button" id="go" disabled
+        class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-primary to-primary-dark text-white font-semibold shadow-soft disabled:opacity-40 disabled:cursor-not-allowed">
+        Generar
+      </button>
+      <div id="out" class="space-y-3"></div>
+    </section>
+
+    <p class="text-center text-[11px] text-gray-400">Todo se procesa en tu celular o PC. No subimos tus archivos.</p>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

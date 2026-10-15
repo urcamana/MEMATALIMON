@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Conversiones · Me Mata Limón</title>
+  <meta name="description" content="Convertí, comprimí, redimensioná y girá imágenes. HEIC, JPG, PNG, WebP, GIF y más." />
+  <meta name="theme-color" content="#a88cd7" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: { DEFAULT: '#a88cd7', dark: '#8e66cf', light: '#c4b0e8', soft: '#f3eef9' },
+            accent: '#fa87f1', ink: '#2d2a33'
+          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'], display: ['Playfair Display', 'serif'] },
+          boxShadow: { soft: '0 4px 20px rgba(168,140,215,.18)', card: '0 8px 28px rgba(115,90,160,.12)' }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background: linear-gradient(160deg, #f8f5fc 0%, #efe8f8 50%, #f5f0fa 100%); min-height: 100vh; }
+    .drop { border: 2px dashed rgba(168,140,215,.45); transition: .15s; }
+    .drop.drag { border-color: #8e66cf; background: #f3eef9; }
+    .step-num { width: 1.75rem; height: 1.75rem; border-radius: 9999px; display: inline-flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 700; }
+    .step-num.on { background: linear-gradient(135deg,#a88cd7,#8e66cf); color: #fff; }
+    .step-num.off { background: #e8e0f0; color: #8a7a9a; }
+    .fmt.active { border-color: #8e66cf !important; background: #f3eef9; box-shadow: 0 0 0 2px rgba(142,102,207,.25); }
+    .fmt:disabled, .fmt.is-disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; filter: grayscale(0.35); }
+    .safe-bottom { padding-bottom: max(1.25rem, env(safe-area-inset-bottom)); }
+  </style>
+</head>
+<body class="font-sans text-ink antialiased">
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-primary/15 shadow-sm">
+    <div class="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+      <div class="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white text-sm font-bold shadow-soft">⇄</div>
+      <div class="min-w-0">
+        <h1 class="font-display text-lg text-primary-dark font-bold leading-tight">Conversiones</h1>
+        <p class="text-[11px] text-gray-500 truncate">Convertir · comprimir · redimensionar · girar</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-2xl mx-auto px-4 py-5 safe-bottom space-y-4">
+    <div class="flex items-center justify-between gap-1 text-[11px] sm:text-xs text-gray-500 px-1">
+      <div class="flex items-center gap-1.5"><span class="step-num on" id="n1">1</span><span>Subir</span></div>
+      <div class="flex-1 h-px bg-primary/20 mx-1"></div>
+      <div class="flex items-center gap-1.5"><span class="step-num off" id="n2">2</span><span>Formato</span></div>
+      <div class="flex-1 h-px bg-primary/20 mx-1"></div>
+      <div class="flex items-center gap-1.5"><span class="step-num off" id="n3">3</span><span>Ajustes</span></div>
+      <div class="flex-1 h-px bg-primary/20 mx-1"></div>
+      <div class="flex items-center gap-1.5"><span class="step-num off" id="n4">4</span><span>Listo</span></div>
+    </div>
+
+    <!-- 1 -->
+    <section class="bg-white rounded-2xl shadow-card border border-primary/10 overflow-hidden">
+      <div class="px-4 pt-4 pb-2 flex items-center gap-2">
+        <span class="step-num on">1</span>
+        <h2 class="font-semibold text-primary-dark">Subí tu imagen</h2>
+      </div>
+      <div class="px-4 pb-4">
+        <div id="drop" class="drop rounded-xl p-6 sm:p-8 text-center cursor-pointer">
+          <input type="file" id="file" accept="image/*,.heic,.heif,.HEIC,.HEIF" class="hidden" />
+          <p class="text-3xl mb-2">🖼️</p>
+          <p class="font-semibold text-ink text-sm sm:text-base">Tocá acá o arrastrá una imagen</p>
+          <p class="text-xs text-gray-400 mt-2 leading-relaxed">
+            <strong>JPG, PNG, WebP, GIF, BMP, HEIC</strong>
+          </p>
+          <p class="text-[11px] text-gray-400 mt-2 bg-primary-soft/60 rounded-lg px-2 py-1.5 inline-block">
+            💡 <strong>HEIC</strong> = formato de muchas fotos de iPhone. Acá las pasás a JPG u otro para que abran en cualquier lado.
+          </p>
+        </div>
+        <div id="source-card" class="hidden mt-3 flex gap-3 items-center p-3 rounded-xl bg-primary-soft/40 border border-primary/10">
+          <img id="source-thumb" alt="" class="w-16 h-16 rounded-lg object-cover border border-white shadow-sm" />
+          <div class="min-w-0 flex-1">
+            <p id="source-name" class="text-sm font-medium truncate"></p>
+            <p id="source-meta" class="text-xs text-gray-500"></p>
+            <button type="button" id="btn-clear" class="text-xs text-primary-dark font-semibold mt-1 hover:underline">Cambiar imagen</button>
+          </div>
+        </div>
+        <div id="unsupported" class="hidden mt-3 p-4 rounded-xl bg-amber-50 border border-amber-200 text-sm text-amber-900"></div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section id="step2" class="bg-white rounded-2xl shadow-card border border-primary/10 overflow-hidden opacity-50 pointer-events-none">
+      <div class="px-4 pt-4 pb-2 flex items-center gap-2">
+        <span class="step-num off" id="n2b">2</span>
+        <h2 class="font-semibold text-gray-500" id="t2">Formato de salida</h2>
+      </div>
+      <div class="px-4 pb-4 space-y-3">
+        <p class="text-xs text-gray-500">¿En qué formato querés el archivo final?</p>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2" id="formats">
+          <button type="button" class="fmt active rounded-xl border-2 border-primary/30 p-3 text-left" data-mime="image/jpeg" data-ext="jpg" data-id="jpg">
+            <div class="font-bold text-sm text-primary-dark">JPG</div>
+            <div class="text-[10px] text-gray-500 mt-0.5 leading-snug">El más compatible. Fotos y WhatsApp.</div>
+          </button>
+          <button type="button" class="fmt rounded-xl border border-primary/15 p-3 text-left" data-mime="image/png" data-ext="png" data-id="png">
+            <div class="font-bold text-sm">PNG</div>
+            <div class="text-[10px] text-gray-500 mt-0.5 leading-snug">Sin pérdida. Logos y capturas.</div>
+          </button>
+          <button type="button" class="fmt rounded-xl border border-primary/15 p-3 text-left" data-mime="image/webp" data-ext="webp" data-id="webp">
+            <div class="font-bold text-sm">WebP</div>
+            <div class="text-[10px] text-gray-500 mt-0.5 leading-snug">Más liviano, pensado para web.</div>
+          </button>
+          <button type="button" class="fmt is-disabled rounded-xl border border-primary/15 p-3 text-left" data-mime="image/jpeg" data-ext="jpg" data-id="heic" disabled>
+            <div class="font-bold text-sm">HEIC → JPG</div>
+            <div class="text-[10px] text-gray-500 mt-0.5 leading-snug">Solo si subís una foto HEIC de iPhone.</div>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section id="step3" class="bg-white rounded-2xl shadow-card border border-primary/10 overflow-hidden opacity-50 pointer-events-none">
+      <div class="px-4 pt-4 pb-2 flex items-center gap-2">
+        <span class="step-num off" id="n3b">3</span>
+        <h2 class="font-semibold text-gray-500" id="t3">Ajustes opcionales</h2>
+      </div>
+      <div class="px-4 pb-4 space-y-4">
+        <p class="text-xs text-gray-500">Podés dejar todo como está o tocar solo lo que necesites.</p>
+        <div id="quality-box">
+          <div class="flex justify-between items-center">
+            <label class="text-sm font-medium text-gray-700">Calidad / peso</label>
+            <span id="q-label" class="text-xs font-semibold text-primary-dark">Alta (0.90)</span>
+          </div>
+          <input id="quality" type="range" min="0.4" max="0.98" step="0.02" value="0.90" class="w-full accent-primary mt-1" />
+          <p class="text-[11px] text-gray-400 mt-1">Más bajo = más liviano. Solo JPG y WebP.</p>
+        </div>
+        <div>
+          <label class="text-sm font-medium text-gray-700">Redimensionar</label>
+          <div class="grid grid-cols-2 gap-2 mt-1">
+            <div>
+              <span class="text-[11px] text-gray-400">Ancho máx. (px)</span>
+              <input id="max-w" type="number" min="0" placeholder="Sin límite" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <span class="text-[11px] text-gray-400">Alto máx. (px)</span>
+              <input id="max-h" type="number" min="0" placeholder="Sin límite" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" />
+            </div>
+          </div>
+          <label class="flex items-center gap-2 mt-2 text-xs text-gray-600">
+            <input id="keep-ratio" type="checkbox" checked class="accent-primary" /> Mantener proporción
+          </label>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <button type="button" class="preset text-[11px] px-2.5 py-1 rounded-full border border-primary/25 bg-white" data-w="1280" data-h="1280">Máx. 1280</button>
+            <button type="button" class="preset text-[11px] px-2.5 py-1 rounded-full border border-primary/25 bg-white" data-w="800" data-h="800">Máx. 800</button>
+            <button type="button" class="preset text-[11px] px-2.5 py-1 rounded-full border border-primary/25 bg-white" data-w="400" data-h="400">Máx. 400</button>
+            <button type="button" class="preset text-[11px] px-2.5 py-1 rounded-full border border-primary/25 bg-white" data-w="" data-h="">Original</button>
+          </div>
+          <p id="upscale-warn" class="hidden mt-2 text-[11px] leading-snug text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-2.5 py-2">
+            Estás pidiendo un tamaño <strong>más grande</strong> que el original. Agrandar no mejora la calidad: la imagen se ve más suave o pixelada. Sirve solo si necesitás más píxeles (por ejemplo para editar después en otra app).
+          </p>
+        </div>
+        <div>
+          <label class="text-sm font-medium text-gray-700">Girar</label>
+          <div class="flex flex-wrap gap-2 mt-1">
+            <button type="button" class="rot px-3 py-2 rounded-xl border border-primary/25 text-sm bg-white" data-r="0">Original</button>
+            <button type="button" class="rot px-3 py-2 rounded-xl border border-primary/25 text-sm bg-white" data-r="90">90° →</button>
+            <button type="button" class="rot px-3 py-2 rounded-xl border border-primary/25 text-sm bg-white" data-r="180">180°</button>
+            <button type="button" class="rot px-3 py-2 rounded-xl border border-primary/25 text-sm bg-white" data-r="270">← 90°</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section id="step4" class="bg-white rounded-2xl shadow-card border border-primary/10 overflow-hidden opacity-50 pointer-events-none">
+      <div class="px-4 pt-4 pb-2 flex items-center gap-2">
+        <span class="step-num off" id="n4b">4</span>
+        <h2 class="font-semibold text-gray-500" id="t4">Generar y descargar</h2>
+      </div>
+      <div class="px-4 pb-4 space-y-3">
+        <button type="button" id="btn-generate" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-primary to-primary-dark text-white font-semibold shadow-soft text-base">
+          Generar imagen
+        </button>
+        <div id="result" class="hidden">
+          <div class="flex gap-3 items-start p-3 rounded-xl bg-primary-soft/50 border border-primary/15">
+            <img id="result-thumb" alt="" class="w-20 h-20 rounded-lg object-cover border border-white shadow-sm" />
+            <div class="min-w-0 flex-1">
+              <p class="text-sm font-semibold text-primary-dark">Listo</p>
+              <p id="result-meta" class="text-xs text-gray-600 mt-0.5"></p>
+              <a id="result-dl" href="#" download="imagen.jpg"
+                class="inline-flex mt-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary to-primary-dark text-white text-xs font-semibold">Descargar</a>
+            </div>
+          </div>
+        </div>
+        <p id="gen-status" class="text-xs text-center text-gray-400 hidden"></p>
+      </div>
+    </section>
+
+    <p class="text-center text-[11px] text-gray-400 px-2">
+      Todo se procesa en tu celular o PC. No subimos tus fotos a ningún servidor.
+    </p>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

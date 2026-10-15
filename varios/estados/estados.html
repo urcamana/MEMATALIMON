@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Texto para estados · Me Mata Limón</title>
+  <meta name="description" content="Creá imágenes de texto para estados de WhatsApp con fuentes, negrita, cursiva y fondos personalizados." />
+  <meta name="theme-color" content="#a88cd7" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: { DEFAULT: '#a88cd7', dark: '#8e66cf', light: '#c4b0e8', soft: '#f3eef9' },
+            accent: '#fa87f1', ink: '#2d2a33'
+          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'], display: ['Playfair Display', 'serif'] },
+          boxShadow: { soft: '0 4px 20px rgba(168,140,215,.18)', card: '0 8px 28px rgba(115,90,160,.12)' }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background: linear-gradient(160deg, #f8f5fc 0%, #efe8f8 50%, #f5f0fa 100%); min-height: 100vh; }
+    .safe-bottom { padding-bottom: max(1.25rem, env(safe-area-inset-bottom)); }
+    .font-btn.active { border-color: #8e66cf; background: #f3eef9; box-shadow: 0 0 0 2px rgba(142,102,207,.2); }
+    .style-btn.active { background: linear-gradient(135deg,#a88cd7,#8e66cf); color: #fff; border-color: transparent; }
+    #preview-shell {
+      aspect-ratio: 9/16;
+      width: min(100%, 280px);
+      max-height: min(62vh, 480px);
+      margin-inline: auto;
+    }
+    @media (min-width: 1024px) {
+      #preview-shell { width: min(100%, 320px); max-height: min(70vh, 560px); }
+    }
+    #cv { width: 100%; height: 100%; display: block; border-radius: 1rem; }
+    .bg-swatch.active { outline: 2px solid #8e66cf; outline-offset: 2px; }
+  </style>
+</head>
+<body class="font-sans text-ink antialiased">
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-primary/15 shadow-sm">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
+      <div class="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white text-sm shadow-soft">Aa</div>
+      <div class="min-w-0">
+        <h1 class="font-display text-lg text-primary-dark font-bold leading-tight">Texto para estados</h1>
+        <p class="text-[11px] text-gray-500 truncate">Fuentes · negrita · cursiva · fondos</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 py-5 safe-bottom grid lg:grid-cols-2 gap-5">
+    <div class="space-y-4 order-2 lg:order-1">
+
+      <!-- ===== TEXTO 1 ===== -->
+      <section class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
+        <div class="flex items-center justify-between gap-2 flex-wrap">
+          <h2 class="text-sm font-semibold text-primary-dark">Texto 1</h2>
+          <button type="button" id="btn-frase" class="text-xs font-semibold text-primary-dark hover:underline">Frase del día (opcional)</button>
+        </div>
+        <textarea id="text1" rows="3" maxlength="220" placeholder="Escribí el texto principal…"
+          class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm resize-y focus:outline-none focus:ring-2 focus:ring-primary/40"></textarea>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-[11px] text-gray-500">Color</label>
+            <input type="color" id="color1" value="#ffffff" class="w-full h-10 rounded-lg cursor-pointer border border-gray-100" />
+          </div>
+          <div>
+            <label class="text-[11px] text-gray-500">Estilo</label>
+            <div class="flex gap-2 mt-1">
+              <button type="button" id="bold1" class="style-btn flex-1 h-10 rounded-xl border border-primary/25 bg-white text-sm font-bold" title="Negrita">B</button>
+              <button type="button" id="italic1" class="style-btn flex-1 h-10 rounded-xl border border-primary/25 bg-white text-sm italic" title="Cursiva">I</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-[11px] text-gray-500">Tamaño</label>
+          <div class="flex items-center gap-2 mt-1">
+            <button type="button" id="size1-minus" class="shrink-0 w-10 h-10 rounded-xl border border-primary/25 bg-white text-lg font-bold text-primary-dark active:bg-primary-soft" aria-label="Bajar tamaño">−</button>
+            <input type="number" id="size1" inputmode="numeric" min="20" max="220" value="64" step="2"
+              class="w-full min-w-0 text-center rounded-xl border border-gray-200 px-2 py-2 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary/40" />
+            <button type="button" id="size1-plus" class="shrink-0 w-10 h-10 rounded-xl border border-primary/25 bg-white text-lg font-bold text-primary-dark active:bg-primary-soft" aria-label="Subir tamaño">+</button>
+          </div>
+          <input type="range" id="size1-range" min="20" max="220" value="64" step="2" class="w-full accent-primary mt-2" />
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between gap-2 mb-1">
+            <label class="text-[11px] text-gray-500">Fuente</label>
+            <span class="text-[10px] text-gray-400" id="font-count"></span>
+          </div>
+          <input type="search" id="font-search1" placeholder="Buscar fuente…"
+            class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm mb-2 focus:outline-none focus:ring-2 focus:ring-primary/40" />
+          <div id="fonts1" class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-44 overflow-y-auto overscroll-contain pr-1"></div>
+        </div>
+      </section>
+
+      <!-- ===== TEXTO 2 ===== -->
+      <section class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
+        <label class="flex items-center gap-2 text-sm font-semibold text-primary-dark">
+          <input type="checkbox" id="sec-on" class="accent-primary" />
+          Texto 2 (opcional)
+        </label>
+        <div id="sec-panel" class="space-y-3 opacity-40 pointer-events-none">
+          <textarea id="text2" rows="2" maxlength="160" placeholder="Texto secundario debajo…"
+            class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm resize-y focus:outline-none focus:ring-2 focus:ring-primary/40"></textarea>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-[11px] text-gray-500">Color</label>
+              <input type="color" id="color2" value="#ffffff" class="w-full h-10 rounded-lg cursor-pointer border border-gray-100" />
+            </div>
+            <div>
+              <label class="text-[11px] text-gray-500">Estilo</label>
+              <div class="flex gap-2 mt-1">
+                <button type="button" id="bold2" class="style-btn flex-1 h-10 rounded-xl border border-primary/25 bg-white text-sm font-bold" title="Negrita">B</button>
+                <button type="button" id="italic2" class="style-btn flex-1 h-10 rounded-xl border border-primary/25 bg-white text-sm italic" title="Cursiva">I</button>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label class="text-[11px] text-gray-500">Tamaño</label>
+            <div class="flex items-center gap-2 mt-1">
+              <button type="button" id="size2-minus" class="shrink-0 w-10 h-10 rounded-xl border border-primary/25 bg-white text-lg font-bold text-primary-dark active:bg-primary-soft" aria-label="Bajar tamaño">−</button>
+              <input type="number" id="size2" inputmode="numeric" min="14" max="160" value="36" step="2"
+                class="w-full min-w-0 text-center rounded-xl border border-gray-200 px-2 py-2 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary/40" />
+              <button type="button" id="size2-plus" class="shrink-0 w-10 h-10 rounded-xl border border-primary/25 bg-white text-lg font-bold text-primary-dark active:bg-primary-soft" aria-label="Subir tamaño">+</button>
+            </div>
+            <input type="range" id="size2-range" min="14" max="160" value="36" step="2" class="w-full accent-primary mt-2" />
+          </div>
+
+          <div>
+            <label class="text-[11px] text-gray-500">Fuente</label>
+            <input type="search" id="font-search2" placeholder="Buscar fuente…"
+              class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm mb-2 focus:outline-none focus:ring-2 focus:ring-primary/40" />
+            <div id="fonts2" class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-40 overflow-y-auto overscroll-contain pr-1"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Fondos -->
+      <section class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
+        <h2 class="text-sm font-semibold text-primary-dark">Fondo</h2>
+        <p class="text-xs text-gray-500">Presets o dos colores a tu gusto (degradado).</p>
+        <div id="bgs" class="flex flex-wrap gap-2"></div>
+        <div class="grid grid-cols-2 gap-3 pt-1">
+          <div>
+            <label class="text-[11px] text-gray-500">Color A</label>
+            <input type="color" id="bg-a" value="#a88cd7" class="w-full h-10 rounded-lg cursor-pointer border border-gray-100" />
+          </div>
+          <div>
+            <label class="text-[11px] text-gray-500">Color B</label>
+            <input type="color" id="bg-b" value="#8e66cf" class="w-full h-10 rounded-lg cursor-pointer border border-gray-100" />
+          </div>
+        </div>
+      </section>
+
+      <button type="button" id="download" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-primary to-primary-dark text-white font-semibold shadow-soft">
+        Descargar imagen (9:16)
+      </button>
+      <p class="text-center text-[11px] text-gray-400">Todo en tu dispositivo · Fuentes SIL OFL</p>
+    </div>
+
+    <div class="order-1 lg:order-2 lg:sticky lg:top-20 self-start">
+      <p class="text-xs text-gray-500 mb-2 text-center">Vista previa · formato estados</p>
+      <div id="preview-shell" class="bg-black/5 rounded-2xl overflow-hidden shadow-card">
+        <canvas id="cv" width="1080" height="1920"></canvas>
+      </div>
+    </div>
+  </main>
+
+  <script src="fonts-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
