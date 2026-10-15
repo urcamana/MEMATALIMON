@@ -354,7 +354,7 @@
 
     const esRecomendado = (tipo === "negocio" || tipo === "servicio") && (item.recomendado === true || item.recomendado === "true");
     const badgeRecomendado = esRecomendado
-      ? `<span class="badge-recomendado">Recomendado por nosotros</span>`
+      ? `<span class="badge-recomendado">¡Recomendado por nosotros!</span>`
       : "";
 
     // Negocio/servicio: link a esta tarjeta (?id=). Producto/curso/libro: link de afiliado.

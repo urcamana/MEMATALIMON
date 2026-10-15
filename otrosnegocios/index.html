@@ -195,6 +195,28 @@
       background: transparent;
       border-top: 1px solid rgba(168, 140, 215, 0.2);
     }
+
+    .seccion-grupo {
+      margin-top: 1.75rem;
+      margin-bottom: 0.5rem;
+    }
+    .seccion-grupo:first-of-type {
+      margin-top: 0.5rem;
+    }
+    .seccion-titulo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #5c3d8a;
+      margin: 0 0 0.35rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid rgba(168, 140, 215, 0.35);
+    }
+    .seccion-sub {
+      font-size: 0.8rem;
+      color: #6c757d;
+      margin-bottom: 0.85rem;
+    }
   </style>
 </head>
 <body class="otros-page">
@@ -239,125 +261,151 @@
 
       <div class="text-center mb-4">
         <h1 class="h3 mb-2">Más secciones</h1>
-        <p class="text-muted mb-0">Negocios, servicios, afiliados y utilidades de Me Mata Limón</p>
+        <p class="text-muted mb-0">Negocios, servicios, recomendaciones y utilidades de Me Mata Limón</p>
       </div>
 
-      <div class="row g-3 justify-content-center">
-        <div class="col-6 col-md-3">
-          <a href="negocios.html" class="card card-opcion h-100">
-            <div class="card-body text-center py-4 px-3">
-              <div class="icono mb-2">🏪</div>
-              <h2 class="h5 mb-1">Negocios locales</h2>
-              <p class="small text-muted mb-3">Emprendedores y comercios de Eldorado</p>
-              <span class="btn btn-sm btn-entrar rounded-pill px-3">Ver listado</span>
-            </div>
-          </a>
+      <!-- ===== Otros negocios y servicios ===== -->
+      <div class="seccion-grupo">
+        <h2 class="seccion-titulo">Otros negocios y servicios</h2>
+        <p class="seccion-sub">Locales y profesionales de Eldorado · Espacio gratuito</p>
+        <div class="row g-3 justify-content-center">
+          <div class="col-6 col-md-3">
+            <a href="negocios.html" class="card card-opcion h-100">
+              <div class="card-body text-center py-4 px-3">
+                <div class="icono mb-2">🏪</div>
+                <h2 class="h5 mb-1">Negocios locales</h2>
+                <p class="small text-muted mb-3">Emprendedores y comercios de Eldorado</p>
+                <span class="btn btn-sm btn-entrar rounded-pill px-3">Ver listado</span>
+              </div>
+            </a>
+          </div>
+          <div class="col-6 col-md-3">
+            <a href="servicios.html" class="card card-opcion h-100">
+              <div class="card-body text-center py-4 px-3">
+                <div class="icono mb-2">🔧</div>
+                <h2 class="h5 mb-1">Servicios profesionales</h2>
+                <p class="small text-muted mb-3">Motomandados, oficios, mantenimiento y más</p>
+                <span class="btn btn-sm btn-entrar rounded-pill px-3">Ver servicios</span>
+              </div>
+            </a>
+          </div>
         </div>
-        <div class="col-6 col-md-3">
-          <a href="servicios.html" class="card card-opcion h-100">
-            <div class="card-body text-center py-4 px-3">
-              <div class="icono mb-2">🔧</div>
-              <h2 class="h5 mb-1">Servicios profesionales</h2>
-              <p class="small text-muted mb-3">Motomandados, oficios, mantenimiento y más</p>
-              <span class="btn btn-sm btn-entrar rounded-pill px-3">Ver servicios</span>
-            </div>
-          </a>
-        </div>
-   <!--   
-        <div class="col-6 col-md-3">
-          <a href="productos.html" class="card card-opcion h-100">
-            <div class="card-body text-center py-4 px-3">
-              <div class="icono mb-2">🛒</div>
-              <h2 class="h5 mb-1">Productos afiliados</h2>
-              <p class="small text-muted mb-3">Recomendaciones con link de compra</p>
-              <span class="btn btn-sm btn-entrar rounded-pill px-3">Ver productos</span>
-            </div>
-          </a>
-        </div>
-        <div class="col-6 col-md-3">
-          <a href="cursos.html" class="card card-opcion h-100">
-            <div class="card-body text-center py-4 px-3">
-              <div class="icono mb-2">📚</div>
-              <h2 class="h5 mb-1">Cursos online / ebooks</h2>
-              <p class="small text-muted mb-3">Hotmart y otras plataformas</p>
-              <span class="btn btn-sm btn-entrar rounded-pill px-3">Ver cursos</span>
-            </div>
-          </a>
-        </div>
-        <div class="col-6 col-md-3">
-          <a href="libros.html" class="card card-opcion h-100">
-            <div class="card-body text-center py-4 px-3">
-              <div class="icono mb-2">📖</div>
-              <h2 class="h5 mb-1">Libros digitales</h2>
-              <p class="small text-muted mb-3">PDF / EPUB con compra legal</p>
-              <span class="btn btn-sm btn-entrar rounded-pill px-3">Ver libros</span>
-            </div>
-          </a>
-        </div>
-  -->
-        <div class="col-6 col-md-3">
-          <a href="../guia-compra.html" class="card card-opcion h-100">
-            <div class="card-body text-center py-4 px-3">
-              <div class="icono mb-2">🔌</div>
-              <h2 class="h5 mb-1">Guía de compra</h2>
-              <p class="small text-muted mb-3">Cables y cargadores · Búsqueda por modelo</p>
-              <span class="btn btn-sm btn-entrar rounded-pill px-3">Abrir guía</span>
-            </div>
-          </a>
-        </div>
-<div class="col-6 col-md-3">
-          <a href="../guia-cadenas.html" class="card card-opcion h-100">
-            <div class="card-body text-center py-4 px-3">
-              <div class="icono mb-2">⛓️</div> 
-              <h2 class="h5 mb-1">Informacion sobre ACERO y otros materiales</h2>
-              <p class="small text-muted mb-3">Cadenas de acero inoxidable</p>
-              <span class="btn btn-sm btn-entrar rounded-pill px-3">Abrir guía</span>
-            </div>
-          </a>
-</div>
-<div class="col-6 col-md-3">
-          <a href="../simulacion/simulacion.html" class="card card-opcion h-100">
-            <div class="card-body text-center py-4 px-3">
-              <div class="icono mb-2">⚡</div> 
-              <h2 class="h5 mb-1">Simulación de grabado</h2>
-              <p class="small text-muted mb-3">¡Visualizá tus dijes de acero personalizados!</p>
-              <span class="btn btn-sm btn-entrar rounded-pill px-3">Probar simulador</span>
-            </div>
-          </a>
-</div>
+      </div>
 
-        <div class="col-6 col-md-3">
-          <a href="../testimonios.html" class="card card-opcion h-100">
-            <div class="card-body text-center py-4 px-3">
-              <div class="icono mb-2">💬</div>
-              <h2 class="h5 mb-1">Recomendaciones y testimonios</h2>
-              <p class="small text-muted mb-3">Lo que dicen quienes ya compraron</p>
-              <span class="btn btn-sm btn-entrar rounded-pill px-3">Ver testimonios</span>
-            </div>
-          </a>
+      <!-- ===== Recomendaciones y opiniones ===== -->
+      <div class="seccion-grupo">
+        <h2 class="seccion-titulo">Recomendaciones y opiniones</h2>
+        <p class="seccion-sub">Lo que dicen los clientes e ideas para regalar</p>
+        <div class="row g-3 justify-content-center">
+          <div class="col-6 col-md-3">
+            <a href="../testimonios.html" class="card card-opcion h-100">
+              <div class="card-body text-center py-4 px-3">
+                <div class="icono mb-2">💬</div>
+                <h2 class="h5 mb-1">Recomendaciones y testimonios</h2>
+                <p class="small text-muted mb-3">Lo que dicen quienes ya compraron</p>
+                <span class="btn btn-sm btn-entrar rounded-pill px-3">Ver testimonios</span>
+              </div>
+            </a>
+          </div>
+          <div class="col-6 col-md-3">
+            <a href="../obsequios/obsequios.html" class="card card-opcion h-100">
+              <div class="card-body text-center py-4 px-3">
+                <div class="icono mb-2">🎁</div>
+                <h2 class="h5 mb-1">Ideas para regalar</h2>
+                <p class="small text-muted mb-3">Cumpleaños, aniversarios y más</p>
+                <span class="btn btn-sm btn-entrar rounded-pill px-3">Ver ideas</span>
+              </div>
+            </a>
+          </div>
         </div>
-        <div class="col-6 col-md-3">
-          <a href="../obsequios/obsequios.html" class="card card-opcion h-100">
-            <div class="card-body text-center py-4 px-3">
-              <div class="icono mb-2">🎁</div>
-              <h2 class="h5 mb-1">Ideas para regalar</h2>
-              <p class="small text-muted mb-3">Cumpleaños, aniversarios y más</p>
-              <span class="btn btn-sm btn-entrar rounded-pill px-3">Ver ideas</span>
-            </div>
-          </a>
-        </div>
-        <div class="col-6 col-md-3">
-          <a href="../cv/cv.html" class="card card-opcion h-100">
-            <div class="card-body text-center py-4 px-3">
-              <div class="icono mb-2">📄</div>
-              <h2 class="h5 mb-1">Crea tu CV</h2>
-              <p class="small text-muted mb-3">Diseña tu currículum gratis y rápido para presentarlo en cualquier negocio</p>
-              <span class="btn btn-sm btn-entrar rounded-pill px-3">Comenzar</span>
-            </div>
-          </a>
-        </div>
+      </div>
 
+      <!-- ===== Otros productos, cursos y libros (oculto por ahora) ===== -->
+      <!--
+      <div class="seccion-grupo">
+        <h2 class="seccion-titulo">Otros productos, cursos y libros recomendados</h2>
+        <p class="seccion-sub">Enlaces de afiliados · Comisión sin costo extra para vos</p>
+        <div class="row g-3 justify-content-center">
+          <div class="col-6 col-md-3">
+            <a href="productos.html" class="card card-opcion h-100">
+              <div class="card-body text-center py-4 px-3">
+                <div class="icono mb-2">🛒</div>
+                <h2 class="h5 mb-1">Productos afiliados</h2>
+                <p class="small text-muted mb-3">Recomendaciones con link de compra</p>
+                <span class="btn btn-sm btn-entrar rounded-pill px-3">Ver productos</span>
+              </div>
+            </a>
+          </div>
+          <div class="col-6 col-md-3">
+            <a href="cursos.html" class="card card-opcion h-100">
+              <div class="card-body text-center py-4 px-3">
+                <div class="icono mb-2">📚</div>
+                <h2 class="h5 mb-1">Cursos online / ebooks</h2>
+                <p class="small text-muted mb-3">Hotmart y otras plataformas</p>
+                <span class="btn btn-sm btn-entrar rounded-pill px-3">Ver cursos</span>
+              </div>
+            </a>
+          </div>
+          <div class="col-6 col-md-3">
+            <a href="libros.html" class="card card-opcion h-100">
+              <div class="card-body text-center py-4 px-3">
+                <div class="icono mb-2">📖</div>
+                <h2 class="h5 mb-1">Libros digitales</h2>
+                <p class="small text-muted mb-3">PDF / EPUB con compra legal</p>
+                <span class="btn btn-sm btn-entrar rounded-pill px-3">Ver libros</span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+      -->
 
+      <!-- ===== Otras utilidades ===== -->
+      <div class="seccion-grupo">
+        <h2 class="seccion-titulo">Otras utilidades</h2>
+        <p class="seccion-sub">Herramientas y guías útiles</p>
+        <div class="row g-3 justify-content-center">
+          <div class="col-6 col-md-3">
+            <a href="../cv/cv.html" class="card card-opcion h-100">
+              <div class="card-body text-center py-4 px-3">
+                <div class="icono mb-2">📄</div>
+                <h2 class="h5 mb-1">Crea tu CV</h2>
+                <p class="small text-muted mb-3">Diseña tu currículum gratis y rápido para presentarlo en cualquier negocio</p>
+                <span class="btn btn-sm btn-entrar rounded-pill px-3">Comenzar</span>
+              </div>
+            </a>
+          </div>
+          <div class="col-6 col-md-3">
+            <a href="../guia-compra.html" class="card card-opcion h-100">
+              <div class="card-body text-center py-4 px-3">
+                <div class="icono mb-2">🔌</div>
+                <h2 class="h5 mb-1">Guía de compra</h2>
+                <p class="small text-muted mb-3">Cables y cargadores · Búsqueda por modelo</p>
+                <span class="btn btn-sm btn-entrar rounded-pill px-3">Abrir guía</span>
+              </div>
+            </a>
+          </div>
+          <div class="col-6 col-md-3">
+            <a href="../guia-cadenas.html" class="card card-opcion h-100">
+              <div class="card-body text-center py-4 px-3">
+                <div class="icono mb-2">⛓️</div>
+                <h2 class="h5 mb-1">Información sobre acero</h2>
+                <p class="small text-muted mb-3">Cadenas de acero inoxidable y materiales</p>
+                <span class="btn btn-sm btn-entrar rounded-pill px-3">Abrir guía</span>
+              </div>
+            </a>
+          </div>
+          <div class="col-6 col-md-3">
+            <a href="../simulacion/simulacion.html" class="card card-opcion h-100">
+              <div class="card-body text-center py-4 px-3">
+                <div class="icono mb-2">⚡</div>
+                <h2 class="h5 mb-1">Simulación de grabado</h2>
+                <p class="small text-muted mb-3">¡Visualizá tus dijes de acero personalizados!</p>
+                <span class="btn btn-sm btn-entrar rounded-pill px-3">Probar simulador</span>
+              </div>
+            </a>
+          </div>
+        </div>
       </div>
 
     </div>
