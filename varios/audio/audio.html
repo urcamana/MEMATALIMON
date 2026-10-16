@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Prueba de audio · Me Mata Limón</title>
+  <meta name="theme-color" content="#a88cd7" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: { DEFAULT: '#a88cd7', dark: '#8e66cf', soft: '#f3eef9' },
+            ink: '#2d2a33'
+          },
+          fontFamily: { sans: ['Inter','system-ui','sans-serif'], display: ['Playfair Display','serif'] },
+          boxShadow: { soft: '0 4px 20px rgba(168,140,215,.18)', card: '0 8px 28px rgba(115,90,160,.12)' }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background: linear-gradient(160deg, #f8f5fc 0%, #efe8f8 50%, #f5f0fa 100%); min-height: 100vh; }
+    .tab.active { background: linear-gradient(135deg,#a88cd7,#8e66cf); color:#fff; }
+  </style>
+</head>
+<body class="font-sans text-ink antialiased">
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-primary/15 shadow-sm">
+    <div class="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
+      <div class="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white text-sm shadow-soft">🎧</div>
+      <div>
+        <h1 class="font-display text-lg text-primary-dark font-bold leading-tight">Prueba de audio</h1>
+        <p class="text-[11px] text-gray-500">Auriculares · micrófono</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-lg mx-auto px-4 py-5 pb-16 space-y-4">
+    <div class="bg-amber-50 border border-amber-200 rounded-2xl p-3 text-sm text-amber-900 leading-snug">
+      <strong>Importante:</strong> si algo falla, probá el mismo auricular o micrófono en <strong>otro celular o PC</strong>. Así sabés si el problema es el accesorio o este dispositivo.
+    </div>
+
+    <div class="flex gap-2">
+      <button type="button" data-tab="phones" class="tab active flex-1 py-2.5 rounded-full text-sm font-semibold">Auriculares L/R</button>
+      <button type="button" data-tab="mic" class="tab flex-1 py-2.5 rounded-full text-sm font-medium bg-white border border-primary/20">Micrófono</button>
+    </div>
+
+    <section id="panel-phones" class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-4">
+      <p class="text-sm text-gray-600">Ponete los auriculares y tocá cada lado. Deberías oír el tono <strong>solo</strong> en ese oído.</p>
+      <div class="grid grid-cols-2 gap-3">
+        <button type="button" id="btn-l" class="py-8 rounded-2xl bg-gradient-to-br from-primary to-primary-dark text-white font-bold text-lg shadow-soft active:scale-[0.98] transition">
+          ◀ Izquierda (L)
+        </button>
+        <button type="button" id="btn-r" class="py-8 rounded-2xl bg-gradient-to-br from-primary to-primary-dark text-white font-bold text-lg shadow-soft active:scale-[0.98] transition">
+          Derecha (R) ▶
+        </button>
+      </div>
+      <button type="button" id="btn-both" class="w-full py-3 rounded-xl border border-primary/30 text-sm font-semibold text-primary-dark">Ambos (stereo)</button>
+      <button type="button" id="btn-stop-tone" class="w-full py-2 text-sm text-gray-500">Detener tono</button>
+      <ul class="text-xs text-gray-500 space-y-1 list-disc pl-4">
+        <li>Si L y R se oyen al revés, el cable o el jack pueden estar mal conectados.</li>
+        <li>Si un lado no suena y en otro celular sí, el problema es este equipo o Bluetooth.</li>
+        <li>Si no suena en ningún dispositivo, el auricular puede estar fallando.</li>
+      </ul>
+    </section>
+
+    <section id="panel-mic" class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-4 hidden">
+      <p class="text-sm text-gray-600">Concedé permiso de micrófono, grabá unos segundos y escuchá. Ideal para auriculares con mic.</p>
+      <div class="flex flex-wrap gap-2">
+        <button type="button" id="btn-rec" class="flex-1 min-w-[120px] py-3 rounded-xl bg-gradient-to-r from-primary to-primary-dark text-white font-semibold">Grabar</button>
+        <button type="button" id="btn-stop-rec" class="flex-1 min-w-[120px] py-3 rounded-xl border border-primary/30 font-semibold text-primary-dark" disabled>Detener</button>
+      </div>
+      <p id="rec-status" class="text-xs text-center text-gray-500">Listo para grabar</p>
+      <div class="h-3 rounded-full bg-gray-100 overflow-hidden">
+        <div id="meter" class="h-full bg-gradient-to-r from-primary to-accent w-0 transition-all duration-75"></div>
+      </div>
+      <audio id="playback" controls class="w-full mt-2 hidden"></audio>
+      <ul class="text-xs text-gray-500 space-y-1 list-disc pl-4">
+        <li>Si la barra casi no se mueve, el mic puede estar muteado o mal conectado.</li>
+        <li>Probá también en la app de grabadora del celular u otro dispositivo.</li>
+      </ul>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
