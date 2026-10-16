@@ -25,7 +25,10 @@
   <style>
     body { background: linear-gradient(160deg, #f8f5fc 0%, #efe8f8 50%, #f5f0fa 100%); min-height: 100vh; }
     .mode.active { border-color: #8e66cf; background: #f3eef9; box-shadow: 0 0 0 2px rgba(142,102,207,.22); }
-    #wheel { transition: transform 4s cubic-bezier(0.12, 0.75, 0.05, 1); }
+    #wheel { transition: transform 4.2s cubic-bezier(0.12, 0.75, 0.05, 1); }
+    .cell-sold { background: #e8dff5 !important; opacity: 0.85; }
+    .cell-sold .badge-sold { display: inline-block; }
+    .badge-sold { display: none; }
   </style>
 </head>
 <body class="font-sans text-ink antialiased">
@@ -34,28 +37,35 @@
       <div class="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white text-sm shadow-soft">🎲</div>
       <div>
         <h1 class="font-display text-lg text-primary-dark font-bold leading-tight">Sorteo y rifa</h1>
-        <p class="text-[11px] text-gray-500">Números · nombres · grilla · ruleta</p>
+        <p class="text-[11px] text-gray-500">Grilla editable · vendidos · ruleta · PDF</p>
       </div>
     </div>
   </header>
 
   <main class="max-w-lg mx-auto px-4 py-5 pb-16 space-y-4">
     <section class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
-      <h2 class="text-sm font-semibold text-primary-dark">1. ¿Qué sorteás?</h2>
+      <h2 class="text-sm font-semibold text-primary-dark">1. Datos de la rifa</h2>
+      <input id="titulo" type="text" placeholder="Ej: Rifa del Día del Arquero" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" />
+      <textarea id="premios" rows="2" placeholder="Premios (opcional)&#10;1º …  2º …" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm"></textarea>
+      <input id="extra" type="text" placeholder="Organiza / valor del número / fecha (opcional)" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" />
+    </section>
+
+    <section class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
+      <h2 class="text-sm font-semibold text-primary-dark">2. ¿Qué sorteás?</h2>
       <div class="grid grid-cols-2 gap-2">
         <button type="button" class="mode active rounded-xl border-2 border-primary/30 p-3 text-left" data-mode="numeros">
           <div class="font-bold text-sm text-primary-dark">Números</div>
           <div class="text-[10px] text-gray-500">Rifa 1…N</div>
         </button>
-        <button type="button" class="mode rounded-xl border border-primary/15 p-3 text-left" data-mode="nombres">
-          <div class="font-bold text-sm">Nombres</div>
-          <div class="text-[10px] text-gray-500">Lista de participantes</div>
+        <button type="button" class="mode rounded-xl border-2 border-primary/20 p-3 text-left" data-mode="nombres">
+          <div class="font-bold text-sm text-primary-dark">Nombres</div>
+          <div class="text-[10px] text-gray-500">Lista libre</div>
         </button>
       </div>
     </section>
 
     <section id="cfg-num" class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
-      <h2 class="text-sm font-semibold text-primary-dark">2. Rango de números</h2>
+      <h2 class="text-sm font-semibold text-primary-dark">3. Rango de números</h2>
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="text-[11px] text-gray-500">Desde</label>
@@ -66,33 +76,45 @@
           <input type="number" id="n-to" value="50" min="1" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" />
         </div>
       </div>
+      <button type="button" id="btn-gen" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-primary to-primary-dark text-white font-semibold text-sm shadow-soft">Generar / actualizar grilla</button>
+      <p class="text-[11px] text-gray-400">Si ya tenés datos guardados, no se borran al abrir la página. “Generar” recrea casilleros vacíos (pide confirmación si hay datos).</p>
     </section>
 
     <section id="cfg-names" class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3 hidden">
-      <h2 class="text-sm font-semibold text-primary-dark">2. Nombres (uno por línea)</h2>
-      <textarea id="names" rows="6" placeholder="Ana&#10;Bruno&#10;Carla&#10;Diego" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm"></textarea>
-      <p id="name-count" class="text-xs text-gray-400">0 nombres</p>
+      <h2 class="text-sm font-semibold text-primary-dark">3. Nombres (uno por línea)</h2>
+      <textarea id="names" rows="5" placeholder="Ana&#10;Bruno&#10;Carla" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm"></textarea>
+      <button type="button" id="btn-gen-names" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-primary to-primary-dark text-white font-semibold text-sm shadow-soft">Armar grilla con nombres</button>
     </section>
 
     <section class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
-      <h2 class="text-sm font-semibold text-primary-dark">3. Acción</h2>
+      <div class="flex items-center justify-between gap-2 flex-wrap">
+        <h2 class="text-sm font-semibold text-primary-dark">Grilla en pantalla</h2>
+        <span id="stats" class="text-[11px] text-gray-500"></span>
+      </div>
+      <div id="grid" class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[28rem] overflow-y-auto pr-1"></div>
+      <p id="grid-empty" class="text-sm text-gray-400 text-center py-6">Generá la grilla para empezar.</p>
+    </section>
+
+    <section class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
+      <h2 class="text-sm font-semibold text-primary-dark">Sortear</h2>
       <div class="grid grid-cols-1 gap-2">
-        <button type="button" id="btn-draw" class="w-full py-3 rounded-xl bg-gradient-to-r from-primary to-primary-dark text-white font-semibold shadow-soft">Sortear un ganador</button>
-        <button type="button" id="btn-spin" class="w-full py-3 rounded-xl border border-primary/30 font-semibold text-primary-dark">Girar ruleta</button>
-        <button type="button" id="btn-pdf" class="w-full py-3 rounded-xl border border-primary/30 font-semibold text-primary-dark">PDF grilla para rifa (A4)</button>
+        <button type="button" id="btn-draw" class="w-full py-3 rounded-xl bg-gradient-to-r from-primary to-primary-dark text-white font-semibold shadow-soft">Sortear un ganador (solo vendidos)</button>
+        <button type="button" id="btn-draw-all" class="w-full py-2.5 rounded-xl border border-primary/30 font-semibold text-primary-dark text-sm">Sortear entre todos</button>
+        <button type="button" id="btn-spin" class="w-full py-2.5 rounded-xl border border-primary/30 font-semibold text-primary-dark text-sm">Girar ruleta (vendidos)</button>
       </div>
       <div id="result" class="hidden text-center p-4 rounded-xl bg-primary-soft/60 border border-primary/15">
         <p class="text-xs text-gray-500 uppercase tracking-wide">Ganador</p>
         <p id="winner" class="text-2xl font-bold text-primary-dark mt-1"></p>
       </div>
-    </section>
-
-    <section class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
-      <h2 class="text-sm font-semibold text-primary-dark">Ruleta</h2>
-      <div class="relative mx-auto w-64 h-64 sm:w-72 sm:h-72">
+      <div class="relative mx-auto w-56 h-56 sm:w-64 sm:h-64 mt-2">
         <div class="absolute left-1/2 -top-1 -translate-x-1/2 z-10 text-primary-dark text-2xl">▼</div>
         <canvas id="wheel" width="320" height="320" class="w-full h-full rounded-full shadow-card"></canvas>
       </div>
+    </section>
+
+    <section class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-2">
+      <button type="button" id="btn-pdf" class="w-full py-3 rounded-xl border border-primary/30 font-semibold text-primary-dark">Exportar grilla a PDF (A4)</button>
+      <button type="button" id="btn-reset" class="w-full py-2 rounded-xl text-xs text-red-500">Borrar rifa guardada en este dispositivo</button>
     </section>
   </main>
   <script src="app.js"></script>

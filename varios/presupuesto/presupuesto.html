@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Presupuesto · Me Mata Limón</title>
+  <meta name="theme-color" content="#a88cd7" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: { DEFAULT: '#a88cd7', dark: '#8e66cf', soft: '#f3eef9' },
+            ink: '#2d2a33'
+          },
+          fontFamily: { sans: ['Inter','system-ui','sans-serif'], display: ['Playfair Display','serif'] },
+          boxShadow: { soft: '0 4px 20px rgba(168,140,215,.18)', card: '0 8px 28px rgba(115,90,160,.12)' }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background: linear-gradient(160deg, #f8f5fc 0%, #efe8f8 50%, #f5f0fa 100%); min-height: 100vh; }
+    .item-row input { font-size: 0.8rem; }
+    #preview {
+      background: #fff;
+      border: 1px solid rgba(168,140,215,.25);
+      box-shadow: 0 4px 18px rgba(115,90,160,.08);
+    }
+  </style>
+</head>
+<body class="font-sans text-ink antialiased">
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-primary/15 shadow-sm">
+    <div class="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
+      <div class="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white text-sm shadow-soft">📋</div>
+      <div>
+        <h1 class="font-display text-lg text-primary-dark font-bold leading-tight">Presupuesto</h1>
+        <p class="text-[11px] text-gray-500">Vista previa en vivo · PDF · no es factura</p>
+      </div>
+    </div>
+  </header>
+  <main class="max-w-lg mx-auto px-4 py-5 pb-16 space-y-4">
+
+    <p class="text-[11px] text-amber-800 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">Este documento es solo un <strong>presupuesto orientativo</strong>. No es factura ni comprobante fiscal.</p>
+
+    <section class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
+      <h2 class="text-sm font-semibold text-primary-dark">Datos del negocio <span class="text-[10px] font-normal text-gray-400">(se mantienen al generar PDF)</span></h2>
+      <input id="biz-name" type="text" placeholder="Nombre del negocio" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" />
+      <input id="biz-extra" type="text" placeholder="Dirección / WhatsApp / CUIT (opcional)" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" />
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="text-[11px] text-gray-500">Fecha</label>
+          <input id="fecha" type="date" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="text-[11px] text-gray-500">Nº presupuesto</label>
+          <input id="numero" type="text" placeholder="001" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" />
+        </div>
+      </div>
+      <div>
+        <label class="text-[11px] text-gray-500">Validez (días)</label>
+        <input id="validez" type="number" min="1" value="7" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" />
+      </div>
+    </section>
+
+    <section class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
+      <h2 class="text-sm font-semibold text-primary-dark">Cliente e ítems <span class="text-[10px] font-normal text-gray-400">(se limpian al generar PDF)</span></h2>
+      <input id="cliente" type="text" placeholder="Nombre del cliente" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" />
+      <div class="flex items-center justify-between">
+        <span class="text-xs text-gray-500">Ítems</span>
+        <button type="button" id="btn-add" class="text-xs font-semibold text-primary-dark px-2 py-1 rounded-lg bg-primary-soft">+ Ítem</button>
+      </div>
+      <div id="items" class="space-y-2"></div>
+      <div class="grid grid-cols-2 gap-2 pt-1">
+        <div>
+          <label class="text-[11px] text-gray-500">Descuento (%)</label>
+          <input id="descuento" type="number" min="0" max="100" step="0.1" value="0" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="text-[11px] text-gray-500">Nota / condiciones</label>
+          <input id="nota" type="text" placeholder="Ej: retiro en local" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Vista previa en vivo -->
+    <section id="preview" class="rounded-2xl p-5 space-y-2">
+      <p class="text-[10px] uppercase tracking-wide text-primary-dark/70 font-semibold">Vista previa</p>
+      <h3 id="pv-biz" class="font-display text-xl text-primary-dark font-bold">Tu negocio</h3>
+      <p id="pv-extra" class="text-xs text-gray-500"></p>
+      <p class="text-[11px] font-semibold text-amber-700 pt-1">PRESUPUESTO (no válido como factura)</p>
+      <p id="pv-meta" class="text-xs text-gray-600"></p>
+      <p id="pv-cliente" class="text-sm font-semibold"></p>
+      <div id="pv-items" class="text-sm space-y-1 border-t border-b border-primary/10 py-2 my-1"></div>
+      <div class="flex justify-between text-sm">
+        <span class="text-gray-500">Subtotal</span><span id="pv-sub">$0</span>
+      </div>
+      <div id="pv-desc-row" class="flex justify-between text-sm hidden">
+        <span class="text-gray-500">Descuento</span><span id="pv-desc"></span>
+      </div>
+      <div class="flex justify-between text-base">
+        <span class="font-semibold">Total</span><span id="pv-total" class="font-bold text-primary-dark">$0</span>
+      </div>
+      <p id="pv-nota" class="text-xs text-gray-500 pt-1"></p>
+    </section>
+
+    <button type="button" id="btn-pdf" class="w-full py-3 rounded-xl bg-gradient-to-r from-primary to-primary-dark text-white font-semibold shadow-soft">Generar PDF</button>
+    <p class="text-[11px] text-center text-gray-400">Al generar el PDF se limpian cliente e ítems. Los datos del negocio quedan para el próximo presupuesto.</p>
+
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
