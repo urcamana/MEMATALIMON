@@ -342,7 +342,7 @@
     const nombre = item.nombre || "Sin nombre";
     const descripcion = item.descripcion || "";
     const link = item.link || "#";
-    const extra = (tipo === "negocio" || tipo === "servicio") ? (item.rubro || "") : (item.categoria || "");
+    const extra = (tipo === "negocio" || tipo === "servicio" || tipo === "profesional") ? (item.rubro || "") : (item.categoria || "");
     const actualizado = formatFecha(item.actualizado);
     const carouselId = "carousel-" + tipo + "-" + id;
 
@@ -352,13 +352,13 @@
     col.dataset.nombre = nombre.toLowerCase();
     col.dataset.extra = extra.toLowerCase();
 
-    const esRecomendado = (tipo === "negocio" || tipo === "servicio") && (item.recomendado === true || item.recomendado === "true");
+    const esRecomendado = (tipo === "negocio" || tipo === "servicio" || tipo === "profesional") && (item.recomendado === true || item.recomendado === "true");
     const badgeRecomendado = esRecomendado
       ? `<span class="badge-recomendado">¡Recomendado por nosotros!</span>`
       : "";
 
     // Negocio/servicio: link a esta tarjeta (?id=). Producto/curso/libro: link de afiliado.
-    const linkCompartir = (tipo === "negocio" || tipo === "servicio")
+    const linkCompartir = (tipo === "negocio" || tipo === "servicio" || tipo === "profesional")
       ? urlDeepLinkTarjeta(id)
       : String(link);
     const btnCompartir =
@@ -401,9 +401,9 @@
           ${extra ? `<span class="badge badge-rubro mb-2 align-self-start">${extra}</span>` : ""}
           <p class="card-text small text-muted flex-grow-1">${descripcion}</p>
           <a href="${link}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-ver mt-auto">
-            ${tipo === "negocio" || tipo === "servicio" ? "Ver / Contactar" : (tipo === "curso" ? "Ver curso / ebook" : (tipo === "libro" ? "Ver libro" : "Ver en Mercado Libre"))}
+            ${tipo === "negocio" || tipo === "servicio" || tipo === "profesional" ? "Ver / Contactar" : (tipo === "curso" ? "Ver curso / ebook" : (tipo === "libro" ? "Ver libro" : "Ver en Mercado Libre"))}
           </a>
-          ${(tipo === "negocio" || tipo === "servicio") && item.mapa
+          ${(tipo === "negocio" || tipo === "servicio" || tipo === "profesional") && item.mapa
             ? `<a href="${String(item.mapa).replace(/"/g, "&quot;")}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-secondary mt-2 btn-mapa">Ver en Maps</a>`
             : ""}
           ${actualizado ? `<small class="text-muted mt-2 d-block" style="font-size:0.7rem">${actualizado}</small>` : ""}
@@ -625,6 +625,30 @@
   }
 
 
+
+  async function initProfesionales() {
+    const contenedor = document.getElementById("contenedorTarjetas");
+    const buscador = document.getElementById("buscador");
+    const mensaje = document.getElementById("mensajeEstado");
+    if (!contenedor) return;
+
+    try {
+      if (mensaje) mensaje.textContent = "Cargando profesionales...";
+      const lista = await cargarJSON("./profesionales.json");
+      const ordenados = ordenarNegocios(lista);
+      contenedor.innerHTML = "";
+      const frag = document.createDocumentFragment();
+      ordenados.forEach((item) => frag.appendChild(crearTarjeta(item, "profesional", "profesionales")));
+      contenedor.appendChild(frag);
+      if (mensaje) mensaje.textContent = "";
+      activarLazyImagenes("profesionales");
+      if (buscador) buscador.addEventListener("input", () => filtrarTarjetas(buscador.value));
+    } catch (err) {
+      console.error(err);
+      if (mensaje) mensaje.textContent = "No se pudieron cargar los profesionales. Revisá profesionales.json";
+    }
+  }
+
   async function initLibros() {
     const contenedor = document.getElementById("contenedorTarjetas");
     const buscador = document.getElementById("buscador");
@@ -682,8 +706,9 @@
     const after = function () {
       setTimeout(resaltarTarjetaDesdeURL, 50);
     };
-    if (page === "negocios") initNegocios().then(after).catch(after);
-    else if (page === "servicios") initServicios().then(after).catch(after);
+    if (page === "profesionales") initProfesionales().then(after).catch(after);
+    else if (page === "negocios") initNegocios().then(after).catch(after); // legacy
+    else if (page === "servicios") initServicios().then(after).catch(after); // legacy
     else if (page === "productos") initProductos().then(after).catch(after);
     else if (page === "cursos") initCursos().then(after).catch(after);
     else if (page === "libros") initLibros().then(after).catch(after);
