@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Inventario rápido · Me Mata Limón</title>
+  <meta name="description" content="Lista rápida de productos con cantidad y unidad. Exportá a PDF." />
+  <meta name="theme-color" content="#a88cd7" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: { DEFAULT: '#a88cd7', dark: '#8e66cf', soft: '#f3eef9' },
+            ink: '#2d2a33'
+          },
+          fontFamily: { sans: ['Inter','system-ui','sans-serif'], display: ['Playfair Display','serif'] },
+          boxShadow: { soft: '0 4px 20px rgba(168,140,215,.18)', card: '0 8px 28px rgba(115,90,160,.12)' }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background: linear-gradient(160deg, #f8f5fc 0%, #efe8f8 50%, #f5f0fa 100%); min-height: 100vh; }
+  </style>
+</head>
+<body class="font-sans text-ink antialiased">
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-primary/15 shadow-sm">
+    <div class="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
+      <div class="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white text-xs font-bold shadow-soft">📦</div>
+      <div>
+        <h1 class="font-display text-lg text-primary-dark font-bold leading-tight">Inventario rápido</h1>
+        <p class="text-[11px] text-gray-500">Producto · cantidad · medida</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-lg mx-auto px-4 py-5 pb-20 space-y-4">
+    <section class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
+      <h2 class="text-sm font-semibold text-primary-dark">Agregar ítem</h2>
+      <div>
+        <label class="text-[11px] text-gray-500">Nombre del producto</label>
+        <input id="nombre" type="text" placeholder="Ej: Auricular Bluetooth" class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm" autocomplete="off" />
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-[11px] text-gray-500">Cantidad</label>
+          <input id="cant" type="number" inputmode="decimal" step="any" min="0" value="1" class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm" />
+        </div>
+        <div>
+          <label class="text-[11px] text-gray-500">Medida</label>
+          <select id="unidad" class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm">
+            <option value="unidad" selected>unidad</option>
+            <option value="pack">pack</option>
+            <option value="caja">caja</option>
+            <option value="par">par</option>
+            <option value="kg">kg</option>
+            <option value="g">g</option>
+            <option value="l">l</option>
+            <option value="ml">ml</option>
+            <option value="m">m</option>
+            <option value="cm">cm</option>
+            <option value="m²">m²</option>
+            <option value="rollo">rollo</option>
+            <option value="docena">docena</option>
+          </select>
+        </div>
+      </div>
+      <button type="button" id="btn-add" class="w-full py-3 rounded-xl bg-gradient-to-r from-primary to-primary-dark text-white font-semibold shadow-soft">Agregar a la lista</button>
+      <p id="msg" class="text-xs text-center text-gray-400 hidden"></p>
+    </section>
+
+    <section class="bg-white rounded-2xl shadow-card border border-primary/10 overflow-hidden">
+      <div class="px-4 py-3 border-b border-primary/10 flex items-center justify-between gap-2">
+        <h2 class="text-sm font-semibold text-primary-dark">Lista</h2>
+        <span id="total" class="text-xs text-gray-400">0 ítems</span>
+      </div>
+      <div id="list" class="divide-y divide-primary/10">
+        <p id="empty" class="p-4 text-sm text-gray-400 text-center">Todavía no hay productos. Completá el formulario y tocá Agregar.</p>
+      </div>
+    </section>
+
+    <section class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
+      <label class="text-[11px] text-gray-500">Título del PDF (opcional)</label>
+      <input id="titulo" type="text" placeholder="Ej: Stock depósito — octubre" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" />
+      <button type="button" id="btn-pdf" disabled class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-primary to-primary-dark text-white font-semibold shadow-soft disabled:opacity-40">Exportar lista en PDF</button>
+      <button type="button" id="btn-clear" class="w-full py-2 text-sm text-red-400 font-semibold">Vaciar lista</button>
+      <p class="text-[11px] text-gray-400 text-center">La lista se guarda en este navegador hasta que la vacíes.</p>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

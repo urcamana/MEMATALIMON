@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>QR · Me Mata Limón</title>
+  <meta name="description" content="Generá códigos QR para links, WhatsApp, texto y más." />
+  <meta name="theme-color" content="#a88cd7" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: { DEFAULT: '#a88cd7', dark: '#8e66cf', soft: '#f3eef9' },
+            ink: '#2d2a33'
+          },
+          fontFamily: { sans: ['Inter','system-ui','sans-serif'], display: ['Playfair Display','serif'] },
+          boxShadow: { soft: '0 4px 20px rgba(168,140,215,.18)', card: '0 8px 28px rgba(115,90,160,.12)' }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background: linear-gradient(160deg, #f8f5fc 0%, #efe8f8 50%, #f5f0fa 100%); min-height: 100vh; }
+    .tipo.active { border-color: #8e66cf; background: #f3eef9; box-shadow: 0 0 0 2px rgba(142,102,207,.22); }
+    #qrcode { display: flex; justify-content: center; }
+    #qrcode img, #qrcode canvas { border-radius: 12px; }
+  </style>
+</head>
+<body class="font-sans text-ink antialiased">
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-primary/15 shadow-sm">
+    <div class="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
+      <div class="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white text-xs font-bold shadow-soft">QR</div>
+      <div>
+        <h1 class="font-display text-lg text-primary-dark font-bold leading-tight">Código QR</h1>
+        <p class="text-[11px] text-gray-500">Link · WhatsApp · texto · WiFi</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-lg mx-auto px-4 py-5 pb-16 space-y-4">
+    <section class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
+      <h2 class="text-sm font-semibold text-primary-dark">1. Tipo</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2" id="tipos">
+        <button type="button" class="tipo active rounded-xl border-2 border-primary/30 p-2.5 text-left" data-tipo="url">
+          <div class="font-bold text-xs text-primary-dark">Link / web</div>
+        </button>
+        <button type="button" class="tipo rounded-xl border border-primary/15 p-2.5 text-left" data-tipo="wa">
+          <div class="font-bold text-xs">WhatsApp</div>
+        </button>
+        <button type="button" class="tipo rounded-xl border border-primary/15 p-2.5 text-left" data-tipo="texto">
+          <div class="font-bold text-xs">Texto</div>
+        </button>
+        <button type="button" class="tipo rounded-xl border border-primary/15 p-2.5 text-left" data-tipo="wifi">
+          <div class="font-bold text-xs">WiFi</div>
+        </button>
+      </div>
+    </section>
+
+    <section class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
+      <h2 class="text-sm font-semibold text-primary-dark">2. Datos</h2>
+      <div id="fields" class="space-y-3"></div>
+    </section>
+
+    <section class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
+      <h2 class="text-sm font-semibold text-primary-dark">3. Tamaño</h2>
+      <input type="range" id="size" min="200" max="2000" step="50" value="400" class="w-full accent-primary" />
+      <div class="flex justify-between items-center gap-2">
+        <p class="text-xs text-gray-400"><span id="size-val">400</span> px (el PNG se descarga a ese tamaño)</p>
+      </div>
+      <div class="flex flex-wrap gap-1.5">
+        <button type="button" class="size-preset text-[11px] px-2.5 py-1 rounded-full border border-primary/25 bg-white" data-s="400">400 · celular</button>
+        <button type="button" class="size-preset text-[11px] px-2.5 py-1 rounded-full border border-primary/25 bg-white" data-s="800">800 · imprimir</button>
+        <button type="button" class="size-preset text-[11px] px-2.5 py-1 rounded-full border border-primary/25 bg-white" data-s="1200">1200 · cartel</button>
+        <button type="button" class="size-preset text-[11px] px-2.5 py-1 rounded-full border border-primary/25 bg-white" data-s="2000">2000 · pancarta</button>
+      </div>
+      <p class="text-[11px] text-gray-400">Para banner o pancarta usá 1200–2000 px. En pantalla se ve más chico, pero el archivo descargado conserva el tamaño elegido.</p>
+    </section>
+
+    <section class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-4">
+      <button type="button" id="btn-gen" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-primary to-primary-dark text-white font-semibold shadow-soft">Generar QR</button>
+      <div id="qr-wrap" class="hidden space-y-3">
+        <div id="qrcode" class="bg-white p-3 rounded-xl border border-primary/10 mx-auto w-fit"></div>
+        <button type="button" id="btn-dl" class="w-full py-3 rounded-xl border border-primary/30 font-semibold text-primary-dark">Descargar PNG</button>
+      </div>
+      <p id="err" class="text-sm text-red-500 text-center hidden"></p>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
