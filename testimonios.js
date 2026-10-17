@@ -245,12 +245,14 @@
       }));
     }
     return Promise.all(pruebas).then(function (results) {
+      // Secuencia 1..N (se corta en el primer hueco), luego orden descendente: N, N-1, … 1
       const paths = [];
       for (let i = 1; i <= max; i++) {
         const hit = results.find(function (r) { return r && r.i === i; });
         if (!hit) break;
         paths.push(hit.src);
       }
+      paths.reverse();
       return paths;
     });
   }
@@ -278,12 +280,53 @@
       interval: false, ride: false, wrap: true, touch: true, keyboard: true
     });
     inner.querySelectorAll('.galeria-img').forEach(function (img) {
-      img.style.cursor = 'pointer';
+      img.style.cursor = 'zoom-in';
       img.addEventListener('click', function (e) {
         e.preventDefault();
-        inst.next();
+        e.stopPropagation();
+        abrirLightboxTestimonios(img.currentSrc || img.src, img.alt || '');
       });
     });
+  }
+
+  function asegurarLightboxTestimonios() {
+    if (document.getElementById('mmlLightboxTestimonios')) return;
+    if (!document.getElementById('mmlLightboxTestimoniosStyles')) {
+      const st = document.createElement('style');
+      st.id = 'mmlLightboxTestimoniosStyles';
+      st.textContent = [
+        '#mmlLightboxTestimonios { position:fixed; inset:0; z-index:3000; background:rgba(0,0,0,0.92);',
+        'display:flex; align-items:center; justify-content:center; padding:0.5rem; }',
+        '#mmlLightboxTestimonios.d-none { display:none !important; }',
+        '#mmlLightboxTestimonios img { width:auto; height:auto; max-width:98vw; max-height:96vh;',
+        'object-fit:contain; border-radius:8px; box-shadow:0 8px 40px rgba(0,0,0,0.5); }',
+        '#mmlLightboxTestimonios .mml-lb-cerrar { position:fixed; top:12px; right:14px; z-index:3001;',
+        'width:48px; height:48px; border-radius:50%; border:none; background:rgba(255,255,255,0.2);',
+        'color:#fff; font-size:2rem; line-height:1; cursor:pointer; }'
+      ].join(' ');
+      document.head.appendChild(st);
+    }
+    const div = document.createElement('div');
+    div.id = 'mmlLightboxTestimonios';
+    div.className = 'd-none';
+    div.innerHTML = '<button type="button" class="mml-lb-cerrar" aria-label="Cerrar">&times;</button><img src="" alt="">';
+    document.body.appendChild(div);
+    div.addEventListener('click', function (e) {
+      if (e.target === div || e.target.classList.contains('mml-lb-cerrar')) {
+        div.classList.add('d-none');
+        div.querySelector('img').src = '';
+      }
+    });
+  }
+
+  function abrirLightboxTestimonios(src, alt) {
+    if (!src) return;
+    asegurarLightboxTestimonios();
+    const box = document.getElementById('mmlLightboxTestimonios');
+    const im = box.querySelector('img');
+    im.src = src;
+    im.alt = alt || '';
+    box.classList.remove('d-none');
   }
 
   async function cargarGalerias() {
