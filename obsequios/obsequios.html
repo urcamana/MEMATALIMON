@@ -15,81 +15,123 @@
 
   
   <style>
+    /* Contenedor de pestañas */
     .obsequio-tabs {
       display: flex;
-      flex-wrap: nowrap;
-      gap: 0.3rem;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      padding: 0.35rem 0.1rem 0;
-      border-bottom: 2px solid rgba(168, 140, 215, 0.35);
-      scrollbar-width: thin;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      justify-content: center;
+      align-items: stretch;
+      padding: 0.75rem 0.5rem 0.9rem;
+      margin: 0 auto 0.25rem;
+      max-width: 920px;
+      background: linear-gradient(180deg, rgba(168,140,215,0.12) 0%, rgba(168,140,215,0.04) 100%);
+      border: 1px solid rgba(168, 140, 215, 0.22);
+      border-radius: 18px;
+      box-shadow: 0 4px 18px rgba(115, 90, 160, 0.06);
     }
+
+    /* Chip / pestaña */
     .obsequio-tab {
-      flex: 0 0 auto;
-      border: 1px solid transparent;
-      background: transparent;
+      flex: 0 1 auto;
+      border: none;
+      background: rgba(255, 255, 255, 0.55);
       color: #5c3d8a;
       font-weight: 600;
-      font-size: 0.88rem;
-      padding: 0.6rem 1.05rem;
-      border-radius: 10px 10px 0 0;
+      font-size: 0.82rem;
+      padding: 0.5rem 0.9rem;
+      border-radius: 12px;
       cursor: pointer;
-      white-space: nowrap;
-      transition: background .15s, color .15s;
+      white-space: normal;
+      text-align: center;
+      line-height: 1.25;
+      max-width: 100%;
+      transition: background .18s ease, color .18s ease, transform .15s ease, box-shadow .18s ease;
+      box-shadow: 0 1px 2px rgba(92, 61, 138, 0.04);
     }
-    .obsequio-tab:hover { background: rgba(168,140,215,0.12); }
+    .obsequio-tab:hover {
+      background: rgba(255, 255, 255, 0.95);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(142, 102, 207, 0.12);
+    }
     .obsequio-tab.active {
-      background: #a88cd7;
+      background: linear-gradient(135deg, #b89ae0 0%, #8e66cf 100%);
       color: #fff;
-      border-color: #a88cd7;
+      box-shadow: 0 4px 14px rgba(142, 102, 207, 0.35);
+      transform: translateY(-1px);
     }
+    .obsequio-tab.active:hover {
+      background: linear-gradient(135deg, #c2a8e8 0%, #9570c9 100%);
+      color: #fff;
+    }
+    /* Fecha debajo del título (la genera el JS en un span.small) */
+    .obsequio-tab .small,
+    .obsequio-tab span.d-block.small {
+      font-weight: 500 !important;
+      font-size: 0.65rem !important;
+      opacity: 0.78;
+      margin-top: 0.15rem !important;
+      letter-spacing: 0.01em;
+    }
+    .obsequio-tab.active .small,
+    .obsequio-tab.active span.d-block.small {
+      opacity: 0.9;
+      color: rgba(255,255,255,0.92) !important;
+    }
+
+    @media (max-width: 575px) {
+      .obsequio-tabs { gap: 0.35rem; padding: 0.55rem 0.4rem 0.65rem; border-radius: 14px; }
+      .obsequio-tab { font-size: 0.74rem; padding: 0.42rem 0.7rem; border-radius: 10px; }
+    }
+
     .obsequio-panel-wrap {
-      background: #faf8fc;
-      border-radius: 0 0 12px 12px;
-      padding: 1.1rem 0.5rem 1.5rem;
+      background: transparent;
+      border-radius: 12px;
+      padding: 1.15rem 0.25rem 1.5rem;
       min-height: 160px;
     }
     .rec-card {
       border: none !important;
-      border-radius: 12px !important;
+      border-radius: 14px !important;
       overflow: hidden;
       background: #fff;
       transition: transform .15s, box-shadow .15s;
+      box-shadow: 0 2px 10px rgba(115, 90, 160, 0.06);
     }
     .rec-card:hover {
       transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(115,123,191,0.15) !important;
+      box-shadow: 0 10px 24px rgba(115,123,191,0.14) !important;
     }
     .rec-img {
       height: 160px;
       object-fit: contain;
-      background: #f5f5f5;
+      background: #f7f4fb;
       width: 100%;
       padding: 0.5rem;
     }
     @media (min-width: 768px) {
       .rec-img { height: 180px; }
     }
-  
+
     .ruleta-box {
-      background: #faf8fc;
-      border: 1px solid rgba(168,140,215,0.35);
-      border-radius: 16px;
+      background: linear-gradient(180deg, #faf8fc 0%, #f3eef9 100%);
+      border: 1px solid rgba(168,140,215,0.3);
+      border-radius: 18px;
       padding: 1.25rem 1rem;
       max-width: 420px;
       margin-left: auto;
       margin-right: auto;
+      box-shadow: 0 4px 16px rgba(115, 90, 160, 0.06);
     }
     .ruleta-box .btn-ruleta {
-      background: #a88cd7;
+      background: linear-gradient(135deg, #b89ae0 0%, #8e66cf 100%);
       border: none;
       color: #fff;
       font-weight: 600;
+      box-shadow: 0 4px 12px rgba(142, 102, 207, 0.3);
     }
-    .ruleta-box .btn-ruleta:hover { background: #9570c9; color: #fff; }
-    .ruleta-box .btn-ruleta:disabled { opacity: 0.55; }
-    .obsequio-tab { line-height: 1.2; }
+    .ruleta-box .btn-ruleta:hover { background: linear-gradient(135deg, #c2a8e8 0%, #9570c9 100%); color: #fff; }
+    .ruleta-box .btn-ruleta:disabled { opacity: 0.55; box-shadow: none; }
   </style>
 
 

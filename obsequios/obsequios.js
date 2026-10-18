@@ -3,7 +3,7 @@
    * Ideas para regalar — Argentina
    * Ventana: 30 días antes → 7 días después.
    * always: true = siempre visible (van primero en las pestañas).
-   * tipoFecha: 'fijo' | 'tercer_domingo' (Madre/Padre).
+   * tipoFecha: 'fijo' | 'tercer_domingo' | 'segundo_lunes' | 'dia_256'
    */
   const EVENTOS = [
     // --- Siempre visibles (primero) ---
@@ -12,19 +12,84 @@
     { id: 'aniversarios', archivo: 'aniversarios.json', titulo: 'Aniversarios', always: true },
     { id: 'amigo_invisible', archivo: 'amigo_invisible.json', titulo: 'Amigo invisible', always: true },
     { id: 'peques', archivo: 'peques.json', titulo: 'Para peques', always: true },
-    // --- Temporada (al final; se ocultan fuera de ventana) ---
+
+    // --- Temporada ---
     { id: 'enamorados', archivo: 'enamorados.json', titulo: 'San Valentín / Enamorados', always: false, tipoFecha: 'fijo', mes: 2, dia: 14 },
     { id: 'padre', archivo: 'padre.json', titulo: 'Día del Padre', always: false, tipoFecha: 'tercer_domingo', mes: 6 },
     { id: 'amigo', archivo: 'amigo.json', titulo: 'Día del Amigo', always: false, tipoFecha: 'fijo', mes: 7, dia: 20 },
     { id: 'profe', archivo: 'profe.json', titulo: 'Día del Maestro', always: false, tipoFecha: 'fijo', mes: 9, dia: 11 },
     { id: 'madre', archivo: 'madre.json', titulo: 'Día de la Madre', always: false, tipoFecha: 'tercer_domingo', mes: 10 },
-    { id: 'navidad', archivo: 'navidad.json', titulo: 'Navidad', always: false, tipoFecha: 'fijo', mes: 12, dia: 25 }
+    { id: 'navidad', archivo: 'navidad.json', titulo: 'Navidad', always: false, tipoFecha: 'fijo', mes: 12, dia: 25 },
+
+    // --- Secundarias ---
+    { id: 'novia', archivo: 'novia.json', titulo: 'Día de la Novia', always: false, tipoFecha: 'fijo', mes: 8, dia: 1 },
+    { id: 'mujer', archivo: 'mujer.json', titulo: 'Día de la Mujer', always: false, tipoFecha: 'fijo', mes: 3, dia: 8 },
+    { id: 'hombre', archivo: 'hombre.json', titulo: 'Día del Hombre', always: false, tipoFecha: 'fijo', mes: 11, dia: 19 },
+    { id: 'niño', archivo: 'infancias.json', titulo: 'Día del Niño/a', always: false, tipoFecha: 'tercer_domingo', mes: 8 },
+
+    // --- Profesiones (mismo nivel; sin array anidado) ---
+    // Enero
+    { id: 'musico', archivo: 'musico.json', titulo: 'Día del Músico', always: false, tipoFecha: 'fijo', mes: 1, dia: 23 },
+    // Febrero
+    { id: 'vitivinicola', archivo: 'vitivinicola.json', titulo: 'Día del Trabajador Vitivinícola', always: false, tipoFecha: 'fijo', mes: 2, dia: 1 },
+    { id: 'guardavidas', archivo: 'guardavidas.json', titulo: 'Día del Guardavidas', always: false, tipoFecha: 'fijo', mes: 2, dia: 4 },
+    { id: 'publicitario', archivo: 'publicitario.json', titulo: 'Día del Redactor Publicitario', always: false, tipoFecha: 'fijo', mes: 2, dia: 15 },
+    { id: 'mecanico', archivo: 'mecanico.json', titulo: 'Día del Mecánico Automotor', always: false, tipoFecha: 'fijo', mes: 2, dia: 24 },
+    // Marzo
+    { id: 'transporte', archivo: 'transporte.json', titulo: 'Día del Trabajador del Transporte', always: false, tipoFecha: 'fijo', mes: 3, dia: 1 },
+    { id: 'pizzero_pastelero', archivo: 'pizzero_pastelero.json', titulo: 'Día del Pizzero y Pastelero', always: false, tipoFecha: 'fijo', mes: 3, dia: 12 },
+    { id: 'artesano', archivo: 'artesano.json', titulo: 'Día del Artesano', always: false, tipoFecha: 'fijo', mes: 3, dia: 19 },
+    // Abril
+    { id: 'viajante', archivo: 'viajante.json', titulo: 'Día del Viajante de Comercio', always: false, tipoFecha: 'fijo', mes: 4, dia: 10 },
+    { id: 'kinesiologo', archivo: 'kinesiologo.json', titulo: 'Día del Kinesiólogo', always: false, tipoFecha: 'fijo', mes: 4, dia: 13 },
+    { id: 'secretaria', archivo: 'secretaria.json', titulo: 'Día de la Secretaria', always: false, tipoFecha: 'fijo', mes: 4, dia: 26 },
+    { id: 'disenador_interiores', archivo: 'disenador_interiores.json', titulo: 'Día del Diseñador de Interiores', always: false, tipoFecha: 'fijo', mes: 4, dia: 28 },
+    // Mayo
+    { id: 'actor', archivo: 'actor.json', titulo: 'Día del Actor', always: false, tipoFecha: 'segundo_lunes', mes: 5 },
+    { id: 'disenador_moda', archivo: 'disenador_moda.json', titulo: 'Día del Diseñador de Moda', always: false, tipoFecha: 'fijo', mes: 5, dia: 15 },
+    { id: 'gastronomico', archivo: 'gastronomico.json', titulo: 'Día del Trabajador Gastronómico', always: false, tipoFecha: 'fijo', mes: 5, dia: 25 },
+    // Junio
+    { id: 'periodista', archivo: 'periodista.json', titulo: 'Día del Periodista', always: false, tipoFecha: 'fijo', mes: 6, dia: 7 },
+    { id: 'ingeniero', archivo: 'ingeniero.json', titulo: 'Día del Ingeniero', always: false, tipoFecha: 'fijo', mes: 6, dia: 16 },
+    { id: 'barrabas', archivo: 'barrabas.json', titulo: 'Día del Barrero y Ceramista', always: false, tipoFecha: 'fijo', mes: 6, dia: 18 },
+    { id: 'comercio_exterior', archivo: 'comercio_exterior.json', titulo: 'Día del Despachante de Aduana', always: false, tipoFecha: 'fijo', mes: 6, dia: 25 },
+    // Julio
+    { id: 'arquitecto', archivo: 'arquitecto.json', titulo: 'Día del Arquitecto', always: false, tipoFecha: 'fijo', mes: 7, dia: 1 },
+    { id: 'locutor', archivo: 'locutor.json', titulo: 'Día del Locutor', always: false, tipoFecha: 'fijo', mes: 7, dia: 3 },
+    { id: 'camionero', archivo: 'camionero.json', titulo: 'Día del Camionero', always: false, tipoFecha: 'fijo', mes: 7, dia: 26 },
+    // Agosto
+    { id: 'veterinario', archivo: 'veterinario.json', titulo: 'Día del Veterinario', always: false, tipoFecha: 'fijo', mes: 8, dia: 6 },
+    { id: 'abogado', archivo: 'abogado.json', titulo: 'Día del Abogado', always: false, tipoFecha: 'fijo', mes: 8, dia: 29 },
+    { id: 'almacenero', archivo: 'almacenero.json', titulo: 'Día del Almacenero', always: false, tipoFecha: 'fijo', mes: 8, dia: 31 },
+    // Septiembre
+    { id: 'inmobiliario', archivo: 'inmobiliario.json', titulo: 'Día del Corredor Inmobiliario', always: false, tipoFecha: 'fijo', mes: 9, dia: 4 },
+    { id: 'bibliotecario', archivo: 'bibliotecario.json', titulo: 'Día del Bibliotecario', always: false, tipoFecha: 'fijo', mes: 9, dia: 13 },
+    { id: 'programador', archivo: 'programador.json', titulo: 'Día del Programador', always: false, tipoFecha: 'dia_256', mes: 9 },
+    { id: 'profesor', archivo: 'profesor.json', titulo: 'Día del Profesor', always: false, tipoFecha: 'fijo', mes: 9, dia: 17 },
+    { id: 'fotografo', archivo: 'fotografo.json', titulo: 'Día del Fotógrafo', always: false, tipoFecha: 'fijo', mes: 9, dia: 21 },
+    { id: 'empleado_comercio', archivo: 'empleado_comercio.json', titulo: 'Día del Empleado de Comercio', always: false, tipoFecha: 'fijo', mes: 9, dia: 26 },
+    // Octubre
+    { id: 'odontologo', archivo: 'odontologo.json', titulo: 'Día del Odontólogo', always: false, tipoFecha: 'fijo', mes: 10, dia: 3 },
+    { id: 'farmaceutico', archivo: 'farmaceutico.json', titulo: 'Día del Farmacéutico', always: false, tipoFecha: 'fijo', mes: 10, dia: 12 },
+    { id: 'psicologo', archivo: 'psicologo.json', titulo: 'Día del Psicólogo', always: false, tipoFecha: 'fijo', mes: 10, dia: 13 },
+    { id: 'disenador_grafico', archivo: 'disenador_grafico.json', titulo: 'Día del Diseñador Gráfico', always: false, tipoFecha: 'fijo', mes: 10, dia: 24 },
+    // Noviembre
+    { id: 'bancario', archivo: 'bancario.json', titulo: 'Día del Bancario', always: false, tipoFecha: 'fijo', mes: 11, dia: 6 },
+    { id: 'canillita', archivo: 'canillita.json', titulo: 'Día del Canillita', always: false, tipoFecha: 'fijo', mes: 11, dia: 7 },
+    { id: 'municipal', archivo: 'municipal.json', titulo: 'Día del Empleado Municipal', always: false, tipoFecha: 'fijo', mes: 11, dia: 8 },
+    { id: 'enfermeria', archivo: 'enfermeria.json', titulo: 'Día de la Enfermería', always: false, tipoFecha: 'fijo', mes: 11, dia: 21 },
+    { id: 'quimico', archivo: 'quimico.json', titulo: 'Día del Químico', always: false, tipoFecha: 'fijo', mes: 11, dia: 26 },
+    // Diciembre
+    { id: 'medico', archivo: 'medico.json', titulo: 'Día del Médico', always: false, tipoFecha: 'fijo', mes: 12, dia: 3 },
+    { id: 'ama_de_casa', archivo: 'ama_de_casa.json', titulo: 'Día del Ama de Casa', always: false, tipoFecha: 'fijo', mes: 12, dia: 9 },
+    { id: 'optico', archivo: 'optico.json', titulo: 'Día del Óptico', always: false, tipoFecha: 'fijo', mes: 12, dia: 13 },
+    { id: 'contador', archivo: 'contador.json', titulo: 'Día del Contador', always: false, tipoFecha: 'fijo', mes: 12, dia: 17 }
   ];
 
   const DIAS_ANTES = 30;
   const DIAS_DESPUES = 7;
 
-  /** 3.er domingo del mes (1–12), año y */
+  /** 3.er domingo del mes (mes 1–12) */
   function tercerDomingo(anio, mes) {
     var d = new Date(anio, mes - 1, 1);
     var domingoCount = 0;
@@ -38,6 +103,27 @@
     return new Date(anio, mes - 1, 15);
   }
 
+  /** 2.º lunes del mes (mes 1–12) */
+  function segundoLunes(anio, mes) {
+    var d = new Date(anio, mes - 1, 1);
+    var lunesCount = 0;
+    while (d.getMonth() === mes - 1) {
+      if (d.getDay() === 1) {
+        lunesCount++;
+        if (lunesCount === 2) return new Date(anio, mes - 1, d.getDate());
+      }
+      d.setDate(d.getDate() + 1);
+    }
+    return new Date(anio, mes - 1, 8);
+  }
+
+  /** Día 256 del año (Día del Programador) */
+  function dia256(anio) {
+    var d = new Date(anio, 0, 1);
+    d.setDate(256);
+    return d;
+  }
+
   function fechaEvento(ev, ref) {
     var y = ref.getFullYear();
     var d;
@@ -46,7 +132,18 @@
       var fin = new Date(d);
       fin.setDate(fin.getDate() + DIAS_DESPUES);
       if (ref > fin) d = tercerDomingo(y + 1, ev.mes);
+    } else if (ev.tipoFecha === 'segundo_lunes') {
+      d = segundoLunes(y, ev.mes);
+      var finL = new Date(d);
+      finL.setDate(finL.getDate() + DIAS_DESPUES);
+      if (ref > finL) d = segundoLunes(y + 1, ev.mes);
+    } else if (ev.tipoFecha === 'dia_256') {
+      d = dia256(y);
+      var finP = new Date(d);
+      finP.setDate(finP.getDate() + DIAS_DESPUES);
+      if (ref > finP) d = dia256(y + 1);
     } else {
+      // 'fijo'
       d = new Date(y, (ev.mes || 1) - 1, ev.dia || 1);
       var fin2 = new Date(d);
       fin2.setDate(fin2.getDate() + DIAS_DESPUES);
@@ -116,7 +213,6 @@
     var lista = await res.json();
     var mapa = {};
     articulos.forEach(function (p) { mapa[p.Artículo] = p; });
-
     var cols = [];
     var productos = [];
     (lista || []).forEach(function (item) {
@@ -146,7 +242,6 @@
     var hoy = new Date();
     hoy.setHours(12, 0, 0, 0);
 
-    // Orden del array EVENTOS ya es: always primero, temporada al final
     var visibles = EVENTOS.filter(function (ev) { return estaEnVentana(ev, hoy); });
     if (!visibles.length) {
       if (sin) sin.classList.remove('d-none');
@@ -167,7 +262,7 @@
       activoId = visibles[0].id;
     }
 
-    var cache = {}; // id -> { html, productos }
+    var cache = {};
     var productosActivos = [];
 
     function actualizarRuletaUI() {
@@ -190,13 +285,10 @@
         btn.className = 'obsequio-tab' + (ev.id === activoId ? ' active' : '');
         btn.setAttribute('role', 'tab');
         btn.dataset.tab = ev.id;
-
         var label = document.createElement('span');
         label.className = 'd-block';
         label.textContent = ev.titulo;
         btn.appendChild(label);
-
-        // Fecha solo en eventos de calendario (no always)
         if (!ev.always) {
           var fe = fechaEvento(ev, hoy);
           var sub = document.createElement('span');
@@ -208,7 +300,6 @@
           sub.textContent = formatearFecha(fe);
           btn.appendChild(sub);
         }
-
         btn.addEventListener('click', function () {
           activoId = ev.id;
           renderTabs();
@@ -242,7 +333,6 @@
         if (!productosActivos.length || !ruletaResultado) return;
         btnRuleta.disabled = true;
         ruletaResultado.innerHTML = '<p class="text-muted small mb-0">Eligiendo…</p>';
-
         var pasos = 12 + Math.floor(Math.random() * 8);
         var i = 0;
         var timer = setInterval(function () {
