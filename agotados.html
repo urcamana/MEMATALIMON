@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Agotados · interno MML</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#a88cd7" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: { DEFAULT: '#a88cd7', dark: '#8e66cf', soft: '#f3eef9' },
+            ink: '#2d2a33'
+          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background: linear-gradient(160deg, #f8f5fc 0%, #efe8f8 50%, #f5f0fa 100%); min-height: 100vh; }
+    .row-zero { background: #fdf2f8; border-color: #f9a8d4; }
+    .row-ok { background: #fff; border-color: rgba(168,140,215,.2); }
+  </style>
+</head>
+<body class="font-sans text-ink antialiased">
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-primary/15 shadow-sm">
+    <div class="max-w-3xl mx-auto px-3 sm:px-4 py-3 flex flex-wrap items-center gap-2 sm:gap-3">
+      <div class="min-w-0 flex-1">
+        <h1 class="text-base sm:text-lg font-bold text-primary-dark">Agotados / Facebook</h1>
+        <p class="text-[11px] text-gray-500 truncate">Uso interno · lee articulos.json</p>
+      </div>
+      <button type="button" id="btn-reload" class="text-xs font-semibold px-3 py-2 rounded-xl border border-primary/25 bg-white">Recargar</button>
+      <button type="button" id="btn-save" class="text-xs sm:text-sm font-semibold px-3 sm:px-4 py-2 rounded-xl bg-gradient-to-r from-primary to-primary-dark text-white shadow">
+        Guardar
+      </button>
+    </div>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-3 sm:px-4 py-4 pb-24 space-y-3">
+    <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-[12px] sm:text-sm text-amber-950 leading-snug">
+      <strong>Guardar:</strong> descarga <code class="text-[11px]">agotados.json</code> para subirlo a la raíz del repo (junto a este HTML y a <code class="text-[11px]">articulos.json</code>).
+      También queda una copia en este navegador por si cerrás la pestaña antes de subir el archivo.
+    </div>
+
+    <div class="flex flex-wrap gap-2 text-xs">
+      <span id="stat-total" class="px-2.5 py-1 rounded-full bg-white border border-primary/20">—</span>
+      <span id="stat-zero" class="px-2.5 py-1 rounded-full bg-pink-100 border border-pink-200 text-pink-900">—</span>
+      <span id="stat-fb" class="px-2.5 py-1 rounded-full bg-white border border-primary/20">—</span>
+    </div>
+
+    <div id="alerts" class="space-y-2"></div>
+
+    <div class="flex gap-2">
+      <input type="search" id="q" placeholder="Buscar id, nombre o categoría…"
+        class="flex-1 min-w-0 rounded-xl border border-gray-200 px-3 py-2.5 text-sm bg-white" />
+      <select id="filtro" class="rounded-xl border border-gray-200 px-2 py-2 text-sm bg-white max-w-[42%]">
+        <option value="todos">Todos</option>
+        <option value="cero">Solo inventario 0</option>
+        <option value="baja">Dados de baja en FB</option>
+        <option value="disp">Disponibles en FB</option>
+      </select>
+    </div>
+
+    <p id="status" class="text-xs text-center text-gray-500">Cargando…</p>
+    <div id="list" class="space-y-2"></div>
+  </main>
+
+  <script>
+(() => {
+  const LS_KEY = 'mml-agotados-v1';
+  /** @type {Record<string, boolean>} id -> dado de baja en Facebook */
+  let checks = {};
+  let productos = [];
+  let dirty = false;
+
+  const $ = (s) => document.querySelector(s);
+
+  function invNum(p) {
+    const n = parseInt(String(p.Inventario ?? '0').replace(/\D/g, ''), 10);
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  function loadChecksFromStorage() {
+    try {
+      const raw = localStorage.getItem(LS_KEY);
+      if (!raw) return {};
+      const o = JSON.parse(raw);
+      return o && typeof o === 'object' ? o : {};
+    } catch { return {}; }
+  }
+
+  function saveChecksToStorage() {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(checks)); } catch {}
+  }
+
+  async function fetchJson(url) {
+    const r = await fetch(url, { cache: 'no-store' });
+    if (!r.ok) throw new Error(url + ' → ' + r.status);
+    return r.json();
+  }
+
+  async function load() {
+    $('#status').textContent = 'Cargando articulos.json…';
+    $('#list').innerHTML = '';
+    try {
+      const arts = await fetchJson('articulos.json');
+      if (!Array.isArray(arts)) throw new Error('articulos.json no es una lista');
+
+      let fileChecks = {};
+      try {
+        const ag = await fetchJson('agotados.json');
+        if (Array.isArray(ag)) {
+          ag.forEach(row => {
+            const id = String(row.id ?? row.Artículo ?? row.articulo ?? '');
+            if (!id) return;
+            fileChecks[id] = !!(row.checklist ?? row.baja_facebook ?? row.dado_de_baja);
+          });
+        } else if (ag && typeof ag === 'object') {
+          // { "1": true, "2": false } or { items: [...] }
+          if (Array.isArray(ag.items)) {
+            ag.items.forEach(row => {
+              const id = String(row.id ?? '');
+              if (id) fileChecks[id] = !!row.checklist;
+            });
+          } else {
+            Object.keys(ag).forEach(k => {
+              if (k === 'items') return;
+              fileChecks[k] = !!ag[k];
+            });
+          }
+        }
+      } catch {
+        // primer uso: no hay agotados.json todavía
+      }
+
+      const ls = loadChecksFromStorage();
+      // archivo del repo manda; localStorage completa ids que falten
+      checks = { ...ls, ...fileChecks };
+
+      productos = arts.map(p => ({
+        id: String(p.Artículo ?? ''),
+        nombre: String(p.Descripción ?? '').trim() || '(sin nombre)',
+        categoria: String(p.Categoria ?? '').trim() || '—',
+        inventario: invNum(p),
+      })).filter(p => p.id);
+
+      productos.sort((a, b) => {
+        if (a.inventario !== b.inventario) return a.inventario - b.inventario;
+        return Number(a.id) - Number(b.id);
+      });
+
+      dirty = false;
+      render();
+      $('#status').textContent = productos.length + ' productos · orden por inventario (0 → arriba)';
+    } catch (err) {
+      console.error(err);
+      $('#status').textContent = 'Error: ' + (err.message || err) + '. ¿Está articulos.json en la misma carpeta que este HTML?';
+    }
+  }
+
+  function filtered() {
+    const q = ($('#q').value || '').trim().toLowerCase();
+    const f = $('#filtro').value;
+    return productos.filter(p => {
+      const baja = !!checks[p.id];
+      if (f === 'cero' && p.inventario !== 0) return false;
+      if (f === 'baja' && !baja) return false;
+      if (f === 'disp' && baja) return false;
+      if (!q) return true;
+      return (
+        p.id.includes(q) ||
+        p.nombre.toLowerCase().includes(q) ||
+        p.categoria.toLowerCase().includes(q)
+      );
+    });
+  }
+
+  function updateStats() {
+    const zero = productos.filter(p => p.inventario === 0).length;
+    const baja = productos.filter(p => checks[p.id]).length;
+    $('#stat-total').textContent = productos.length + ' productos';
+    $('#stat-zero').textContent = zero + ' con inventario 0';
+    $('#stat-fb').textContent = baja + ' dados de baja en FB';
+    renderAlerts();
+  }
+
+  function renderAlerts() {
+    const box = $('#alerts');
+    if (!box) return;
+
+    // Inventario 0 y NO dado de baja en FB → habría que darlo de baja
+    const needBaja = productos.filter(p => p.inventario === 0 && !checks[p.id]);
+    // Inventario >= 1 y SÍ dado de baja en FB → habría que volver a publicarlo
+    const needAlta = productos.filter(p => p.inventario >= 1 && checks[p.id]);
+
+    if (!needBaja.length && !needAlta.length) {
+      box.innerHTML = `
+        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-[12px] sm:text-sm text-emerald-900">
+          Sin pendientes: los de stock 0 están dados de baja en FB y los con stock no figuran dados de baja.
+        </div>`;
+      return;
+    }
+
+    let html = '';
+    if (needBaja.length) {
+      html += `
+        <div class="bg-rose-50 border border-rose-300 rounded-xl p-3 text-[12px] sm:text-sm text-rose-950">
+          <p class="font-bold mb-1.5">⚠ Agotados sin dar de baja en Facebook (${needBaja.length})</p>
+          <p class="text-[11px] text-rose-800/90 mb-2">Inventario 0 y todavía figuran como disponibles en FB.</p>
+          <ul class="space-y-1 max-h-40 overflow-y-auto">
+            ${needBaja.map(p => `
+              <li class="leading-snug">
+                <span class="font-semibold">${escapeHtml(p.id)}</span>
+                <span class="text-rose-800/70"> — </span>${escapeHtml(p.nombre)}
+                <span class="text-rose-700/80"> · inv: 0</span>
+              </li>`).join('')}
+          </ul>
+        </div>`;
+    }
+    if (needAlta.length) {
+      html += `
+        <div class="bg-amber-50 border border-amber-300 rounded-xl p-3 text-[12px] sm:text-sm text-amber-950">
+          <p class="font-bold mb-1.5">⚠ Con stock pero dados de baja en Facebook (${needAlta.length})</p>
+          <p class="text-[11px] text-amber-900/90 mb-2">Inventario ≥ 1 y el check sigue en “dado de baja en facebook”.</p>
+          <ul class="space-y-1 max-h-40 overflow-y-auto">
+            ${needAlta.map(p => `
+              <li class="leading-snug">
+                <span class="font-semibold">${escapeHtml(p.id)}</span>
+                <span class="text-amber-900/70"> — </span>${escapeHtml(p.nombre)}
+                <span class="text-amber-800/90"> · inv: ${p.inventario}</span>
+              </li>`).join('')}
+          </ul>
+        </div>`;
+    }
+    box.innerHTML = html;
+  }
+
+  function render() {
+    updateStats();
+    const rows = filtered();
+    const box = $('#list');
+    if (!rows.length) {
+      box.innerHTML = '<p class="text-sm text-gray-500 text-center py-8">Ningún producto con este filtro.</p>';
+      return;
+    }
+    box.innerHTML = rows.map(p => {
+      const baja = !!checks[p.id];
+      const zero = p.inventario === 0;
+      const label = baja ? 'dado de baja en facebook' : 'disponible en facebook';
+      return `
+        <label class="flex gap-3 items-start p-3 sm:p-3.5 rounded-xl border-2 ${zero ? 'row-zero' : 'row-ok'} cursor-pointer shadow-sm">
+          <input type="checkbox" data-id="${p.id}" class="chk mt-1 w-5 h-5 accent-primary shrink-0" ${baja ? 'checked' : ''} />
+          <div class="min-w-0 flex-1 text-sm leading-snug space-y-1">
+            <p class="font-semibold text-ink">
+              <span class="text-primary-dark">${escapeHtml(p.id)}</span>
+              <span class="text-gray-400 font-normal"> — </span>
+              ${escapeHtml(p.nombre)}
+            </p>
+            <p class="text-xs text-gray-600">
+              categoria: <span class="font-medium">${escapeHtml(p.categoria)}</span>
+              <span class="text-gray-300"> · </span>
+              inventario: <span class="font-bold ${zero ? 'text-pink-700' : 'text-primary-dark'}">${p.inventario}</span>
+            </p>
+            <p class="text-xs font-semibold ${baja ? 'text-pink-700' : 'text-emerald-700'}">${label}</p>
+          </div>
+        </label>`;
+    }).join('');
+
+    box.querySelectorAll('.chk').forEach(inp => {
+      inp.addEventListener('change', () => {
+        const id = inp.dataset.id;
+        checks[id] = inp.checked;
+        dirty = true;
+        saveChecksToStorage();
+        // actualizar solo el texto de esa fila
+        const lab = inp.closest('label')?.querySelector('.font-semibold.text-xs, p.text-xs.font-semibold');
+        const ps = inp.closest('label')?.querySelectorAll('p');
+        const last = ps && ps[ps.length - 1];
+        if (last) {
+          last.textContent = inp.checked ? 'dado de baja en facebook' : 'disponible en facebook';
+          last.className = 'text-xs font-semibold ' + (inp.checked ? 'text-pink-700' : 'text-emerald-700');
+        }
+        updateStats();
+        $('#status').textContent = 'Cambios sin subir al repo — tocá Guardar';
+      });
+    });
+  }
+
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function buildAgotadosJson() {
+    // solo ids marcados + todos los que alguna vez tocamos? User asked id + checklist true/false
+    // Guardamos todos los productos con su estado actual para no perder falses
+    const items = productos.map(p => ({
+      id: p.id,
+      checklist: !!checks[p.id],
+    }));
+    return {
+      actualizado: new Date().toISOString(),
+      items,
+    };
+  }
+
+  $('#btn-save').onclick = () => {
+    const data = buildAgotadosJson();
+    saveChecksToStorage();
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'agotados.json';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    dirty = false;
+    $('#status').textContent = 'Descargado agotados.json — subilo a la raíz del repo (reemplazá el anterior).';
+  };
+
+  $('#btn-reload').onclick = () => load();
+  $('#q').addEventListener('input', render);
+  $('#filtro').addEventListener('change', render);
+
+  window.addEventListener('beforeunload', (e) => {
+    if (dirty) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
+
+  load();
+})();
+  </script>
+</body>
+</html>
