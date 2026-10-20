@@ -1558,12 +1558,37 @@ padding: 10px 20px !important;
   #nav1 .nav-acciones { order: 2; margin-left: auto; }
   #nav1 .btn-menu-movil { order: 3; }
 
-  /* Fila 2: búsqueda full width */
+  /* Fila 2: búsqueda + botón QR en la misma línea */
   #nav1 .barra-busqueda-wrap {
     order: 4;
     flex: 1 1 100%;
     max-width: 100%;
-    min-width: 100%;
+    min-width: 0;
+    width: 100%;
+  }
+
+  #nav1 .barra-busqueda-wrap form {
+    width: 100%;
+  }
+
+  #nav1 .barra-busqueda-wrap form .buscador-con-scan {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    width: 100%;
+    gap: 8px;
+  }
+
+  #nav1 .barra-busqueda-wrap .buscador-con-scan #formulario {
+    flex: 1 1 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+  }
+
+  #nav1 .barra-busqueda-wrap .btn-escanear {
+    flex: 0 0 36px !important;
+    width: 36px !important;
+    height: 36px !important;
   }
 
   .tarjetas {
@@ -2421,27 +2446,38 @@ body.pagina-secundaria section {
 }
 
 /* =====================================================
-   Buscador con botón de escáner de código de barras
+   Buscador + botón QR FUERA de la barra (al lado)
    ===================================================== */
 #nav1 .barra-busqueda-wrap form .buscador-con-scan {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 8px;
   width: 100%;
 }
 
 #nav1 .barra-busqueda-wrap .buscador-con-scan #formulario {
-  flex: 1 1 auto;
-  width: auto;
-  min-width: 0;
+  flex: 1 1 auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none;
+  /* sin padding extra: el botón no está adentro */
+  padding-right: 14px !important;
 }
 
 .btn-escanear {
-  flex: 0 0 auto;
-  width: 36px;
-  height: 36px;
-  padding: 0;
-  display: inline-flex;
+  position: static !important;
+  transform: none !important;
+  right: auto !important;
+  top: auto !important;
+  flex: 0 0 36px !important;
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: inline-flex !important;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
@@ -2450,10 +2486,12 @@ body.pagina-secundaria section {
   color: #583397;
   cursor: pointer;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  z-index: 2;
 }
 
 .btn-escanear:hover {
   background: #f1eaf8;
+  color: #46287a;
 }
 
 .btn-escanear:focus-visible {
@@ -2461,86 +2499,13 @@ body.pagina-secundaria section {
   outline-offset: 2px;
 }
 
-/* Ventana del escáner (la crea escaner.js) */
-.escaner-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 3000;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  padding: 16px;
-  background: rgba(20, 10, 35, 0.92);
-  color: #fff;
-  text-align: center;
+.btn-escanear svg {
+  width: 18px;
+  height: 18px;
+  display: block;
 }
 
-.escaner-overlay .escaner-marco {
-  position: relative;
-  width: min(92vw, 520px);
-  aspect-ratio: 4 / 3;
-  border-radius: 16px;
-  overflow: hidden;
-  background: #000;
-}
-
-.escaner-overlay video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.escaner-overlay .escaner-guia {
-  position: absolute;
-  left: 8%;
-  right: 8%;
-  top: 50%;
-  height: 2px;
-  background: #ff4d4d;
-  box-shadow: 0 0 8px #ff4d4d;
-}
-
-.escaner-overlay .escaner-msg {
-  min-height: 1.4em;
-  margin: 0;
-  font-size: 0.98rem;
-}
-
-.escaner-overlay .escaner-cerrar {
-  border: 0;
-  border-radius: 20px;
-  padding: 8px 22px;
-  font-weight: 600;
-  background: #fff;
-  color: #583397;
-}
-
-/* =====================================================
-   Portada: letras blancas con borde negro fino (más contraste)
-   El logo de fondo no se toca.
-   ===================================================== */
-.heroTitulo h1,
-.heroTitulo p.lead {
-  text-shadow:
-    -1px -1px 0 #000,
-    1px -1px 0 #000,
-    -1px 1px 0 #000,
-    1px 1px 0 #000,
-    0 2px 6px rgba(0, 0, 0, 0.35);
-}
-
-.heroTitulo #horarioHoy {
-  text-shadow:
-    -1px -1px 0 #000,
-    1px -1px 0 #000,
-    -1px 1px 0 #000,
-    1px 1px 0 #000 !important;
-}
-
-/* Pegá esto al final de style.css si en el celular el video se ve chico o no se ve */
-
+/* Ventana del escáner (móvil + PC) */
 .escaner-overlay {
   position: fixed !important;
   inset: 0 !important;
@@ -2577,7 +2542,6 @@ body.pagina-secundaria section {
   background: #000 !important;
 }
 
-/* Recuadro tipo QR (no línea fina) */
 .escaner-overlay .escaner-guia {
   position: absolute !important;
   left: 18% !important;
@@ -2609,4 +2573,26 @@ body.pagina-secundaria section {
   background: #fff;
   color: #583397;
   min-height: 44px;
+}
+
+/* =====================================================
+   Portada: letras blancas con borde negro fino (más contraste)
+   El logo de fondo no se toca.
+   ===================================================== */
+.heroTitulo h1,
+.heroTitulo p.lead {
+  text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000,
+    0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+.heroTitulo #horarioHoy {
+  text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000 !important;
 }
