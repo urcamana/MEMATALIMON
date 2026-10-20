@@ -130,6 +130,16 @@
     render();
   };
 
+  function fitText(text, font, size, maxW) {
+    const t = String(text || '');
+    if (font.widthOfTextAtSize(t, size) <= maxW) return t;
+    let out = t;
+    while (out.length > 1 && font.widthOfTextAtSize(out + '…', size) > maxW) {
+      out = out.slice(0, -1);
+    }
+    return out + '…';
+  }
+
   $('#btn-pdf').onclick = async () => {
     if (!items.length) return;
     try {
@@ -138,14 +148,22 @@
       const font = await pdf.embedFont(StandardFonts.Helvetica);
       const fontBold = await pdf.embedFont(StandardFonts.HelveticaBold);
       const pageW = 210, pageH = 297;
-      const margin = 18;
-      const lineH = 9;
-      const rowH = 11;
+      const margin = 16;
+      const rowH = 12;
+      // Columnas fijas (mm) — evita solapamiento
+      const colNumW = 16;   // # (hasta 999+)
+      const colQtyW = 42;   // cantidad + unidad
+      const gap = 4;
+      const xNum = margin;
+      const xName = margin + colNumW + gap;
+      const xQtyRight = pageW - margin;
+      const nameMaxW = pageW - margin - xName - colQtyW - gap;
+
       let page = pdf.addPage([pageW, pageH]);
       let y = pageH - margin;
 
       const titulo = ($('#titulo').value || '').trim() || 'Inventario';
-      page.drawText(titulo.slice(0, 60), {
+      page.drawText(fitText(titulo, fontBold, 13, pageW - 2 * margin), {
         x: margin, y: y - 4, size: 13, font: fontBold, color: rgb(0.42, 0.32, 0.58),
       });
       y -= 12;
@@ -161,9 +179,13 @@
       y -= 10;
 
       // header
-      page.drawText('#', { x: margin, y, size: 8, font: fontBold, color: rgb(0.35, 0.3, 0.45) });
-      page.drawText('Producto', { x: margin + 12, y, size: 8, font: fontBold, color: rgb(0.35, 0.3, 0.45) });
-      page.drawText('Cantidad', { x: pageW - margin - 45, y, size: 8, font: fontBold, color: rgb(0.35, 0.3, 0.45) });
+      page.drawText('#', { x: xNum, y, size: 8, font: fontBold, color: rgb(0.35, 0.3, 0.45) });
+      page.drawText('Producto', { x: xName, y, size: 8, font: fontBold, color: rgb(0.35, 0.3, 0.45) });
+      const hCant = 'Cantidad';
+      page.drawText(hCant, {
+        x: xQtyRight - fontBold.widthOfTextAtSize(hCant, 8),
+        y, size: 8, font: fontBold, color: rgb(0.35, 0.3, 0.45),
+      });
       y -= 4;
       page.drawLine({
         start: { x: margin, y }, end: { x: pageW - margin, y },
@@ -172,20 +194,20 @@
       y -= rowH;
 
       items.forEach((it, i) => {
-        if (y < margin + 20) {
+        if (y < margin + 18) {
           page = pdf.addPage([pageW, pageH]);
           y = pageH - margin;
         }
         const num = String(i + 1);
-        const nombre = it.nombre.length > 48 ? it.nombre.slice(0, 47) + '…' : it.nombre;
+        const nombre = fitText(it.nombre, font, 9, nameMaxW);
         const cantStr = `${fmtCant(it.cant)} ${it.unidad}`;
+        const cantFit = fitText(cantStr, fontBold, 9, colQtyW);
 
-        // zebra line background alternate via light line under each row
-        page.drawText(num, { x: margin, y, size: 9, font, color: rgb(0.4, 0.4, 0.45) });
-        page.drawText(nombre, { x: margin + 12, y, size: 9, font, color: rgb(0.15, 0.12, 0.2) });
-        const tw = font.widthOfTextAtSize(cantStr, 9);
-        page.drawText(cantStr, {
-          x: pageW - margin - tw, y, size: 9, font: fontBold, color: rgb(0.42, 0.32, 0.58),
+        page.drawText(num, { x: xNum, y, size: 9, font, color: rgb(0.4, 0.4, 0.45) });
+        page.drawText(nombre, { x: xName, y, size: 9, font, color: rgb(0.15, 0.12, 0.2) });
+        page.drawText(cantFit, {
+          x: xQtyRight - fontBold.widthOfTextAtSize(cantFit, 9),
+          y, size: 9, font: fontBold, color: rgb(0.42, 0.32, 0.58),
         });
         y -= 3;
         page.drawLine({
