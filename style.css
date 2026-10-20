@@ -2538,3 +2538,75 @@ body.pagina-secundaria section {
     -1px 1px 0 #000,
     1px 1px 0 #000 !important;
 }
+
+/* Pegá esto al final de style.css si en el celular el video se ve chico o no se ve */
+
+.escaner-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 10000 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 12px !important;
+  padding: max(12px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom)) !important;
+  background: rgba(15, 8, 28, 0.94) !important;
+  color: #fff !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+}
+
+.escaner-overlay .escaner-marco {
+  position: relative !important;
+  width: min(92vw, 420px) !important;
+  max-width: 100% !important;
+  aspect-ratio: 3 / 4 !important;
+  max-height: 70vh !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  background: #000 !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,.45) !important;
+}
+
+.escaner-overlay video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+  background: #000 !important;
+}
+
+/* Recuadro tipo QR (no línea fina) */
+.escaner-overlay .escaner-guia {
+  position: absolute !important;
+  left: 18% !important;
+  right: 18% !important;
+  top: 22% !important;
+  bottom: 22% !important;
+  height: auto !important;
+  border: 2px solid rgba(255, 80, 80, 0.95) !important;
+  border-radius: 12px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  pointer-events: none !important;
+}
+
+.escaner-overlay .escaner-msg {
+  min-height: 1.3em;
+  margin: 0;
+  font-size: 0.95rem;
+  max-width: 92vw;
+  padding: 0 8px;
+}
+
+.escaner-overlay .escaner-cerrar {
+  border: 0;
+  border-radius: 22px;
+  padding: 12px 28px;
+  font-weight: 700;
+  font-size: 1rem;
+  background: #fff;
+  color: #583397;
+  min-height: 44px;
+}

@@ -1,11 +1,9 @@
-/* Escáner de QR de producto - Me Mata Limón
+/* Escáner QR de producto - Me Mata Limón (móvil + PC)
  *
- * Lee QR con el link del producto (ej. https://mematalimon.com.ar/index.html?p=3),
- * deja solo el ID en #formulario y dispara la búsqueda.
- *
- * Estrategia:
- * 1) BarcodeDetector nativo SOLO si el navegador declara soporte de qr_code
- * 2) Si no, ZXing (QR primero) — más fiable en iPhone y muchos Android
+ * 1) Abre la cámara nosotros (getUserMedia con varios intentos)
+ * 2) Muestra el video en pantalla
+ * 3) ZXing lee el QR sobre ese stream (más estable en celulares)
+ * 4) Pone el texto completo del QR en #formulario y dispara la búsqueda
  */
 (function () {
   'use strict';
@@ -21,18 +19,15 @@
   var msg = null;
   var stream = null;
   var timer = null;
-  var zxingControls = null;
   var zxingReader = null;
+  var zxingStop = null;
   var abierto = false;
   var yaLeyo = false;
-
-  // ---------- parseo del QR ----------
 
   function extraerIdProducto(texto) {
     texto = String(texto || '').trim();
     if (!texto) return null;
     if (/^\d{1,6}$/.test(texto)) return texto;
-
     try {
       var raw = texto;
       if (!/^https?:\/\//i.test(raw)) {
@@ -46,22 +41,15 @@
         if (p && /^\d+$/.test(String(p).trim())) return String(p).trim();
       }
     } catch (e) { /* regex */ }
-
     var m = texto.match(/[?&]p=(\d+)/i) || texto.match(/[?&]producto=(\d+)/i);
     if (m) return m[1];
     m = texto.match(/(?:^|[^\w])p=(\d+)/i);
     return m ? m[1] : null;
   }
 
-  function valorUtil(codigo) {
-    return !!extraerIdProducto(codigo);
-  }
-
   function mostrarMensaje(texto) {
     if (msg) msg.textContent = texto;
   }
-
-  // ---------- UI ----------
 
   function crearVentana() {
     overlay = document.createElement('div');
@@ -74,11 +62,15 @@
     marco.className = 'escaner-marco';
 
     video = document.createElement('video');
-    video.setAttribute('playsinline', '');
-    video.setAttribute('muted', '');
-    video.setAttribute('autoplay', '');
+    video.setAttribute('playsinline', 'true');
+    video.setAttribute('webkit-playsinline', 'true');
+    video.setAttribute('muted', 'true');
+    video.setAttribute('autoplay', 'true');
     video.muted = true;
     video.playsInline = true;
+    video.setAttribute('autoplay', '');
+    // Evita pantalla negra en iOS: el video debe poder autoplay silencioso
+    video.setAttribute('disablePictureInPicture', 'true');
 
     var guia = document.createElement('div');
     guia.className = 'escaner-guia';
@@ -90,23 +82,31 @@
     msg.className = 'escaner-msg';
     msg.setAttribute('aria-live', 'polite');
 
+    var ayuda = document.createElement('p');
+    ayuda.className = 'escaner-msg';
+    ayuda.style.opacity = '0.85';
+    ayuda.style.fontSize = '0.85rem';
+    ayuda.textContent = 'Acercá el QR al recuadro. Si queda negro, cerrá y volvé a tocar el botón.';
+
     var cerrar = document.createElement('button');
     cerrar.type = 'button';
     cerrar.className = 'escaner-cerrar';
     cerrar.textContent = 'Cerrar';
-    cerrar.addEventListener('click', cerrarEscaner);
-
-    var ayuda = document.createElement('p');
-    ayuda.className = 'escaner-msg';
-    ayuda.style.opacity = '0.85';
-    ayuda.style.fontSize = '0.8rem';
-    ayuda.textContent = 'Acercá el QR hasta que entre en el recuadro. Buena luz ayuda.';
+    cerrar.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      cerrarEscaner();
+    });
 
     overlay.appendChild(marco);
     overlay.appendChild(msg);
     overlay.appendChild(ayuda);
     overlay.appendChild(cerrar);
     document.body.appendChild(overlay);
+
+    // Evitar scroll del body en móvil mientras está abierto
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
   }
 
   function detenerCamara() {
@@ -114,24 +114,31 @@
       clearInterval(timer);
       timer = null;
     }
-    if (zxingControls && typeof zxingControls.stop === 'function') {
-      try { zxingControls.stop(); } catch (e) { /* */ }
-      zxingControls = null;
+    if (typeof zxingStop === 'function') {
+      try { zxingStop(); } catch (e) { /* */ }
+      zxingStop = null;
     }
     if (zxingReader) {
       try {
         if (typeof zxingReader.reset === 'function') zxingReader.reset();
         if (typeof zxingReader.stopContinuousDecode === 'function') zxingReader.stopContinuousDecode();
+        if (typeof zxingReader.stopAsyncDecode === 'function') zxingReader.stopAsyncDecode();
       } catch (e) { /* */ }
       zxingReader = null;
     }
     if (stream) {
-      stream.getTracks().forEach(function (t) { t.stop(); });
+      try {
+        stream.getTracks().forEach(function (t) { t.stop(); });
+      } catch (e) { /* */ }
       stream = null;
     }
     if (video) {
-      try { video.pause(); } catch (e) { /* */ }
-      video.srcObject = null;
+      try {
+        video.pause();
+        video.srcObject = null;
+        video.removeAttribute('src');
+        video.load();
+      } catch (e) { /* */ }
     }
   }
 
@@ -140,6 +147,8 @@
     yaLeyo = false;
     detenerCamara();
     document.removeEventListener('keydown', alTeclear);
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
     if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
     overlay = video = msg = null;
   }
@@ -151,7 +160,6 @@
   function codigoLeido(codigo) {
     if (!abierto || yaLeyo) return;
     codigo = String(codigo || '').trim();
-    // Debe ser un link de producto (?p=ID). Si no, avisar.
     var id = extraerIdProducto(codigo);
     if (!id) {
       mostrarMensaje('QR leído, pero no es un link de producto (?p=…). Probá de nuevo.');
@@ -159,65 +167,66 @@
     }
     yaLeyo = true;
     if (navigator.vibrate) {
-      try { navigator.vibrate(60); } catch (e) { /* */ }
+      try { navigator.vibrate(50); } catch (e) { /* */ }
     }
     cerrarEscaner();
-    // Texto COMPLETO del QR en el buscador (ej. https://mematalimon.com.ar/index.html?p=91)
-    // logica.js extrae el id de ?p= y muestra el producto
+    // Texto completo del QR en el buscador
     input.value = codigo;
-    input.focus();
+    try { input.focus(); } catch (e) { /* */ }
     input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.dispatchEvent(new Event('change', { bubbles: true }));
     input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', keyCode: 13, bubbles: true }));
   }
 
-  var CONSTRAINTS = {
-    audio: false,
-    video: {
-      facingMode: { ideal: 'environment' },
-      width: { ideal: 1280 },
-      height: { ideal: 720 }
+  /** Intenta varias configuraciones de cámara (celulares varían mucho). */
+  async function pedirCamara() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      throw Object.assign(new Error('no-media'), { name: 'NotSupportedError' });
     }
-  };
 
-  // ---------- Nativo (solo si soporta QR) ----------
+    var intentos = [
+      { audio: false, video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } } },
+      { audio: false, video: { facingMode: { exact: 'environment' } } },
+      { audio: false, video: { facingMode: 'environment' } },
+      { audio: false, video: { facingMode: 'user' } },
+      { audio: false, video: true }
+    ];
 
-  async function nativoSoportaQr() {
-    if (!('BarcodeDetector' in window)) return false;
-    try {
-      var soportados = await window.BarcodeDetector.getSupportedFormats();
-      return soportados && soportados.indexOf('qr_code') !== -1;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  async function iniciarNativo() {
-    var detector = new window.BarcodeDetector({ formats: ['qr_code'] });
-    stream = await navigator.mediaDevices.getUserMedia(CONSTRAINTS);
-    if (!abierto) { detenerCamara(); return; }
-
-    video.srcObject = stream;
-    await video.play();
-    mostrarMensaje('Apuntá al QR del producto');
-
-    var leyendo = false;
-    timer = setInterval(async function () {
-      if (!abierto || yaLeyo || leyendo || !video || video.readyState < 2) return;
-      leyendo = true;
+    var ultimoError = null;
+    for (var i = 0; i < intentos.length; i++) {
       try {
-        var res = await detector.detect(video);
-        for (var i = 0; i < res.length; i++) {
-          if (valorUtil(res[i].rawValue)) {
-            codigoLeido(res[i].rawValue);
-            break;
-          }
-        }
-      } catch (e) { /* seguir */ }
-      leyendo = false;
-    }, 200);
+        var s = await navigator.mediaDevices.getUserMedia(intentos[i]);
+        return s;
+      } catch (e) {
+        ultimoError = e;
+        // Permiso denegado: no seguir intentando
+        if (e && e.name === 'NotAllowedError') throw e;
+      }
+    }
+    throw ultimoError || new Error('camara');
   }
 
-  // ---------- ZXing (principal en la práctica) ----------
+  async function mostrarVideo(s) {
+    stream = s;
+    video.srcObject = s;
+    // Esperar metadatos y play (crítico en iOS/Android)
+    await new Promise(function (resolve) {
+      if (video.readyState >= 1) return resolve();
+      var ok = function () {
+        video.removeEventListener('loadedmetadata', ok);
+        resolve();
+      };
+      video.addEventListener('loadedmetadata', ok);
+      setTimeout(resolve, 1500);
+    });
+    try {
+      await video.play();
+    } catch (e) {
+      // Algunos navegadores requieren otro intento
+      video.muted = true;
+      await video.play();
+    }
+  }
 
   function cargarZXing() {
     return new Promise(function (resolve, reject) {
@@ -225,84 +234,117 @@
       var s = document.createElement('script');
       s.src = ZXING_URL;
       s.async = true;
-      s.onload = function () { window.ZXing ? resolve(window.ZXing) : reject(new Error('zxing')); };
+      s.onload = function () {
+        if (window.ZXing) resolve(window.ZXing);
+        else reject(new Error('zxing'));
+      };
       s.onerror = function () { reject(new Error('zxing-load')); };
       document.head.appendChild(s);
     });
   }
 
-  async function iniciarZXing() {
-    mostrarMensaje('Preparando el escáner QR…');
+  async function iniciarLecturaZXing() {
+    mostrarMensaje('Preparando lectura del QR…');
     var ZX = await cargarZXing();
-    if (!abierto) return;
+    if (!abierto || !video) return;
 
-    // Preferir lector solo QR si existe
-    var Reader = ZX.BrowserQRCodeReader || ZX.BrowserMultiFormatReader;
-    zxingReader = new Reader();
+    var hints = null;
+    try {
+      hints = new Map();
+      if (ZX.DecodeHintType && ZX.BarcodeFormat) {
+        hints.set(ZX.DecodeHintType.POSSIBLE_FORMATS, [ZX.BarcodeFormat.QR_CODE]);
+        hints.set(ZX.DecodeHintType.TRY_HARDER, true);
+      }
+    } catch (e) { hints = null; }
+
+    try {
+      zxingReader = hints
+        ? new ZX.BrowserMultiFormatReader(hints, 250)
+        : new ZX.BrowserMultiFormatReader(undefined, 250);
+    } catch (e) {
+      zxingReader = new ZX.BrowserQRCodeReader
+        ? new ZX.BrowserQRCodeReader()
+        : new ZX.BrowserMultiFormatReader();
+    }
 
     mostrarMensaje('Apuntá al QR del producto');
 
-    // decodeFromVideoDevice / decodeFromConstraints según versión
-    if (typeof zxingReader.decodeFromConstraints === 'function') {
-      var hintsOk = false;
-      try {
-        // MultiFormat: limitar a QR
-        if (ZX.BarcodeFormat && ZX.DecodeHintType && zxingReader instanceof ZX.BrowserMultiFormatReader) {
-          // nueva instancia con hints
-          var hints = new Map();
-          hints.set(ZX.DecodeHintType.POSSIBLE_FORMATS, [ZX.BarcodeFormat.QR_CODE]);
-          hints.set(ZX.DecodeHintType.TRY_HARDER, true);
-          zxingReader = new ZX.BrowserMultiFormatReader(hints, 200);
-        }
-      } catch (e) { /* default */ }
-
-      zxingControls = await zxingReader.decodeFromConstraints(
-        CONSTRAINTS,
-        video,
-        function (resultado, err) {
-          if (resultado) codigoLeido(resultado.getText());
-        }
-      );
-      return;
-    }
-
-    if (typeof zxingReader.decodeFromVideoDevice === 'function') {
-      await zxingReader.decodeFromVideoDevice(
-        undefined,
-        video,
-        function (resultado, err) {
-          if (resultado) codigoLeido(resultado.getText());
-        }
-      );
-      return;
-    }
-
-    // Fallback manual: stream + decode once loop
-    stream = await navigator.mediaDevices.getUserMedia(CONSTRAINTS);
-    if (!abierto) { detenerCamara(); return; }
-    video.srcObject = stream;
-    await video.play();
-
-    timer = setInterval(async function () {
-      if (!abierto || yaLeyo || !video) return;
-      try {
-        if (typeof zxingReader.decodeOnceFromVideoElement === 'function') {
-          var r = await zxingReader.decodeOnceFromVideoElement(video);
-          if (r) codigoLeido(r.getText());
-        }
-      } catch (e) {
-        // NotFoundException es normal entre frames
+    var onResult = function (resultado, err) {
+      if (!abierto || yaLeyo) return;
+      if (resultado) {
+        try {
+          codigoLeido(resultado.getText());
+        } catch (e) { /* */ }
       }
-    }, 300);
+    };
+
+    // Preferir stream ya abierto (no pedir la cámara de nuevo)
+    if (stream && typeof zxingReader.decodeFromStream === 'function') {
+      await zxingReader.decodeFromStream(stream, video, onResult);
+      zxingStop = function () {
+        try { zxingReader.reset(); } catch (e) { /* */ }
+      };
+      return;
+    }
+
+    if (typeof zxingReader.decodeFromVideoElement === 'function') {
+      // Algunas versiones devuelven controls / Promise
+      var ret = zxingReader.decodeFromVideoElement(video, onResult);
+      if (ret && typeof ret.then === 'function') await ret;
+      zxingStop = function () {
+        try { zxingReader.reset(); } catch (e) { /* */ }
+      };
+      return;
+    }
+
+    // Fallback: decodificar por intervalos
+    timer = setInterval(function () {
+      if (!abierto || yaLeyo || !video || !zxingReader) return;
+      if (typeof zxingReader.decodeOnceFromVideoElement !== 'function') return;
+      zxingReader.decodeOnceFromVideoElement(video).then(function (r) {
+        if (r) codigoLeido(r.getText());
+      }).catch(function () { /* NotFound entre frames */ });
+    }, 350);
   }
 
-  // ---------- abrir ----------
+  // BarcodeDetector nativo solo como refuerzo extra (si ya hay video)
+  function iniciarNativoSobreVideo() {
+    if (!('BarcodeDetector' in window) || !video) return;
+    var detector;
+    try {
+      detector = new window.BarcodeDetector({ formats: ['qr_code'] });
+    } catch (e) {
+      return;
+    }
+    var leyendo = false;
+    timer = setInterval(async function () {
+      if (!abierto || yaLeyo || leyendo || !video || video.readyState < 2) return;
+      leyendo = true;
+      try {
+        var res = await detector.detect(video);
+        for (var i = 0; i < res.length; i++) {
+          if (extraerIdProducto(res[i].rawValue)) {
+            codigoLeido(res[i].rawValue);
+            break;
+          }
+        }
+      } catch (e) { /* */ }
+      leyendo = false;
+    }, 280);
+  }
 
-  async function abrirEscaner() {
+  async function abrirEscaner(ev) {
+    if (ev) {
+      try { ev.preventDefault(); } catch (e) { /* */ }
+    }
     if (abierto) return;
 
-    if (!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      alert('Este navegador no permite usar la cámara aquí. Probá en HTTPS o escribí el producto en el buscador.');
+    if (!window.isSecureContext) {
+      alert('La cámara solo funciona en HTTPS (o en localhost).');
+      return;
+    }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      alert('Este navegador no puede usar la cámara. Probá Chrome o Safari actualizado.');
       return;
     }
 
@@ -310,41 +352,49 @@
     yaLeyo = false;
     crearVentana();
     document.addEventListener('keydown', alTeclear);
-    mostrarMensaje('Abriendo la cámara…');
+    mostrarMensaje('Pediendo permiso de cámara…');
 
     try {
-      // En la práctica ZXing lee mejor los QR de producto; nativo solo si QR está garantizado
-      var usarNativo = await nativoSoportaQr();
-      // En iOS Safari BarcodeDetector casi no existe; en Android a veces es irregular → ZXing por defecto
-      var esIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-
-      if (usarNativo && !esIOS) {
-        try {
-          await iniciarNativo();
-          return;
-        } catch (e) {
-          if (e && (e.name === 'NotAllowedError' || e.name === 'NotFoundError')) throw e;
-          detenerCamara();
-          mostrarMensaje('Probando otro motor de lectura…');
-        }
+      var s = await pedirCamara();
+      if (!abierto) {
+        s.getTracks().forEach(function (t) { t.stop(); });
+        return;
       }
-      await iniciarZXing();
+      mostrarMensaje('Abriendo cámara…');
+      await mostrarVideo(s);
+      if (!abierto) return;
+
+      // En paralelo: ZXing es el principal; nativo refuerza si existe
+      try {
+        await iniciarLecturaZXing();
+      } catch (eZ) {
+        console.warn('ZXing falló, intento nativo:', eZ);
+        iniciarNativoSobreVideo();
+        if (!timer) throw eZ;
+        mostrarMensaje('Apuntá al QR del producto');
+      }
+
+      // Si ZXing arrancó, igual se puede sumar nativo sin segundo timer conflictivo:
+      // solo si no hay timer de fallback
     } catch (e) {
-      detenerCamara();
+      console.error('Escáner QR:', e);
       var nombre = e && e.name;
-      if (nombre === 'NotAllowedError') {
-        mostrarMensaje('Falta permiso de cámara. Activalo en el navegador y reintentá.');
-      } else if (nombre === 'NotFoundError') {
-        mostrarMensaje('No se encontró cámara.');
+      if (nombre === 'NotAllowedError' || nombre === 'PermissionDeniedError') {
+        mostrarMensaje('Permiso de cámara denegado. En el celular: Ajustes del navegador → Cámara → Permitir, y reintentá.');
+      } else if (nombre === 'NotFoundError' || nombre === 'DevicesNotFoundError') {
+        mostrarMensaje('No se encontró cámara en este dispositivo.');
+      } else if (nombre === 'NotReadableError' || nombre === 'TrackStartError') {
+        mostrarMensaje('La cámara está ocupada por otra app. Cerrala y reintentá.');
+      } else if (nombre === 'OverconstrainedError') {
+        mostrarMensaje('No se pudo usar la cámara trasera. Cerrá y probá de nuevo.');
       } else {
-        console.error('Escáner QR:', e);
-        mostrarMensaje('No se pudo iniciar el escáner. Escribí el producto a mano.');
+        mostrarMensaje('No se pudo abrir la cámara. Cerrá y reintentá, o escribí el producto a mano.');
       }
     }
   }
 
   btn.setAttribute('aria-label', 'Escanear código QR del producto');
   btn.setAttribute('title', 'Escanear QR del producto');
+  // click + touchend (algunos Android pierden el gesto en click diferido)
   btn.addEventListener('click', abrirEscaner);
 })();
