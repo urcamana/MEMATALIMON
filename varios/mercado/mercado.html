@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Lista del super · Me Mata Limón</title>
+  <meta name="description" content="Lista de compras con precios de góndola y total en vivo." />
+  <meta name="theme-color" content="#a88cd7" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: { DEFAULT: '#a88cd7', dark: '#8e66cf', soft: '#f3eef9' },
+            ink: '#2d2a33'
+          },
+          fontFamily: { sans: ['Inter','system-ui','sans-serif'], display: ['Playfair Display','serif'] },
+          boxShadow: { soft: '0 4px 20px rgba(168,140,215,.18)', card: '0 8px 28px rgba(115,90,160,.12)' }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background: linear-gradient(160deg, #f8f5fc 0%, #efe8f8 50%, #f5f0fa 100%); min-height: 100vh; }
+    .item-done .item-name { opacity: 0.85; }
+  </style>
+</head>
+<body class="font-sans text-ink antialiased">
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-primary/15 shadow-sm">
+    <div class="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
+      <div class="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white text-sm shadow-soft">🛒</div>
+      <div class="min-w-0 flex-1">
+        <h1 class="font-display text-lg text-primary-dark font-bold leading-tight">Lista del super</h1>
+        <p class="text-[11px] text-gray-500">Compras · precios · total en vivo</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Visor de total fijo arriba del contenido / sticky secondary -->
+  <div class="sticky top-[57px] z-30 bg-primary-soft/95 backdrop-blur border-b border-primary/15">
+    <div class="max-w-lg mx-auto px-4 py-2.5 flex items-center justify-between gap-3">
+      <div>
+        <p class="text-[10px] uppercase tracking-wide text-primary-dark/70 font-semibold">Total agarrado</p>
+        <p id="visor-total" class="text-xl font-bold text-primary-dark tabular-nums">$0</p>
+      </div>
+      <div class="text-right text-[11px] text-gray-600 leading-snug">
+        <p id="visor-meta">0 productos en el carrito</p>
+        <p id="visor-warn" class="text-amber-700 font-medium hidden"></p>
+      </div>
+    </div>
+  </div>
+
+  <main class="max-w-lg mx-auto px-4 py-5 pb-24 space-y-4">
+    <section class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
+      <h2 class="text-sm font-semibold text-primary-dark">Agregar a la lista</h2>
+      <div>
+        <label class="text-[11px] text-gray-500">Producto</label>
+        <input id="nombre" type="text" placeholder="Ej: Leche, pan, yerba…" class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm" autocomplete="off" />
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-[11px] text-gray-500">Cantidad a comprar <span class="text-gray-400">(opcional)</span></label>
+          <input id="cant" type="number" inputmode="decimal" step="any" min="0" placeholder="—" class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm" />
+        </div>
+        <div>
+          <label class="text-[11px] text-gray-500">Medida <span class="text-gray-400">(opcional)</span></label>
+          <select id="unidad" class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm">
+            <option value="" selected>—</option>
+            <option value="u">u</option>
+            <option value="kg">kg</option>
+            <option value="g">g</option>
+            <option value="l">l</option>
+            <option value="ml">ml</option>
+            <option value="pack">pack</option>
+            <option value="paq">paq</option>
+            <option value="docena">docena</option>
+            <option value="caja">caja</option>
+          </select>
+        </div>
+      </div>
+      <p class="text-[11px] text-gray-400">En el super, al marcar el ítem podés cargar el <strong>precio de góndola</strong> y ajustar lo que realmente agarraste.</p>
+      <button type="button" id="btn-add" class="w-full py-3 rounded-xl bg-gradient-to-r from-primary to-primary-dark text-white font-semibold shadow-soft">Agregar</button>
+      <p id="msg" class="text-xs text-center text-gray-400 hidden"></p>
+    </section>
+
+    <section class="bg-white rounded-2xl shadow-card border border-primary/10 overflow-hidden">
+      <div class="px-4 py-3 border-b border-primary/10 flex items-center justify-between gap-2">
+        <h2 class="text-sm font-semibold text-primary-dark">Mi lista</h2>
+        <span id="total" class="text-xs text-gray-400">0</span>
+      </div>
+      <div id="list">
+        <p id="empty" class="p-4 text-sm text-gray-400 text-center">La lista está vacía. Anotá lo que hace falta comprar.</p>
+      </div>
+    </section>
+
+    <section id="avisos" class="hidden rounded-2xl border p-3 text-[12px] leading-snug space-y-1"></section>
+
+    <section class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
+      <label class="text-[11px] text-gray-500">Título del PDF (opcional)</label>
+      <input id="titulo" type="text" placeholder="Ej: Compras del sábado" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" />
+      <button type="button" id="btn-pdf" disabled class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-primary to-primary-dark text-white font-semibold shadow-soft disabled:opacity-40">Exportar PDF</button>
+      <button type="button" id="btn-copy" disabled class="w-full py-3 rounded-xl border border-primary/30 font-semibold text-primary-dark text-sm disabled:opacity-40">Copiar lista (WhatsApp)</button>
+      <div class="flex gap-2">
+        <button type="button" id="btn-clear-done" class="flex-1 py-2 text-sm text-gray-500 font-semibold">Quitar marcados</button>
+        <button type="button" id="btn-clear" class="flex-1 py-2 text-sm text-red-400 font-semibold">Vaciar todo</button>
+      </div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
