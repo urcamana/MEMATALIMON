@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Lector / etiquetas QR · Me Mata Limón</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#a88cd7" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: { DEFAULT: '#a88cd7', dark: '#8e66cf', soft: '#f3eef9' },
+            ink: '#2d2a33'
+          },
+          fontFamily: { sans: ['Inter','system-ui','sans-serif'], display: ['Playfair Display','serif'] },
+          boxShadow: { soft: '0 4px 20px rgba(168,140,215,.18)', card: '0 8px 28px rgba(115,90,160,.12)' }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background: linear-gradient(160deg, #f8f5fc 0%, #efe8f8 50%, #f5f0fa 100%); min-height: 100vh; }
+    #sug box, #sug { max-height: 220px; }
+  </style>
+</head>
+<body class="font-sans text-ink antialiased">
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-primary/15 shadow-sm">
+    <div class="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
+      <div class="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white text-sm shadow-soft">🏷️</div>
+      <div>
+        <h1 class="font-display text-lg text-primary-dark font-bold leading-tight">Etiquetas QR</h1>
+        <p class="text-[11px] text-gray-500">Ingreso de mercadería · grilla para imprimir</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-lg mx-auto px-4 py-5 pb-24 space-y-4">
+    <section class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
+      <h2 class="text-sm font-semibold text-primary-dark">Buscar producto (articulos.json)</h2>
+      <div class="relative">
+        <input id="q" type="search" placeholder="Nombre o número de artículo…" autocomplete="off"
+          class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm" />
+        <div id="sug" class="hidden absolute left-0 right-0 top-full mt-1 z-20 bg-white border border-primary/20 rounded-xl shadow-card overflow-y-auto max-h-56"></div>
+      </div>
+      <p id="status" class="text-[11px] text-gray-400">Cargando catálogo…</p>
+    </section>
+
+    <section class="bg-white rounded-2xl shadow-card border border-primary/10 overflow-hidden">
+      <div class="px-4 py-3 border-b border-primary/10 flex items-center justify-between">
+        <h2 class="text-sm font-semibold text-primary-dark">Ingreso (lista)</h2>
+        <span id="total" class="text-xs text-gray-400">0</span>
+      </div>
+      <div id="list">
+        <p class="p-4 text-sm text-gray-400 text-center">Todavía no hay productos. Buscá y elegí uno.</p>
+      </div>
+    </section>
+
+    <section class="bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
+      <div>
+        <label class="text-[11px] text-gray-500">Base del link en el QR</label>
+        <input id="base" type="text" value="https://mematalimon.com.ar/index.html?p="
+          class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm font-mono text-[12px]" />
+        <p class="text-[10px] text-gray-400 mt-1">Queda: base + id → ej. …?p=91</p>
+      </div>
+      <p id="preview-count" class="text-xs text-gray-500 text-center">0 etiquetas QR en total</p>
+      <button type="button" id="btn-pdf" disabled
+        class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-primary to-primary-dark text-white font-semibold shadow-soft disabled:opacity-40">
+        Generar PDF (grilla de QR)
+      </button>
+      <button type="button" id="btn-clear"
+        class="w-full py-2.5 rounded-xl border border-red-200 text-red-500 text-sm font-semibold">
+        Limpiar lista
+      </button>
+      <p class="text-[11px] text-gray-400 text-center leading-snug">
+        Cada unidad = 1 QR de 20×20 mm + “ESCANEÁ ACÁ”. A4, listo para recortar.
+      </p>
+    </section>
+  </main>
+
+  <script>
+(() => {
+  const $ = (s) => document.querySelector(s);
+  const KEY = 'mml-lector-lista-v1';
+  let catalogo = [];
+  /** @type {{id:number,nombre:string,cant:number}[]} */
+  let items = [];
+
+  try {
+    const raw = JSON.parse(localStorage.getItem(KEY) || '[]');
+    if (Array.isArray(raw)) items = raw;
+  } catch (_) {}
+
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(items)); } catch (_) {}
+  }
+
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function totalEtiquetas() {
+    return items.reduce((a, it) => a + Math.max(0, Math.floor(Number(it.cant) || 0)), 0);
+  }
+
+  function updateMeta() {
+    const n = totalEtiquetas();
+    $('#preview-count').textContent = n + ' etiqueta' + (n === 1 ? '' : 's') + ' QR en total';
+    $('#btn-pdf').disabled = n < 1;
+    $('#total').textContent = items.length
+      ? (items.length + ' producto' + (items.length === 1 ? '' : 's') + ' · ' + n + ' u.')
+      : '0';
+  }
+
+  function render() {
+    updateMeta();
+    const list = $('#list');
+    if (!items.length) {
+      list.innerHTML = '<p class="p-4 text-sm text-gray-400 text-center">Todavía no hay productos. Buscá y elegí uno.</p>';
+      return;
+    }
+    list.innerHTML = items.map((it, i) => `
+      <div class="px-3 py-3 border-b border-primary/10 last:border-0">
+        <div class="flex items-start gap-2">
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-ink">
+              <span class="text-primary-dark font-bold">${it.id}</span>
+              <span class="text-gray-300"> — </span>${escapeHtml(it.nombre)}
+            </p>
+          </div>
+          <button type="button" data-i="${i}" class="rm text-red-400 text-xs font-semibold shrink-0">Quitar</button>
+        </div>
+        <div class="flex items-center gap-2 mt-2">
+          <button type="button" data-i="${i}" data-d="-1" class="adj w-9 h-9 rounded-lg border border-primary/25 bg-white font-bold text-primary-dark">−</button>
+          <input type="number" data-i="${i}" class="qty flex-1 min-w-0 text-center rounded-lg border border-gray-200 py-1.5 text-sm font-semibold" min="1" step="1" value="${it.cant}" />
+          <button type="button" data-i="${i}" data-d="1" class="adj w-9 h-9 rounded-lg border border-primary/25 bg-white font-bold text-primary-dark">+</button>
+        </div>
+      </div>`).join('');
+
+    list.querySelectorAll('.rm').forEach(btn => {
+      btn.onclick = () => { items.splice(+btn.dataset.i, 1); save(); render(); };
+    });
+    list.querySelectorAll('.adj').forEach(btn => {
+      btn.onclick = () => {
+        const i = +btn.dataset.i;
+        const d = +btn.dataset.d;
+        items[i].cant = Math.max(1, (parseInt(items[i].cant, 10) || 1) + d);
+        save();
+        render();
+      };
+    });
+    list.querySelectorAll('.qty').forEach(inp => {
+      inp.onchange = () => {
+        const i = +inp.dataset.i;
+        let n = parseInt(inp.value, 10);
+        if (Number.isNaN(n) || n < 1) n = 1;
+        items[i].cant = n;
+        save();
+        render();
+      };
+    });
+  }
+
+  function addProduct(id, nombre) {
+    id = Number(id);
+    const existing = items.find(it => it.id === id);
+    if (existing) {
+      existing.cant = (parseInt(existing.cant, 10) || 0) + 1;
+    } else {
+      items.push({ id, nombre, cant: 1 });
+    }
+    save();
+    render();
+    $('#q').value = '';
+    $('#sug').classList.add('hidden');
+    $('#q').focus();
+  }
+
+  function showSug(matches) {
+    const box = $('#sug');
+    if (!matches.length) {
+      box.classList.add('hidden');
+      box.innerHTML = '';
+      return;
+    }
+    box.innerHTML = matches.slice(0, 30).map(p => {
+      const inv = p.Inventario;
+      return `<button type="button" data-id="${p.Artículo}" data-nombre="${escapeHtml(p.Descripción || '')}"
+        class="sug-item w-full text-left px-3 py-2.5 text-sm hover:bg-primary-soft border-b border-primary/5 last:border-0">
+        <span class="font-bold text-primary-dark">${p.Artículo}</span>
+        <span class="text-gray-400"> · </span>${escapeHtml(p.Descripción || '')}
+        <span class="text-[10px] text-gray-400"> · stock ${escapeHtml(String(inv))}</span>
+      </button>`;
+    }).join('');
+    box.classList.remove('hidden');
+    box.querySelectorAll('.sug-item').forEach(btn => {
+      btn.onclick = () => addProduct(btn.dataset.id, btn.getAttribute('data-nombre'));
+    });
+  }
+
+  function filtrarSug() {
+    const t = ($('#q').value || '').trim().toLowerCase();
+    if (t.length < 1) {
+      $('#sug').classList.add('hidden');
+      return;
+    }
+    const matches = catalogo.filter(p => {
+      const id = String(p.Artículo);
+      const nom = String(p.Descripción || '').toLowerCase();
+      return id.includes(t) || nom.includes(t);
+    });
+    // priorizar coincidencia por id exacto / inicio
+    matches.sort((a, b) => {
+      const sa = String(a.Artículo) === t ? -2 : String(a.Artículo).startsWith(t) ? -1 : 0;
+      const sb = String(b.Artículo) === t ? -2 : String(b.Artículo).startsWith(t) ? -1 : 0;
+      if (sa !== sb) return sa - sb;
+      return String(a.Descripción || '').localeCompare(String(b.Descripción || ''), 'es');
+    });
+    showSug(matches);
+  }
+
+  // ----- PDF QR grid -----
+  function mm(n) { return (n * 72) / 25.4; }
+
+  function makeQrDataUrl(text, px) {
+    return new Promise((resolve, reject) => {
+      const host = document.createElement('div');
+      host.style.cssText = 'position:fixed;left:-9999px;top:0;';
+      document.body.appendChild(host);
+      try {
+        const qr = new QRCode(host, {
+          text: text,
+          width: px,
+          height: px,
+          correctLevel: QRCode.CorrectLevel.M,
+          margin: 1,
+        });
+        // qrcodejs renders img or canvas async
+        setTimeout(() => {
+          try {
+            const canvas = host.querySelector('canvas');
+            const img = host.querySelector('img');
+            let url = null;
+            if (canvas) url = canvas.toDataURL('image/png');
+            else if (img && img.src) url = img.src;
+            document.body.removeChild(host);
+            if (!url) reject(new Error('QR vacío'));
+            else resolve(url);
+          } catch (e) {
+            try { document.body.removeChild(host); } catch (_) {}
+            reject(e);
+          }
+        }, 40);
+      } catch (e) {
+        try { document.body.removeChild(host); } catch (_) {}
+        reject(e);
+      }
+    });
+  }
+
+  async function dataUrlToBytes(dataUrl) {
+    const res = await fetch(dataUrl);
+    const buf = await res.arrayBuffer();
+    return new Uint8Array(buf);
+  }
+
+  $('#btn-pdf').onclick = async () => {
+    const n = totalEtiquetas();
+    if (n < 1) return;
+    if (n > 500) {
+      if (!confirm('Vas a generar ' + n + ' QR. Puede tardar un poco. ¿Seguir?')) return;
+    }
+    const btn = $('#btn-pdf');
+    const prev = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Generando…';
+
+    try {
+      let base = ($('#base').value || '').trim();
+      if (!base) base = 'https://mematalimon.com.ar/index.html?p=';
+      // asegurar que se pueda concatenar el id
+      if (!/[?&]p=$/i.test(base) && !base.endsWith('=')) {
+        if (base.indexOf('?') === -1) base += (base.endsWith('/') ? '' : '/') + '?p=';
+        else if (!base.endsWith('=') && !base.endsWith('&')) base += (base.endsWith('?') ? 'p=' : '&p=');
+      }
+
+      const { PDFDocument, rgb, StandardFonts } = PDFLib;
+      const pdf = await PDFDocument.create();
+      const font = await pdf.embedFont(StandardFonts.HelveticaBold);
+
+      const pageW = mm(210);
+      const pageH = mm(297);
+      const margin = mm(5);
+      const qrMm = 20;
+      const qrSize = mm(qrMm);
+      const textH = mm(4.2);
+      const pad = mm(1);
+      const cellW = qrSize + pad * 2;
+      const cellH = textH + qrSize + pad * 2;
+      const gap = mm(0.6);
+
+      const cols = Math.max(1, Math.floor((pageW - 2 * margin + gap) / (cellW + gap)));
+      const rows = Math.max(1, Math.floor((pageH - 2 * margin + gap) / (cellH + gap)));
+      const perPage = cols * rows;
+
+      // Expandir unidades
+      const queue = [];
+      items.forEach(it => {
+        const c = Math.max(0, Math.floor(Number(it.cant) || 0));
+        for (let k = 0; k < c; k++) queue.push(it.id);
+      });
+
+      // Cache QR image por id de producto
+      const qrCache = {};
+      async function qrForId(id) {
+        if (qrCache[id]) return qrCache[id];
+        const url = base + String(id);
+        const dataUrl = await makeQrDataUrl(url, 256);
+        const bytes = await dataUrlToBytes(dataUrl);
+        const img = await pdf.embedPng(bytes);
+        qrCache[id] = img;
+        return img;
+      }
+
+      let page = null;
+      let idx = 0;
+      for (let i = 0; i < queue.length; i++) {
+        const slot = idx % perPage;
+        if (slot === 0) {
+          page = pdf.addPage([pageW, pageH]);
+        }
+        const col = slot % cols;
+        const row = Math.floor(slot / cols);
+        const x0 = margin + col * (cellW + gap);
+        const y0 = pageH - margin - (row + 1) * cellH - row * gap;
+
+        // Marco de recorte
+        page.drawRectangle({
+          x: x0,
+          y: y0,
+          width: cellW,
+          height: cellH,
+          borderColor: rgb(0.55, 0.55, 0.55),
+          borderWidth: 0.4,
+        });
+
+        // Texto ESCANEÁ ACÁ
+        const label = 'ESCANEÁ ACÁ';
+        const fontSize = 5.5;
+        const tw = font.widthOfTextAtSize(label, fontSize);
+        page.drawText(label, {
+          x: x0 + (cellW - tw) / 2,
+          y: y0 + cellH - pad - fontSize,
+          size: fontSize,
+          font,
+          color: rgb(0.15, 0.12, 0.2),
+        });
+
+        // QR centrado debajo del texto
+        const img = await qrForId(queue[i]);
+        const qx = x0 + (cellW - qrSize) / 2;
+        const qy = y0 + pad;
+        page.drawImage(img, { x: qx, y: qy, width: qrSize, height: qrSize });
+
+        idx++;
+        if (i % 20 === 0) {
+          btn.textContent = 'Generando… ' + (i + 1) + '/' + queue.length;
+          await new Promise(r => setTimeout(r, 0));
+        }
+      }
+
+      const bytes = await pdf.save();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
+      a.download = 'etiquetas-qr.pdf';
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 3000);
+    } catch (err) {
+      console.error(err);
+      alert('No se pudo generar el PDF: ' + (err.message || err));
+    } finally {
+      btn.disabled = totalEtiquetas() < 1;
+      btn.textContent = prev;
+    }
+  };
+
+  $('#btn-clear').onclick = () => {
+    if (!items.length) return;
+    if (!confirm('¿Vaciar toda la lista?')) return;
+    items = [];
+    save();
+    render();
+  };
+
+  // Cerrar sugerencias al click fuera
+  document.addEventListener('click', (e) => {
+    if (!$('#sug').contains(e.target) && e.target !== $('#q')) {
+      $('#sug').classList.add('hidden');
+    }
+  });
+
+  $('#q').addEventListener('input', filtrarSug);
+  $('#q').addEventListener('focus', filtrarSug);
+  $('#q').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const first = $('#sug .sug-item');
+      if (first) first.click();
+    }
+  });
+
+  // Cargar articulos.json (misma carpeta = raíz del sitio)
+  (async () => {
+    try {
+      const r = await fetch('articulos.json', { cache: 'no-store' });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const data = await r.json();
+      if (!Array.isArray(data)) throw new Error('JSON inválido');
+      catalogo = data;
+      $('#status').textContent = catalogo.length + ' productos en el catálogo. Escribí para buscar.';
+    } catch (e) {
+      console.error(e);
+      $('#status').textContent = 'No se pudo cargar articulos.json (¿está en la misma carpeta que este HTML?).';
+      $('#status').classList.add('text-red-500');
+    }
+    render();
+  })();
+})();
+  </script>
+</body>
+</html>

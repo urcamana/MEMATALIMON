@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Códigos de barras · Me Mata Limón</title>
+  <meta name="description" content="Convertí el número de un producto en un código de barras EAN-13 y imprimí las etiquetas." />
+  <meta name="theme-color" content="#a88cd7" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    if (window.tailwind) {
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: { DEFAULT: '#a88cd7', dark: '#8e66cf', soft: '#f3eef9' },
+              ink: '#2d2a33'
+            },
+            fontFamily: { sans: ['Inter','system-ui','sans-serif'], display: ['Playfair Display','serif'] },
+            boxShadow: { soft: '0 4px 20px rgba(168,140,215,.18)', card: '0 8px 28px rgba(115,90,160,.12)' }
+          }
+        }
+      };
+    }
+  </script>
+  <style>
+    body { background: linear-gradient(160deg, #f8f5fc 0%, #efe8f8 50%, #f5f0fa 100%); min-height: 100vh; }
+    .modo.active { border-color: #8e66cf; background: #f3eef9; box-shadow: 0 0 0 2px rgba(142,102,207,.22); }
+
+    /* Etiquetas (medidas reales en mm: lo que ves es lo que se imprime) */
+    #hojas { display: flex; flex-wrap: wrap; gap: 2mm; }
+    .etq {
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5mm;
+      background: #fff;
+      overflow: hidden;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    .etq.con-borde { border: 0.2mm dashed #888; }
+    .etq-tit {
+      width: 100%;
+      margin-bottom: 0.6mm;
+      font: 600 2.8mm/1.15 Arial, Helvetica, sans-serif;
+      text-align: center;
+      color: #000;
+      max-height: 6.6mm;
+      overflow: hidden;
+    }
+    .etq-svg { flex: 1 1 auto; min-height: 0; width: 100%; }
+    .etq-svg svg { display: block; width: 100%; height: 100%; }
+
+    /* Vista previa en pantalla: scroll horizontal si la etiqueta es ancha */
+    #vista { overflow-x: auto; padding-bottom: 4px; }
+
+    @media print {
+      @page { size: A4; margin: 8mm; }
+      html, body { background: #fff !important; min-height: 0 !important; height: auto !important; }
+      header, .no-imprimir { display: none !important; }
+      main { max-width: none !important; padding: 0 !important; margin: 0 !important; }
+      #sec-resultado { box-shadow: none !important; border: 0 !important; padding: 0 !important; background: #fff !important; }
+      #vista { overflow: visible; padding: 0; }
+    }
+  </style>
+</head>
+<body class="font-sans text-ink antialiased">
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-primary/15 shadow-sm">
+    <div class="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
+      <div class="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white text-xs font-bold shadow-soft">EAN</div>
+      <div>
+        <h1 class="font-display text-lg text-primary-dark font-bold leading-tight">Códigos de barras</h1>
+        <p class="text-[11px] text-gray-500">Número de producto → EAN-13 → etiqueta para imprimir</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-lg mx-auto px-4 py-5 pb-16 space-y-4">
+
+    <section class="no-imprimir bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
+      <h2 class="text-sm font-semibold text-primary-dark">1. ¿Qué querés generar?</h2>
+      <div class="grid grid-cols-2 gap-2" id="modos">
+        <button type="button" class="modo active rounded-xl border-2 border-primary/30 p-2.5 text-left" data-modo="id">
+          <div class="font-bold text-xs text-primary-dark">Desde un número de producto</div>
+          <div class="text-[11px] text-gray-500">Crea un código propio</div>
+        </button>
+        <button type="button" class="modo rounded-xl border border-primary/15 p-2.5 text-left" data-modo="codigo">
+          <div class="font-bold text-xs">Ya tengo el código</div>
+          <div class="text-[11px] text-gray-500">El de la caja del producto</div>
+        </button>
+      </div>
+    </section>
+
+    <section class="no-imprimir bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
+      <h2 class="text-sm font-semibold text-primary-dark">2. Datos</h2>
+
+      <div id="campos-id" class="space-y-3">
+        <div class="grid grid-cols-2 gap-3">
+          <label class="block">
+            <span class="text-xs font-medium text-gray-600">Número de producto</span>
+            <input id="id-desde" type="text" inputmode="numeric" autocomplete="off" placeholder="Ej: 25" class="mt-1 w-full rounded-xl border border-primary/25 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+          </label>
+          <label class="block">
+            <span class="text-xs font-medium text-gray-600">Hasta (opcional)</span>
+            <input id="id-hasta" type="text" inputmode="numeric" autocomplete="off" placeholder="Ej: 40" class="mt-1 w-full rounded-xl border border-primary/25 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+          </label>
+        </div>
+        <p class="text-[11px] text-gray-400">Escribí un solo número, o completá “Hasta” para generar varios seguidos (máximo 200). Usá el mismo número que le diste al producto en tu planilla (columna Artículo).</p>
+      </div>
+
+      <div id="campos-codigo" class="space-y-2 hidden">
+        <label class="block">
+          <span class="text-xs font-medium text-gray-600">Códigos (uno por línea, 12 o 13 dígitos)</span>
+          <textarea id="codigos" rows="4" placeholder="7790895000010" class="mt-1 w-full rounded-xl border border-primary/25 px-3 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary/40"></textarea>
+        </label>
+        <p class="text-[11px] text-gray-400">Si pegás 12 dígitos, calculo el último (dígito verificador). Si pegás 13, controlo que sea correcto.</p>
+      </div>
+    </section>
+
+    <section class="no-imprimir bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
+      <h2 class="text-sm font-semibold text-primary-dark">3. Etiqueta</h2>
+
+      <label class="block">
+        <span class="text-xs font-medium text-gray-600">Texto sobre el código (opcional)</span>
+        <input id="titulo" type="text" maxlength="60" autocomplete="off" placeholder="Ej: Me Mata Limón o nombre del producto" class="mt-1 w-full rounded-xl border border-primary/25 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+      </label>
+
+      <div class="grid grid-cols-3 gap-3">
+        <label class="block">
+          <span class="text-xs font-medium text-gray-600">Ancho (mm)</span>
+          <input id="ancho" type="number" min="25" max="200" step="1" value="50" class="mt-1 w-full rounded-xl border border-primary/25 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+        </label>
+        <label class="block">
+          <span class="text-xs font-medium text-gray-600">Alto (mm)</span>
+          <input id="alto" type="number" min="15" max="120" step="1" value="30" class="mt-1 w-full rounded-xl border border-primary/25 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+        </label>
+        <label class="block">
+          <span class="text-xs font-medium text-gray-600">Copias</span>
+          <input id="copias" type="number" min="1" max="50" step="1" value="1" class="mt-1 w-full rounded-xl border border-primary/25 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
+        </label>
+      </div>
+
+      <div class="flex flex-wrap gap-1.5">
+        <button type="button" class="preset text-[11px] px-2.5 py-1 rounded-full border border-primary/25 bg-white" data-w="50" data-h="30">50 × 30 · estándar</button>
+        <button type="button" class="preset text-[11px] px-2.5 py-1 rounded-full border border-primary/25 bg-white" data-w="40" data-h="25">40 × 25 · chica</button>
+        <button type="button" class="preset text-[11px] px-2.5 py-1 rounded-full border border-primary/25 bg-white" data-w="60" data-h="40">60 × 40 · grande</button>
+      </div>
+
+      <label class="flex items-center gap-2 text-xs text-gray-600">
+        <input id="borde" type="checkbox" checked class="accent-primary" />
+        Dibujar un borde fino punteado para recortar
+      </label>
+    </section>
+
+    <section class="no-imprimir bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-3">
+      <button type="button" id="btn-gen" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-primary to-primary-dark text-white font-semibold shadow-soft">Generar códigos</button>
+      <p id="err" class="text-sm text-red-500 text-center hidden" role="alert"></p>
+    </section>
+
+    <section id="sec-resultado" class="hidden bg-white rounded-2xl shadow-card border border-primary/10 p-4 space-y-4">
+      <div class="no-imprimir space-y-3">
+        <h2 class="text-sm font-semibold text-primary-dark">Resultado</h2>
+        <p id="resumen" class="text-xs text-gray-500"></p>
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" id="btn-imprimir" class="py-3 rounded-xl bg-gradient-to-r from-primary to-primary-dark text-white font-semibold text-sm shadow-soft">Imprimir</button>
+          <button type="button" id="btn-png" class="py-3 rounded-xl border border-primary/30 font-semibold text-sm text-primary-dark">Descargar PNG</button>
+        </div>
+        <p class="text-[11px] text-gray-400">Al imprimir elegí tamaño real, <strong>escala 100%</strong> (sin “ajustar a la página”), para que las medidas salgan exactas. También podés elegir “Guardar como PDF”.</p>
+      </div>
+
+      <div id="vista"><div id="hojas"></div></div>
+
+      <div class="no-imprimir space-y-2">
+        <div class="flex items-center justify-between gap-2">
+          <h3 class="text-xs font-semibold text-primary-dark">Lista de códigos</h3>
+          <button type="button" id="btn-copiar" class="text-[11px] px-3 py-1.5 rounded-full border border-primary/30 text-primary-dark font-semibold">Copiar para Excel</button>
+        </div>
+        <div class="max-h-56 overflow-auto rounded-xl border border-primary/10">
+          <table class="w-full text-xs">
+            <thead class="bg-primary-soft text-primary-dark sticky top-0">
+              <tr><th class="text-left px-3 py-1.5 font-semibold">Número</th><th class="text-left px-3 py-1.5 font-semibold">EAN-13</th></tr>
+            </thead>
+            <tbody id="tabla" class="font-mono"></tbody>
+          </table>
+        </div>
+        <p class="text-[11px] text-gray-400">Pegá la columna EAN en tu planilla con el formato de la celda en <strong>Texto</strong>, para que Excel no le cambie los números.</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

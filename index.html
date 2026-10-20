@@ -75,7 +75,12 @@
             <!-- 3. Búsqueda (único id="formulario") -->
             <div class="barra-busqueda-wrap position-relative">
                 <form role="search" onsubmit="return false;">
-                    <input id="formulario" class="form-control" type="search" placeholder="Buscar producto o modelo (ej: J7 Pro, Moto G52)..." aria-label="Buscar producto" autocomplete="off">
+                    <div class="buscador-con-scan">
+                        <input id="formulario" class="form-control" type="search" placeholder="Buscar producto, modelo o escanear QR" aria-label="Buscar producto, modelo o escanear QR" autocomplete="off">
+                        <button type="button" id="btnEscanear" class="btn-escanear" aria-label="Escanear código QR del producto" title="Escanear QR del producto">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 8v8M11 8v8M14 8v8M17 8v8"/></svg>
+                        </button>
+                    </div>
                 </form>
                 <div id="sugerenciasBusqueda" class="sugerencias-busqueda d-none" role="listbox" aria-label="Sugerencias"></div>
             </div>
@@ -167,7 +172,7 @@
         <div class="container-fluid px-md-5 my-5">
             <div class="text-center text-white">
                 <h1 class="display-4 fw-bolder">Me Mata Limón!</h1>
-                <p class="lead fw-normal text-white-40 mb-0">Accesorios y electronica</p>
+                <p class="lead fw-normal text-white-40 mb-0">Accesorios y electrónica</p>
                 <p class="lead fw-normal text-white-40 mb-0">Grabados personalizados</p>
                 <div id="estadoLocal" class="mt-3 mb-2" aria-live="polite">
                   <span id="badgeAbierto" class="badge rounded-pill px-3 py-2 fw-semibold"
@@ -800,6 +805,7 @@
 
     <script src="compat-modelo.js"></script>
     <script type="module" src="logica.js"></script>
+    <script src="escaner.js" defer></script>
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./sw.js').catch(function () {});

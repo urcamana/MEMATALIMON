@@ -1178,12 +1178,31 @@ function filtrarConBusqueda() {
       }
     }
 
+    // ID de producto desde QR (?p=3) o tipeado solo el número corto
+    let idDesdeQr = null;
+    const mP = texto.match(/[?&]p=(\d+)/i) || texto.match(/[?&]producto=(\d+)/i);
+    if (mP) idDesdeQr = parseInt(mP[1], 10);
+    else if (/^\d{1,6}$/.test(texto)) idDesdeQr = parseInt(texto, 10);
+
+    // Búsqueda por código de barras (EAN): número de 8 a 14 dígitos
+    const textoDigitos = texto.replace(/[\s-]/g, '');
+    const esCodigoBarras = /^\d{8,14}$/.test(textoDigitos);
+    const codigoNormalizado = esCodigoBarras ? textoDigitos.replace(/^0+/, '') : '';
+
     for (let producto of datos) {
       let Descripcion = String(producto.Descripción || '').toLowerCase();
       const id = Number(producto.Artículo);
       if (idsYaMostrados.has(id)) continue;
       // texto vacío → todos (comportamiento original indexOf(""))
-      if (Descripcion.indexOf(texto) !== -1 && producto.Inventario >= 1) {
+      let coincide = Descripcion.indexOf(texto) !== -1;
+      // Match por ID de artículo (QR del producto o número corto en el buscador)
+      if (!coincide && idDesdeQr != null && !Number.isNaN(idDesdeQr) && id === idDesdeQr) {
+        coincide = true;
+      }
+      if (!coincide && esCodigoBarras && producto.EAN) {
+        coincide = String(producto.EAN).replace(/\D/g, '').replace(/^0+/, '') === codigoNormalizado;
+      }
+      if (coincide && producto.Inventario >= 1) {
         listaBusqueda.push(producto);
         idsYaMostrados.add(id);
       }
