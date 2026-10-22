@@ -7,25 +7,11 @@
   <meta name="description" content="Lista rápida de productos con cantidad y unidad. Exportá a PDF." />
   <meta name="theme-color" content="#a88cd7" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: { DEFAULT: '#a88cd7', dark: '#8e66cf', soft: '#f3eef9' },
-            ink: '#2d2a33'
-          },
-          fontFamily: { sans: ['Inter','system-ui','sans-serif'], display: ['Playfair Display','serif'] },
-          boxShadow: { soft: '0 4px 20px rgba(168,140,215,.18)', card: '0 8px 28px rgba(115,90,160,.12)' }
-        }
-      }
-    }
-  </script>
-  <style>
+<style>
     body { background: linear-gradient(160deg, #f8f5fc 0%, #efe8f8 50%, #f5f0fa 100%); min-height: 100vh; }
   </style>
+  <link rel="stylesheet" href="tw.css" />
 </head>
 <body class="font-sans text-ink antialiased">
   <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-primary/15 shadow-sm">

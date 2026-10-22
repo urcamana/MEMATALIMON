@@ -9,23 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: { DEFAULT: '#a88cd7', dark: '#8e66cf', light: '#c4b0e8', soft: '#f3eef9' },
-            accent: '#fa87f1', ink: '#2d2a33'
-          },
-          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'], display: ['Playfair Display', 'serif'] },
-          boxShadow: { soft: '0 4px 20px rgba(168,140,215,.18)', card: '0 8px 28px rgba(115,90,160,.12)' }
-        }
-      }
-    }
-  </script>
-  <style>
+<style>
     body { background: linear-gradient(160deg, #f8f5fc 0%, #efe8f8 50%, #f5f0fa 100%); min-height: 100vh; }
     .drop { border: 2px dashed rgba(168,140,215,.45); transition: .15s; }
     .drop.drag { border-color: #8e66cf; background: #f3eef9; }
@@ -36,6 +21,7 @@
     .fmt:disabled, .fmt.is-disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; filter: grayscale(0.35); }
     .safe-bottom { padding-bottom: max(1.25rem, env(safe-area-inset-bottom)); }
   </style>
+  <link rel="stylesheet" href="tw.css" />
 </head>
 <body class="font-sans text-ink antialiased">
   <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-primary/15 shadow-sm">

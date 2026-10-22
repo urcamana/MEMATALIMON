@@ -9,29 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: { DEFAULT: '#a88cd7', dark: '#8e66cf', light: '#c4b0e8', soft: '#f3eef9' },
-            accent: '#fa87f1',
-            ink: '#2d2a33'
-          },
-          fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
-            display: ['Playfair Display', 'serif']
-          },
-          boxShadow: {
-            soft: '0 4px 20px rgba(168, 140, 215, 0.18)',
-            card: '0 8px 30px rgba(115, 90, 160, 0.12)'
-          }
-        }
-      }
-    }
-  </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
@@ -43,6 +21,7 @@
     #cv-preview img.photo { object-fit: cover; }
     @media print { .no-print { display: none !important; } }
   </style>
+  <link rel="stylesheet" href="tw.css" />
 </head>
 <body class="font-sans text-ink antialiased">
   <!-- Header -->

@@ -6,27 +6,13 @@
   <title>Turnos del día · Me Mata Limón</title>
   <meta name="theme-color" content="#a88cd7" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: { DEFAULT: '#a88cd7', dark: '#8e66cf', soft: '#f3eef9' },
-            ink: '#2d2a33'
-          },
-          fontFamily: { sans: ['Inter','system-ui','sans-serif'], display: ['Playfair Display','serif'] },
-          boxShadow: { soft: '0 4px 20px rgba(168,140,215,.18)', card: '0 8px 28px rgba(115,90,160,.12)' }
-        }
-      }
-    }
-  </script>
-  <style>
+<style>
     body { background: linear-gradient(160deg, #f8f5fc 0%, #efe8f8 50%, #f5f0fa 100%); min-height: 100vh; }
     .turno-ok { background: #e8f8ef !important; border-color: #86d4a8 !important; }
     .turno-pasado { background: #fff7ed !important; border-color: #fdba74 !important; }
     .turno-ok .hora { color: #15803d; }
   </style>
+  <link rel="stylesheet" href="tw.css" />
 </head>
 <body class="font-sans text-ink antialiased">
   <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-primary/15 shadow-sm">
