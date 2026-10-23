@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-22T12:01:14.385Z",
+  "actualizado": "2026-10-23T12:39:18.001Z",
   "items": [
     {
       "id": "1",
@@ -150,11 +150,19 @@
       "checklist": true
     },
     {
+      "id": "148",
+      "checklist": true
+    },
+    {
       "id": "151",
       "checklist": true
     },
     {
       "id": "152",
+      "checklist": true
+    },
+    {
+      "id": "153",
       "checklist": true
     },
     {
@@ -322,10 +330,6 @@
       "checklist": true
     },
     {
-      "id": "279",
-      "checklist": true
-    },
-    {
       "id": "284",
       "checklist": true
     },
@@ -379,6 +383,10 @@
     },
     {
       "id": "315",
+      "checklist": true
+    },
+    {
+      "id": "316",
       "checklist": true
     },
     {
@@ -566,19 +574,15 @@
       "checklist": false
     },
     {
+      "id": "144",
+      "checklist": false
+    },
+    {
       "id": "145",
       "checklist": false
     },
     {
       "id": "146",
-      "checklist": false
-    },
-    {
-      "id": "148",
-      "checklist": false
-    },
-    {
-      "id": "153",
       "checklist": false
     },
     {
@@ -730,6 +734,10 @@
       "checklist": false
     },
     {
+      "id": "279",
+      "checklist": true
+    },
+    {
       "id": "293",
       "checklist": false
     },
@@ -742,15 +750,15 @@
       "checklist": false
     },
     {
+      "id": "306",
+      "checklist": false
+    },
+    {
       "id": "310",
       "checklist": false
     },
     {
       "id": "313",
-      "checklist": false
-    },
-    {
-      "id": "316",
       "checklist": false
     },
     {
@@ -887,10 +895,6 @@
     },
     {
       "id": "139",
-      "checklist": false
-    },
-    {
-      "id": "144",
       "checklist": false
     },
     {
@@ -1086,6 +1090,10 @@
       "checklist": false
     },
     {
+      "id": "84",
+      "checklist": false
+    },
+    {
       "id": "96",
       "checklist": false
     },
@@ -1142,6 +1150,10 @@
       "checklist": false
     },
     {
+      "id": "263",
+      "checklist": false
+    },
+    {
       "id": "265",
       "checklist": false
     },
@@ -1155,10 +1167,6 @@
     },
     {
       "id": "305",
-      "checklist": false
-    },
-    {
-      "id": "306",
       "checklist": false
     },
     {
@@ -1183,10 +1191,6 @@
     },
     {
       "id": "341",
-      "checklist": false
-    },
-    {
-      "id": "347",
       "checklist": false
     },
     {
@@ -1258,10 +1262,6 @@
       "checklist": false
     },
     {
-      "id": "84",
-      "checklist": false
-    },
-    {
       "id": "134",
       "checklist": false
     },
@@ -1282,19 +1282,11 @@
       "checklist": false
     },
     {
-      "id": "263",
-      "checklist": false
-    },
-    {
-      "id": "350",
+      "id": "347",
       "checklist": false
     },
     {
       "id": "352",
-      "checklist": false
-    },
-    {
-      "id": "354",
       "checklist": false
     },
     {
@@ -1398,7 +1390,15 @@
       "checklist": false
     },
     {
+      "id": "350",
+      "checklist": false
+    },
+    {
       "id": "353",
+      "checklist": false
+    },
+    {
+      "id": "354",
       "checklist": false
     },
     {
@@ -1422,6 +1422,10 @@
       "checklist": false
     },
     {
+      "id": "337",
+      "checklist": false
+    },
+    {
       "id": "32",
       "checklist": false
     },
@@ -1439,10 +1443,6 @@
     },
     {
       "id": "89",
-      "checklist": false
-    },
-    {
-      "id": "337",
       "checklist": false
     },
     {

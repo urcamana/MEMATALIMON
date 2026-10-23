@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "nombre": "Me Mata Limón!",
+    "nombre": "Me Mata Limón! 🍋",
     "descripcion": "Articulos electrónicos y Accesorios varios (Auriculares, cargadores, relojes, joyas de acero quirurgico, etc...) Estamos en Eldorado KM3 - Avenida San Martin Oeste 1885. Envianos un mensaje o entra en nuestra web! [mematalimon.com.ar]",
     "rubro": "Accesorios",
     "link": "https://wa.me/5493751588752",
@@ -13,7 +13,7 @@
   },
   {
     "id": 2,
-    "nombre": "CM servicio de limpieza",
+    "nombre": "CM servicio de limpieza 🧽",
     "descripcion": "Colchones, sillones, asientos de auto también techo interior de auto. Ubicación barrio Citricultores KM3. Se realiza trabajo a domicilio. Instagram: cm_limpiezaeldo",
     "rubro": "Limpieza",
     "link": "https://wa.me/5493751335575?text=¡Hola!%20Vi%20tu%20publicidad%20en%20la%20web%20de%20Me%20mata%20limon.%20Me%20interesa%20tu%20servicio.",
@@ -25,7 +25,7 @@
   },
   {
     "id": 3,
-    "nombre": "Romi moto envíos",
+    "nombre": "Romi moto envíos 🏍️",
     "descripcion": "¡Tus pedidos en buenas manos! Compras, documentos, medicamentos, comidas y más...  Rapidez, seguridad y confianza.",
     "rubro": "Motomandados",
     "link": "https://wa.me/5493751574144?text=¡Hola!%20Vi%20tu%20publicidad%20en%20la%20web%20de%20Me%20mata%20limon.%20Me%20interesa%20tu%20servicio.",
@@ -49,7 +49,19 @@
   },
   {
     "id": 5,
-    "nombre": "Espacio Disponible",
+    "nombre": "Motomandados 🛵",
+    "descripcion": "¡Tu pedido a dónde necesites! Paquetes, envios, documentos, compras y más... Eldorado y alrededores.",
+    "rubro": "Motomandados",
+    "link": "https://wa.me/5493751233808?text=¡Hola!%20Vi%20tu%20publicidad%20en%20la%20web%20de%20Me%20mata%20limon.%20Me%20interesa%20tu%20servicio.",
+    "actualizado": "2026-10-23",
+    "preferencia": 0,
+    "recomendado": false,
+    "ubicacion": false,
+    "mapa": ""
+  },
+  {
+    "id": 6,
+    "nombre": "Espacio Disponible 🔎",
     "descripcion": "Si queres aparecer en este listado gratuitamente escribinos y lo vamos a incorporar lo mas pronto posible!",
     "rubro": "Todos",
     "link": "https://wa.me/5493751588753?text=Me%20interesa%20agregar%20mi%20negocio%20a%20la%20web%20de%20mematalimon.com.ar%20%20%C2%BFComo%20debo%20hacer%3F",
