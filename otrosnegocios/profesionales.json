@@ -2,7 +2,7 @@
   {
     "id": 1,
     "nombre": "Me Mata Limón! 🍋",
-    "descripcion": "Articulos electrónicos y Accesorios varios (Auriculares, cargadores, relojes, joyas de acero quirurgico, etc...) Estamos en Eldorado KM3 - Avenida San Martin Oeste 1885. Envianos un mensaje o entra en nuestra web! [mematalimon.com.ar]",
+    "descripcion": "Articulos electrónicos y Accesorios varios (Auriculares, cargadores, relojes, joyas de acero quirurgico, etc...) Estamos en Eldorado KM3 - Envianos un mensaje!",
     "rubro": "Accesorios",
     "link": "https://wa.me/5493751588752",
     "actualizado": "2026-09-30",
@@ -73,6 +73,18 @@
   },
   {
     "id": 7,
+    "nombre": "🌹 Ramos con Amor 💗",
+    "descripcion": "Creamos ramos de flores artesanales y regalos personalizados, hechos con amor para sorprender en cada ocasión. 💐 Podés agregar chocolates, bombones, cartas dedicatorias y otros detalles especiales. 📸 Instagram: @ramosconamor.md",
+    "rubro": "Artesanales",
+    "link": "https://wa.me/5493751342584?text=¡Hola!%20Vi%20tu%20publicidad%20en%20la%20web%20de%20Me%20mata%20limon.%20Me%20interesan%20tus%20ramos.",
+    "actualizado": "2026-10-23",
+    "preferencia": 0,
+    "recomendado": false,
+    "ubicacion": false,
+    "mapa": ""
+  },
+  {
+    "id": 8,
     "nombre": "Espacio Disponible 🔎",
     "descripcion": "Si queres aparecer en este listado gratuitamente escribinos y lo vamos a incorporar lo mas pronto posible!",
     "rubro": "Todos",
