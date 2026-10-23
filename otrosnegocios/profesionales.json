@@ -85,6 +85,18 @@
   },
   {
     "id": 8,
+    "nombre": "DARSHANA | Centro de Formación y Bienestar Integral 🌿",
+    "descripcion": "Terapias complementarias, Movimiento y bienestar, Policonsultorios, Entrenamiento y actividad física, Cursos y formaciones. Un espacio para aprender, cuidarte, conectar con vos mismo y construir bienestar a tu propio ritmo. 📸Ig: @centro_darshana ",
+    "rubro": "Bienestar",
+    "link": "https://wa.me/5493751508491?text=¡Hola!%20Vi%20tu%20publicidad%20en%20la%20web%20de%20Me%20mata%20limon.%20Me%20interesan%20tus%servicios.",
+    "actualizado": "2026-10-23",
+    "preferencia": 0,
+    "recomendado": false,
+    "ubicacion": true,
+    "mapa": "https://maps.app.goo.gl/cApmyxufTVpAUD8Y9"
+  },
+  {
+    "id": 9,
     "nombre": "Espacio Disponible 🔎",
     "descripcion": "Si queres aparecer en este listado gratuitamente escribinos y lo vamos a incorporar lo mas pronto posible!",
     "rubro": "Todos",
