@@ -95,8 +95,20 @@
     "ubicacion": true,
     "mapa": "https://maps.app.goo.gl/cApmyxufTVpAUD8Y9"
   },
-  {
+{
     "id": 9,
+    "nombre": "🍔 Punto Don Raúl 🍕",
+    "descripcion": "Ofrecemos pizzas, hamburguesas, papas de distintas formas y sabores. Hamburguesas especiales, pizzas especiales y papas especiales. Km1, Felix Bogado. IG: @puntoburguer.donraul",
+    "rubro": "Comidas",
+    "link": "https://wa.me/5493751560083?text=¡Hola!%20Vi%20tu%20publicidad%20en%20la%20web%20de%20Me%20mata%20limon.%20Me%20interesan%20tu%20comida.",
+    "actualizado": "2026-10-24",
+    "preferencia": 0,
+    "recomendado": false,
+    "ubicacion": false,
+    "mapa": ""
+  },
+  {
+    "id": 10,
     "nombre": "Espacio Disponible 🔎",
     "descripcion": "Si queres aparecer en este listado gratuitamente escribinos y lo vamos a incorporar lo mas pronto posible!",
     "rubro": "Todos",
