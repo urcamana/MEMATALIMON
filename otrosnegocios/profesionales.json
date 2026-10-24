@@ -125,8 +125,22 @@
     "infoExtra": false,
     "info": "."
   },
-  {
+{
     "id": 10,
+    "nombre": "🧉 Mates con Anto 🌿",
+    "descripcion": "Los mejores yuyitos para tus infusiones favoritass🧉💕 Ig: @Anto_yuyitoss" Km3 Eldorado,
+    "rubro": "Comidas",
+    "link": "https://wa.me/5493751206453?text=¡Hola!%20Vi%20tu%20publicidad%20en%20la%20web%20de%20Me%20mata%20limon.%20Me%20interesan%20tus%20yuyitos.",
+    "actualizado": "2026-10-24",
+    "preferencia": 0,
+    "recomendado": false,
+    "ubicacion": true,
+    "mapa": "https://maps.app.goo.gl/PMmqzXMRVDFimtCH7",
+    "infoExtra": false,
+    "info": "."
+  },
+  {
+    "id": 11,
     "nombre": "Espacio Disponible 🔎",
     "descripcion": "Si queres aparecer en este listado gratuitamente escribinos y lo vamos a incorporar lo mas pronto posible!",
     "rubro": "Todos",
