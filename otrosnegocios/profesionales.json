@@ -10,6 +10,8 @@
     "recomendado": false,
     "ubicacion": true,
     "mapa": "https://maps.google.com/?q=Av.+San+Martin+Oeste+1885,+Eldorado,+Misiones"
+    "infoExtra": false,
+    "info": "."
   },
   {
     "id": 2,
@@ -22,6 +24,8 @@
     "recomendado": false,
     "ubicacion": false,
     "mapa": ""
+    "infoExtra": false,
+    "info": "."
   },
   {
     "id": 3,
@@ -34,6 +38,8 @@
     "recomendado": true,
     "ubicacion": false,
     "mapa": ""
+    "infoExtra": false,
+    "info": "."
   },
 {
     "id": 4,
@@ -46,6 +52,8 @@
     "recomendado": false,
     "ubicacion": false,
     "mapa": ""
+    "infoExtra": false,
+    "info": "."
   },
   {
     "id": 5,
@@ -58,6 +66,8 @@
     "recomendado": false,
     "ubicacion": false,
     "mapa": ""
+    "infoExtra": false,
+    "info": "."
   },
   {
     "id": 6,
@@ -70,6 +80,8 @@
     "recomendado": false,
     "ubicacion": false,
     "mapa": ""
+    "infoExtra": false,
+    "info": "."
   },
   {
     "id": 7,
@@ -82,6 +94,8 @@
     "recomendado": false,
     "ubicacion": false,
     "mapa": ""
+    "infoExtra": false,
+    "info": "."
   },
   {
     "id": 8,
@@ -94,6 +108,8 @@
     "recomendado": false,
     "ubicacion": true,
     "mapa": "https://maps.app.goo.gl/cApmyxufTVpAUD8Y9"
+    "infoExtra": false,
+    "info": "."
   },
 {
     "id": 9,
@@ -106,6 +122,8 @@
     "recomendado": false,
     "ubicacion": false,
     "mapa": ""
+    "infoExtra": false,
+    "info": "."
   },
   {
     "id": 10,
@@ -118,5 +136,7 @@
     "recomendado": false,
     "ubicacion": false,
     "mapa": ""
+    "infoExtra": false,
+    "info": "."
   }
 ]

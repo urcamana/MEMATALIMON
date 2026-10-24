@@ -25,6 +25,18 @@
     return a;
   }
 
+  function escapeHtml(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function textoConSaltos(s) {
+    return escapeHtml(s).replace(/\n/g, "<br>");
+  }
+
   function formatFecha(iso) {
     if (!iso) return "";
     try {
@@ -334,6 +346,50 @@
     }
   }
 
+
+  // =====================================================
+  // MODAL +INFO (texto largo opcional del JSON)
+  // =====================================================
+  function asegurarModalInfo() {
+    let overlay = document.getElementById("modalInfoExtra");
+    if (overlay) return overlay;
+    overlay = document.createElement("div");
+    overlay.id = "modalInfoExtra";
+    overlay.className = "modal-info-extra";
+    overlay.setAttribute("role", "dialog");
+    overlay.setAttribute("aria-modal", "true");
+    overlay.innerHTML =
+      '<div class="modal-info-box">' +
+        '<div class="modal-info-head">' +
+          '<h3 class="modal-info-title" id="modalInfoTitulo"></h3>' +
+          '<button type="button" class="modal-info-cerrar" aria-label="Cerrar">&times;</button>' +
+        '</div>' +
+        '<div class="modal-info-body" id="modalInfoCuerpo"></div>' +
+      '</div>';
+    document.body.appendChild(overlay);
+
+    function cerrar() {
+      overlay.classList.remove("is-open");
+      document.body.style.overflow = "";
+    }
+    overlay.querySelector(".modal-info-cerrar").addEventListener("click", cerrar);
+    overlay.addEventListener("click", function (e) {
+      if (e.target === overlay) cerrar();
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && overlay.classList.contains("is-open")) cerrar();
+    });
+    return overlay;
+  }
+
+  function abrirModalInfo(titulo, texto) {
+    const overlay = asegurarModalInfo();
+    overlay.querySelector("#modalInfoTitulo").textContent = titulo || "Más información";
+    overlay.querySelector("#modalInfoCuerpo").innerHTML = textoConSaltos(texto || "");
+    overlay.classList.add("is-open");
+    document.body.style.overflow = "hidden";
+  }
+
   // =====================================================
   // CREAR TARJETA
   // =====================================================
@@ -341,6 +397,8 @@
     const id = item.id;
     const nombre = item.nombre || "Sin nombre";
     const descripcion = item.descripcion || "";
+    const infoTexto = item.info || item.infoExtraTexto || "";
+    const mostrarInfo = (item.infoExtra === true || item.infoExtra === "true") && String(infoTexto).trim() !== "";
     const link = item.link || "#";
     const extra = (tipo === "negocio" || tipo === "servicio" || tipo === "profesional") ? (item.rubro || "") : (item.categoria || "");
     const actualizado = formatFecha(item.actualizado);
@@ -397,9 +455,10 @@
           </button>
         </div>
         <div class="card-body d-flex flex-column">
-          <h5 class="card-title fs-6 mb-1">${nombre}</h5>
-          ${extra ? `<span class="badge badge-rubro mb-2 align-self-start">${extra}</span>` : ""}
-          <p class="card-text small text-muted flex-grow-1">${descripcion}</p>
+          <h5 class="card-title fs-6 mb-1">${escapeHtml(nombre)}</h5>
+          ${extra ? `<span class="badge badge-rubro mb-2 align-self-start">${escapeHtml(extra)}</span>` : ""}
+          <p class="card-text small text-muted flex-grow-1 mb-1">${escapeHtml(descripcion)}</p>
+          ${mostrarInfo ? `<button type="button" class="btn btn-link btn-sm btn-info-extra p-0 mb-2 align-self-start">+ info</button>` : ""}
           <a href="${link}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-ver mt-auto">
             ${tipo === "negocio" || tipo === "servicio" || tipo === "profesional" ? "Ver / Contactar" : (tipo === "curso" ? "Ver curso / ebook" : (tipo === "libro" ? "Ver libro" : "Ver en Mercado Libre"))}
           </a>
@@ -410,6 +469,17 @@
         </div>
       </div>
     `;
+
+    if (mostrarInfo) {
+      const btnInfo = col.querySelector(".btn-info-extra");
+      if (btnInfo) {
+        btnInfo.addEventListener("click", function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          abrirModalInfo(nombre, infoTexto);
+        });
+      }
+    }
 
     return col;
   }

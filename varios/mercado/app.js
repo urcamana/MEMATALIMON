@@ -1,10 +1,15 @@
 (() => {
   const $ = (s) => document.querySelector(s);
-  const KEY = 'mml-mercado-v2';
+  const KEY = 'mml-mercado-v3';
   let items = [];
 
   try {
-    const raw = JSON.parse(localStorage.getItem(KEY) || localStorage.getItem('mml-mercado-v1') || '[]');
+    const raw = JSON.parse(
+      localStorage.getItem(KEY) ||
+      localStorage.getItem('mml-mercado-v2') ||
+      localStorage.getItem('mml-mercado-v1') ||
+      '[]'
+    );
     items = Array.isArray(raw) ? raw.map(normalize) : [];
   } catch (_) { items = []; }
 
@@ -16,7 +21,6 @@
       unidad: it.unidad || '',
       done: !!it.done,
       precio: it.precio != null && it.precio !== '' ? Number(it.precio) : null,
-      // orden estable: cuándo se agregó / cuándo se marcó
       addedAt: it.addedAt != null ? Number(it.addedAt) : Date.now(),
       checkedAt: it.checkedAt != null ? Number(it.checkedAt) : (it.done ? Date.now() : null),
     };
@@ -46,13 +50,19 @@
     return c || u;
   }
 
-  function subtotal(it) {
-    if (!it.done) return null;
+  /** Subtotal visual (también sin check, para ir completando). */
+  function subtotalCalc(it) {
     const c = Number(it.cant);
     const p = Number(it.precio);
     if (!c || c <= 0 || Number.isNaN(c)) return null;
     if (p == null || Number.isNaN(p) || p < 0) return null;
     return c * p;
+  }
+
+  /** Solo suma al total del carrito si está marcado. */
+  function subtotalCarrito(it) {
+    if (!it.done) return null;
+    return subtotalCalc(it);
   }
 
   function escapeHtml(s) {
@@ -71,19 +81,18 @@
     setTimeout(() => el.classList.add('hidden'), 1600);
   }
 
-  /** Pendientes por orden de agregado; marcados por último check primero. */
-  function displayOrder() {
-    const pending = items
+  function pendingList() {
+    return items
       .map((it, i) => ({ it, i }))
       .filter(x => !x.it.done)
       .sort((a, b) => (a.it.addedAt || 0) - (b.it.addedAt || 0));
+  }
 
-    const done = items
+  function doneList() {
+    return items
       .map((it, i) => ({ it, i }))
       .filter(x => x.it.done)
       .sort((a, b) => (b.it.checkedAt || 0) - (a.it.checkedAt || 0));
-
-    return [...pending, ...done];
   }
 
   function updateVisor() {
@@ -91,7 +100,7 @@
     let total = 0;
     let conPrecio = 0;
     done.forEach(it => {
-      const s = subtotal(it);
+      const s = subtotalCarrito(it);
       if (s != null) { total += s; conPrecio++; }
     });
     const vt = $('#visor-total');
@@ -110,7 +119,7 @@
     const warn = $('#visor-warn');
     if (warn) {
       if (pending.length) {
-        warn.textContent = pending.length + ' sin agarrar';
+        warn.textContent = pending.length + ' por agarrar';
         warn.classList.remove('hidden');
       } else {
         warn.classList.add('hidden');
@@ -121,13 +130,13 @@
     if (!box) return;
     const notes = [];
     if (pending.length) {
-      notes.push('<p class="text-amber-800"><strong>' + pending.length + '</strong> producto(s) todavía <strong>sin marcar</strong> (no olvides revisarlos).</p>');
+      notes.push('<p class="text-amber-800"><strong>' + pending.length + '</strong> en la lista <strong>sin marcar</strong> (completá cantidad/precio y marcá cuando lo agarres).</p>');
     }
     if (noQty.length) {
-      notes.push('<p class="text-amber-800"><strong>' + noQty.length + '</strong> marcado(s) <strong>sin cantidad</strong>: el total no los suma bien hasta que indiques cuántos agarraste.</p>');
+      notes.push('<p class="text-amber-800"><strong>' + noQty.length + '</strong> en el carrito <strong>sin cantidad</strong>.</p>');
     }
     if (noPrice.length) {
-      notes.push('<p class="text-amber-800"><strong>' + noPrice.length + '</strong> marcado(s) <strong>sin precio de góndola</strong>: opcional, pero sin precio no entran en el total.</p>');
+      notes.push('<p class="text-amber-800"><strong>' + noPrice.length + '</strong> en el carrito <strong>sin precio</strong> (no suman al total).</p>');
     }
     if (notes.length) {
       box.className = 'rounded-2xl border border-amber-200 bg-amber-50 p-3 text-[12px] leading-snug space-y-1';
@@ -135,7 +144,7 @@
       box.classList.remove('hidden');
     } else if (done.length) {
       box.className = 'rounded-2xl border border-emerald-200 bg-emerald-50 p-3 text-[12px] leading-snug text-emerald-900';
-      box.innerHTML = '<p>Todo lo marcado tiene cantidad y precio. Total al día.</p>';
+      box.innerHTML = '<p>Carrito completo con cantidad y precio. Total al día.</p>';
       box.classList.remove('hidden');
     } else {
       box.classList.add('hidden');
@@ -146,10 +155,10 @@
   function updateRowSubtotal(row, it) {
     const el = row.querySelector('.subtotal-line');
     if (!el) return;
-    const st = subtotal(it);
-    el.innerHTML = 'Subtotal: ' + (st != null
+    const st = subtotalCalc(it);
+    el.innerHTML = st != null
       ? money(st)
-      : '<span class="text-gray-400 font-medium">— (falta cantidad o precio)</span>');
+      : '<span class="text-gray-400 font-medium">—</span>';
   }
 
   function bindRow(row, i) {
@@ -159,7 +168,6 @@
     const chk = row.querySelector('.chk');
     if (chk) {
       chk.onchange = () => {
-        const wasDone = it.done;
         it.done = chk.checked;
         if (chk.checked) {
           it.checkedAt = Date.now();
@@ -168,8 +176,7 @@
           it.checkedAt = null;
         }
         save();
-        // Solo reordenar al marcar/desmarcar (no al editar precio/cant)
-        render();
+        render(); // solo reordena al marcar/desmarcar
       };
     }
 
@@ -193,7 +200,6 @@
         save();
         updateRowSubtotal(row, it);
         updateVisor();
-        // NO render() → no salta de lugar
       };
     });
 
@@ -228,16 +234,51 @@
     }
   }
 
+  function rowHtml(it, i, enCarrito) {
+    const st = subtotalCalc(it);
+    const cantVal = it.cant != null && !Number.isNaN(Number(it.cant)) ? it.cant : '';
+    const precioVal = it.precio != null && !Number.isNaN(Number(it.precio)) ? it.precio : '';
+    const bg = enCarrito ? 'is-cart' : '';
+    const checked = enCarrito ? 'checked' : '';
+
+    return `
+      <div class="item-row ${bg}" data-i="${i}">
+        <div class="item-top">
+          <p class="item-name" title="${escapeHtml(it.nombre)}">${escapeHtml(it.nombre)}</p>
+          <button type="button" class="rm" title="Quitar">✕</button>
+        </div>
+        <div class="item-bottom">
+          <label class="chk-wrap" title="${enCarrito ? 'Quitar del carrito' : 'Marcar como agarrado'}">
+            <input type="checkbox" class="chk" ${checked} />
+            <span class="chk-label">${enCarrito ? 'Listo' : 'Agarrar'}</span>
+          </label>
+          <div class="field">
+            <span class="field-label">Cant</span>
+            <input type="number" class="qty" step="any" min="0" value="${cantVal}" placeholder="0" inputmode="decimal" />
+          </div>
+          <div class="field">
+            <span class="field-label">Precio</span>
+            <input type="number" class="precio" step="any" min="0" value="${precioVal}" placeholder="0" inputmode="decimal" />
+          </div>
+          <div class="field sub">
+            <span class="field-label">Subt.</span>
+            <p class="subtotal-line">${st != null ? money(st) : '—'}</p>
+          </div>
+        </div>
+      </div>`;
+  }
+
   function render() {
     const list = $('#list');
     if (!list) return;
 
-    const pending = items.filter(it => !it.done).length;
-    const done = items.filter(it => it.done).length;
+    const pending = pendingList();
+    const done = doneList();
+
     const tot = $('#total');
     if (tot) {
       tot.textContent = items.length
-        ? (pending + ' por agarrar · ' + done + ' en carrito')
+        ? (pending.length + ' por agarrar · ' + done.length + ' en carrito')
         : '0';
     }
     const btnPdf = $('#btn-pdf');
@@ -247,67 +288,29 @@
     updateVisor();
 
     if (!items.length) {
-      list.innerHTML = '<p id="empty" class="p-4 text-sm text-gray-400 text-center">La lista está vacía. Anotá lo que hace falta comprar.</p>';
+      list.innerHTML = '<p class="p-4 text-sm text-gray-400 text-center">La lista está vacía. Anotá lo que hace falta comprar.</p>';
       return;
     }
 
-    const order = displayOrder();
+    let html = '';
 
-    list.innerHTML = order.map(({ it, i }) => {
-      const q = qtyLabel(it);
-      if (!it.done) {
-        return `
-          <div class="item-row px-3 py-3 border-b border-primary/10 last:border-0" data-i="${i}">
-            <div class="flex items-center gap-3">
-              <input type="checkbox" class="chk w-5 h-5 accent-primary shrink-0" />
-              <div class="flex-1 min-w-0">
-                <p class="item-name text-sm font-medium text-ink">${escapeHtml(it.nombre)}</p>
-              </div>
-              <span class="text-xs text-gray-500 shrink-0 max-w-[40%] text-right">${q ? escapeHtml(q) : '<span class="text-gray-300">—</span>'}</span>
-              <button type="button" class="rm text-red-400 text-xs font-semibold shrink-0">✕</button>
-            </div>
-          </div>`;
-      }
-
-      const st = subtotal(it);
-      const cantVal = it.cant != null && !Number.isNaN(Number(it.cant)) ? it.cant : '';
-      const precioVal = it.precio != null && !Number.isNaN(Number(it.precio)) ? it.precio : '';
-
-      return `
-        <div class="item-row item-done px-3 py-3 border-b border-primary/10 last:border-0 bg-primary-soft/25" data-i="${i}">
-          <div class="flex items-start gap-3">
-            <input type="checkbox" class="chk mt-1 w-5 h-5 accent-primary shrink-0" checked />
-            <div class="flex-1 min-w-0 space-y-2">
-              <div class="flex items-start justify-between gap-2">
-                <p class="item-name text-sm font-semibold text-ink">${escapeHtml(it.nombre)}</p>
-                <button type="button" class="rm text-red-400 text-xs font-semibold shrink-0">✕</button>
-              </div>
-              <div class="grid grid-cols-2 gap-2">
-                <div>
-                  <label class="text-[10px] text-gray-500">Unidades agarradas</label>
-                  <div class="flex items-center gap-1 mt-0.5">
-                    <button type="button" data-d="-1" class="adj w-8 h-8 rounded-lg border border-primary/25 bg-white font-bold text-primary-dark text-sm">−</button>
-                    <input type="number" class="qty flex-1 min-w-0 text-center rounded-lg border border-gray-200 py-1.5 text-sm font-semibold" step="any" min="0" value="${cantVal}" inputmode="decimal" />
-                    <button type="button" data-d="1" class="adj w-8 h-8 rounded-lg border border-primary/25 bg-white font-bold text-primary-dark text-sm">+</button>
-                  </div>
-                  ${it.unidad ? `<p class="text-[10px] text-gray-400 mt-0.5">Medida: ${escapeHtml(it.unidad)}</p>` : ''}
-                </div>
-                <div>
-                  <label class="text-[10px] text-gray-500">Precio góndola (c/u)</label>
-                  <div class="relative mt-0.5">
-                    <span class="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-gray-400">$</span>
-                    <input type="number" class="precio w-full rounded-lg border border-gray-200 py-1.5 pl-6 pr-2 text-sm font-semibold" step="any" min="0" placeholder="opcional" value="${precioVal}" inputmode="decimal" />
-                  </div>
-                </div>
-              </div>
-              <p class="subtotal-line text-xs text-primary-dark font-semibold">
-                Subtotal: ${st != null ? money(st) : '<span class="text-gray-400 font-medium">— (falta cantidad o precio)</span>'}
-              </p>
-            </div>
-          </div>
+    if (pending.length) {
+      html += `
+        <div class="list-section-head">
+          <span class="sec-title">Para comprar</span>
         </div>`;
-    }).join('');
+      pending.forEach(({ it, i }) => { html += rowHtml(it, i, false); });
+    }
 
+    if (done.length) {
+      html += `
+        <div class="list-section-head cart">
+          <span class="sec-title">Ya en el carrito</span>
+        </div>`;
+      done.forEach(({ it, i }) => { html += rowHtml(it, i, true); });
+    }
+
+    list.innerHTML = html;
     list.querySelectorAll('.item-row').forEach(row => {
       bindRow(row, +row.dataset.i);
     });
@@ -373,7 +376,7 @@
   if ($('#btn-clear-done')) {
     $('#btn-clear-done').onclick = () => {
       const n = items.filter(it => it.done).length;
-      if (!n) { flash('No hay ítems marcados.'); return; }
+      if (!n) { flash('No hay ítems en el carrito.'); return; }
       items = items.filter(it => !it.done);
       save();
       render();
@@ -383,19 +386,37 @@
   if ($('#btn-copy')) {
     $('#btn-copy').onclick = async () => {
       if (!items.length) return;
-      const ordered = displayOrder().map(x => x.it);
-      const lines = ordered.map(it => {
-        const q = qtyLabel(it);
-        const st = subtotal(it);
-        let line = (it.done ? '✓ ' : '• ') + it.nombre;
-        if (q) line += ' — ' + q;
-        if (it.done && it.precio != null) line += ' · $' + fmtNum(it.precio) + ' c/u';
-        if (st != null) line += ' → ' + money(st);
-        return line;
-      });
+      const lines = [];
+      const pend = pendingList().map(x => x.it);
+      const don = doneList().map(x => x.it);
+      if (pend.length) {
+        lines.push('Para comprar:');
+        pend.forEach(it => {
+          const q = qtyLabel(it);
+          const st = subtotalCalc(it);
+          let line = '• ' + it.nombre;
+          if (q) line += ' — ' + q;
+          if (it.precio != null) line += ' · $' + fmtNum(it.precio);
+          if (st != null) line += ' → ' + money(st);
+          lines.push(line);
+        });
+        lines.push('');
+      }
+      if (don.length) {
+        lines.push('En el carrito:');
+        don.forEach(it => {
+          const q = qtyLabel(it);
+          const st = subtotalCalc(it);
+          let line = '✓ ' + it.nombre;
+          if (q) line += ' — ' + q;
+          if (it.precio != null) line += ' · $' + fmtNum(it.precio);
+          if (st != null) line += ' → ' + money(st);
+          lines.push(line);
+        });
+      }
       let total = 0;
-      items.forEach(it => { const s = subtotal(it); if (s != null) total += s; });
-      const text = 'Lista del super\n' + lines.join('\n') + '\n\nTotal agarrado: ' + money(total);
+      items.forEach(it => { const s = subtotalCarrito(it); if (s != null) total += s; });
+      const text = 'Lista del super\n' + lines.join('\n') + '\n\nTotal carrito: ' + money(total);
       try {
         await navigator.clipboard.writeText(text);
         flash('Lista copiada');
@@ -415,7 +436,10 @@
 
   if ($('#btn-pdf')) {
     $('#btn-pdf').onclick = async () => {
-      if (!items.length) return;
+      if (!items.length || typeof PDFLib === 'undefined') {
+        if (typeof PDFLib === 'undefined') alert('No se cargó la librería PDF.');
+        return;
+      }
       try {
         const { PDFDocument, rgb, StandardFonts } = PDFLib;
         const pdf = await PDFDocument.create();
@@ -441,53 +465,50 @@
         page.drawLine({ start: { x: margin, y }, end: { x: pageW - margin, y }, thickness: 0.8, color: rgb(0.66, 0.55, 0.84) });
         y -= 10;
 
-        page.drawText('#', { x: xNum, y, size: 8, font: fontBold, color: rgb(0.35, 0.3, 0.45) });
-        page.drawText('Producto', { x: xName, y, size: 8, font: fontBold, color: rgb(0.35, 0.3, 0.45) });
-        page.drawText('Detalle', {
-          x: pageW - margin - fontBold.widthOfTextAtSize('Detalle', 8),
-          y, size: 8, font: fontBold, color: rgb(0.35, 0.3, 0.45),
-        });
-        y -= 4;
-        page.drawLine({ start: { x: margin, y }, end: { x: pageW - margin, y }, thickness: 0.4, color: rgb(0.75, 0.7, 0.85) });
-        y -= rowH;
-
-        const ordered = displayOrder().map(x => x.it);
-        let total = 0;
-        ordered.forEach((it, i) => {
-          if (y < margin + 18) {
+        function drawSection(title, list) {
+          if (!list.length) return;
+          if (y < margin + 24) {
             page = pdf.addPage([pageW, pageH]);
             y = pageH - margin;
           }
-          const st = subtotal(it);
-          if (st != null) total += st;
-          const q = qtyLabel(it);
-          let det = '';
-          if (it.done) {
-            det = (q || '—');
+          page.drawText(title, { x: margin, y, size: 9, font: fontBold, color: rgb(0.42, 0.32, 0.58) });
+          y -= rowH;
+          list.forEach((it, idx) => {
+            if (y < margin + 18) {
+              page = pdf.addPage([pageW, pageH]);
+              y = pageH - margin;
+            }
+            const st = subtotalCalc(it);
+            const q = qtyLabel(it);
+            let det = q || '—';
             if (it.precio != null) det += ' x $' + fmtNum(it.precio);
             if (st != null) det += ' = $' + fmtNum(st);
-          } else {
-            det = q || 'pendiente';
-          }
-          const nombre = fitText((it.done ? '✓ ' : '○ ') + it.nombre, font, 9, nameMaxW);
-          const detFit = fitText(det, font, 8, colRight);
-          page.drawText(String(i + 1), { x: xNum, y, size: 9, font, color: rgb(0.4, 0.4, 0.45) });
-          page.drawText(nombre, { x: xName, y, size: 9, font, color: rgb(0.15, 0.12, 0.2) });
-          page.drawText(detFit, {
-            x: pageW - margin - font.widthOfTextAtSize(detFit, 8),
-            y, size: 8, font, color: rgb(0.42, 0.32, 0.58),
+            const mark = it.done ? '✓ ' : '○ ';
+            const nombre = fitText(mark + it.nombre, font, 9, nameMaxW);
+            const detFit = fitText(det, font, 8, colRight);
+            page.drawText(String(idx + 1), { x: xNum, y, size: 9, font, color: rgb(0.4, 0.4, 0.45) });
+            page.drawText(nombre, { x: xName, y, size: 9, font, color: rgb(0.15, 0.12, 0.2) });
+            page.drawText(detFit, {
+              x: pageW - margin - font.widthOfTextAtSize(detFit, 8),
+              y, size: 8, font, color: rgb(0.42, 0.32, 0.58),
+            });
+            y -= 3;
+            page.drawLine({ start: { x: margin, y }, end: { x: pageW - margin, y }, thickness: 0.25, color: rgb(0.85, 0.82, 0.9) });
+            y -= rowH;
           });
-          y -= 3;
-          page.drawLine({ start: { x: margin, y }, end: { x: pageW - margin, y }, thickness: 0.25, color: rgb(0.85, 0.82, 0.9) });
-          y -= rowH;
-        });
+          y -= 4;
+        }
 
-        y -= 6;
+        drawSection('Para comprar', pendingList().map(x => x.it));
+        drawSection('En el carrito', doneList().map(x => x.it));
+
+        let total = 0;
+        items.forEach(it => { const s = subtotalCarrito(it); if (s != null) total += s; });
         if (y < margin + 16) {
           page = pdf.addPage([pageW, pageH]);
           y = pageH - margin;
         }
-        page.drawText('Total agarrado: ' + money(total), {
+        page.drawText('Total carrito: ' + money(total), {
           x: margin, y, size: 11, font: fontBold, color: rgb(0.42, 0.32, 0.58),
         });
 

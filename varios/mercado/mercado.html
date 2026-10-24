@@ -10,7 +10,157 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <style>
     body { background: linear-gradient(160deg, #f8f5fc 0%, #efe8f8 50%, #f5f0fa 100%); min-height: 100vh; }
-    .item-done .item-name { opacity: 0.85; }
+
+    #list .list-section-head {
+      padding: 6px 10px;
+      background: #fff;
+      border-bottom: 1px solid rgba(168,140,215,.15);
+    }
+    #list .list-section-head.cart {
+      background: rgba(243,238,249,.9);
+      border-top: 1px solid rgba(168,140,215,.2);
+    }
+    #list .list-section-head .sec-title {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: #6b4f9c;
+    }
+
+    #list {
+      /* el contenedor de la lista deja ver el fondo entre tarjetas */
+    }
+    #list .item-row {
+      margin: 0 8px 8px;
+      padding: 10px 10px;
+      border: 1px solid rgba(168,140,215,.18);
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(115, 90, 160, 0.06);
+      box-sizing: border-box;
+    }
+    #list .item-row.is-cart {
+      background: rgba(243,238,249,.55);
+      border-color: rgba(168,140,215,.28);
+    }
+    #list .item-row:last-child {
+      margin-bottom: 8px;
+    }
+    /* los encabezados de sección no llevan el margen de tarjeta */
+    #list .list-section-head {
+      margin: 0;
+      border-radius: 0;
+    }
+
+    /* Renglón 1: nombre + eliminar */
+    #list .item-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    #list .item-name {
+      margin: 0;
+      flex: 1;
+      min-width: 0;
+      font-size: 13px;
+      font-weight: 600;
+      color: #2d2a33;
+      line-height: 1.25;
+      word-break: break-word;
+    }
+    #list .item-top .rm {
+      border: 0;
+      background: transparent;
+      color: #f87171;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 2px 4px;
+      line-height: 1;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    /* Renglón 2: check | cant | precio | subtotal */
+    #list .item-bottom {
+      display: grid;
+      grid-template-columns: auto 1fr 1fr 1fr;
+      gap: 6px;
+      align-items: end;
+    }
+    #list .chk-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      cursor: pointer;
+      min-width: 44px;
+    }
+    #list .chk-wrap .chk {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      accent-color: #a88cd7;
+    }
+    #list .chk-label {
+      font-size: 9px;
+      color: #9ca3af;
+      font-weight: 600;
+      line-height: 1;
+    }
+    #list .field {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    #list .field-label {
+      font-size: 9px;
+      font-weight: 600;
+      color: #9ca3af;
+      line-height: 1;
+    }
+    #list .item-row .qty,
+    #list .item-row .precio {
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 6px 4px;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+      background: #fff;
+    }
+    #list .item-row .qty:focus,
+    #list .item-row .precio:focus {
+      outline: none;
+      border-color: #a88cd7;
+      box-shadow: 0 0 0 2px rgba(168,140,215,.2);
+    }
+    #list .item-row input[type=number]::-webkit-outer-spin-button,
+    #list .item-row input[type=number]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    #list .item-row input[type=number] { -moz-appearance: textfield; }
+
+    #list .field.sub .subtotal-line {
+      margin: 0;
+      min-height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #6b4f9c;
+      font-variant-numeric: tabular-nums;
+      text-align: center;
+      padding: 0 2px;
+      word-break: break-all;
+    }
   </style>
   <link rel="stylesheet" href="tw.css" />
 </head>
