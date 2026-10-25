@@ -155,6 +155,20 @@
   },
   {
     "id": 12,
+    "nombre": "LAVADOS EXPRESS 🫧 + MOTOMANDADOS 🛵",
+    "descripcion": "Todo impecable y sin moverte de tu casa 🏠",
+    "rubro": "Multirubro",
+    "link": "https://wa.me/5493751447076?text=¡Hola!%20Vi%20tu%20publicidad%20en%20la%20web%20de%20Me%20mata%20limon.%20Me%20interesa%20tu%20servicio.",
+    "actualizado": "2026-10-25",
+    "preferencia": 0,
+    "recomendado": false,
+    "ubicacion": false,
+    "mapa": "",
+    "infoExtra": false,
+    "info": "."
+  },
+  {
+    "id": 13,
     "nombre": "Espacio Disponible 🔎",
     "descripcion": "Si queres aparecer en este listado gratuitamente escribinos y lo vamos a incorporar lo mas pronto posible!",
     "rubro": "Todos",
