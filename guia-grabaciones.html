@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#a88cd7">
+  <meta name="description" content="Modelos disponibles para grabado en acero — Me Mata Limón, Eldorado.">
+  <title>Guía de grabaciones | Me Mata Limón</title>
+  <link rel="shortcut icon" href="IMG/icono.png" type="image/png">
+  <link rel="apple-touch-icon" href="IMG/logo_principal.jpg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .cta-simular {
+      display: block;
+      text-align: center;
+      text-decoration: none;
+      background: linear-gradient(135deg, #a88cd7 0%, #8e66cf 55%, #6b4f9c 100%);
+      color: #fff !important;
+      border-radius: 16px;
+      padding: 1.15rem 1.25rem;
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: 0.02em;
+      box-shadow: 0 10px 28px rgba(115, 90, 160, 0.35);
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .cta-simular:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 32px rgba(115, 90, 160, 0.45);
+      color: #fff !important;
+    }
+    .cta-simular small {
+      display: block;
+      font-weight: 500;
+      font-size: 0.85rem;
+      opacity: 0.92;
+      margin-top: 0.25rem;
+    }
+    .modelo-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+    @media (min-width: 576px) {
+      .modelo-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (min-width: 768px) {
+      .modelo-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+    .modelo-card {
+      background: #fff;
+      border: 2px solid rgba(168, 140, 215, 0.2);
+      border-radius: 14px;
+      padding: 0.65rem;
+      text-align: center;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+      height: 100%;
+    }
+    .modelo-card:hover {
+      border-color: #a88cd7;
+      box-shadow: 0 8px 20px rgba(115, 90, 160, 0.15);
+      transform: translateY(-2px);
+      color: inherit;
+    }
+    .modelo-card.agotado {
+      opacity: 0.72;
+      border-style: dashed;
+    }
+    .modelo-card img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: contain;
+      background: #f5f5f5;
+      border-radius: 10px;
+      display: block;
+    }
+    .modelo-card .nombre {
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin: 0.45rem 0 0;
+      line-height: 1.25;
+      color: #2d2a33;
+    }
+    .modelo-card .badge-estado {
+      font-size: 0.65rem;
+      font-weight: 700;
+      display: inline-block;
+      margin-top: 0.25rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 999px;
+    }
+    .badge-activo { background: #e8f5e9; color: #2e7d32; }
+    .badge-agotado { background: #fdecea; color: #c62828; }
+
+    .modelo-card .img-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1;
+      background: #f5f5f5;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .modelo-card .img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      aspect-ratio: auto;
+      background: transparent;
+      border-radius: 0;
+    }
+    .modelo-card .carteles-precio {
+      position: absolute;
+      left: 4px;
+      right: 4px;
+      bottom: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      pointer-events: none;
+    }
+    .modelo-card .cartel-precio {
+      font-size: 0.62rem;
+      font-weight: 700;
+      line-height: 1.2;
+      padding: 3px 5px;
+      border-radius: 6px;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,.35);
+      box-shadow: 0 1px 4px rgba(0,0,0,.2);
+      word-break: break-word;
+    }
+    .modelo-card .cartel-precio.texto {
+      background: linear-gradient(135deg, #6b4f9c, #a88cd7);
+    }
+    .modelo-card .cartel-precio.imagen {
+      background: linear-gradient(135deg, #c9a227, #e0b83a);
+      color: #2d2a33;
+      text-shadow: none;
+    }
+
+    .seccion-chapita {
+      margin-bottom: 2rem;
+      scroll-margin-top: 90px;
+    }
+    .seccion-chapita h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #5c3d8a;
+      margin-bottom: 0.75rem;
+    }
+    .titulo-agotados {
+      background: #3d2a55;
+      color: #fff;
+      text-align: center;
+      padding: 1rem 1.25rem;
+      border-radius: 14px;
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      margin: 2.5rem 0 1.5rem;
+      box-shadow: 0 6px 20px rgba(61, 42, 85, 0.35);
+    }
+    .galeria-carrusel {
+      background: #fff;
+      max-width: 100%;
+    }
+    .galeria-carrusel .galeria-img {
+      width: 100%;
+      max-height: 420px;
+      object-fit: contain;
+      background: #f3eef9;
+      cursor: zoom-in;
+    }
+    .galeria-placeholder {
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      text-align: center;
+      color: #6b7280;
+      font-size: 0.95rem;
+      background: #f8f5fc;
+    }
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+      background-color: rgba(88, 51, 151, 0.55);
+      border-radius: 50%;
+      padding: 14px;
+    }
+    #mmlLightboxGrabados {
+      position: fixed;
+      inset: 0;
+      z-index: 3000;
+      background: rgba(0, 0, 0, 0.92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem;
+    }
+    #mmlLightboxGrabados.d-none { display: none !important; }
+    #mmlLightboxGrabados img {
+      width: auto;
+      height: auto;
+      max-width: 98vw;
+      max-height: 96vh;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+    }
+    #mmlLightboxGrabados .mml-lb-cerrar {
+      position: fixed;
+      top: 12px;
+      right: 14px;
+      z-index: 3001;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      font-size: 2rem;
+      line-height: 1;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body class="pagina-secundaria">
+
+  <header>
+    <nav class="navbar fixed-top" id="nav1">
+      <div class="container-fluid nav-main-row">
+        <a class="navbar-brand d-flex align-items-center" href="index.html">
+          <img src="IMG/logo_principal.jpg" alt="Me Mata Limón!" class="logo-nav-img rounded-3 shadow-sm bg-white p-1 border">
+        </a>
+        <div class="nav-links-desktop d-none d-md-flex align-items-center gap-3 ms-auto">
+          <a class="nav-link-desk" href="index.html">Inicio</a>
+          <a class="nav-link-desk" href="guia-cadenas.html">Guía de cadenas</a>
+          <a class="nav-link-desk active" href="guia-grabaciones.html">Guía de grabaciones</a>
+          <a class="nav-link-desk" href="simulacion/simulacion.html">Simulá tu grabado</a>
+          <a class="nav-link-desk" href="contacto.html">Contacto</a>
+        </div>
+        <button class="btn-menu-movil" type="button" data-bs-toggle="offcanvas"
+          data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar" aria-label="Menú">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </nav>
+    <div class="offcanvas offcanvas-end text-bg-dark rounded" tabindex="-1" id="offcanvasDarkNavbar">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title">Menú</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <ul class="navbar-nav flex-grow-1 pe-3">
+          <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="guia-cadenas.html">Guía de cadenas</a></li>
+          <li class="nav-item"><a class="nav-link active" href="guia-grabaciones.html">Guía de grabaciones</a></li>
+          <li class="nav-item"><a class="nav-link" href="simulacion/simulacion.html">Simulá tu grabado</a></li>
+          <li class="nav-item"><a class="nav-link" href="contacto.html">Contacto</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <main class="container pagina-main py-3 py-md-4">
+    <!-- CTA grande a simulación -->
+    <a class="cta-simular mb-4" href="simulacion/simulacion.html">
+      Hacé click para simular tu grabado
+      <small>Elegí modelo, texto y fuente — vista previa al instante</small>
+    </a>
+
+    <header class="mb-4">
+      <h1 class="h3 fw-bold mb-2">Modelos disponibles para grabar</h1>
+      <p class="text-secondary mb-0">
+        Chapitas de acero disponibles para personalizar en el local. Tocá un modelo para ver fotos de ejemplo.
+        La simulación es orientativa; el grabado real se hace en el local.
+      </p>
+    </header>
+
+    <!-- Grilla de miniaturas (jpg del JSON) -->
+    <section class="mb-5">
+      <div id="grillaModelos" class="modelo-grid">
+        <p class="text-secondary small mb-0">Cargando modelos…</p>
+      </div>
+    </section>
+
+    <!-- Secciones por chapita: activas primero -->
+    <div id="seccionesActivas"></div>
+
+    <!-- Bloque agotados -->
+    <div id="bloqueAgotados" class="d-none">
+      <h2 class="titulo-agotados">Productos agotados — no disponible para grabar</h2>
+      <div id="seccionesAgotadas"></div>
+    </div>
+
+    <div class="text-center mt-4 mb-3">
+      <a href="simulacion/simulacion.html" class="btn btn-dark rounded-pill px-4 me-2 mb-2">Simular grabado</a>
+      <a href="index.html" class="btn btn-outline-secondary rounded-pill px-4 mb-2">Volver a la tienda</a>
+    </div>
+    <p class="text-center text-muted small mb-0">Me Mata Limón · Eldorado, Misiones</p>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+  <script>
+(function () {
+  'use strict';
+
+  var JSON_URL = 'simulacion/modelos-grabado.json';
+  var GRABADOS_BASE = 'simulacion/grabados/';
+  var MINI_BASE = 'simulacion/';
+  var MAX_FOTOS = 40;
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function miniSrc(modelo) {
+    var m = modelo.miniatura || '';
+    if (!m) return '';
+    if (/^https?:\/\//i.test(m)) return m;
+    return MINI_BASE + m.replace(/^\.\//, '');
+  }
+
+  /** Precio igual que en la tienda: Venta * DOLAR * (1 - Descuento). */
+  function precioDesdeArticulo(prod) {
+    if (!prod) return null;
+    var p = Number(String(prod.Venta || 0).replace(/,/g, '.')) * Number(prod.DOLAR || 1);
+    if (prod.Descuento != null && prod.Descuento !== '' && prod.Descuento != 0 && prod.Descuento != '0') {
+      var d = Number(String(prod.Descuento).replace(/,/g, '.'));
+      if (!isNaN(d)) p = p * (1 - d);
+    }
+    if (isNaN(p)) return null;
+    return '$' + new Intl.NumberFormat('es-AR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(p);
+  }
+
+  /**
+   * precio_texto / precio_imagen pueden ser:
+   * - id de Artículo en articulos.json → muestra el precio del catálogo
+   * - texto libre ("no disponible", "consultar") → se muestra tal cual
+   */
+  function resolverEtiquetaPrecio(valor, byId) {
+    if (valor == null) return '';
+    var s = String(valor).trim();
+    if (!s) return '';
+    // Solo dígitos (con posibles espacios) = id de producto
+    if (/^\d+$/.test(s)) {
+      var prod = byId[s] || byId[String(parseInt(s, 10))];
+      var precio = precioDesdeArticulo(prod);
+      if (precio) return precio;
+      return 'consultar';
+    }
+    return s;
+  }
+
+  function descubrirSecuencial(id, max) {
+    max = max || MAX_FOTOS;
+    var paths = [];
+    var i = 1;
+
+    function probarSiguiente() {
+      if (i > max) return Promise.resolve(paths);
+      var src = GRABADOS_BASE + id + '_' + i + '.jpg';
+      return new Promise(function (resolve) {
+        var img = new Image();
+        img.onload = function () {
+          paths.push(src);
+          i += 1;
+          resolve(probarSiguiente());
+        };
+        img.onerror = function () {
+          resolve(paths); // corta en el primer hueco
+        };
+        img.src = src;
+      });
+    }
+    return probarSiguiente();
+  }
+
+  function asegurarLightbox() {
+    if (document.getElementById('mmlLightboxGrabados')) return;
+    var div = document.createElement('div');
+    div.id = 'mmlLightboxGrabados';
+    div.className = 'd-none';
+    div.innerHTML = '<button type="button" class="mml-lb-cerrar" aria-label="Cerrar">&times;</button><img src="" alt="">';
+    document.body.appendChild(div);
+    div.addEventListener('click', function (e) {
+      if (e.target === div || e.target.classList.contains('mml-lb-cerrar')) {
+        div.classList.add('d-none');
+        div.querySelector('img').src = '';
+      }
+    });
+  }
+
+  function abrirLightbox(src, alt) {
+    if (!src) return;
+    asegurarLightbox();
+    var box = document.getElementById('mmlLightboxGrabados');
+    var im = box.querySelector('img');
+    im.src = src;
+    im.alt = alt || '';
+    box.classList.remove('d-none');
+  }
+
+  function pintarCarrusel(carouselEl, inner, paths, mensajeVacio, nombre) {
+    if (!paths.length) {
+      inner.innerHTML = '<div class="carousel-item active"><div class="galeria-placeholder">' + mensajeVacio + '</div></div>';
+    } else {
+      inner.innerHTML = paths.map(function (src, idx) {
+        return (
+          '<div class="carousel-item' + (idx === 0 ? ' active' : '') + '">' +
+            '<img src="' + src + '" class="d-block w-100 galeria-img" alt="' + escapeHtml(nombre) + ' — foto ' + (idx + 1) + '" draggable="false">' +
+          '</div>'
+        );
+      }).join('');
+    }
+    try {
+      var prev = bootstrap.Carousel.getInstance(carouselEl);
+      if (prev) prev.dispose();
+    } catch (e) {}
+    bootstrap.Carousel.getOrCreateInstance(carouselEl, {
+      interval: false, ride: false, wrap: true, touch: true, keyboard: true
+    });
+    inner.querySelectorAll('.galeria-img').forEach(function (img) {
+      img.style.cursor = 'zoom-in';
+      img.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        abrirLightbox(img.currentSrc || img.src, img.alt || '');
+      });
+    });
+  }
+
+  /** Solo la primera foto al inicio; al hover/focus carga el resto. */
+  function montarCarruselLazy(seccion, modelo) {
+    var carouselEl = seccion.querySelector('.galeria-carrusel');
+    var inner = seccion.querySelector('.carousel-inner');
+    if (!carouselEl || !inner) return;
+
+    var cargadoFull = false;
+    var id = modelo.id;
+    var nombre = modelo.nombre || id;
+
+    // Primera imagen solamente
+    var primera = GRABADOS_BASE + id + '_1.jpg';
+    var imgProbe = new Image();
+    imgProbe.onload = function () {
+      pintarCarrusel(carouselEl, inner, [primera], '', nombre);
+    };
+    imgProbe.onerror = function () {
+      pintarCarrusel(
+        carouselEl,
+        inner,
+        [],
+        'Todavía no hay fotos de ejemplo en <strong>simulacion/grabados/</strong> para este modelo (' + escapeHtml(id) + '_1.jpg).',
+        nombre
+      );
+    };
+    imgProbe.src = primera;
+
+    function cargarTodas() {
+      if (cargadoFull) return;
+      cargadoFull = true;
+      descubrirSecuencial(id, MAX_FOTOS).then(function (paths) {
+        if (!paths.length) {
+          pintarCarrusel(
+            carouselEl,
+            inner,
+            [],
+            'Todavía no hay fotos de ejemplo para este modelo.',
+            nombre
+          );
+          return;
+        }
+        pintarCarrusel(carouselEl, inner, paths, '', nombre);
+      });
+    }
+
+    seccion.addEventListener('mouseenter', cargarTodas, { once: true });
+    seccion.addEventListener('focusin', cargarTodas, { once: true });
+    seccion.addEventListener('touchstart', cargarTodas, { once: true, passive: true });
+  }
+
+  function htmlSeccion(modelo, agotado) {
+    var id = modelo.id;
+    var nombre = escapeHtml(modelo.nombre || id);
+    var cid = 'carrusel-' + id;
+    return (
+      '<section class="seccion-chapita' + (agotado ? ' seccion-agotada' : '') + '" id="sec-' + escapeHtml(id) + '">' +
+        '<h2>' + nombre + (agotado ? ' <span class="badge badge-agotado">Agotado</span>' : '') + '</h2>' +
+        '<div id="' + cid + '" class="carousel slide galeria-carrusel shadow-sm rounded-3 overflow-hidden" data-bs-ride="false" data-bs-interval="false">' +
+          '<div class="carousel-inner">' +
+            '<div class="carousel-item active"><div class="galeria-placeholder">Cargando…</div></div>' +
+          '</div>' +
+          '<button class="carousel-control-prev" type="button" data-bs-target="#' + cid + '" data-bs-slide="prev">' +
+            '<span class="carousel-control-prev-icon" aria-hidden="true"></span>' +
+            '<span class="visually-hidden">Anterior</span>' +
+          '</button>' +
+          '<button class="carousel-control-next" type="button" data-bs-target="#' + cid + '" data-bs-slide="next">' +
+            '<span class="carousel-control-next-icon" aria-hidden="true"></span>' +
+            '<span class="visually-hidden">Siguiente</span>' +
+          '</button>' +
+        '</div>' +
+      '</section>'
+    );
+  }
+
+  function pintarGrilla(modelos, byId) {
+    var cont = document.getElementById('grillaModelos');
+    // Solo modelos activos en la grilla superior
+    var disponibles = modelos.filter(function (m) {
+      return m.activo === true || m.activo === 'true';
+    });
+    if (!disponibles.length) {
+      cont.innerHTML = '<p class="text-secondary">No hay modelos disponibles para grabar en este momento.</p>';
+      return;
+    }
+    cont.innerHTML = disponibles.map(function (m) {
+      var src = miniSrc(m);
+      var pt = resolverEtiquetaPrecio(m.precio_texto, byId);
+      var pi = resolverEtiquetaPrecio(m.precio_imagen, byId);
+      var carteles = '';
+      if (pt || pi) {
+        carteles = '<div class="carteles-precio">';
+        if (pt) carteles += '<span class="cartel-precio texto">solo texto: ' + escapeHtml(pt) + '</span>';
+        if (pi) carteles += '<span class="cartel-precio imagen">solo imagen: ' + escapeHtml(pi) + '</span>';
+        carteles += '</div>';
+      }
+      var imgBlock = src
+        ? ('<div class="img-wrap"><img src="' + escapeHtml(src) + '" alt="' + escapeHtml(m.nombre || m.id) + '" loading="lazy" onerror="this.style.opacity=.3">' + carteles + '</div>')
+        : '<div class="galeria-placeholder" style="min-height:100px">Sin foto</div>';
+      return (
+        '<a class="modelo-card" href="#sec-' + encodeURIComponent(m.id) + '">' +
+          imgBlock +
+          '<p class="nombre">' + escapeHtml(m.nombre || m.id) + '</p>' +
+          '<span class="badge-estado badge-activo">Disponible</span>' +
+        '</a>'
+      );
+    }).join('');
+  }
+
+  async function init() {
+    var grilla = document.getElementById('grillaModelos');
+    var contAct = document.getElementById('seccionesActivas');
+    var contAgo = document.getElementById('seccionesAgotadas');
+    var bloqueAgo = document.getElementById('bloqueAgotados');
+
+    try {
+      var r = await fetch(JSON_URL, { cache: 'no-store' });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      var data = await r.json();
+      if (!Array.isArray(data)) throw new Error('JSON inválido');
+
+      var byId = {};
+      try {
+        var ra = await fetch('articulos.json', { cache: 'no-store' });
+        if (ra.ok) {
+          var arts = await ra.json();
+          if (Array.isArray(arts)) {
+            arts.forEach(function (a) {
+              byId[String(a.Artículo)] = a;
+            });
+          }
+        }
+      } catch (eArt) {
+        console.warn('articulos.json no disponible para precios', eArt);
+      }
+
+      pintarGrilla(data, byId);
+
+      var activos = data.filter(function (m) { return m.activo === true || m.activo === 'true'; });
+      var agotados = data.filter(function (m) { return !(m.activo === true || m.activo === 'true'); });
+
+      contAct.innerHTML = activos.map(function (m) { return htmlSeccion(m, false); }).join('');
+      activos.forEach(function (m) {
+        var sec = document.getElementById('sec-' + m.id);
+        if (sec) montarCarruselLazy(sec, m);
+      });
+
+      if (agotados.length) {
+        bloqueAgo.classList.remove('d-none');
+        contAgo.innerHTML = agotados.map(function (m) { return htmlSeccion(m, true); }).join('');
+        agotados.forEach(function (m) {
+          var sec = document.getElementById('sec-' + m.id);
+          if (sec) montarCarruselLazy(sec, m);
+        });
+      }
+    } catch (e) {
+      console.error(e);
+      grilla.innerHTML = '<p class="text-danger">No se pudo cargar <code>simulacion/modelos-grabado.json</code>.</p>';
+    }
+  }
+
+  init();
+})();
+  </script>
+</body>
+</html>

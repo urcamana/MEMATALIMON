@@ -13,6 +13,8 @@
       "height": 68
     },
     "miniatura": "img/circulo_dorado.jpg",
+    "precio_texto": "355",
+    "precio_imagen": "355",
     "activo": true
   },
   {
@@ -29,6 +31,8 @@
       "height": 68
     },
     "miniatura": "img/circulo_plateado.jpg",
+    "precio_texto": "350",
+    "precio_imagen": "350",
     "activo": true
   },
   {
@@ -45,6 +49,8 @@
       "height": 64
     },
     "miniatura": "img/cuadrado_dorado.jpg",
+    "precio_texto": "353",
+    "precio_imagen": "353",
     "activo": true
   },
   {
@@ -61,6 +67,8 @@
       "height": 64
     },
     "miniatura": "img/cuadrado_plateado.jpg",
+    "precio_texto": "no disponible",
+    "precio_imagen": "no disponible",
     "activo": false
   },
   {
@@ -77,6 +85,8 @@
       "height": 38
     },
     "miniatura": "img/rectangulo_dorado.jpg",
+    "precio_texto": "347",
+    "precio_imagen": "347",
     "activo": true
   },
   {
@@ -93,6 +103,8 @@
       "height": 38
     },
     "miniatura": "img/rectangulo_plateado.jpg",
+    "precio_texto": "347",
+    "precio_imagen": "347",
     "activo": true
   },
   {
@@ -109,6 +121,8 @@
       "height": 86
     },
     "miniatura": "img/rectangulo_grande_dorado.jpg",
+    "precio_texto": "no disponible",
+    "precio_imagen": "no disponible",
     "activo": false
   },
   {
@@ -125,6 +139,8 @@
       "height": 86
     },
     "miniatura": "img/rectangulo_grande_plateado.jpg",
+    "precio_texto": "351",
+    "precio_imagen": "351",
     "activo": true
   },
   {
@@ -141,6 +157,8 @@
       "height": 70
     },
     "miniatura": "img/rectangulo_ovalado_dorado.jpg",
+    "precio_texto": "354",
+    "precio_imagen": "354",
     "activo": true
   },
   {
@@ -157,6 +175,8 @@
       "height": 70
     },
     "miniatura": "img/rectangulo_ovalado_plateado.jpg",
+    "precio_texto": "no disponible",
+    "precio_imagen": "no disponible",
     "activo": false
   },
   {
@@ -173,6 +193,8 @@
       "height": 64
     },
     "miniatura": "img/corazon_chico_dorado.jpg",
+    "precio_texto": "359",
+    "precio_imagen": "359",
     "activo": true
   },
   {
@@ -189,6 +211,8 @@
       "height": 64
     },
     "miniatura": "img/corazon_chico_plateado.jpg",
+    "precio_texto": "358",
+    "precio_imagen": "358",
     "activo": true
   },
   {
@@ -205,6 +229,8 @@
       "height": 74
     },
     "miniatura": "img/corazon_dorado.jpg",
+    "precio_texto": "no disponible",
+    "precio_imagen": "no disponible",
     "activo": false
   },
   {
@@ -221,6 +247,8 @@
       "height": 74
     },
     "miniatura": "img/corazon_plateado.jpg",
+    "precio_texto": "357",
+    "precio_imagen": "357",
     "activo": true
   }
 ]
