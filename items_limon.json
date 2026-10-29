@@ -1,0 +1,51 @@
+{
+  "_ayuda": "Qué puede recomendar Limón. categorias: si la completás, SOLO recomienda de esas (vacía = todas). excluirCategorias y excluirIds: nunca recomienda eso. destacados: ids que recomienda más seguido. usarUltimoVisto: si es true, prioriza productos de la misma categoría que lo último que miró el cliente. soloConDescuento: true = solo recomienda productos en oferta. activo: false apaga las recomendaciones.",
+  "activo": true,
+  "usarUltimoVisto": true,
+  "categorias": [
+"Auriculares",
+"Relojes",
+    "Parlantes",
+    "Accesorios en acero",
+    "Cabello"
+],
+  "excluirCategorias": [
+    "Adultos",
+    "sin stock"
+  ],
+  "excluirIds": [],
+  "destacados": [],
+  "soloConDescuento": false,
+  "_categorias_disponibles": [
+    "Accesorios",
+    "Accesorios en acero",
+    "Accesorios para auto",
+    "Accesorios para bici y moto",
+    "Adaptadores",
+    "Adultos",
+    "Auriculares",
+    "Belleza",
+    "Cabello",
+    "Cabezales",
+    "Cables de carga",
+    "Cargadores completos",
+    "Cocina",
+    "Computacion",
+    "Grabados personalizados",
+    "Hogar",
+    "Iluminacion",
+    "Joystick",
+    "Mascotas",
+    "Microfonos",
+    "Para negocios",
+    "Parlantes",
+    "Peluqueria",
+    "Pilas",
+    "Relojes",
+    "Salud",
+    "Seguridad",
+    "Suculentas",
+    "Uñas",
+    "sin stock"
+  ]
+}

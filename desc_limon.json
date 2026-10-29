@@ -1,0 +1,71 @@
+{
+  "_ayuda": "Descuentos de Limón. activo: true/false (apagado por defecto). maxPorVisita: cuántos códigos da por visita. pausaDias: días que espera antes de volver a dar uno en el mismo dispositivo. minutosSinComprar + inactivoSeg: tiempo en la tienda y segundos quieto antes de ofrecer. minutosCarritoParado: minutos con productos en el carrito sin decidirse. alTocar: probabilidad (0 a 1) de dar un código al tocarlo, pasado 1 minuto. Cada código: clave, descuento (%), activo, vence (AAAA-MM-DD), minimo (compra mínima, 0 = sin mínimo) y peso (más alto = sale más seguido). En frases usá {descuento} y {clave}. Reto: si activo es true, Limón invita (muy de vez en cuando) a agarrarlo y tirarlo desde bien arriba 'veces' veces; al cumplirlo entrega el código de la lista marcado con \"uso\": \"reto\" (ese código no se regala por otras vías y se da una sola vez por dispositivo). En invitar usá {veces}; en progreso {n} y {veces}; en premio {descuento} y {clave}.",
+  "activo": false,
+  "maxPorVisita": 1,
+  "pausaDias": 7,
+  "minutosSinComprar": 5,
+  "inactivoSeg": 60,
+  "minutosCarritoParado": 3,
+  "alTocar": 0.05,
+  "aviso": "(Se aplica al confirmar tu pedido por WhatsApp ÚNICAMENTE VÁLIDO EN EL DIA DE HOY.)",
+  "codigos": [
+    {
+      "clave": "CHOCALOSCINCO",
+      "descuento": 5,
+      "activo": true,
+      "vence": "2026-11-07",
+      "minimo": 0,
+      "peso": 2
+    },
+    {
+      "clave": "DIEZLIMONES",
+      "descuento": 10,
+      "activo": true,
+      "vence": "2026-11-07",
+      "minimo": 20000,
+      "peso": 1
+    },
+    {
+      "clave": "CAMBIAME20",
+      "descuento": 20,
+      "activo": false,
+      "vence": "2026-12-31",
+      "minimo": 20000,
+      "peso": 1
+    },
+    {
+      "clave": "CINCOLIMONADAS",
+      "descuento": 5,
+      "activo": true,
+      "vence": "2026-12-31",
+      "minimo": 0,
+      "peso": 3,
+      "uso": "reto"
+    }
+  ],
+  "frases": [
+    "¿No te decidís? Tomá un descuento de {descuento} con la clave: {clave} 🍋",
+    "Soy muy ácido, pero también sé dar descuentos: {descuento} usando la clave: {clave}",
+    "Veo que no comprás nada… tomá un descuento de {descuento} usando la clave: {clave}",
+    "Me tenés cansado de tanta indecisión 😤 Tomá {descuento} de descuento con la clave: {clave}",
+    "Shhh, no le digas a nadie: {descuento} de descuento con la clave {clave} 🤫"
+  ],
+  "reto": {
+    "activo": true,
+    "veces": 10,
+    "invitar": [
+      "Si me agarrás y me tirás desde lo alto {veces} veces, te doy un código de descuento 😈",
+      "Reto: revoleame por tu pantalla {veces} veces y te regalo un descuento 🍋",
+      "¿Te animás? Agarrame y tirame desde arriba {veces} veces… y te doy un código 🎁"
+    ],
+    "progreso": [
+      "¡Van {n} de {veces}! Seguí, que me estoy mareando 😵",
+      "{n} de {veces}… ¡qué brazo! 💪",
+      "¡{n} de {veces}! No pares ahora 😈"
+    ],
+    "premio": [
+      "¡Está bien, ganaste! 🏆 Tomá {descuento} de descuento con la clave: {clave}",
+      "¡Me rindo! 😵 Tu premio: {descuento} de descuento con la clave: {clave}"
+    ]
+  }
+}
