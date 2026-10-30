@@ -1558,37 +1558,12 @@ padding: 10px 20px !important;
   #nav1 .nav-acciones { order: 2; margin-left: auto; }
   #nav1 .btn-menu-movil { order: 3; }
 
-  /* Fila 2: búsqueda + botón QR en la misma línea */
+  /* Fila 2: búsqueda full width */
   #nav1 .barra-busqueda-wrap {
     order: 4;
     flex: 1 1 100%;
     max-width: 100%;
-    min-width: 0;
-    width: 100%;
-  }
-
-  #nav1 .barra-busqueda-wrap form {
-    width: 100%;
-  }
-
-  #nav1 .barra-busqueda-wrap form .buscador-con-scan {
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    align-items: center !important;
-    width: 100%;
-    gap: 8px;
-  }
-
-  #nav1 .barra-busqueda-wrap .buscador-con-scan #formulario {
-    flex: 1 1 auto !important;
-    width: auto !important;
-    min-width: 0 !important;
-  }
-
-  #nav1 .barra-busqueda-wrap .btn-escanear {
-    flex: 0 0 36px !important;
-    width: 36px !important;
-    height: 36px !important;
+    min-width: 100%;
   }
 
   .tarjetas {
@@ -2446,38 +2421,27 @@ body.pagina-secundaria section {
 }
 
 /* =====================================================
-   Buscador + botón QR FUERA de la barra (al lado)
+   Buscador con botón de escáner de código de barras
    ===================================================== */
 #nav1 .barra-busqueda-wrap form .buscador-con-scan {
-  display: flex !important;
-  flex-direction: row !important;
-  flex-wrap: nowrap !important;
-  align-items: center !important;
-  gap: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
   width: 100%;
 }
 
 #nav1 .barra-busqueda-wrap .buscador-con-scan #formulario {
-  flex: 1 1 auto !important;
-  width: auto !important;
-  min-width: 0 !important;
-  max-width: none;
-  /* sin padding extra: el botón no está adentro */
-  padding-right: 14px !important;
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;
 }
 
 .btn-escanear {
-  position: static !important;
-  transform: none !important;
-  right: auto !important;
-  top: auto !important;
-  flex: 0 0 36px !important;
-  width: 36px !important;
-  height: 36px !important;
-  min-width: 36px !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  display: inline-flex !important;
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
@@ -2486,12 +2450,10 @@ body.pagina-secundaria section {
   color: #583397;
   cursor: pointer;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
-  z-index: 2;
 }
 
 .btn-escanear:hover {
   background: #f1eaf8;
-  color: #46287a;
 }
 
 .btn-escanear:focus-visible {
@@ -2499,80 +2461,60 @@ body.pagina-secundaria section {
   outline-offset: 2px;
 }
 
-.btn-escanear svg {
-  width: 18px;
-  height: 18px;
-  display: block;
-}
-
-/* Ventana del escáner (móvil + PC) */
+/* Ventana del escáner (la crea escaner.js) */
 .escaner-overlay {
-  position: fixed !important;
-  inset: 0 !important;
-  z-index: 10000 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 12px !important;
-  padding: max(12px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom)) !important;
-  background: rgba(15, 8, 28, 0.94) !important;
-  color: #fff !important;
-  text-align: center !important;
-  box-sizing: border-box !important;
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 16px;
+  background: rgba(20, 10, 35, 0.92);
+  color: #fff;
+  text-align: center;
 }
 
 .escaner-overlay .escaner-marco {
-  position: relative !important;
-  width: min(92vw, 420px) !important;
-  max-width: 100% !important;
-  aspect-ratio: 3 / 4 !important;
-  max-height: 70vh !important;
-  border-radius: 16px !important;
-  overflow: hidden !important;
-  background: #000 !important;
-  box-shadow: 0 8px 32px rgba(0,0,0,.45) !important;
+  position: relative;
+  width: min(92vw, 520px);
+  aspect-ratio: 4 / 3;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #000;
 }
 
 .escaner-overlay video {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
-  display: block !important;
-  background: #000 !important;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .escaner-overlay .escaner-guia {
-  position: absolute !important;
-  left: 18% !important;
-  right: 18% !important;
-  top: 22% !important;
-  bottom: 22% !important;
-  height: auto !important;
-  border: 2px solid rgba(255, 80, 80, 0.95) !important;
-  border-radius: 12px !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  pointer-events: none !important;
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 50%;
+  height: 2px;
+  background: #ff4d4d;
+  box-shadow: 0 0 8px #ff4d4d;
 }
 
 .escaner-overlay .escaner-msg {
-  min-height: 1.3em;
+  min-height: 1.4em;
   margin: 0;
-  font-size: 0.95rem;
-  max-width: 92vw;
-  padding: 0 8px;
+  font-size: 0.98rem;
 }
 
 .escaner-overlay .escaner-cerrar {
   border: 0;
-  border-radius: 22px;
-  padding: 12px 28px;
-  font-weight: 700;
-  font-size: 1rem;
+  border-radius: 20px;
+  padding: 8px 22px;
+  font-weight: 600;
   background: #fff;
   color: #583397;
-  min-height: 44px;
 }
 
 /* =====================================================
@@ -2595,4 +2537,58 @@ body.pagina-secundaria section {
     1px -1px 0 #000,
     -1px 1px 0 #000,
     1px 1px 0 #000 !important;
+}/* ===================================================== */
+/* MENÚ FLOTANTE LATERAL DE REDES SOCIALES (COLAPSABLE)  */
+/* ===================================================== */
+
+footer .redes {
+  position: fixed !important;
+  right: 15px !important;
+  bottom: 20px !important;
+  top: auto !important;
+  left: auto !important;
+  z-index: 9990 !important;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.redes a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.redes a img {
+  width: 45px !important;
+  height: 45px !important;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* Ocultar todos los íconos EXCEPTO el de WhatsApp (#w) cuando está colapsado */
+.redes.colapsado a:not(#w) {
+  opacity: 0;
+  transform: translateX(60px); /* Se desplazan y ocultan hacia la derecha */
+  pointer-events: none;        /* Evita clics accidentales mientras están ocultos */
+  position: absolute;          /* Evita que dejen espacios vacíos */
+}
+
+/* El ícono de WhatsApp siempre visible en el margen */
+#w {
+  opacity: 1 !important;
+  transform: translateX(0) !important;
+  pointer-events: auto !important;
+  cursor: pointer;
+  z-index: 9992;
+}
+
+/* Al desplegarse (cuando se quita la clase .colapsado) */
+.redes:not(.colapsado) a:not(#w) {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+  position: relative;
 }

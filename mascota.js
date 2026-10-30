@@ -5,7 +5,7 @@
    <script src="mascota.js" defer></script> */
 (() => {
 'use strict';
-const CFG = { json: 'articulos.json', items: 'items_limon.json', desc: 'desc_limon.json', W: 60, H: 72, mi: 64, md: 84, borde: 4, maxPromos: 20, ritmo: 1 };   // ritmo: 1 = normal, 0.5 = más charlatán, 2 = más callado
+const CFG = { json: 'articulos.json', items: 'items_limon.json', desc: 'desc_limon.json', W: 60, H: 72, mi: 64, md: 84, borde: 4, maxPromos: 20, ritmo: 1, lat: -26.4, lon: -54.63, calor: 30 };   // lat/lon: ubicación del local (para el clima). calor: grados a partir de los que se acalora   // ritmo: 1 = normal, 0.5 = más charlatán, 2 = más callado
 const gap = (a, b) => rnd(a, b) * 1e3 * CFG.ritmo;
 const W = CFG.W, H = CFG.H;
 const $q = (s, r = document) => r.querySelector(s), $a = (s, r = document) => [...r.querySelectorAll(s)];
@@ -32,6 +32,18 @@ const L = {
   retoInv: ['Si me agarrás y me tirás desde lo alto {veces} veces, te doy un código de descuento 😈', 'Reto: revoleame por tu pantalla {veces} veces y te regalo un descuento 🍋', '¿Te animás? Agarrame y tirame desde arriba {veces} veces… y te doy un código 🎁'],
   retoProg: ['¡Van {n} de {veces}! Seguí, que me estoy mareando 😵', '{n} de {veces}… ¡qué brazo! 💪', '¡{n} de {veces}! No pares ahora 😈'],
   retoPremio: ['¡Está bien, ganaste! 🏆 Tomá {descuento} de descuento con la clave: {clave}', '¡Me rindo! 😵 Tu premio: {descuento} de descuento con la clave: {clave}'],
+  desp: ['No me pagan horas extras… al menos haceme un pedido 😤', 'Ya que me despertaste, sumá cosas al carrito 🛒', '¡Eh! Estaba durmiendo… Si me despertás, comprá algo 😠', 'Tenés suerte de que soy simpático… ¿qué vas a llevar?', 'Me despertaste. Ahora me debés un pedido 😤🍋'],
+  despCerrado: ['Estamos cerrados y encima me despertás 😤 Dejá tu pedido y mis empleados lo ven apenas abran', '¿A esta hora? Hasta los jefes dormimos… Dejá tu pedido y mañana te atienden 😴', 'Soy el jefe y estoy durmiendo. Dejá tu pedido, que mis empleados se encargan 😤'],
+  cerrado: ['Ahora estamos cerrados, pero dejanos tu pedido que mis empleados te atenderán pronto. Yo soy el jefe, pero estoy de paso… 🍋', 'Estamos cerrados, pero mis empleados ven los pedidos apenas abren. ¡Yo soy el jefe, ojo! 😎', 'Cerrado por ahora. Armá tu carrito y mis empleados se encargan cuando vuelvan 🛒', 'Mis empleados están descansando (yo no, soy el jefe 😤). Dejá tu pedido y te atienden pronto.'],
+  addCerrado: ['¡Buena elección! Mis empleados lo preparan apenas abramos 🍋', '¡Eso! Dejá el pedido y ellos se encargan cuando vuelvan 🛒'],
+  trip: ['Esto me trajo recuerdos de aquel día que me caí del árbol 🌳🍋', '¿Quién tiró esa piedra? ¡Fue a propósito! 😤', 'Auch… eso dolió más que un exprimidor 🍋'],
+  corrio: ['¡Uff! Si me hubiera chocado a esa velocidad me hacía limonada 🍋💨', '¡Uf! Corrí tan rápido que casi me exprimo 😅', '¡Qué carrera! Nuevo récord personal 🏅'],
+  musica: ['¡Qué buen tema! 🎧 Por cierto, acá vendemos auriculares re buenos…', '¿Escuchaste eso? 🎶 Tenemos auriculares geniales 😉'],
+  wx: {
+    calor: ['¡Qué calor! 🥵 Con {T}° hasta un limón se exprime solo', 'Con {T}° hasta los limones sudamos 🥵', '¡{T}° afuera! Me quedo en la sombra de tu pantalla 😎'],
+    lluvia: ['¡Está lloviendo! ☔ Buen momento para comprar sin mojarte', 'Llueve… yo ya saqué el paraguas ☔ ¿Y tu pedido?', '¡Día de lluvia! Ideal para elegir cositas desde casa 🍋'],
+    nube: ['Está nublado… por las dudas ando con el paraguas ☂️', 'Se viene nublado, ya tengo el paraguas a mano ☂️']
+  },
   wake: '¡Ah! Estaba soñando con ofertas 💤'
 };
 
@@ -44,6 +56,7 @@ sh.innerHTML = `<style>
 #m{position:absolute;left:0;top:0;width:${W}px;height:${H}px;transform-origin:50% 100%;pointer-events:auto;touch-action:none;cursor:grab;will-change:transform;transition:opacity .4s}
 #m.dg{cursor:grabbing}#m.gone{opacity:0;pointer-events:none}
 svg{width:100%;height:100%;overflow:visible;display:block}
+#rk{position:absolute;left:0;top:0;width:26px;height:18px;border-radius:55% 55% 40% 40%;background:radial-gradient(circle at 35% 30%,#c4bfb3,#7c776b);box-shadow:inset -3px -3px 0 #0002,0 2px 3px #0003;display:none;will-change:transform}
 #bub{position:absolute;left:0;top:0;max-width:min(230px,72vw);padding:9px 12px;border-radius:14px;background:#fff;color:#2b2140;font-size:13px;line-height:1.3;box-shadow:0 4px 16px #0003;pointer-events:auto;opacity:0;visibility:hidden;transition:opacity .25s}
 #bub.on{opacity:1;visibility:visible}
 #bub .a{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
@@ -55,29 +68,37 @@ svg{width:100%;height:100%;overflow:visible;display:block}
 <g id="bd"><g id="fx">
 <g id="l1"><path d="M32 74V85" stroke="#7a5d00" stroke-width="5" stroke-linecap="round"/><ellipse cx="33" cy="88" rx="6.5" ry="3.4" fill="#6b4ca3"/></g>
 <g id="l2"><path d="M48 74V85" stroke="#7a5d00" stroke-width="5" stroke-linecap="round"/><ellipse cx="47" cy="88" rx="6.5" ry="3.4" fill="#6b4ca3"/></g>
-<g id="a1"><ellipse cx="14" cy="55" rx="5" ry="8" fill="#ffe14a" stroke="#c99a00" stroke-width="2.5"/></g>
+<g id="a1"><ellipse cx="14" cy="55" rx="5" ry="8" fill="#ffe14a" stroke="#c99a00" stroke-width="2.5"/><g id="um2" style="display:none"><path d="M12 56Q7 49 14 49" fill="none" stroke="#4a2b8a" stroke-width="2.2" stroke-linecap="round"/><path d="M13 58L8 84L17 84Z" fill="#7b4fc9" stroke="#4a2b8a" stroke-width="1.6" stroke-linejoin="round"/></g></g>
 <g id="a2"><ellipse cx="66" cy="55" rx="5" ry="8" fill="#ffe14a" stroke="#c99a00" stroke-width="2.5"/></g>
 <ellipse cx="40" cy="50" rx="27" ry="29" fill="#ffe14a" stroke="#c99a00" stroke-width="3"/>
+<ellipse id="heat" cx="40" cy="50" rx="26" ry="28" fill="#ff5a36" opacity="0"/>
+<g id="hp" style="display:none"><path d="M16 46Q40 -4 64 46" fill="none" stroke="#3a2a66" stroke-width="4" stroke-linecap="round"/><ellipse cx="15" cy="49" rx="5.5" ry="8" fill="#6b4ca3" stroke="#3a2a66" stroke-width="2"/><ellipse cx="65" cy="49" rx="5.5" ry="8" fill="#6b4ca3" stroke="#3a2a66" stroke-width="2"/></g>
 <path d="M40 22Q42 8 58 8Q56 22 40 22Z" fill="#5bbf4a" stroke="#3c8c32" stroke-width="2" stroke-linejoin="round"/>
+<g id="um" style="display:none"><path d="M6 6Q40 -32 74 6Q64 0 56 6Q48 0 40 6Q32 0 24 6Q16 0 6 6Z" fill="#7b4fc9" stroke="#4a2b8a" stroke-width="2" stroke-linejoin="round"/><path d="M40 6V22" stroke="#4a2b8a" stroke-width="2.5" stroke-linecap="round"/></g>
 <ellipse cx="24" cy="57" rx="4.5" ry="3" fill="#ff9aa8" opacity=".6"/><ellipse cx="56" cy="57" rx="4.5" ry="3" fill="#ff9aa8" opacity=".6"/>
 <g id="e1"><ellipse cx="32" cy="46" rx="5.6" ry="6.4" fill="#fff" stroke="#333" stroke-width="1"/><circle id="p1" cx="32" cy="47" r="3" fill="#222"/></g>
 <g id="e2"><ellipse cx="48" cy="46" rx="5.6" ry="6.4" fill="#fff" stroke="#333" stroke-width="1"/><circle id="p2" cx="48" cy="47" r="3" fill="#222"/></g>
 <g id="cl" style="display:none" fill="none" stroke="#5a3d00" stroke-width="2.2" stroke-linecap="round"><path d="M27 46Q32 50 37 46"/><path d="M43 46Q48 50 53 46"/></g>
 <path id="mo" d="M33 58Q40 65 47 58" stroke="#8a4b00" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+<g id="br" style="display:none" stroke="#5a3d00" stroke-width="2.8" stroke-linecap="round"><path d="M24 37L38 42"/><path d="M56 37L42 42"/></g>
+<g id="sw" style="display:none" fill="#6ec6ff" stroke="#2b8fd6" stroke-width=".8"><path id="sw1" d="M62 34q4 6 0 9q-4-3 0-9z"/><path id="sw2" d="M14 38q4 6 0 9q-4-3 0-9z"/></g>
 </g>
 <g id="st" style="display:none" fill="#ffb300" font-size="11"><text id="s1">★</text><text id="s2">★</text><text id="s3">★</text></g>
 <g id="zz" style="display:none" fill="#fff" stroke="#6b4ca3" stroke-width=".7" font-weight="700"><text id="z1" x="58" y="22" font-size="11">z</text><text id="z2" x="64" y="12" font-size="14">Z</text></g>
-</g></svg></div><div id="bub"></div>`;
-const m = sh.getElementById('m'), bub = sh.getElementById('bub'), g = id => sh.getElementById(id);
+<g id="nt" style="display:none" fill="#fff" stroke="#6b4ca3" stroke-width=".6" font-weight="700"><text id="n1" font-size="13">♪</text><text id="n2" font-size="11">♫</text></g>
+</g></svg></div><div id="rk"></div><div id="bub"></div>`;
+const m = sh.getElementById('m'), bub = sh.getElementById('bub'), g = id => sh.getElementById(id), rk = g('rk');
 
 /* ---------- Estado ---------- */
 let fl = 'b', u = -40, pos = { x: -40, y: 0 }, rot = 0, face = 1, mode = 'idle', sub = 'stand', tm = 1, tgt = 0, entering = true;
 let T = 0, last = 0, J = null, P = null, D = null, squash = 0, stars = 0, happy = 0, blinkAt = 2, lastSay = 0, lastAct = Date.now(), lastScroll = 0;
 let silent = SS('mm_sil') === '1', promos = +SS('mm_n') || 0, ptr = { x: innerWidth / 2, y: innerHeight / 2 }, sensor = false, want = 'b', wantSince = 0, lastFlip = 0;
 let ART = null, bubUntil = 0, nextTour = Date.now() + 25e3, nextRec = Date.now() + 55e3, nextQuip = Date.now() + 40e3, nextNudge = Date.now() + 100e3, cartCount = 0, lastAdd = 0, nudged = false;
-let ITEMS = null, DESC = null, ALL = new Map(), tStart = Date.now(), cartSince = 0, lastRec = null, nextPeek = Date.now() + 70e3, nextReto = Date.now() + 100e3, wantCart = false, toCart = false, lastFav = 0, pidio = false;
+let ITEMS = null, DESC = null, ALL = new Map(), tStart = Date.now(), cartSince = 0, lastRec = null, nextPeek = Date.now() + 70e3, nextReto = Date.now() + 100e3, wantCart = false, toCart = false, lastFav = 0, pidio = false, WX = null, grump = 0, tripRot = 0, corre = false, rock = null, trip = null, lastEvt = Date.now() - 45e3, nextCerrado = Date.now() + 40e3, cerrados = 0, nightOv = null;
 const ROT = { b: 0, t: 180, l: 90, r: -90 };
-const night = () => { const h = new Date().getHours(); return h >= 23 || h < 7 };
+const night = () => nightOv !== null ? nightOv : (h => h >= 23 || h < 7)(new Date().getHours());
+const cerrado = () => /cerrado/i.test((document.getElementById('badgeAbierto') || {}).textContent || '');   // lee el cartel «Abierto/Cerrado ahora» de tu página
+const abrirCarrito = () => { const b = $q('#listaInteres'); b && b.click() };
 const navBottom = () => { const n = $q('#nav1'); return n ? n.getBoundingClientRect().bottom : 0 };
 const range = f => (f === 'b' || f === 't') ? [CFG.mi, innerWidth - CFG.md] : [navBottom() + H, innerHeight - H];
 const edge = (f, uu) => { const b = CFG.borde; return f === 'b' ? { x: uu, y: innerHeight - b } : f === 't' ? { x: uu, y: b } : f === 'l' ? { x: b, y: uu } : { x: innerWidth - b, y: uu } };
@@ -195,12 +216,26 @@ function aplicar(k) {
   i.value = k; i.dispatchEvent(new Event('input', { bubbles: true })); i.dispatchEvent(new Event('change', { bubbles: true }));
   show('¡Listo! Ya la puse en tu carrito 🛒', [['Abrir carrito', () => { const b = $q('#listaInteres'); b && b.click() }]], 6000);
 }
-function verOfertas() {
-  const b = $a('.categoria-btn').find(x => x.textContent.trim() === 'CON DESCUENTOS'), c = $q('#contenedorCatalogo');
-  if (!b) return show('Buscá «CON DESCUENTOS» entre las categorías 😉', null, 4000);
+function irCategoria(nombre, luego) {
+  const b = $a('.categoria-btn').find(x => x.textContent.trim().toLowerCase() === nombre.toLowerCase()), c = $q('#contenedorCatalogo');
+  if (!b) return show(`Buscá «${nombre}» entre las categorías 😉`, null, 4000);
   b.click();
-  setTimeout(() => { if (c) scrollTo({ top: c.getBoundingClientRect().top + scrollY - navBottom() - 10, behavior: reduce ? 'auto' : 'smooth' }); setTimeout(() => tour(true), 1500) }, 400);
+  setTimeout(() => { if (c) scrollTo({ top: c.getBoundingClientRect().top + scrollY - navBottom() - 10, behavior: reduce ? 'auto' : 'smooth' }); if (luego) setTimeout(luego, 1500) }, 400);
 }
+function verOfertas() { irCategoria('CON DESCUENTOS', () => tour(true)) }
+/* Clima del local (Open-Meteo, sin clave): calor → se acalora, lluvia → paraguas, nublado → paraguas colgado */
+async function clima() {
+  try {
+    let c = JSON.parse(SS('mm_wx') || 'null');
+    if (!c || Date.now() - c.t > 30 * 60e3) {
+      const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${CFG.lat}&longitude=${CFG.lon}&current=temperature_2m,weather_code,is_day&timezone=auto`), j = await r.json();
+      c = { t: Date.now(), T: j.current.temperature_2m, c: j.current.weather_code, d: j.current.is_day }; SS('mm_wx', JSON.stringify(c));
+    }
+    const k = c.c, lluvia = (k >= 51 && k <= 67) || (k >= 80 && k <= 86) || k >= 95;
+    WX = { T: c.T, lluvia, nube: !lluvia && (k === 3 || k === 45 || k === 48), calor: !lluvia && k <= 2 && c.d === 1 && c.T >= CFG.calor };
+  } catch (e) { WX = null }
+}
+const climaFrase = () => { const k = WX && (WX.calor ? 'calor' : WX.lluvia ? 'lluvia' : WX.nube ? 'nube' : null); return k && fill(R(L.wx[k]), { T: Math.round(WX.T) }) };
 function verProducto(id) {
   const im = document.getElementById('img' + id), c = im && (im.closest('.tarjetas2') || im.closest('.card-group') || im);
   if (c) { c.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); c.animate([{ boxShadow: '0 0 0 0 #ffe14a' }, { boxShadow: '0 0 0 10px #ffe14a88' }, { boxShadow: '0 0 0 0 #ffe14a00' }], { duration: 1400, iterations: 2 }) }
@@ -208,7 +243,7 @@ function verProducto(id) {
 }
 
 /* ---------- Movimiento ---------- */
-function go(b, o) { J = { a: { x: pos.x, y: pos.y }, b, t: 0, d: o.d, arc: o.arc || 0, ease: o.ease || 'io', done: o.done }; mode = 'jump' }
+function go(b, o) { J = { a: { x: pos.x, y: pos.y }, b, t: 0, d: o.d, arc: o.arc || 0, ease: o.ease || 'io', done: o.done }; mode = 'jump'; corre = false; trip = null; tripRot = 0 }
 function jump(dt) {
   J.t = Math.min(1, J.t + dt / J.d); const t = J.t, e = J.ease === 'in' ? t * t : t * t * (3 - 2 * t);
   pos.x = J.a.x + (J.b.x - J.a.x) * e; pos.y = J.a.y + (J.b.y - J.a.y) * e - 4 * J.arc * t * (1 - t);
@@ -220,17 +255,52 @@ function flip(nf) {
   lastFlip = Date.now(); const v = nf === 'b' || nf === 't'; fl = nf; u = v ? pos.x : pos.y; const [a, b] = range(fl); u = clamp(u, a, b); P = null; entering = false;
   const e = edge(fl, u); hide(); go(e, { d: .3 + Math.hypot(e.x - pos.x, e.y - pos.y) / 1500, ease: 'in', done: () => land(true) });
 }
+function evPiedra() {   // cae una piedra delante de él y se tropieza
+  const [a, b] = range('b'), dir = u - a < b - u ? 1 : -1, ru = u + dir * rnd(100, Math.max(110, Math.min(200, (b - a) * .5)));
+  if (fl !== 'b' || ru < a + 30 || ru > b - 30) return false;
+  rock = { u: ru, f: 0 }; lastEvt = Date.now(); tgt = clamp(ru + dir * 150, a, b); mode = 'walk'; return true;
+}
+function evCorrer() {   // sale corriendo hasta la otra punta
+  const [a, b] = range('b'), far = u - a > b - u ? a : b; if (fl !== 'b' || Math.abs(far - u) < (b - a) * .55) return false;
+  corre = true; lastEvt = Date.now(); tgt = far; mode = 'walk'; hide(); return true;
+}
+function evMusica() { sub = 'music'; tm = 8; lastEvt = Date.now(); return true }   // se pone los auriculares
 function nextAction() {
+  if (sub === 'music') { sub = 'stand'; tm = 1.5; if (!silent && canSpeak()) promo(R(L.musica), [['🎧 Ver auriculares', () => irCategoria('Auriculares')]]); return }
   if (night() || (Date.now() - lastAct > 9e4)) { sub = 'sleep'; tm = 8; return }
   const r = Math.random();
+  if (!reduce && fl === 'b' && Date.now() - lastEvt > 120e3) {   // animaciones especiales, de vez en cuando
+    const e = Math.random();
+    if (e < .06 && evPiedra()) return; if (e >= .06 && e < .11 && evCorrer()) return; if (e >= .11 && e < .16) return evMusica();
+  }
+  if (WX && WX.calor && r < .22) { sub = 'fan'; tm = 3; return }   // se abanica
   if (r < .5 && !reduce) { const [a, b] = range(fl); tgt = clamp(u + (Math.random() < .5 ? -1 : 1) * rnd(120, 340), a, b); if (Math.abs(tgt - u) < 40) tgt = (u - a > b - u) ? a + 20 : b - 20; mode = 'walk'; return }
   if (r < .72) { sub = 'sit'; tm = rnd(4, 8) } else if (r < .85) { sub = 'wave'; tm = 2.2 } else { sub = 'stand'; tm = rnd(2, 5) }
 }
 function walk(dt) {
-  const d = Math.sign(tgt - u) || 1; u += d * (entering ? 120 : toCart ? 75 : 55) * dt; face = d * sgn();
+  const d = Math.sign(tgt - u) || 1; u += d * (entering ? 120 : toCart ? 75 : corre ? 260 : 55) * dt; face = d * sgn();
   if (!entering && !toCart) { const [a, b] = range(fl); u = clamp(u, a - 30, b + 30) }
-  if (Math.abs(tgt - u) < 3) { if (toCart) { toCart = false; mode = 'cart' } else { mode = 'idle'; sub = 'stand'; tm = rnd(1, 3) } entering = false }
+  if (rock && !rock.hit && rock.f >= 1 && !toCart && Math.abs(u - rock.u) < 14) { rock.hit = true; trip = { t: 0, d }; mode = 'trip'; corre = false; pos = edge(fl, u); return }
+  if (Math.abs(tgt - u) < 3) {
+    if (toCart) { toCart = false; mode = 'cart' }
+    else { mode = 'idle'; sub = 'stand'; tm = rnd(1, 3); if (corre) { corre = false; squash = .15; tm = 3; if (!silent) show(R(L.corrio), null, 4500) } }
+    entering = false;
+  }
   pos = edge(fl, u);
+}
+function tropiezo(dt) {
+  trip.t += dt; const t = trip.t;
+  tripRot = trip.d * (t < .25 ? 80 * (t / .25) : t < 1.4 ? 80 : 80 * Math.max(0, 1 - (t - 1.4) / .4));
+  if (t > .3 && !trip.s) { trip.s = 1; stars = 1.4; squash = .3 }
+  if (t > 1.8) {
+    tripRot = 0; mode = 'idle'; sub = 'stand'; tm = 3; trip = null; if (!silent) show(R(L.trip), null, 5200);
+    const r0 = rock; setTimeout(() => { if (rock === r0) { rock = null; rk.style.display = 'none' } }, 2500);
+  }
+  pos = edge(fl, u);
+}
+function rockUpd(dt) {
+  if (!rock) return; rk.style.display = ''; if (rock.f < 1) rock.f = Math.min(1, rock.f + dt * 2.2);
+  rk.style.transform = `translate(${rock.u - 13}px,${innerHeight - CFG.borde - 17 - (rock.f < 1 ? (1 - rock.f * rock.f) * innerHeight * .7 : 0)}px)`;
 }
 function idle(dt) {
   if (wantCart && cartOpen() && fl === 'b') { irAlCarrito(); return }
@@ -280,7 +350,7 @@ function cartMode() {
 }
 const cartX = () => Math.min((cartEl().offsetWidth || 0) + W / 2 + 14, innerWidth - W / 2 - 8);
 function irAlCarrito() {   // camina hasta el costado del carrito
-  wantCart = false; u = pos.x; tgt = cartX(); sub = 'stand'; entering = false;
+  wantCart = false; corre = false; u = pos.x; tgt = cartX(); sub = 'stand'; entering = false;
   if (Math.abs(tgt - u) < 3) { mode = 'cart'; return } toCart = true; mode = 'walk';
 }
 function onCart() {
@@ -299,10 +369,27 @@ function onCart() {
 
 /* ---------- Dibujo ---------- */
 const rt = (a, x, y) => `rotate(${a} ${x} ${y})`;
+function extras(dt) {   // clima, auriculares, enojo, correr
+  grump = Math.max(0, grump - dt);
+  const wx = WX || {}, musica = sub === 'music' && mode === 'idle', fan = sub === 'fan' && mode === 'idle', run = corre && mode === 'walk', calma = mode === 'idle' || mode === 'walk';
+  g('um').style.display = wx.lluvia ? '' : 'none'; g('um2').style.display = wx.nube ? '' : 'none';
+  g('sw').style.display = wx.calor ? '' : 'none'; g('heat').setAttribute('opacity', wx.calor ? .22 : 0);
+  if (wx.calor) [1, 2].forEach(i => { const k = (T * .9 + i * .5) % 1, s = g('sw' + i); s.setAttribute('transform', `translate(0 ${k * 12})`); s.setAttribute('opacity', 1 - k) });
+  g('hp').style.display = g('nt').style.display = musica ? '' : 'none';
+  if (musica) [1, 2].forEach(i => { const k = (T * .7 + i * .5) % 1, n = g('n' + i); n.setAttribute('x', (i === 1 ? 62 : 8) + Math.sin(T * 3 + i) * 3); n.setAttribute('y', 18 - k * 26); n.setAttribute('opacity', 1 - k) });
+  g('br').style.display = grump > 0 ? '' : 'none';
+  if (run) { const s = Math.sin(T * 26) * 42; g('l1').setAttribute('transform', rt(s, 32, 74)); g('l2').setAttribute('transform', rt(-s, 48, 74)); g('a1').setAttribute('transform', rt(s, 18, 48)); g('a2').setAttribute('transform', rt(s, 62, 48)) }
+  if (fan) g('a2').setAttribute('transform', rt(-(105 + Math.sin(T * 18) * 12), 62, 48));
+  if (musica) { g('cl').style.display = ''; g('e1').style.display = g('e2').style.display = 'none' }
+  if (grump > 0) { g('mo').setAttribute('d', 'M34 61H46'); g('mo').setAttribute('fill', 'none') }
+  else if (musica) { g('mo').setAttribute('d', 'M33 58Q40 66 47 58'); g('mo').setAttribute('fill', 'none') }
+  else if (wx.calor && calma && sub !== 'sleep' && stars <= 0 && happy <= 0) { g('mo').setAttribute('d', 'M34 58Q40 68 46 58Z'); g('mo').setAttribute('fill', '#7a2f00') }
+}
 function draw(dt) {
-  const d = ((ROT[fl] + (D ? clamp(D.vx * .06, -25, 25) : 0) - rot + 540) % 360) - 180; rot += d * Math.min(1, dt * 12);
+  const d = ((ROT[fl] + tripRot + (D ? clamp(D.vx * .06, -25, 25) : 0) - rot + 540) % 360) - 180; rot += d * Math.min(1, dt * 12);
   squash = Math.max(0, squash - dt * 1.4); stars = Math.max(0, stars - dt); happy = Math.max(0, happy - dt);
   const hop = happy > 0 ? Math.abs(Math.sin(T * 13)) * 9 : 0;
+  const bob = sub === 'music' && mode === 'idle' ? Math.sin(T * 6) * 4 : 0, shake = grump > 0 ? Math.sin(T * 45) * 1.2 : 0;
   m.style.transform = `translate(${pos.x - W / 2}px,${pos.y - H - hop}px) rotate(${rot}deg)`;
   const walking = mode === 'walk', scared = mode === 'drag' || (mode === 'jump' && J && J.ease === 'in'), asleep = sub === 'sleep' && mode === 'idle', sit = sub === 'sit' && mode === 'idle', watch = mode === 'cart';
   const lg = walking ? Math.sin(T * 14) * 30 : scared ? Math.sin(T * 18) * 25 : 0;
@@ -312,7 +399,7 @@ function draw(dt) {
   if (walking) { A1 = Math.sin(T * 14) * 22; A2 = -A1 } else if (sub === 'wave' && mode === 'idle') { A2 = 120 + Math.sin(T * 12) * 22 } else if (happy > 0 || scared) { A1 = A2 = 140 + Math.sin(T * 16) * 12 }
   g('a1').setAttribute('transform', rt(A1, 18, 48)); g('a2').setAttribute('transform', rt(-A2, 62, 48));
   const br = 1 + Math.sin(T * (asleep ? 1.2 : 2.4)) * .02, sx = 1 + squash * .35, sy = 1 - squash * .4 + (br - 1);
-  g('bd').setAttribute('transform', `translate(0 ${(sit || asleep ? 9 : 0) - (walking ? Math.abs(Math.sin(T * 14)) * 2 : 0)}) translate(40 90) scale(${sx} ${sy}) translate(-40 -90)`);
+  g('bd').setAttribute('transform', `rotate(${bob} 40 90) translate(${shake} ${(sit || asleep ? 9 : 0) - (walking ? Math.abs(Math.sin(T * 14)) * 2 : 0)}) translate(40 90) scale(${sx} ${sy}) translate(-40 -90)`);
   g('fx').setAttribute('transform', face < 0 ? 'translate(80 0) scale(-1 1)' : '');
   /* cara */
   if (T > blinkAt) { if (T > blinkAt + .13) blinkAt = T + rnd(2, 5) }
@@ -327,15 +414,20 @@ function draw(dt) {
   g('st').style.display = stars > 0 ? '' : 'none'; g('zz').style.display = asleep ? '' : 'none';
   if (stars > 0) [1, 2, 3].forEach(i => { const a = T * 6 + i * 2.1, s = g('s' + i); s.setAttribute('x', 40 + Math.cos(a) * 20 - 5); s.setAttribute('y', 8 + Math.sin(a) * 5) });
   if (asleep) { g('z1').setAttribute('opacity', .4 + .6 * Math.abs(Math.sin(T * 1.5))); g('z2').setAttribute('opacity', .4 + .6 * Math.abs(Math.sin(T * 1.5 + 1))) }
-  placeBub();
+  extras(dt); placeBub();
 }
 function frame(now) {
   const dt = Math.min(.05, (now - last) / 1000 || 0); last = now; T += dt;
-  if (mode === 'idle') idle(dt); else if (mode === 'walk') walk(dt); else if (mode === 'jump') jump(dt); else if (mode === 'perch') perch(dt); else if (mode === 'cart') cartMode();
-  draw(dt); requestAnimationFrame(frame);
+  if (mode === 'idle') idle(dt); else if (mode === 'walk') walk(dt); else if (mode === 'jump') jump(dt); else if (mode === 'perch') perch(dt); else if (mode === 'cart') cartMode(); else if (mode === 'trip') tropiezo(dt);
+  rockUpd(dt); draw(dt); requestAnimationFrame(frame);
 }
 
 /* ---------- Interacción ---------- */
+function despertar() {   // lo despiertan de noche: se enoja un rato y los incentiva a comprar
+  sub = 'stand'; tm = 7; happy = 0;
+  if (!night()) return show(L.wake, null, 2500);
+  grump = 6; show(R(cerrado() ? L.despCerrado : L.desp), [['🛒 Mi carrito', abrirCarrito], ['🔥 Ver ofertas', verOfertas]], 9000);
+}
 function menu() {
   const b = [['🛍️ Recomendame', recMenu], ['🔥 Ofertas', () => tour(true)]];
   b.push([silent ? '🔔 Hablar' : '🤫 Silencio', () => { silent = !silent; SS('mm_sil', silent ? '1' : '0'); show(silent ? 'Ok, me quedo calladito 🤫' : '¡Vuelvo a charlar! 🍋', null, 2500) }]);
@@ -345,13 +437,13 @@ function menu() {
 m.addEventListener('pointerdown', e => { D = { sx: e.clientX, sy: e.clientY, moved: false, vx: 0, lx: e.clientX, id: e.pointerId }; m.setPointerCapture(e.pointerId); e.preventDefault() });
 m.addEventListener('pointermove', e => {
   if (!D) return; D.vx = e.clientX - D.lx; D.lx = e.clientX;
-  if (!D.moved && Math.hypot(e.clientX - D.sx, e.clientY - D.sy) > 8 && mode !== 'cart') { D.moved = true; mode = 'drag'; J = null; P = null; m.classList.add('dg'); hide() }
+  if (!D.moved && Math.hypot(e.clientX - D.sx, e.clientY - D.sy) > 8 && mode !== 'cart') { D.moved = true; mode = 'drag'; J = null; P = null; corre = false; trip = null; tripRot = 0; m.classList.add('dg'); hide() }
   if (D.moved) { pos.x = e.clientX; pos.y = e.clientY + H * .7 }
 });
 m.addEventListener('pointerup', e => {
   const d = D; D = null; m.classList.remove('dg'); pedirSensor(); if (!d) return;
   if (d.moved) { const f = fl; u = (f === 'b' || f === 't') ? pos.x : pos.y; const [a, b] = range(f); u = clamp(u, a, b); const t = edge(f, u), dist = Math.hypot(t.x - pos.x, t.y - pos.y); entering = false; go(t, { d: .25 + dist / 1600, ease: 'in', done: () => { land(true); contarTiro(dist) } }) }
-  else { happy = .6; if (sub === 'sleep') { sub = 'stand'; tm = 2; show(L.wake, null, 2500) } else if (bubUntil) hide(); else if (DESC && Date.now() - tStart > 60e3 && Math.random() < (DESC.alTocar ?? .15) && darCodigo()) { } else menu() }
+  else { happy = .6; if (sub === 'sleep') despertar(); else if (bubUntil) hide(); else if (DESC && Date.now() - tStart > 60e3 && Math.random() < (DESC.alTocar ?? .15) && darCodigo()) { } else menu() }
 });
 const act = () => {
   const ina = Date.now() - lastAct; lastAct = Date.now();
@@ -383,7 +475,7 @@ function vigilarTienda() {
   const cc = $q('#cantCarrito'); cartCount = parseInt(cc && cc.textContent) || 0; cartSince = cartCount > 0 ? Date.now() : 0;
   if (cc) new MutationObserver(() => {
     const n = parseInt(cc.textContent) || 0, up = n > cartCount; cartCount = n; cartSince = n > 0 ? Date.now() : 0;
-    if (up && Date.now() - lastAdd > 8000 && mode !== 'cart') { lastAdd = Date.now(); happy = 1.2; if (!silent && Math.random() < .5) show(R(L.add), null, 2600) }
+    if (up && Date.now() - lastAdd > 8000 && mode !== 'cart') { lastAdd = Date.now(); happy = 1.2; if (!silent && Math.random() < .5) show(R(cerrado() ? L.addCerrado : L.add), null, 2600) }
   }).observe(cc, { childList: true, characterData: true, subtree: true });
   const o = cartEl(); if (o) new MutationObserver(onCart).observe(o, { attributes: true, attributeFilter: ['class'] });
 }
@@ -411,6 +503,8 @@ function sched() {
       if (now >= nextTour) { if (tour(false)) { nextTour = now + gap(35, 60); return } nextTour = now + 12e3 }
       if (now >= nextPeek) { if (tour(false, true)) { nextPeek = now + gap(100, 170); return } nextPeek = now + 15e3 }
       if (now >= nextRec) { nextRec = now + gap(45, 80); recomendar(); return }
+      if (cerrado() && now >= nextCerrado && cerrados < 3) { nextCerrado = now + gap(90, 150); cerrados++; promo(R(L.cerrado), [['🛒 Mi carrito', abrirCarrito]]); return }
+      if (WX && !SS('mm_wxd') && now - tStart > 15e3) { const t = climaFrase(); if (t) { SS('mm_wxd', '1'); promo(t); return } }
       if (now >= nextQuip) { nextQuip = now + gap(40, 70); promo(R(L.quip)); return }
       if (now >= nextReto) { nextReto = now + gap(180, 300); const c = retoCfg(); if (c && (+SS('mm_ri') || 0) < 2) { SS('mm_ri', (+SS('mm_ri') || 0) + 1); promo(fill(R(c.invitar && c.invitar.length ? c.invitar : L.retoInv), { veces: c.veces || 10 })); return } }
       if (cartCount > 0 && !nudged && now >= nextNudge && !cartOpen()) { nudged = true; promo(R(L.nudge), [['Ver carrito', () => { const b = $q('#listaInteres'); b && b.click() }]]) }
@@ -424,15 +518,15 @@ function listo() {
   const cs = getComputedStyle(f); return cs.display === 'none' || parseInt(cs.zIndex) < 0;   // el logo de inicio ya pasó al fondo
 }
 function iniciar() {
-  document.body.appendChild(host); vigilarTienda(); cargar();
+  document.body.appendChild(host); vigilarTienda(); cargar(); if (CFG.clima !== false) clima();
   nextTour = Date.now() + 12e3 * CFG.ritmo; nextRec = Date.now() + 30e3 * CFG.ritmo; nextQuip = Date.now() + 22e3 * CFG.ritmo; nextPeek = Date.now() + 70e3 * CFG.ritmo; nextReto = Date.now() + 100e3 * CFG.ritmo;
   pos = edge('b', -40); tgt = CFG.mi + 70; mode = 'walk'; last = performance.now(); requestAnimationFrame(frame); setInterval(sched, 1000);
-  if (SS('mm_hi') !== '1' && !silent) { SS('mm_hi', '1'); setTimeout(() => { if (mode !== 'cart') show(R(L.hi), [['🛍️ Recomendame', recMenu], ['🔥 Ofertas', () => tour(true)]], 9000) }, 1800) }
+  if (SS('mm_hi') !== '1' && !silent) { SS('mm_hi', '1'); setTimeout(() => { if (mode !== 'cart') show(cerrado() ? R(L.cerrado) : R(L.hi), [['🛍️ Recomendame', recMenu], ['🔥 Ofertas', () => tour(true)]], 9000) }, 1800) }
 }
 let tries = 0;
 (function esperar() {
   if (window.mensajeActivo === true) return setTimeout(esperar, 500);   // hay un aviso importante en pantalla: espera a que lo cierren
   if (listo() || ++tries > 16) setTimeout(iniciar, 300); else setTimeout(esperar, 250);
 })();
-window.__mm = { show, tour, recomendar, darCodigo, verOfertas, tiro: contarTiro, last: () => lastRec, flip, state: () => ({ fl, mode, sub, pos, promos, sensor, tgt, toCart }) };
+window.__mm = { show, tour, recomendar, despertar, piedra: evPiedra, correr: evCorrer, musica: evMusica, setWX: w => { WX = w }, noche: v => { nightOv = v }, darCodigo, verOfertas, tiro: contarTiro, last: () => lastRec, flip, state: () => ({ fl, mode, sub, pos, promos, sensor, tgt, toCart, WX, grump, corre, rock: !!rock }) };
 })();
