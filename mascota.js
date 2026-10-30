@@ -1,8 +1,4 @@
-/* Limón 🍋 — mascota vendedora para la tienda.
-   Un solo archivo, sin librerías. No modifica ni lee tu código: solo mira la página
-   (tarjetas con etiqueta "% OFF", el carrito #offcanvasDark y el contador #cantCarrito)
-   y lee articulos.json para recomendar. Se instala con una línea en index.html:
-   <script src="mascota.js" defer></script> */
+/* Limón 🍋 — mascota vendedora para la tienda. */
 (() => {
 'use strict';
 const CFG = { json: 'articulos.json', items: 'items_limon.json', desc: 'desc_limon.json', W: 60, H: 72, mi: 64, md: 84, borde: 4, maxPromos: 20, ritmo: 1, lat: -26.4, lon: -54.63, calor: 30 };   // lat/lon: ubicación del local (para el clima). calor: grados a partir de los que se acalora   // ritmo: 1 = normal, 0.5 = más charlatán, 2 = más callado
@@ -19,32 +15,32 @@ const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
 
 /* ---------- Frases ---------- */
 const L = {
-  hi: ['¡Hola! Soy Limón 🍋 Tocame si querés ver ofertas o que te recomiende algo.', '¡Bienvenido a la tienda! Soy Limón 🍋 Si necesitás ayuda, tocame.', '¡Hola! Limón al servicio 🍋 ¿Te muestro las ofertas?'],
-  oferta: [(p, n) => `¿Este te sirve? ¡Comprálo, está en oferta! ${p} OFF 🍋`, (p, n) => `Psst… ${n} tiene ${p} de descuento. ¡No te lo pierdas!`, (p, n) => `¡Ofertón! ${n}, ${p} OFF. Yo en tu lugar lo llevaba 😉`],
+  hi: ['¡Hola! Soy Limón 🍋 Tocame si querés ver ofertas o que te recomiende algo.', '¡Bienvenido a la tienda! Soy Limón 🍋 Si no necesitás ayuda, tocame 😝.', '¡Hola! Limón al servicio 🍋 ¿Te muestro las ofertas?'],
+  oferta: [(p, n) => `¿Este te sirve? ¡Comprálo, está en oferta! ${p} OFF 🍋`, (p, n) => `Psst… ${n} tiene ${p} de descuento. ¡No te lo pierdas!`, (p, n) => `¡Ofertón! ${n}, ${p} OFF. Yo en tu lugar lo llevo 😉`],
   rec: [(n, p) => `No te distraigas conmigo 😅 ¿Ya viste ${n}? Está a ${p}.`, (n, p) => `¡Ojo con ${n}! ${p} y es genial 🍋`, (n, p) => `¿Buscás algo? Mirá ${n}: ${p}.`],
   recOf: [(n, p, d) => `¡${n} está en oferta! ${d}% OFF, ahora ${p} 🔥`],
   quip: ['🍋 Si la vida te da limones… ¡mirá las ofertas!', '¿Buscás algo en particular? Probá el buscador de arriba 🔎', 'Estoy de turno vigilando las ofertas 👀', '¿Sabías que podés mandar tu carrito por WhatsApp? Es re fácil 📲'],
   nudge: ['Tu carrito te está esperando 🛒 ¿Lo terminamos?', '¿Te falta algo o ya cerramos la compra? 🍋'],
-  add: ['¡Buena elección! 🍋', '¡Eso! Al carrito 🛒', '¡Qué buen ojo!', '¡Uh, ese es de los buenos!'],
-  poke: ['¡Cosquillas! 🤭', '¿Me necesitabas?', 'Soy muy ocupado, ¿sabés? 😎'],
-  fall: ['¡Aaah! ¡Avisá antes de dar vuelta el celu! 😵', 'Uf… me mareé ⭐', '¡Cuidado, que soy frágil! 🍋'],
+  add: ['¡Buena elección! 🍋', 'Menos mal que lo agregaste, si no lo elegías perdias la oportunidad', '¡Eso! Al carrito 🛒', '¡Qué buen ojo!', '¡Uh, ese es de los buenos!'],
+  poke: ['¡Cosquillas! 🤭', 'Ojo con voltear tu pantalla, ¡yo soy el patrón!😂', 'Cobro por cada tocada, aca nadie trabaja gratis... 😆', 'Soy muy ocupado, ¿sabés? 😎', 'Hola, hola, soy el jefe... 😎'],
+  fall: ['¡Aaah! ¡Avisá antes de dar vuelta el celu! 😵', 'Uf… me mareé ⭐', 'Me parece que esto es algo personal 😒', 'Uy, todo gira... 😵‍💫🥴', '¡Cuidado, que soy frágil! 🍋'],
   peek: [() => '¿Este? 👀', () => '¿Qué tal este? 🍋', n => `Mmm… ¿y ${n}? 😏`, () => 'Este tiene buena pinta, ¿no?'],
   retoInv: ['Si me agarrás y me tirás desde lo alto {veces} veces, te doy un código de descuento 😈', 'Reto: revoleame por tu pantalla {veces} veces y te regalo un descuento 🍋', '¿Te animás? Agarrame y tirame desde arriba {veces} veces… y te doy un código 🎁'],
   retoProg: ['¡Van {n} de {veces}! Seguí, que me estoy mareando 😵', '{n} de {veces}… ¡qué brazo! 💪', '¡{n} de {veces}! No pares ahora 😈'],
   retoPremio: ['¡Está bien, ganaste! 🏆 Tomá {descuento} de descuento con la clave: {clave}', '¡Me rindo! 😵 Tu premio: {descuento} de descuento con la clave: {clave}'],
   desp: ['No me pagan horas extras… al menos haceme un pedido 😤', 'Ya que me despertaste, sumá cosas al carrito 🛒', '¡Eh! Estaba durmiendo… Si me despertás, comprá algo 😠', 'Tenés suerte de que soy simpático… ¿qué vas a llevar?', 'Me despertaste. Ahora me debés un pedido 😤🍋'],
   despCerrado: ['Estamos cerrados y encima me despertás 😤 Dejá tu pedido y mis empleados lo ven apenas abran', '¿A esta hora? Hasta los jefes dormimos… Dejá tu pedido y mañana te atienden 😴', 'Soy el jefe y estoy durmiendo. Dejá tu pedido, que mis empleados se encargan 😤'],
-  cerrado: ['Ahora estamos cerrados, pero dejanos tu pedido que mis empleados te atenderán pronto. Yo soy el jefe, pero estoy de paso… 🍋', 'Estamos cerrados, pero mis empleados ven los pedidos apenas abren. ¡Yo soy el jefe, ojo! 😎', 'Cerrado por ahora. Armá tu carrito y mis empleados se encargan cuando vuelvan 🛒', 'Mis empleados están descansando (yo no, soy el jefe 😤). Dejá tu pedido y te atienden pronto.'],
+  cerrado: ['Ahora estamos cerrados, pero dejanos tu pedido que mis empleados te atenderán pronto.', 'Yo soy el jefe, pero estoy de paso… 🍋 podes seguir comprando...', 'Estamos cerrados, pero mis empleados ven los pedidos apenas abren. ¡Yo soy el jefe, ojo! 😎', 'Cerrado por ahora. Armá tu carrito y mis empleados se encargan cuando vuelvan 🛒', 'Mis empleados están descansando (yo no, soy el jefe 😤). Dejá tu pedido y te atienden pronto.'],
   addCerrado: ['¡Buena elección! Mis empleados lo preparan apenas abramos 🍋', '¡Eso! Dejá el pedido y ellos se encargan cuando vuelvan 🛒'],
   trip: ['Esto me trajo recuerdos de aquel día que me caí del árbol 🌳🍋', '¿Quién tiró esa piedra? ¡Fue a propósito! 😤', 'Auch… eso dolió más que un exprimidor 🍋'],
   corrio: ['¡Uff! Si me hubiera chocado a esa velocidad me hacía limonada 🍋💨', '¡Uf! Corrí tan rápido que casi me exprimo 😅', '¡Qué carrera! Nuevo récord personal 🏅'],
   musica: ['¡Qué buen tema! 🎧 Por cierto, acá vendemos auriculares re buenos…', '¿Escuchaste eso? 🎶 Tenemos auriculares geniales 😉'],
   wx: {
     calor: ['¡Qué calor! 🥵 Con {T}° hasta un limón se exprime solo', 'Con {T}° hasta los limones sudamos 🥵', '¡{T}° afuera! Me quedo en la sombra de tu pantalla 😎'],
-    lluvia: ['¡Está lloviendo! ☔ Buen momento para comprar sin mojarte', 'Llueve… yo ya saqué el paraguas ☔ ¿Y tu pedido?', '¡Día de lluvia! Ideal para elegir cositas desde casa 🍋'],
-    nube: ['Está nublado… por las dudas ando con el paraguas ☂️', 'Se viene nublado, ya tengo el paraguas a mano ☂️']
+    lluvia: ['¡Está lloviendo! ☔ Buen momento para comprar sin mojarte', 'Llueve… yo ya saqué el paraguas ☔ ¿Y tu pedido?', '¡Día de lluvia! Ideal para elegir cositas desde casa 🍋', 'Se anuncian lluvias… ¿ahí ya comenzó? ☔ Yo ya abrí el paraguas'],
+    nube: ['Está nublado… saqué el paraguas por las dudas ☂️ ¡Pero no llueve!', 'Nublado… abro el paraguas, miro arriba… ¡nada! Lo cierro ☂️', 'Se viene nublado, saqué el paraguas… ¿llueve? Nope, lo guardo 🍋']
   },
-  wake: '¡Ah! Estaba soñando con ofertas 💤'
+  wake: ['¡Ah! Estaba soñando con ofertas 💤', '¡¿Quién? ¿Dónde?! Uhh, pensé que venia el patrón.. 🫩 💤', '¡Ay! emm, si, claro, ya te atiendo.. solo me despabilo 🥱💤', '¡¡Ahhh, No me quiten las ofertas!! 🥴💤'],
 };
 
 /* ---------- Estructura (Shadow DOM: el CSS de la tienda no lo toca) ---------- */
@@ -68,13 +64,13 @@ svg{width:100%;height:100%;overflow:visible;display:block}
 <g id="bd"><g id="fx">
 <g id="l1"><path d="M32 74V85" stroke="#7a5d00" stroke-width="5" stroke-linecap="round"/><ellipse cx="33" cy="88" rx="6.5" ry="3.4" fill="#6b4ca3"/></g>
 <g id="l2"><path d="M48 74V85" stroke="#7a5d00" stroke-width="5" stroke-linecap="round"/><ellipse cx="47" cy="88" rx="6.5" ry="3.4" fill="#6b4ca3"/></g>
-<g id="a1"><ellipse cx="14" cy="55" rx="5" ry="8" fill="#ffe14a" stroke="#c99a00" stroke-width="2.5"/><g id="um2" style="display:none"><path d="M12 56Q7 49 14 49" fill="none" stroke="#4a2b8a" stroke-width="2.2" stroke-linecap="round"/><path d="M13 58L8 84L17 84Z" fill="#7b4fc9" stroke="#4a2b8a" stroke-width="1.6" stroke-linejoin="round"/></g></g>
-<g id="a2"><ellipse cx="66" cy="55" rx="5" ry="8" fill="#ffe14a" stroke="#c99a00" stroke-width="2.5"/></g>
 <ellipse cx="40" cy="50" rx="27" ry="29" fill="#ffe14a" stroke="#c99a00" stroke-width="3"/>
 <ellipse id="heat" cx="40" cy="50" rx="26" ry="28" fill="#ff5a36" opacity="0"/>
 <g id="hp" style="display:none"><path d="M16 46Q40 -4 64 46" fill="none" stroke="#3a2a66" stroke-width="4" stroke-linecap="round"/><ellipse cx="15" cy="49" rx="5.5" ry="8" fill="#6b4ca3" stroke="#3a2a66" stroke-width="2"/><ellipse cx="65" cy="49" rx="5.5" ry="8" fill="#6b4ca3" stroke="#3a2a66" stroke-width="2"/></g>
 <path d="M40 22Q42 8 58 8Q56 22 40 22Z" fill="#5bbf4a" stroke="#3c8c32" stroke-width="2" stroke-linejoin="round"/>
-<g id="um" style="display:none"><path d="M6 6Q40 -32 74 6Q64 0 56 6Q48 0 40 6Q32 0 24 6Q16 0 6 6Z" fill="#7b4fc9" stroke="#4a2b8a" stroke-width="2" stroke-linejoin="round"/><path d="M40 6V22" stroke="#4a2b8a" stroke-width="2.5" stroke-linecap="round"/></g>
+<g id="um" style="display:none"><path d="M6 0Q38 -32 70 0Q60 -6 52 0Q44 -6 38 0Q32 -6 24 0Q16 -6 6 0Z" fill="#7b4fc9" stroke="#4a2b8a" stroke-width="2" stroke-linejoin="round"/><path d="M38 0 L22 54" stroke="#4a2b8a" stroke-width="2.5" stroke-linecap="round"/><circle cx="22" cy="54" r="2.5" fill="#4a2b8a"/></g>
+<g id="a1"><ellipse cx="14" cy="55" rx="5" ry="8" fill="#ffe14a" stroke="#c99a00" stroke-width="2.5"/><g id="um2" style="display:none"><path d="M11 52 L11 78" stroke="#4a2b8a" stroke-width="2.2" stroke-linecap="round"/><path d="M11 52 Q6 48 8 42 Q11 38 14 42 Q16 48 11 52" fill="#7b4fc9" stroke="#4a2b8a" stroke-width="1.5" stroke-linejoin="round"/><circle cx="11" cy="78" r="1.8" fill="#4a2b8a"/></g></g>
+<g id="a2"><ellipse cx="66" cy="55" rx="5" ry="8" fill="#ffe14a" stroke="#c99a00" stroke-width="2.5"/></g>
 <ellipse cx="24" cy="57" rx="4.5" ry="3" fill="#ff9aa8" opacity=".6"/><ellipse cx="56" cy="57" rx="4.5" ry="3" fill="#ff9aa8" opacity=".6"/>
 <g id="e1"><ellipse cx="32" cy="46" rx="5.6" ry="6.4" fill="#fff" stroke="#333" stroke-width="1"/><circle id="p1" cx="32" cy="47" r="3" fill="#222"/></g>
 <g id="e2"><ellipse cx="48" cy="46" rx="5.6" ry="6.4" fill="#fff" stroke="#333" stroke-width="1"/><circle id="p2" cx="48" cy="47" r="3" fill="#222"/></g>
@@ -94,7 +90,7 @@ let fl = 'b', u = -40, pos = { x: -40, y: 0 }, rot = 0, face = 1, mode = 'idle',
 let T = 0, last = 0, J = null, P = null, D = null, squash = 0, stars = 0, happy = 0, blinkAt = 2, lastSay = 0, lastAct = Date.now(), lastScroll = 0;
 let silent = SS('mm_sil') === '1', promos = +SS('mm_n') || 0, ptr = { x: innerWidth / 2, y: innerHeight / 2 }, sensor = false, want = 'b', wantSince = 0, lastFlip = 0;
 let ART = null, bubUntil = 0, nextTour = Date.now() + 25e3, nextRec = Date.now() + 55e3, nextQuip = Date.now() + 40e3, nextNudge = Date.now() + 100e3, cartCount = 0, lastAdd = 0, nudged = false;
-let ITEMS = null, DESC = null, ALL = new Map(), tStart = Date.now(), cartSince = 0, lastRec = null, nextPeek = Date.now() + 70e3, nextReto = Date.now() + 100e3, wantCart = false, toCart = false, lastFav = 0, pidio = false, WX = null, grump = 0, tripRot = 0, corre = false, rock = null, trip = null, lastEvt = Date.now() - 45e3, nextCerrado = Date.now() + 40e3, cerrados = 0, nightOv = null;
+let ITEMS = null, DESC = null, ALL = new Map(), tStart = Date.now(), cartSince = 0, lastRec = null, nextPeek = Date.now() + 70e3, nextReto = Date.now() + 100e3, wantCart = false, toCart = false, lastFav = 0, pidio = false, WX = null, umAnim = null, grump = 0, tripRot = 0, corre = false, rock = null, trip = null, lastEvt = Date.now() - 45e3, nextCerrado = Date.now() + 40e3, cerrados = 0, nightOv = null;
 const ROT = { b: 0, t: 180, l: 90, r: -90 };
 const night = () => nightOv !== null ? nightOv : (h => h >= 23 || h < 7)(new Date().getHours());
 const cerrado = () => /cerrado/i.test((document.getElementById('badgeAbierto') || {}).textContent || '');   // lee el cartel «Abierto/Cerrado ahora» de tu página
@@ -160,7 +156,7 @@ const permitido = p => {
   if (cs.length && !cs.includes(p.c.toLowerCase())) return false;
   return !(I.soloConDescuento && !(p.d > 0));
 };
-L.recCat = [(c, n, p) => `Vi que te interesan los productos de ${c}. Quizás te guste ${n}: ${p} 🍋`, (c, n, p) => `Por lo que veo, lo tuyo es ${c} 😏 Mirá ${n}, está a ${p}.`, (c, n, p) => `Como te gusta ${c}, te muestro ${n}: ${p}.`];
+L.recCat = [(c, n, p) => `Vi que te interesan los productos de ${c}. Quizás te guste ${n}: ${p} 🍋`, (c, n, p) => `Por lo que veo, lo tuyo es ${c} 😏 Mirá ${n}, está a ${p}.`, (c, n, p) => `Como te gusta la categoría ${c}, te muestro ${n}: ${p}.`];
 async function recomendar() {
   await cargar(); const I = ITEMS || {}; if (I.activo === false || !ART.length) return false;
   let vistos = []; try { vistos = JSON.parse(LS('vistos_limon') || '[]').map(Number) } catch (e) {}
@@ -223,16 +219,17 @@ function irCategoria(nombre, luego) {
   setTimeout(() => { if (c) scrollTo({ top: c.getBoundingClientRect().top + scrollY - navBottom() - 10, behavior: reduce ? 'auto' : 'smooth' }); if (luego) setTimeout(luego, 1500) }, 400);
 }
 function verOfertas() { irCategoria('CON DESCUENTOS', () => tour(true)) }
-/* Clima del local (Open-Meteo, sin clave): calor → se acalora, lluvia → paraguas, nublado → paraguas colgado */
+/* Clima del local (Open-Meteo, sin clave): calor → se acalora, lluvia → paraguas abierto en la mano, nublado → animación de abrir/mirar/cerrar */
 async function clima() {
   try {
     let c = JSON.parse(SS('mm_wx') || 'null');
     if (!c || Date.now() - c.t > 30 * 60e3) {
-      const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${CFG.lat}&longitude=${CFG.lon}&current=temperature_2m,weather_code,is_day&timezone=auto`), j = await r.json();
-      c = { t: Date.now(), T: j.current.temperature_2m, c: j.current.weather_code, d: j.current.is_day }; SS('mm_wx', JSON.stringify(c));
+      const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${CFG.lat}&longitude=${CFG.lon}&current=temperature_2m,weather_code,is_day,precipitation&hourly=precipitation_probability&timezone=auto&forecast_hours=1`), j = await r.json();
+      const pp = (j.hourly && j.hourly.precipitation_probability && j.hourly.precipitation_probability[0]) || 0;
+      c = { t: Date.now(), T: j.current.temperature_2m, c: j.current.weather_code, d: j.current.is_day, p: j.current.precipitation || 0, pp }; SS('mm_wx', JSON.stringify(c));
     }
-    const k = c.c, lluvia = (k >= 51 && k <= 67) || (k >= 80 && k <= 86) || k >= 95;
-    WX = { T: c.T, lluvia, nube: !lluvia && (k === 3 || k === 45 || k === 48), calor: !lluvia && k <= 2 && c.d === 1 && c.T >= CFG.calor };
+    const k = c.c, lluvia = (k >= 51 && k <= 67) || (k >= 80 && k <= 86) || k >= 95 || (c.p > 0.1);
+    WX = { T: c.T, lluvia, nube: !lluvia && (k === 3 || k === 45 || k === 48 || (c.pp >= 40 && k <= 3)), calor: !lluvia && k <= 2 && c.d === 1 && c.T >= CFG.calor, pp: c.pp };
   } catch (e) { WX = null }
 }
 const climaFrase = () => { const k = WX && (WX.calor ? 'calor' : WX.lluvia ? 'lluvia' : WX.nube ? 'nube' : null); return k && fill(R(L.wx[k]), { T: Math.round(WX.T) }) };
@@ -372,7 +369,25 @@ const rt = (a, x, y) => `rotate(${a} ${x} ${y})`;
 function extras(dt) {   // clima, auriculares, enojo, correr
   grump = Math.max(0, grump - dt);
   const wx = WX || {}, musica = sub === 'music' && mode === 'idle', fan = sub === 'fan' && mode === 'idle', run = corre && mode === 'walk', calma = mode === 'idle' || mode === 'walk';
-  g('um').style.display = wx.lluvia ? '' : 'none'; g('um2').style.display = wx.nube ? '' : 'none';
+  // --- Paraguas ---
+  // lluvia: abierto en la mano (brazo izquierdo levantado)
+  // nube: animación breve: saca, abre, mira arriba, cierra (sin dejarlo colgado)
+  let holdOpen = !!wx.lluvia, holdClosed = false, lookUp = false, armUm = 0;
+  if (umAnim) {
+    umAnim.t += dt;
+    const t = umAnim.t;
+    if (t < 0.5) {           // saca cerrado y levanta el brazo
+      holdClosed = true; armUm = -50 * (t / 0.5);
+    } else if (t < 1.9) {     // abre, mira arriba (paraguas tapa a Limón)
+      holdOpen = true; armUm = -60; lookUp = true;
+    } else if (t < 2.6) {     // cierra y baja
+      holdClosed = true; armUm = -50 * (1 - (t - 1.9) / 0.7);
+    } else {
+      umAnim = null;
+    }
+  }
+  g('um').style.display = holdOpen ? '' : 'none';
+  g('um2').style.display = holdClosed ? '' : 'none';
   g('sw').style.display = wx.calor ? '' : 'none'; g('heat').setAttribute('opacity', wx.calor ? .22 : 0);
   if (wx.calor) [1, 2].forEach(i => { const k = (T * .9 + i * .5) % 1, s = g('sw' + i); s.setAttribute('transform', `translate(0 ${k * 12})`); s.setAttribute('opacity', 1 - k) });
   g('hp').style.display = g('nt').style.display = musica ? '' : 'none';
@@ -384,6 +399,16 @@ function extras(dt) {   // clima, auriculares, enojo, correr
   if (grump > 0) { g('mo').setAttribute('d', 'M34 61H46'); g('mo').setAttribute('fill', 'none') }
   else if (musica) { g('mo').setAttribute('d', 'M33 58Q40 66 47 58'); g('mo').setAttribute('fill', 'none') }
   else if (wx.calor && calma && sub !== 'sleep' && stars <= 0 && happy <= 0) { g('mo').setAttribute('d', 'M34 58Q40 68 46 58Z'); g('mo').setAttribute('fill', '#7a2f00') }
+  // paraguas: override del brazo al final (prioridad sobre correr/abanico)
+  // brazos ahora se dibujan encima del cuerpo → se ven siempre
+  // -60° sube la mano cerca del mango del paraguas
+  if (holdOpen || holdClosed) {
+    g('a1').setAttribute('transform', rt(armUm || (holdOpen ? -60 : -45), 18, 48));
+  }
+  // mirar arriba durante la animación de nubes
+  if (lookUp && calma) {
+    [['p1', 32], ['p2', 48]].forEach(([id, cx]) => { const p = g(id); p.setAttribute('cy', 44); });
+  }
 }
 function draw(dt) {
   const d = ((ROT[fl] + tripRot + (D ? clamp(D.vx * .06, -25, 25) : 0) - rot + 540) % 360) - 180; rot += d * Math.min(1, dt * 12);
@@ -425,7 +450,7 @@ function frame(now) {
 /* ---------- Interacción ---------- */
 function despertar() {   // lo despiertan de noche: se enoja un rato y los incentiva a comprar
   sub = 'stand'; tm = 7; happy = 0;
-  if (!night()) return show(L.wake, null, 2500);
+  if (!night()) return show(R(L.wake), null, 2500);
   grump = 6; show(R(cerrado() ? L.despCerrado : L.desp), [['🛒 Mi carrito', abrirCarrito], ['🔥 Ver ofertas', verOfertas]], 9000);
 }
 function menu() {
@@ -447,7 +472,7 @@ m.addEventListener('pointerup', e => {
 });
 const act = () => {
   const ina = Date.now() - lastAct; lastAct = Date.now();
-  if (sub === 'sleep' && mode === 'idle' && !night()) { sub = 'stand'; tm = 1.5; if (!silent && !bubUntil) show(L.wake, null, 2500) }
+  if (sub === 'sleep' && mode === 'idle' && !night()) { sub = 'stand'; tm = 1.5; if (!silent && !bubUntil) show(R(L.wake), null, 2500) }
   else if (ina > 60e3 && !silent && !bubUntil && mode !== 'cart' && Math.random() < .4) { happy = .8; show('¡Volviste! Te estaba esperando 🍋', null, 2400) }
 };
 addEventListener('pointermove', e => { ptr = { x: e.clientX, y: e.clientY }; act() }, { passive: true });
@@ -504,7 +529,7 @@ function sched() {
       if (now >= nextPeek) { if (tour(false, true)) { nextPeek = now + gap(100, 170); return } nextPeek = now + 15e3 }
       if (now >= nextRec) { nextRec = now + gap(45, 80); recomendar(); return }
       if (cerrado() && now >= nextCerrado && cerrados < 3) { nextCerrado = now + gap(90, 150); cerrados++; promo(R(L.cerrado), [['🛒 Mi carrito', abrirCarrito]]); return }
-      if (WX && !SS('mm_wxd') && now - tStart > 15e3) { const t = climaFrase(); if (t) { SS('mm_wxd', '1'); promo(t); return } }
+      if (WX && !SS('mm_wxd') && now - tStart > 15e3) { const t = climaFrase(); if (t) { SS('mm_wxd', '1'); if (WX.nube) umAnim = { t: 0 }; promo(t); return } }
       if (now >= nextQuip) { nextQuip = now + gap(40, 70); promo(R(L.quip)); return }
       if (now >= nextReto) { nextReto = now + gap(180, 300); const c = retoCfg(); if (c && (+SS('mm_ri') || 0) < 2) { SS('mm_ri', (+SS('mm_ri') || 0) + 1); promo(fill(R(c.invitar && c.invitar.length ? c.invitar : L.retoInv), { veces: c.veces || 10 })); return } }
       if (cartCount > 0 && !nudged && now >= nextNudge && !cartOpen()) { nudged = true; promo(R(L.nudge), [['Ver carrito', () => { const b = $q('#listaInteres'); b && b.click() }]]) }
@@ -528,5 +553,5 @@ let tries = 0;
   if (window.mensajeActivo === true) return setTimeout(esperar, 500);   // hay un aviso importante en pantalla: espera a que lo cierren
   if (listo() || ++tries > 16) setTimeout(iniciar, 300); else setTimeout(esperar, 250);
 })();
-window.__mm = { show, tour, recomendar, despertar, piedra: evPiedra, correr: evCorrer, musica: evMusica, setWX: w => { WX = w }, noche: v => { nightOv = v }, darCodigo, verOfertas, tiro: contarTiro, last: () => lastRec, flip, state: () => ({ fl, mode, sub, pos, promos, sensor, tgt, toCart, WX, grump, corre, rock: !!rock }) };
+window.__mm = { show, tour, recomendar, despertar, piedra: evPiedra, correr: evCorrer, musica: evMusica, setWX: w => { WX = w }, noche: v => { nightOv = v }, darCodigo, verOfertas, tiro: contarTiro, last: () => lastRec, flip, state: () => ({ fl, mode, sub, pos, promos, sensor, tgt, toCart, WX, umAnim, grump, corre, rock: !!rock }) };
 })();

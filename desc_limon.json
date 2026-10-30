@@ -1,6 +1,6 @@
 {
   "_ayuda": "Descuentos de Limón. activo: true/false (apagado por defecto). maxPorVisita: cuántos códigos da por visita. pausaDias: días que espera antes de volver a dar uno en el mismo dispositivo. minutosSinComprar + inactivoSeg: tiempo en la tienda y segundos quieto antes de ofrecer. minutosCarritoParado: minutos con productos en el carrito sin decidirse. alTocar: probabilidad (0 a 1) de dar un código al tocarlo, pasado 1 minuto. Cada código: clave, descuento (%), activo, vence (AAAA-MM-DD), minimo (compra mínima, 0 = sin mínimo) y peso (más alto = sale más seguido). En frases usá {descuento} y {clave}. Reto: si activo es true, Limón invita (muy de vez en cuando) a agarrarlo y tirarlo desde bien arriba 'veces' veces; al cumplirlo entrega el código de la lista marcado con \"uso\": \"reto\" (ese código no se regala por otras vías y se da una sola vez por dispositivo). En invitar usá {veces}; en progreso {n} y {veces}; en premio {descuento} y {clave}.",
-  "activo": false,
+  "activo": true,
   "maxPorVisita": 1,
   "pausaDias": 7,
   "minutosSinComprar": 5,
