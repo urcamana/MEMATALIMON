@@ -6,7 +6,7 @@
   "minutosSinComprar": 5,
   "inactivoSeg": 60,
   "minutosCarritoParado": 3,
-  "alTocar": 0.05,
+  "alTocar": 0.09,
   "aviso": "(Se aplica al confirmar tu pedido por WhatsApp ÚNICAMENTE VÁLIDO EN EL DIA DE HOY.)",
   "codigos": [
     {

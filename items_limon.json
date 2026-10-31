@@ -3,12 +3,12 @@
   "activo": true,
   "usarUltimoVisto": true,
   "categorias": [
-"Auriculares",
-"Relojes",
+    "Auriculares",
+    "Relojes",
     "Parlantes",
     "Accesorios en acero",
     "Cabello"
-],
+  ],
   "excluirCategorias": [
     "Adultos",
     "sin stock"
@@ -47,5 +47,124 @@
     "Suculentas",
     "Uñas",
     "sin stock"
-  ]
+  ],
+  "_ayuda_extras": "Complementos: reglas 'cuando' (categoria y opcionalmente parte del nombre) → 'ofrece' (botones que llevan a una categoría; 'buscar' filtra por texto dentro de ella). Cada regla se ofrece una sola vez por visita y no se ofrece lo que ya está en el carrito. fechas: usa las fechas de obsequios/obsequios.js; 'celebrar' = ids de eventos con sombrero y saludo, avisoDias = desde cuándo avisa, sombreroDias = días con sombrero. regalos: botones del ayudante (archivo = JSON dentro de obsequios/). cierre: avisa cuando faltan 'minutos' para cerrar (lee #horarioHoy). Para que ese aviso regale un código, poné en desc_limon.json un código con \"uso\": \"cierre\". Otros 'uso' para medir qué trae pedidos: \"indecision\" (tiempo sin comprar o carrito parado), \"toque\" (al tocarlo) y \"reto\".",
+  "complementos": [
+    {
+      "id": "cabezal",
+      "cuando": {
+        "categoria": "Cabezales"
+      },
+      "texto": "¡Buena elección! ¿Y un cable para ese cabezal? 🔌",
+      "ofrece": [
+        {
+          "boton": "🔌 Ver cables",
+          "categoria": "Cables de carga"
+        },
+        {
+          "boton": "⚡ Cargador completo",
+          "categoria": "Cargadores completos"
+        }
+      ]
+    },
+    {
+      "id": "cable",
+      "cuando": {
+        "categoria": "Cables de carga"
+      },
+      "texto": "¿Ya tenés el cabezal para ese cable? ⚡",
+      "ofrece": [
+        {
+          "boton": "⚡ Ver cabezales",
+          "categoria": "Cabezales"
+        },
+        {
+          "boton": "🔋 Cargador completo",
+          "categoria": "Cargadores completos"
+        }
+      ]
+    },
+    {
+      "id": "dije",
+      "cuando": {
+        "categoria": "Accesorios en acero",
+        "nombre": "dije"
+      },
+      "texto": "Ese dije queda hermoso con una cadena ✨ ¿Te muestro?",
+      "ofrece": [
+        {
+          "boton": "⛓️ Ver cadenas",
+          "categoria": "Accesorios en acero",
+          "buscar": "cadena"
+        },
+        {
+          "boton": "🎁 Ver combos",
+          "categoria": "Combos"
+        }
+      ]
+    },
+    {
+      "id": "cadena",
+      "cuando": {
+        "categoria": "Accesorios en acero",
+        "nombre": "cadena"
+      },
+      "texto": "¿Y un dije para esa cadena? ✨",
+      "ofrece": [
+        {
+          "boton": "💎 Ver dijes",
+          "categoria": "Accesorios en acero",
+          "buscar": "dije"
+        },
+        {
+          "boton": "🎁 Ver combos",
+          "categoria": "Combos"
+        }
+      ]
+    }
+  ],
+  "fechas": {
+    "activo": true,
+    "celebrar": [
+      "enamorados",
+      "padre",
+      "amigo",
+      "profe",
+      "madre",
+      "navidad",
+      "novia",
+      "mujer",
+      "hombre",
+      "niño"
+    ],
+    "avisoDias": 14,
+    "sombreroDias": 3
+  },
+  "regalos": [
+    {
+      "boton": "👶 Para peques",
+      "archivo": "peques.json"
+    },
+    {
+      "boton": "🎂 Cumpleaños",
+      "archivo": "cumple.json"
+    },
+    {
+      "boton": "🤝 Amigo invisible",
+      "archivo": "amigo_invisible.json"
+    }
+  ],
+  "cierre": {
+    "activo": true,
+    "minutos": 30
+  },
+  "comoComprar": {
+    "pasos": [
+      "1️⃣ Elegís el producto y la cantidad, y tocás «Agregar».",
+      "2️⃣ Abrís el carrito 🛒, completás entrega y forma de pago.",
+      "3️⃣ Enviás el pedido por WhatsApp y te confirmamos. ¡Listo! 🍋"
+    ]
+  },
+  "carritoEspera": true,
+  "primeraVisita": true
 }

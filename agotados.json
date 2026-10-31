@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-29T12:19:13.054Z",
+  "actualizado": "2026-10-31T12:03:18.162Z",
   "items": [
     {
       "id": "1",
@@ -119,6 +119,10 @@
     },
     {
       "id": "86",
+      "checklist": true
+    },
+    {
+      "id": "87",
       "checklist": true
     },
     {
@@ -255,6 +259,10 @@
     },
     {
       "id": "200",
+      "checklist": true
+    },
+    {
+      "id": "204",
       "checklist": true
     },
     {
@@ -526,6 +534,10 @@
       "checklist": false
     },
     {
+      "id": "58",
+      "checklist": false
+    },
+    {
       "id": "63",
       "checklist": false
     },
@@ -547,10 +559,6 @@
     },
     {
       "id": "83",
-      "checklist": false
-    },
-    {
-      "id": "87",
       "checklist": false
     },
     {
@@ -687,10 +695,6 @@
     },
     {
       "id": "203",
-      "checklist": false
-    },
-    {
-      "id": "204",
       "checklist": false
     },
     {
@@ -898,15 +902,15 @@
       "checklist": false
     },
     {
+      "id": "40",
+      "checklist": false
+    },
+    {
       "id": "48",
       "checklist": false
     },
     {
       "id": "53",
-      "checklist": false
-    },
-    {
-      "id": "58",
       "checklist": false
     },
     {
@@ -1106,11 +1110,11 @@
       "checklist": false
     },
     {
-      "id": "33",
+      "id": "19",
       "checklist": false
     },
     {
-      "id": "40",
+      "id": "33",
       "checklist": false
     },
     {
@@ -1210,6 +1214,10 @@
       "checklist": false
     },
     {
+      "id": "337",
+      "checklist": false
+    },
+    {
       "id": "348",
       "checklist": false
     },
@@ -1219,6 +1227,10 @@
     },
     {
       "id": "351",
+      "checklist": false
+    },
+    {
+      "id": "352",
       "checklist": false
     },
     {
@@ -1250,11 +1262,11 @@
       "checklist": false
     },
     {
-      "id": "19",
+      "id": "21",
       "checklist": false
     },
     {
-      "id": "21",
+      "id": "22",
       "checklist": false
     },
     {
@@ -1294,15 +1306,7 @@
       "checklist": false
     },
     {
-      "id": "337",
-      "checklist": false
-    },
-    {
       "id": "347",
-      "checklist": false
-    },
-    {
-      "id": "352",
       "checklist": false
     },
     {
@@ -1347,10 +1351,6 @@
     },
     {
       "id": "16",
-      "checklist": false
-    },
-    {
-      "id": "22",
       "checklist": false
     },
     {
@@ -1430,15 +1430,15 @@
       "checklist": false
     },
     {
+      "id": "231",
+      "checklist": false
+    },
+    {
       "id": "340",
       "checklist": false
     },
     {
       "id": "32",
-      "checklist": false
-    },
-    {
-      "id": "231",
       "checklist": false
     },
     {
