@@ -1,5 +1,5 @@
 /* Service Worker - Me Mata Limón PWA */
-const CACHE = 'mematalimon-v6';
+const CACHE = 'mematalimon-v7';
 const PRECACHE = [
   './',
   './index.html',

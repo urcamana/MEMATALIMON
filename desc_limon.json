@@ -15,23 +15,35 @@
       "activo": true,
       "vence": "2026-11-07",
       "minimo": 0,
-      "peso": 2
+      "peso": 2,
+      "uso": "toque"
     },
     {
       "clave": "DIEZLIMONES",
       "descuento": 10,
       "activo": true,
       "vence": "2026-11-07",
-      "minimo": 20000,
-      "peso": 1
+      "minimo": 15000,
+      "peso": 1,
+      "uso": "indecision"
     },
     {
-      "clave": "CAMBIAME20",
+      "clave": "CIERRALIMON",
+      "descuento": 10,
+      "activo": true,
+      "vence": "2026-11-07",
+      "minimo": 10000,
+      "peso": 1,
+      "uso": "cierre"
+    },
+    {
+      "clave": "REVOLEAME20",
       "descuento": 20,
-      "activo": false,
-      "vence": "2026-12-31",
+      "activo": true,
+      "vence": "2026-11-07",
       "minimo": 20000,
-      "peso": 1
+      "peso": 1,
+      "uso": "reto"
     },
     {
       "clave": "CINCOLIMONADAS",
