@@ -125,7 +125,9 @@
   ],
   "fechas": {
     "activo": true,
-    "celebrar": [
+    "avisoDias": 14,
+    "sombreroDias": 3,
+    "principales": [
       "enamorados",
       "padre",
       "amigo",
@@ -137,8 +139,91 @@
       "hombre",
       "niño"
     ],
-    "avisoDias": 14,
-    "sombreroDias": 3
+    "avisoOtros": 2,
+    "excluir": [],
+    "accesorios": {},
+    "extras": [
+      {
+        "id": "25mayo",
+        "titulo": "el 25 de Mayo",
+        "tipoFecha": "fijo",
+        "mes": 5,
+        "dia": 25,
+        "accesorio": "escarapela",
+        "saludo": "¡Feliz 25 de Mayo! 🇦🇷"
+      },
+      {
+        "id": "bandera",
+        "titulo": "el Día de la Bandera",
+        "tipoFecha": "fijo",
+        "mes": 6,
+        "dia": 20,
+        "accesorio": "escarapela",
+        "saludo": "¡Feliz Día de la Bandera! 🇦🇷"
+      },
+      {
+        "id": "independencia",
+        "titulo": "el Día de la Independencia",
+        "tipoFecha": "fijo",
+        "mes": 7,
+        "dia": 9,
+        "accesorio": "escarapela",
+        "saludo": "¡Feliz Día de la Independencia! 🇦🇷"
+      },
+      {
+        "id": "sanmartin",
+        "titulo": "el Día de San Martín",
+        "tipoFecha": "fijo",
+        "mes": 8,
+        "dia": 17,
+        "accesorio": "escarapela",
+        "saludo": "¡Honor al General San Martín! 🇦🇷"
+      },
+      {
+        "id": "halloween",
+        "titulo": "Halloween",
+        "tipoFecha": "fijo",
+        "mes": 10,
+        "dia": 31,
+        "accesorio": "calabaza",
+        "saludo": "¡Feliz Halloween! 🎃 ¿Dulce o truco?"
+      },
+      {
+        "id": "blackfriday",
+        "titulo": "el Black Friday",
+        "tipoFecha": "cuarto_viernes",
+        "mes": 11,
+        "duracion": 3,
+        "accesorio": "ofertas",
+        "aviso": 3,
+        "saludo": "¡Black Friday y Cyber Monday! 🔥 Mirá las ofertas"
+      },
+      {
+        "id": "anionuevo",
+        "titulo": "el Año Nuevo",
+        "tipoFecha": "fijo",
+        "mes": 12,
+        "dia": 31,
+        "duracion": 1,
+        "accesorio": [
+          "fiesta",
+          "copa"
+        ],
+        "saludo": "¡Feliz Año Nuevo! 🥂"
+      },
+      {
+        "id": "hotsale",
+        "titulo": "el Hot Sale",
+        "tipoFecha": "fijo",
+        "anio": 2026,
+        "mes": 5,
+        "dia": 11,
+        "duracion": 3,
+        "accesorio": "ofertas",
+        "saludo": "¡Hot Sale! 🔥 Mirá las ofertas",
+        "activo": false
+      }
+    ]
   },
   "regalos": [
     {
@@ -166,5 +251,37 @@
     ]
   },
   "carritoEspera": true,
-  "primeraVisita": true
+  "primeraVisita": true,
+  "envio": {
+    "activo": true,
+    "retiro": "Retirando personalmente no se abona el envío 🛍️",
+    "tabla": [
+      [
+        "Km 1 al 6",
+        "$3.000 / $3.500"
+      ],
+      [
+        "Km 7 al 9",
+        "$3.500 / $4.000"
+      ],
+      [
+        "Km 10 al 11",
+        "$4.500 / $5.000"
+      ]
+    ],
+    "nota": "Valores aproximados: dependen de la zona y de la ubicación que nos mandes por WhatsApp."
+  },
+  "favoritos": {
+    "activo": true,
+    "pocas": 1
+  },
+  "carritoAviso": {
+    "activo": true,
+    "minutos": 3
+  },
+  "bateria": {
+    "activo": true,
+    "umbral": 20
+  },
+  "_ayuda_novedades": "fechas: ahora Limón usa TODAS las fechas de obsequios/obsequios.js (profesiones incluidas) con su accesorio (corbata, jeringa, estetoscopio, birrete, gorro de chef, casco, lentes, auriculares…). 'principales' = eventos que avisan con anticipación (avisoDias); el resto avisa 'avisoOtros' días antes y el día. 'excluir' = ids que no querés que celebre. 'accesorios' = para cambiar el accesorio de un evento, ej. {\"abogado\":[\"corbata\"]}. Accesorios disponibles: fiesta, santa, lana, gorra, dormir, birrete, chef, casco, calabaza, mundial, sol, lentes, corbata, estetoscopio, jeringa, escarapela, corazones, ofertas, copa, auriculares, mate. 'extras' = fechas propias (mismo formato que obsequios.js + 'accesorio', 'saludo', 'duracion' en días, 'anio' para que valga un solo año y 'activo'). MUNDIAL: agregá en obsequios.js un evento como { id:'mundial', archivo:'mundial.json', titulo:'Mundial de Fútbol', tipoFecha:'fijo', mes:6, dia:11, anio:2026, duracion:38, saludo:'¡Vamos Argentina! 🇦🇷' } (Limón se pone el gorro celeste y blanco y la corneta durante todo el torneo y ofrece las ideas de mundial.json). envio: texto de retiro y tabla de costos (se muestran con el botón «🛵 Envíos» del menú y como recordatorio una vez por visita cuando hay productos en el carrito). favoritos: avisa al entrar si un favorito está en oferta o con pocas unidades. carritoAviso: recordatorio amable del carrito (sin descuento) a los 'minutos'; el código llega recién más tarde. bateria: recordatorio amable (sin vender nada) cuando queda 'umbral'% o menos (solo Chrome de Android)."
 }
