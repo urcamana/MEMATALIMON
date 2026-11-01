@@ -1,7 +1,7 @@
 /* Limón 🍋 — mascota vendedora para la tienda. */
 (() => {
 'use strict';
-const CFG = { json: 'articulos.json', items: 'items_limon.json', obsequios: 'obsequios/', desc: 'desc_limon.json', W: 60, H: 72, mi: 64, md: 84, borde: 4, maxPromos: 20, ritmo: 1, lat: -26.4, lon: -54.63, calor: 30 };   // lat/lon: ubicación del local (para el clima). calor: grados a partir de los que se acalora   // ritmo: 1 = normal, 0.5 = más charlatán, 2 = más callado
+const CFG = { json: 'articulos.json', items: 'items_limon.json', obsequios: 'obsequios/', desc: 'desc_limon.json', W: 60, H: 72, mi: 64, md: 84, borde: 4, maxPromos: 20, ritmo: 1, lat: -26.4, lon: -54.63, calor: 30, frio: 12, viento: 30 };   // lat/lon: ubicación del local (para el clima). calor: grados a partir de los que se acalora   // ritmo: 1 = normal, 0.5 = más charlatán, 2 = más callado
 const gap = (a, b) => rnd(a, b) * 1e3 * CFG.ritmo;
 const W = CFG.W, H = CFG.H;
 const $q = (s, r = document) => r.querySelector(s), $a = (s, r = document) => [...r.querySelectorAll(s)];
@@ -23,7 +23,7 @@ const L = {
   nudge: ['Tu carrito te está esperando 🛒 ¿Lo terminamos?', '¿Te falta algo o ya cerramos la compra? 🍋'],
   add: ['¡Buena elección! 🍋', 'Menos mal que lo agregaste, si no lo elegías perdias la oportunidad', '¡Eso! Al carrito 🛒', '¡Qué buen ojo!', '¡Uh, ese es de los buenos!'],
   poke: ['¡Cosquillas! 🤭', 'Ojo con voltear tu pantalla, ¡yo soy el patrón!😂', 'Cobro por cada tocada, aca nadie trabaja gratis... 😆', 'Soy muy ocupado, ¿sabés? 😎', 'Hola, hola, soy el jefe... 😎'],
-  fall: ['¡Aaah! ¡Avisá antes de dar vuelta el celu! 😵', 'Uf… me mareé ⭐', 'Me parece que esto es algo personal 😒', 'Uy, todo gira... 😵‍💫🥴', '¡Cuidado, que soy frágil! 🍋'],
+  fall: ['¡Aaah! ¡Avisame antes! me mareo.. 😵', 'Uf… me mareé ⭐', 'Me parece que esto es algo personal 😒', 'Uy, todo gira... 😵‍💫🥴', '¡Cuidado, que soy frágil! 🍋'],
   peek: [() => '¿Este? 👀', () => '¿Qué tal este? 🍋', n => `Mmm… ¿y ${n}? 😏`, () => 'Este tiene buena pinta, ¿no?'],
   retoInv: ['Si me agarrás y me tirás desde lo alto {veces} veces, te doy un código de descuento 😈', 'Reto: revoleame por tu pantalla {veces} veces y te regalo un descuento 🍋', '¿Te animás? Agarrame y tirame desde arriba {veces} veces… y te doy un código 🎁'],
   retoProg: ['¡Van {n} de {veces}! Seguí, que me estoy mareando 😵', '{n} de {veces}… ¡qué brazo! 💪', '¡{n} de {veces}! No pares ahora 😈'],
@@ -36,6 +36,9 @@ const L = {
   corrio: ['¡Uff! Si me hubiera chocado a esa velocidad me hacía limonada 🍋💨', '¡Uf! Corrí tan rápido que casi me exprimo 😅', '¡Qué carrera! Nuevo récord personal 🏅'],
   musica: ['¡Qué buen tema! 🎧 Por cierto, acá vendemos auriculares re buenos…', '¿Escuchaste eso? 🎶 Tenemos auriculares geniales 😉'],
   wx: {
+    frio: ['¡Brrr! 🥶 Con {T}° hasta los limones nos congelamos', 'Hace {T}°… me puse el gorro y la bufanda 🧣', '¡Qué frío! ({T}°) Ideal para quedarse en casa eligiendo cositas 🍋'],
+    tormenta: ['¡Hay tormenta! ⚡ Mejor comprar desde casa', 'Se viene tormenta… ¡qué miedo! 😱 Yo me quedo acá, calentito'],
+    viento: ['¡Qué viento! 💨 Casi se me vuela la hojita'],
     calor: ['¡Qué calor! 🥵 Con {T}° hasta un limón se exprime solo', 'Con {T}° hasta los limones sudamos 🥵', '¡{T}° afuera! Me quedo en la sombra de tu pantalla 😎'],
     lluvia: ['¡Está lloviendo! ☔ Buen momento para comprar sin mojarte', 'Llueve… yo ya saqué el paraguas ☔ ¿Y tu pedido?', '¡Día de lluvia! Ideal para elegir cositas desde casa 🍋', 'Se anuncian lluvias… ¿ahí ya comenzó? ☔ Yo ya abrí el paraguas'],
     nube: ['Está nublado… saqué el paraguas por las dudas ☂️ ¡Pero no llueve!', 'Nublado… abro el paraguas, miro arriba… ¡nada! Lo cierro ☂️', 'Se viene nublado, saqué el paraguas… ¿llueve? Nope, lo guardo 🍋']
@@ -48,6 +51,14 @@ const L = {
   fechaManana: ['¡Mañana es {t}! 🎁 ¡Todavía llegás con el regalo!'],
   fechaPronto: ['¡{t} en {n} días! 🎁 Todavía llegás con el regalo', 'Faltan {n} días: {t} 🎁 ¿Ya elegiste el regalo?'],
   fechaLejos: ['Se acerca: {t} 🎁 ¿Ya pensaste el regalo?', '¡Ya casi es {t}! 🎁 Mirá estas ideas para regalar'],
+  hiManana: ['¡Buen día! ☀️ Soy Limón 🍋 Mate en mano, ¿te ayudo a elegir algo?', '¡Buen día! Soy Limón 🍋 Tocame si querés ver las ofertas del día.'],
+  trueno: ['¡¿Qué fue eso?! ⚡😱', '¡Qué trueno! ⚡ Me asusté un poquito…'],
+  bat: ['Te queda poca batería 🔋 ({n}%) ¡Ojo!', 'Tu celu está al {n}% 🔋 ¡Cuidalo!'],
+  bat2: ['¡Solo {n}% de batería! 🪫 Buscá un enchufe pronto'],
+  batBroma: ['Tu batería anda en {n}%… igual que mi paciencia 😅', '{n}% de batería… ¡y yo que pensaba que me cansaba rápido! 🔋', 'Con {n}% de batería hasta yo me pongo nervioso 😬'],
+  favOferta: ['¡Ese que guardaste está en oferta! 🔥 {n}: {d}% OFF', '¡Buenas noticias! {n} (de tus favoritos) tiene {d}% de descuento 🍋'],
+  favPocasAviso: ['Quedan pocas unidades de uno de tus favoritos: {n} ⏳', '¡Ojo! {n} se está por agotar y lo tenés en favoritos 😱'],
+  carritoAviso: ['¿Lo terminamos? 🛒 Tenés {n} producto{s} esperando', 'Tu pedido está casi listo 🛍️ ¿Lo enviamos por WhatsApp?'],
   wake: ['¡Ah! Estaba soñando con ofertas 💤', '¡¿Quién? ¿Dónde?! Uhh, pensé que venia el patrón.. 🫩 💤', '¡Ay! emm, si, claro, ya te atiendo.. solo me despabilo 🥱💤', '¡¡Ahhh, No me quiten las ofertas!! 🥴💤'],
 };
 
@@ -64,6 +75,7 @@ svg{width:100%;height:100%;overflow:visible;display:block}
 #bub{position:absolute;left:0;top:0;max-width:min(230px,72vw);padding:9px 12px;border-radius:14px;background:#fff;color:#2b2140;font-size:13px;line-height:1.3;box-shadow:0 4px 16px #0003;pointer-events:auto;opacity:0;visibility:hidden;transition:opacity .25s}
 #bub.on{opacity:1;visibility:visible}
 #bub .a{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+#bub>div:first-child{white-space:pre-line}
 #bub button{border:0;border-radius:999px;padding:6px 10px;background:#f3ecfa;color:#4a2b7a;font-size:12px;font-weight:600;cursor:pointer}
 #bub button:hover{background:#e4d6f5}
 @media (prefers-reduced-motion:reduce){#bub{transition:none}}
@@ -75,16 +87,36 @@ svg{width:100%;height:100%;overflow:visible;display:block}
 <ellipse cx="40" cy="50" rx="27" ry="29" fill="#ffe14a" stroke="#c99a00" stroke-width="3"/>
 <ellipse id="heat" cx="40" cy="50" rx="26" ry="28" fill="#ff5a36" opacity="0"/>
 <g id="hp" style="display:none"><path d="M16 46Q40 -4 64 46" fill="none" stroke="#3a2a66" stroke-width="4" stroke-linecap="round"/><ellipse cx="15" cy="49" rx="5.5" ry="8" fill="#6b4ca3" stroke="#3a2a66" stroke-width="2"/><ellipse cx="65" cy="49" rx="5.5" ry="8" fill="#6b4ca3" stroke="#3a2a66" stroke-width="2"/></g>
-<path d="M40 22Q42 8 58 8Q56 22 40 22Z" fill="#5bbf4a" stroke="#3c8c32" stroke-width="2" stroke-linejoin="round"/>
+<path id="leaf" d="M40 22Q42 8 58 8Q56 22 40 22Z" fill="#5bbf4a" stroke="#3c8c32" stroke-width="2" stroke-linejoin="round"/>
 <g id="um" style="display:none"><path d="M6 0Q38 -32 70 0Q60 -6 52 0Q44 -6 38 0Q32 -6 24 0Q16 -6 6 0Z" fill="#7b4fc9" stroke="#4a2b8a" stroke-width="2" stroke-linejoin="round"/><path d="M38 0 L22 54" stroke="#4a2b8a" stroke-width="2.5" stroke-linecap="round"/><circle cx="22" cy="54" r="2.5" fill="#4a2b8a"/></g>
 <g id="a1"><ellipse cx="14" cy="55" rx="5" ry="8" fill="#ffe14a" stroke="#c99a00" stroke-width="2.5"/><g id="um2" style="display:none"><path d="M11 52 L11 78" stroke="#4a2b8a" stroke-width="2.2" stroke-linecap="round"/><path d="M11 52 Q6 48 8 42 Q11 38 14 42 Q16 48 11 52" fill="#7b4fc9" stroke="#4a2b8a" stroke-width="1.5" stroke-linejoin="round"/><circle cx="11" cy="78" r="1.8" fill="#4a2b8a"/></g></g>
-<g id="a2"><ellipse cx="66" cy="55" rx="5" ry="8" fill="#ffe14a" stroke="#c99a00" stroke-width="2.5"/></g>
+<g id="a2"><g id="mate" style="display:none"><path d="M61 42Q59 58 66 58Q73 58 71 42Z" fill="#a9743a" stroke="#6b4420" stroke-width="1.6"/><path d="M60 42H72" stroke="#6b4420" stroke-width="2"/><path d="M68 42L74 26" stroke="#c0c0c0" stroke-width="2" stroke-linecap="round"/><circle cx="75" cy="25" r="1.8" fill="#c0c0c0"/></g>
+<g id="jer" style="display:none"><rect x="63" y="28" width="6" height="22" rx="2" fill="#e8f4ff" stroke="#6a8fb0" stroke-width="1.5"/><path d="M66 28V16" stroke="#9aa" stroke-width="1.6" stroke-linecap="round"/><rect x="60" y="48" width="12" height="3" rx="1" fill="#6a8fb0"/><rect x="64" y="52" width="4" height="5" fill="#6a8fb0"/><path d="M63 36H69M63 40H69" stroke="#6a8fb0" stroke-width="1"/></g>
+<g id="copa" style="display:none"><path d="M60 30H72L69.5 44Q66 47 62.5 44Z" fill="#ffe9a8" stroke="#c9a227" stroke-width="1.6"/><path d="M66 46V56M61 56H71" stroke="#c9a227" stroke-width="2" stroke-linecap="round"/><circle cx="64" cy="36" r="1" fill="#fff"/><circle cx="68" cy="39" r="1" fill="#fff"/></g>
+<g id="corn" style="display:none"><path d="M62 52L90 34L94 46Z" fill="#74acdf" stroke="#3d7fb8" stroke-width="1.6" stroke-linejoin="round"/><path d="M74 44L78 38M82 40L86 34" stroke="#fff" stroke-width="3"/><circle cx="62" cy="54" r="4" fill="#f6b40e"/></g>
+<g id="cartel" style="display:none"><path d="M64 24V54" stroke="#8d6e63" stroke-width="2.2" stroke-linecap="round"/><rect x="40" y="8" width="48" height="17" rx="2.5" fill="#e53935" stroke="#b71c1c" stroke-width="1.6"/><text x="64" y="20.2" font-size="9.5" font-weight="700" fill="#fff" text-anchor="middle" font-family="system-ui,sans-serif">OFERTAS</text></g>
+<ellipse cx="66" cy="55" rx="5" ry="8" fill="#ffe14a" stroke="#c99a00" stroke-width="2.5"/></g>
 <ellipse cx="24" cy="57" rx="4.5" ry="3" fill="#ff9aa8" opacity=".6"/><ellipse cx="56" cy="57" rx="4.5" ry="3" fill="#ff9aa8" opacity=".6"/>
 <g id="e1"><ellipse cx="32" cy="46" rx="5.6" ry="6.4" fill="#fff" stroke="#333" stroke-width="1"/><circle id="p1" cx="32" cy="47" r="3" fill="#222"/></g>
 <g id="e2"><ellipse cx="48" cy="46" rx="5.6" ry="6.4" fill="#fff" stroke="#333" stroke-width="1"/><circle id="p2" cx="48" cy="47" r="3" fill="#222"/></g>
 <g id="cl" style="display:none" fill="none" stroke="#5a3d00" stroke-width="2.2" stroke-linecap="round"><path d="M27 46Q32 50 37 46"/><path d="M43 46Q48 50 53 46"/></g>
 <g id="hat1" style="display:none"><path d="M31 21L42 -9L52 21Z" fill="#ff5fa2" stroke="#c2336f" stroke-width="2" stroke-linejoin="round"/><circle cx="42" cy="-10" r="3.5" fill="#ffe14a"/><path d="M34 15H50M37 8H48" stroke="#fff" stroke-width="2" stroke-linecap="round"/></g>
 <g id="hat2" style="display:none"><path d="M27 21Q30 -8 54 -2Q44 6 56 12L58 21Z" fill="#d62828" stroke="#a31515" stroke-width="2" stroke-linejoin="round"/><rect x="24" y="17" width="36" height="8" rx="4" fill="#fff" stroke="#ddd"/><circle cx="55" cy="-1" r="4.5" fill="#fff" stroke="#ddd"/></g>
+<g id="hat3" style="display:none"><path d="M24 24Q22 -6 41 -6Q60 -6 58 24Z" fill="#4a7fd1" stroke="#2f55a0" stroke-width="2"/><rect x="21" y="18" width="40" height="9" rx="3" fill="#2f55a0"/><circle cx="41" cy="-8" r="5" fill="#fff" stroke="#ddd"/></g>
+<g id="hat4" style="display:none"><path d="M26 22Q40 2 56 22Z" fill="#ffb02e" stroke="#c97b00" stroke-width="2" stroke-linejoin="round"/><path d="M50 21Q68 19 72 26Q60 28 48 24Z" fill="#ffb02e" stroke="#c97b00" stroke-width="2" stroke-linejoin="round"/></g>
+<g id="hat5" style="display:none"><path d="M26 22Q30 -4 54 2Q62 6 66 18Q62 14 58 22Z" fill="#6b4ca3" stroke="#3a2a66" stroke-width="2" stroke-linejoin="round"/><rect x="24" y="18" width="36" height="7" rx="3" fill="#fff" stroke="#ddd"/><circle cx="66" cy="19" r="4.5" fill="#fff" stroke="#ddd"/></g>
+<g id="hat6" style="display:none"><path d="M20 19L40 10L60 19L40 28Z" fill="#222" stroke="#000" stroke-width="1.5" stroke-linejoin="round"/><path d="M31 23V28Q40 33 49 28V23" fill="#333"/><path d="M58 20V31" stroke="#ffd34a" stroke-width="2"/><circle cx="58" cy="32" r="2.8" fill="#ffd34a"/></g>
+<g id="hat7" style="display:none"><path d="M27 22Q20 10 30 6Q34 -4 44 2Q56 -2 55 8Q62 14 54 22Z" fill="#fff" stroke="#cfcfcf" stroke-width="1.8"/><rect x="28" y="18" width="26" height="6" rx="2" fill="#fff" stroke="#cfcfcf" stroke-width="1.5"/></g>
+<g id="hat8" style="display:none"><path d="M24 22Q26 2 41 2Q56 2 58 22Z" fill="#ffc400" stroke="#c28f00" stroke-width="2"/><rect x="21" y="19" width="40" height="5" rx="2" fill="#ffc400" stroke="#c28f00" stroke-width="1.5"/><rect x="38" y="3" width="6" height="16" fill="#ffd84a"/></g>
+<g id="hat9" style="display:none"><path d="M41 7Q39 0 45 -4" stroke="#6b4a1e" stroke-width="3.4" fill="none" stroke-linecap="round"/><path d="M44 -2Q54 -8 57 0Q50 4 44 -2Z" fill="#5bbf4a" stroke="#3c8c32" stroke-width="1.2" stroke-linejoin="round"/><ellipse cx="29" cy="15" rx="9" ry="11" fill="#ef6c00" stroke="#a84c00" stroke-width="1.8"/><ellipse cx="53" cy="15" rx="9" ry="11" fill="#ef6c00" stroke="#a84c00" stroke-width="1.8"/><ellipse cx="41" cy="14" rx="11" ry="12.5" fill="#ff9a2e" stroke="#a84c00" stroke-width="1.8"/><path d="M35.5 9.5L39 9.5L37.2 14Z M43 9.5L46.5 9.5L44.7 14Z" fill="#3b1e00"/><path d="M34 18.5L36.5 21L39 18.5L41 21L43 18.5L45.5 21L48 18.5" fill="none" stroke="#3b1e00" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/></g>
+<g id="hat10" style="display:none"><path d="M31 21L42 -9L52 21Z" fill="#74acdf" stroke="#3d7fb8" stroke-width="2" stroke-linejoin="round"/><path d="M35 14H49M38 5H46" stroke="#fff" stroke-width="3"/><circle cx="42" cy="-10" r="3.6" fill="#f6b40e" stroke="#c78f00"/></g>
+<g id="gl" style="display:none"><path d="M24 44H56" stroke="#111" stroke-width="2.4"/><rect x="23" y="41" width="16" height="11" rx="4.5" fill="#15152a"/><rect x="41" y="41" width="16" height="11" rx="4.5" fill="#15152a"/><path d="M26 44L30 43M44 44L48 43" stroke="#fff" stroke-opacity=".5" stroke-width="1.5"/></g>
+<g id="gl2" style="display:none" fill="none" stroke="#333" stroke-width="2"><circle cx="32" cy="46" r="8.6"/><circle cx="48" cy="46" r="8.6"/><path d="M40.6 45Q40 43.5 39.4 45"/><path d="M23.4 46L17 43M56.6 46L63 43"/></g>
+<g id="scarf" style="display:none"><path d="M14 66Q40 80 66 66L67 75Q40 90 13 75Z" fill="#e8574c" stroke="#b03a30" stroke-width="1.8" stroke-linejoin="round"/><path d="M52 78L58 96L48 94Z" fill="#e8574c" stroke="#b03a30" stroke-width="1.8" stroke-linejoin="round"/><path d="M20 70Q40 82 60 70" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="2"/></g>
+<g id="tie" style="display:none"><path d="M36 66H44L42 70H38Z" fill="#a93226"/><path d="M38 70H42L45 86L40 90L35 86Z" fill="#c0392b" stroke="#8e2a20" stroke-width="1.5" stroke-linejoin="round"/></g>
+<g id="steto" style="display:none" fill="none" stroke="#444" stroke-width="2.2" stroke-linecap="round"><path d="M28 62Q22 82 36 86Q50 86 50 70V64"/><path d="M52 62V68M28 62V66"/><circle cx="36" cy="86" r="3.6" fill="#cfd8dc"/></g>
+<g id="esc" style="display:none"><path d="M49 70L45 84M55 70L59 84" stroke="#74acdf" stroke-width="3" stroke-linecap="round"/><circle cx="52" cy="67" r="7" fill="#fff" stroke="#74acdf" stroke-width="3"/><circle cx="52" cy="67" r="3" fill="#74acdf"/></g>
+<g id="hearts" style="display:none" fill="#ff4d79"><text id="h1" font-size="11">❤</text><text id="h2" font-size="9">❤</text><text id="h3" font-size="12">❤</text></g>
 <path id="mo" d="M33 58Q40 65 47 58" stroke="#8a4b00" stroke-width="2.4" fill="none" stroke-linecap="round"/>
 <g id="br" style="display:none" stroke="#5a3d00" stroke-width="2.8" stroke-linecap="round"><path d="M24 37L38 42"/><path d="M56 37L42 42"/></g>
 <g id="sw" style="display:none" fill="#6ec6ff" stroke="#2b8fd6" stroke-width=".8"><path id="sw1" d="M62 34q4 6 0 9q-4-3 0-9z"/><path id="sw2" d="M14 38q4 6 0 9q-4-3 0-9z"/></g>
@@ -103,7 +135,8 @@ let ART = null, bubUntil = 0, nextTour = Date.now() + 25e3, nextRec = Date.now()
 let ITEMS = null, DESC = null, ALL = new Map(), tStart = Date.now(), cartSince = 0, lastRec = null, nextPeek = Date.now() + 70e3, nextReto = Date.now() + 100e3, wantCart = false, toCart = false, lastFav = 0, pidio = false, WX = null, umAnim = null, grump = 0, tripRot = 0, corre = false, rock = null, trip = null, lastEvt = Date.now() - 45e3, nextCerrado = Date.now() + 40e3, cerrados = 0, nightOv = null;
 const ROT = { b: 0, t: 180, l: 90, r: -90 };
 const night = () => nightOv !== null ? nightOv : (h => h >= 23 || h < 7)(new Date().getHours());
-const cerrado = () => /cerrado/i.test((document.getElementById('badgeAbierto') || {}).textContent || '');   // lee el cartel «Abierto/Cerrado ahora» de tu página
+let cerradoOv = null;
+const cerrado = () => cerradoOv !== null ? cerradoOv : /cerrado/i.test((document.getElementById('badgeAbierto') || {}).textContent || '');   // lee el cartel «Abierto/Cerrado ahora» de tu página
 const abrirCarrito = () => { const b = $q('#listaInteres'); b && b.click() };
 const navBottom = () => { const n = $q('#nav1'); return n ? n.getBoundingClientRect().bottom : 0 };
 const range = f => (f === 'b' || f === 't') ? [CFG.mi, innerWidth - CFG.md] : [navBottom() + H, innerHeight - H];
@@ -150,7 +183,7 @@ function cargar() {
   return cargando || (cargando = (async () => {
     try {
       const r = await fetch(CFG.json, { cache: 'force-cache' }), d = await r.json();
-      const it = d.map(p => { let ds = num(p.Descuento); if (ds > 0 && ds < 1) ds *= 100; ds = Math.round(ds); return { id: p['Artículo'], n: String(p['Descripción'] || '').trim(), c: String(p.Categoria || ''), d: ds, pr: num(p.Venta) * (num(p.DOLAR) || 1) * (1 - ds / 100), st: num(p.Inventario) >= 1 && num(p.Venta) > 0 } });
+      const it = d.map(p => { let ds = num(p.Descuento); if (ds > 0 && ds < 1) ds *= 100; ds = Math.round(ds); return { id: p['Artículo'], n: String(p['Descripción'] || '').trim(), c: String(p.Categoria || ''), d: ds, pr: num(p.Venta) * (num(p.DOLAR) || 1) * (1 - ds / 100), inv: num(p.Inventario), st: num(p.Inventario) >= 1 && num(p.Venta) > 0 } });
       ALL = new Map(it.map(p => [p.id, p])); ART = it.filter(p => p.st && p.n);
     } catch (e) { ART = [] }
     ITEMS = await leer(CFG.items) || {}; DESC = await leer(CFG.desc); await cargarEventos(); calcularFecha();
@@ -236,15 +269,15 @@ async function clima() {
   try {
     let c = JSON.parse(SS('mm_wx') || 'null');
     if (!c || Date.now() - c.t > 30 * 60e3) {
-      const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${CFG.lat}&longitude=${CFG.lon}&current=temperature_2m,weather_code,is_day,precipitation&hourly=precipitation_probability&timezone=auto&forecast_hours=1`), j = await r.json();
+      const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${CFG.lat}&longitude=${CFG.lon}&current=temperature_2m,weather_code,is_day,precipitation,wind_speed_10m&hourly=precipitation_probability&timezone=auto&forecast_hours=1`), j = await r.json();
       const pp = (j.hourly && j.hourly.precipitation_probability && j.hourly.precipitation_probability[0]) || 0;
-      c = { t: Date.now(), T: j.current.temperature_2m, c: j.current.weather_code, d: j.current.is_day, p: j.current.precipitation || 0, pp }; SS('mm_wx', JSON.stringify(c));
+      c = { t: Date.now(), T: j.current.temperature_2m, c: j.current.weather_code, d: j.current.is_day, p: j.current.precipitation || 0, w: j.current.wind_speed_10m || 0, pp }; SS('mm_wx', JSON.stringify(c));
     }
     const k = c.c, lluvia = (k >= 51 && k <= 67) || (k >= 80 && k <= 86) || k >= 95 || (c.p > 0.1);
-    WX = { T: c.T, lluvia, nube: !lluvia && (k === 3 || k === 45 || k === 48 || (c.pp >= 40 && k <= 3)), calor: !lluvia && k <= 2 && c.d === 1 && c.T >= CFG.calor, pp: c.pp };
+    WX = { T: c.T, lluvia, nube: !lluvia && (k === 3 || k === 45 || k === 48 || (c.pp >= 40 && k <= 3)), calor: !lluvia && k <= 2 && c.d === 1 && c.T >= CFG.calor, frio: c.T < CFG.frio, tormenta: k >= 95, viento: (c.w || 0) >= CFG.viento, pp: c.pp };
   } catch (e) { WX = null }
 }
-const climaFrase = () => { const k = WX && (WX.calor ? 'calor' : WX.lluvia ? 'lluvia' : WX.nube ? 'nube' : null); return k && fill(R(L.wx[k]), { T: Math.round(WX.T) }) };
+const climaFrase = () => { const k = WX && (WX.tormenta ? 'tormenta' : WX.lluvia ? 'lluvia' : WX.calor ? 'calor' : WX.frio ? 'frio' : WX.nube ? 'nube' : WX.viento ? 'viento' : null); return k && fill(R(L.wx[k]), { T: Math.round(WX.T) }) };
 function verProducto(id) {
   const im = document.getElementById('img' + id), c = im && (im.closest('.tarjetas2') || im.closest('.card-group') || im);
   if (c) { c.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); c.animate([{ boxShadow: '0 0 0 0 #ffe14a' }, { boxShadow: '0 0 0 10px #ffe14a88' }, { boxShadow: '0 0 0 0 #ffe14a00' }], { duration: 1400, iterations: 2 }) }
@@ -399,13 +432,15 @@ function extras(dt) {   // clima, auriculares, enojo, correr
     }
   }
   g('um').style.display = holdOpen ? '' : 'none';
-  g('hat1').style.display = hat === 'fiesta' ? '' : 'none'; g('hat2').style.display = hat === 'santa' ? '' : 'none';
+  vestirAplicar();
   g('um2').style.display = holdClosed ? '' : 'none';
   g('sw').style.display = wx.calor ? '' : 'none'; g('heat').setAttribute('opacity', wx.calor ? .22 : 0);
   if (wx.calor) [1, 2].forEach(i => { const k = (T * .9 + i * .5) % 1, s = g('sw' + i); s.setAttribute('transform', `translate(0 ${k * 12})`); s.setAttribute('opacity', 1 - k) });
-  g('hp').style.display = g('nt').style.display = musica ? '' : 'none';
   if (musica) [1, 2].forEach(i => { const k = (T * .7 + i * .5) % 1, n = g('n' + i); n.setAttribute('x', (i === 1 ? 62 : 8) + Math.sin(T * 3 + i) * 3); n.setAttribute('y', 18 - k * 26); n.setAttribute('opacity', 1 - k) });
   g('br').style.display = grump > 0 ? '' : 'none';
+  const lf = g('leaf'); if (lf) lf.setAttribute('transform', rt(wx.viento ? Math.sin(T * 9) * 14 : Math.sin(T * 1.6) * 2, 40, 22));
+  if (wx.tormenta && mode === 'idle' && sub !== 'sleep' && T > nextSusto) { nextSusto = T + rnd(25, 45); happy = Math.max(happy, .7); if (!silent && !tipeando && !bubUntil && Math.random() < .5) show(R(L.trueno), null, 2600) }
+  if (visSig.includes('hearts')) [1, 2, 3].forEach(i => { const k = (T * .5 + i * .33) % 1, e = g('h' + i); e.setAttribute('x', [4, 62, 33][i - 1] + Math.sin(T * 2 + i) * 3); e.setAttribute('y', 34 - k * 40); e.setAttribute('opacity', 1 - k) });
   if (run) { const s = Math.sin(T * 26) * 42; g('l1').setAttribute('transform', rt(s, 32, 74)); g('l2').setAttribute('transform', rt(-s, 48, 74)); g('a1').setAttribute('transform', rt(s, 18, 48)); g('a2').setAttribute('transform', rt(s, 62, 48)) }
   if (fan) g('a2').setAttribute('transform', rt(-(105 + Math.sin(T * 18) * 12), 62, 48));
   if (musica) { g('cl').style.display = ''; g('e1').style.display = g('e2').style.display = 'none' }
@@ -427,7 +462,7 @@ function draw(dt) {
   const d = ((ROT[fl] + tripRot + (D ? clamp(D.vx * .06, -25, 25) : 0) - rot + 540) % 360) - 180; rot += d * Math.min(1, dt * 12);
   squash = Math.max(0, squash - dt * 1.4); stars = Math.max(0, stars - dt); happy = Math.max(0, happy - dt);
   const hop = happy > 0 ? Math.abs(Math.sin(T * 13)) * 9 : 0;
-  const bob = sub === 'music' && mode === 'idle' ? Math.sin(T * 6) * 4 : 0, shake = grump > 0 ? Math.sin(T * 45) * 1.2 : 0;
+  const bob = sub === 'music' && mode === 'idle' ? Math.sin(T * 6) * 4 : 0, shake = grump > 0 ? Math.sin(T * 45) * 1.2 : (WX && WX.frio && mode === 'idle' && sub !== 'sleep') ? Math.sin(T * 38) * .9 : 0;
   m.style.transform = `translate(${pos.x - W / 2}px,${pos.y - H - hop}px) rotate(${rot}deg)`;
   const walking = mode === 'walk', scared = mode === 'drag' || (mode === 'jump' && J && J.ease === 'in'), asleep = sub === 'sleep' && mode === 'idle', sit = sub === 'sit' && mode === 'idle', watch = mode === 'cart';
   const lg = walking ? Math.sin(T * 14) * 30 : scared ? Math.sin(T * 18) * 25 : 0;
@@ -467,7 +502,7 @@ function despertar() {   // lo despiertan de noche: se enoja un rato y los incen
   grump = 6; show(R(cerrado() ? L.despCerrado : L.desp), [['🛒 Mi carrito', abrirCarrito], ['🔥 Ver ofertas', verOfertas]], 9000);
 }
 function menu() {
-  const b = [['🛍️ Recomendame', recMenu], ['🔥 Ofertas', () => tour(true)], ['🎁 Ayudame a elegir', regalosMenu]];
+  const b = [['🛍️ Recomendame', recMenu], ['🔥 Ofertas', () => tour(true)], ['🎁 Ayudame a elegir', regalosMenu], ['🛵 Envíos', envioTabla]];
   b.push([silent ? '🔔 Hablar' : '🤫 Silencio', () => { silent = !silent; SS('mm_sil', silent ? '1' : '0'); show(silent ? 'Ok, me quedo calladito 🤫' : '¡Vuelvo a charlar! 🍋', null, 2500) }]);
   b.push(['👋 Chau', () => { LS('mm_off', Date.now() + 7 * 864e5); show('¡Chau! Vuelvo en unos días 👋', null, 2200); setTimeout(() => { host.remove(); window.__mmOn = false }, 2400) }]);
   show(R(L.poke), b, 12000);
@@ -559,6 +594,7 @@ async function complemento() {
 /* Primera visita / carrito que espera */
 async function saludoInicial() {
   await cargar(); const I = ITEMS || {};
+  const viejo = await enlaceViejo(); if (viejo) return viejo;
   if (cartCount > 0 && I.carritoEspera !== false && SS('mm_back') !== '1') {
     SS('mm_back', '1'); LS('mm_vis', '1'); let vistos = []; try { vistos = JSON.parse(LS('vistos_limon') || '[]') } catch (e) {}
     const v = vistos.map(getP).find(Boolean), n = cartCount, b = [['🛒 Abrir carrito', abrirCarrito]];
@@ -567,7 +603,7 @@ async function saludoInicial() {
   }
   if (!LS('mm_vis') && I.primeraVisita !== false) { LS('mm_vis', '1'); return [L.primera, [['❓ ¿Cómo compro?', () => comoComprar()], ['Ya sé cómo 😎', () => {}]], 12000] }
   LS('mm_vis', '1');
-  return [cerrado() ? R(L.cerrado) : R(L.hi), [['🛍️ Recomendame', recMenu], ['🔥 Ofertas', () => tour(true)]], 9000];
+  return [cerrado() ? R(L.cerrado) : (hr => hr >= 6 && hr < 12)(hoyF().getHours()) ? R(L.hiManana) : R(L.hi), [['🛍️ Recomendame', recMenu], ['🔥 Ofertas', () => tour(true)]], 9000];
 }
 function comoComprar(i = 0) {
   const P = ((ITEMS || {}).comoComprar || {}).pasos || ['1️⃣ Elegís el producto y la cantidad, y tocás «Agregar».', '2️⃣ Abrís el carrito 🛒, completás entrega y forma de pago.', '3️⃣ Enviás el pedido por WhatsApp y te confirmamos. ¡Listo! 🍋'];
@@ -596,21 +632,35 @@ async function cargarEventos() {
   try { const t = await (await fetch(CFG.obsequios + 'obsequios.js')).text(), a = t.indexOf('[', t.indexOf('const EVENTOS')), z = t.indexOf('];', a); EVENTOS = new Function('return ' + t.slice(a, z + 1))() } catch (e) { EVENTOS = [] }
 }
 function enesimo(y, m, dow, n) { const d = new Date(y, m - 1, 1); let c = 0; while (d.getMonth() === m - 1) { if (d.getDay() === dow && ++c === n) return new Date(d); d.setDate(d.getDate() + 1) } return new Date(y, m - 1, 15) }
-function fechaEv(ev, ref) {
-  const f = y => ev.tipoFecha === 'tercer_domingo' ? enesimo(y, ev.mes, 0, 3) : ev.tipoFecha === 'segundo_lunes' ? enesimo(y, ev.mes, 1, 2) : ev.tipoFecha === 'dia_256' ? new Date(y, 0, 256) : new Date(y, (ev.mes || 1) - 1, ev.dia || 1);
-  const d = f(ref.getFullYear()), fin = new Date(d); fin.setDate(fin.getDate() + 7); return ref > fin ? f(ref.getFullYear() + 1) : d;
+const ACC_DEF = { enamorados: ['corazones'], novia: ['corazones'], navidad: ['santa'], padre: ['corbata'], hombre: ['corbata'], profe: ['birrete'], profesor: ['birrete'], bibliotecario: ['lentes'], programador: ['lentes'], psicologo: ['lentes'], disenador_grafico: ['lentes'], quimico: ['lentes'], optico: ['lentes'], fotografo: ['lentes'], periodista: ['lentes'], contador: ['corbata'], abogado: ['corbata'], bancario: ['corbata'], inmobiliario: ['corbata'], viajante: ['corbata'], comercio_exterior: ['corbata'], empleado_comercio: ['corbata'], enfermeria: ['jeringa'], farmaceutico: ['jeringa'], odontologo: ['jeringa'], kinesiologo: ['estetoscopio'], veterinario: ['estetoscopio'], medico: ['estetoscopio'], pizzero_pastelero: ['chef'], gastronomico: ['chef'], ingeniero: ['casco'], arquitecto: ['casco'], mecanico: ['casco'], transporte: ['gorra'], camionero: ['gorra'], canillita: ['gorra'], guardavidas: ['sol'], vitivinicola: ['copa'], musico: ['auriculares'], locutor: ['auriculares'], mundial: ['mundial'] };
+const accDe = ev => { const o = (((ITEMS || {}).fechas || {}).accesorios || {})[ev.id] ?? ev.accesorio ?? ACC_DEF[ev.id]; return o ? [].concat(o) : ['fiesta'] };
+function diaDe(ev, yy) {
+  const d = ev.tipoFecha === 'tercer_domingo' ? enesimo(yy, ev.mes, 0, 3) : ev.tipoFecha === 'segundo_lunes' ? enesimo(yy, ev.mes, 1, 2) : ev.tipoFecha === 'cuarto_viernes' ? enesimo(yy, ev.mes, 5, 4) : ev.tipoFecha === 'dia_256' ? new Date(yy, 0, 256) : new Date(yy, (ev.mes || 1) - 1, ev.dia || 1);
+  if (ev.offset) d.setDate(d.getDate() + ev.offset); return d;
+}
+function ocurrencia(ev, hoy) {   // la que está en curso o la próxima (campos opcionales: duracion en días, anio)
+  const dur = Math.max(1, ev.duracion || 0); let mejor = null;
+  for (const yy of [hoy.getFullYear() - 1, hoy.getFullYear(), hoy.getFullYear() + 1]) {
+    if (ev.anio && +ev.anio !== yy) continue;
+    const dias = Math.round((diaDe(ev, yy) - hoy) / 864e5);
+    if (dias >= -dur && (!mejor || dias < mejor.dias)) mejor = { dias, dur };
+  }
+  return mejor;
 }
 function calcularFecha() {
-  const F = (ITEMS || {}).fechas || {}; FECHA = null; hat = null; if (F.activo === false || !EVENTOS.length) return;
-  const cel = F.celebrar || ['enamorados', 'padre', 'amigo', 'profe', 'madre', 'navidad', 'novia', 'mujer', 'hombre', 'niño'], hoy = hoyF(); hoy.setHours(12, 0, 0, 0);
-  const l = EVENTOS.filter(e => !e.always && cel.includes(e.id)).map(e => ({ ev: e, dias: Math.round((fechaEv(e, hoy) - hoy) / 864e5) })).filter(x => x.dias >= -1 && x.dias <= (F.avisoDias ?? 14)).sort((a, b) => Math.abs(a.dias) - Math.abs(b.dias));
-  FECHA = l[0] || null;
-  if (FECHA && FECHA.dias >= -1 && FECHA.dias <= (F.sombreroDias ?? 3)) hat = FECHA.ev.id === 'navidad' ? 'santa' : 'fiesta';
+  const F = (ITEMS || {}).fechas || {}; FECHA = null; if (F.activo === false) return;
+  const todas = [...EVENTOS.filter(e => !e.always), ...(F.extras || []).filter(e => e.activo !== false)];
+  const prin = F.principales || (Array.isArray(F.celebrar) ? F.celebrar : ['enamorados', 'padre', 'amigo', 'profe', 'madre', 'navidad', 'novia', 'mujer', 'hombre', 'niño']);
+  const pr = x => x.ev.prioridad ?? (x.ev.duracion > 1 ? 1 : 0), excl = F.excluir || [], hoy = hoyF(); hoy.setHours(12, 0, 0, 0);
+  const l = todas.filter(e => !excl.includes(e.id)).map(e => ({ ev: e, ...ocurrencia(e, hoy) }))
+    .filter(x => x.dias !== undefined && x.dias <= (prin.includes(x.ev.id) ? (F.avisoDias ?? 14) : (x.ev.aviso ?? F.avisoOtros ?? 2)))
+    .sort((a, b) => (pr(b) - pr(a)) || Math.abs(a.dias) - Math.abs(b.dias));   // los eventos largos (Mundial, Black Friday) pasan primero
+  FECHA = l[0] || null; if (FECHA) { FECHA.acc = accDe(FECHA.ev); FECHA.on = FECHA.dias <= (F.sombreroDias ?? 3) }
 }
 function fechaMsg() {
-  const x = FECHA; if (!x) return false; const t = x.ev.titulo, n = x.dias;
-  const txt = n === 0 ? fill(R(L.fechaHoy), { t }) : n < 0 ? fill(R(L.fechaAyer), { t }) : n === 1 ? fill(R(L.fechaManana), { t }) : n <= 3 ? fill(R(L.fechaPronto), { t, n }) : fill(R(L.fechaLejos), { t });
-  promo(txt, [['🎁 Ver ideas', () => regaloIdeas(x.ev.archivo, t)], ['Ahora no', () => {}]]); return true;
+  const x = FECHA; if (!x) return false; const ev = x.ev, t = ev.titulo, n = x.dias;
+  const txt = n === 0 || (n < 0 && x.dur > 1) ? (ev.saludo || fill(R(L.fechaHoy), { t })) : n < 0 ? fill(R(L.fechaAyer), { t }) : n === 1 ? fill(R(L.fechaManana), { t }) : n <= 3 ? fill(R(L.fechaPronto), { t, n }) : fill(R(L.fechaLejos), { t });
+  promo(txt, [...(ev.archivo ? [['🎁 Ver ideas', () => regaloIdeas(ev.archivo, t)]] : []), ['Ahora no', () => {}]]); return true;
 }
 
 /* Ayudante de regalos: usa los mismos JSON de obsequios/ */
@@ -625,21 +675,116 @@ async function regaloIdeas(archivo, titulo) {
 }
 async function regalosMenu() {
   await cargar(); const opts = [];
-  if (FECHA) opts.push(['🎉 ' + FECHA.ev.titulo.split('/')[0].trim(), () => regaloIdeas(FECHA.ev.archivo, FECHA.ev.titulo)]);
+  if (FECHA && FECHA.ev.archivo) opts.push(['🎉 ' + FECHA.ev.titulo.split('/')[0].trim(), () => regaloIdeas(FECHA.ev.archivo, FECHA.ev.titulo)]);
   ((ITEMS || {}).regalos || [{ boton: '👶 Para peques', archivo: 'peques.json' }, { boton: '🎂 Cumpleaños', archivo: 'cumple.json' }, { boton: '🤝 Amigo invisible', archivo: 'amigo_invisible.json' }]).forEach(r => opts.push([r.boton, () => regaloIdeas(r.archivo, r.boton)]));
   show('¿Para quién es el regalo? 🎁', opts.slice(0, 4), 14000);
+}
+
+/* ---------- Ropa y accesorios (fechas, clima, hora) ---------- */
+const KIND = { fiesta: ['hat1'], santa: ['hat2'], lana: ['hat3', 'scarf'], gorra: ['hat4'], dormir: ['hat5'], birrete: ['hat6'], chef: ['hat7'], casco: ['hat8'], calabaza: ['hat9'], mundial: ['hat10', 'corn'], sol: ['gl'], lentes: ['gl2'], corbata: ['tie'], estetoscopio: ['steto'], jeringa: ['jer'], escarapela: ['esc'], corazones: ['hearts'], ofertas: ['gl', 'cartel'], copa: ['hat1', 'copa'], auriculares: ['hp', 'nt'], mate: ['mate'] };
+const CABEZA = new Set(['hat1', 'hat2', 'hat3', 'hat4', 'hat5', 'hat6', 'hat7', 'hat8', 'hat9', 'hat10', 'hp']), TODOS = [...new Set(Object.values(KIND).flat())];
+let visSig = '', nextSusto = 12, BAT = null;
+function vestirAplicar() {
+  const vis = new Set(); let cab = false, dorm = sub === 'sleep' && mode === 'idle';
+  const add = ks => ks.forEach(k => (KIND[k] || []).forEach(id => { if (CABEZA.has(id)) { if (cab) return; cab = true } vis.add(id) }));
+  if (FECHA && FECHA.on) add(FECHA.acc);
+  const wx = WX || {}, hr = hoyF().getHours();
+  if (wx.frio) add(['lana']); if (wx.calor) add(dorm ? ['gorra'] : ['gorra', 'sol']);
+  if (dorm || (cerrado() && hr >= 13 && hr < 17)) add(['dormir']);
+  if (sub === 'music' && mode === 'idle') add(['auriculares']);
+  if (hr >= 6 && hr < 12 && sub === 'sit' && mode === 'idle') add(['mate']);
+  const sig = [...vis].join(); if (sig === visSig) return; visSig = sig;
+  TODOS.forEach(id => { const e = g(id); if (e) e.style.display = vis.has(id) ? '' : 'none' });
+}
+
+/* Batería baja: solo un recordatorio amable (o una broma), sin vender nada */
+async function bateria() {
+  if (((ITEMS || {}).bateria || {}).activo === false || !navigator.getBattery) return;
+  try { const b = await navigator.getBattery(), f = () => { BAT = { n: Math.round(b.level * 100), carga: b.charging } }; f(); b.addEventListener('levelchange', f); b.addEventListener('chargingchange', f) } catch (e) {}
+}
+
+/* Favoritos en oferta o por agotarse (favoritos_limon) */
+async function favoritosAviso() {
+  const F = (ITEMS || {}).favoritos || {}; if (F.activo === false) return false;
+  let fav = []; try { fav = JSON.parse(LS('favoritos_limon') || '[]').map(Number) } catch (e) {}
+  await cargar(); const lim = F.pocas ?? 1, xs = fav.map(getP).filter(p => p && p.st);
+  const of = xs.filter(p => p.d > 0), poco = xs.filter(p => p.inv <= lim), ambos = of.filter(p => poco.includes(p));
+  const p = ambos.length ? R(ambos) : of.length ? R(of) : poco.length ? R(poco) : null; if (!p) return false;
+  const n = corto(p.n), t = ambos.includes(p) ? `¡${n} está en oferta (${p.d}% OFF) y quedan pocas unidades! 🔥 Lo tenés en favoritos, no lo pierdas` : of.includes(p) ? fill(R(L.favOferta), { n, d: p.d }) : fill(R(L.favPocasAviso), { n });
+  promo(t, [['👀 Verlo', () => verProducto(p.id)], ['Ahora no', () => {}]]); return true;
+}
+
+/* Enlace ?p= de un producto agotado o que ya no existe: ofrece parecidos */
+async function enlaceViejo() {
+  const id = new URLSearchParams(location.search).get('p'); if (!id) return null;
+  await cargar(); const p = getP(Number(id)); if (p && p.st) return null;
+  const sim = p ? ART.filter(q => q.c === p.c && q.id !== p.id && permitido(q)).sort((a, b) => Math.abs(a.pr - p.pr) - Math.abs(b.pr - p.pr)).slice(0, 2) : [];
+  const b = sim.map(q => ['👀 ' + corto(q.n).slice(0, 18) + ' · ' + money(q.pr), () => verProducto(q.id)]);
+  if (!b.length) b.push(['🔥 Ver ofertas', verOfertas], ['🛍️ Recomendame', recMenu]);
+  return [p ? 'Ese producto se agotó 😕 Pero mirá estos parecidos:' : 'Ese enlace es de un producto que ya no está 😕 Pero mirá lo que tenemos:', b, 15000];
+}
+
+/* Envío o retiro */
+function envioTabla() {
+  const E = (ITEMS || {}).envio || {}, tabla = E.tabla || [['Km 1 al 6', '$3.000 / $3.500'], ['Km 7 al 9', '$3.500 / $4.000'], ['Km 10 al 11', '$4.500 / $5.000']];
+  show('🛵 Envío por moto (aprox.)\n' + tabla.map(r => r[0] + ': ' + r[1]).join('\n') + '\n' + (E.nota || 'Valores aproximados: dependen de la zona y de la ubicación que nos mandes por WhatsApp.') + '\n' + (E.retiro || 'Retirando personalmente no se abona el envío 🛍️'), [['🛒 Mi carrito', abrirCarrito]], 20000);
+}
+
+/* ---------- Modo prueba: abrí la tienda con «?limon» al final (ej. index.html?limon) ---------- */
+async function panelPrueba() {
+  await cargar();
+  const css = document.createElement('style');
+  css.textContent = '#tp{position:absolute;left:8px;bottom:70px;width:232px;max-height:62vh;overflow:auto;padding:8px 10px;border-radius:12px;background:#000d;color:#fff;font:12px system-ui,sans-serif;pointer-events:auto;line-height:1.35}#tp label{display:block;margin:5px 0 2px}#tp input,#tp select{width:100%;font:12px system-ui;padding:3px;border-radius:6px;border:0}#tp input[type=checkbox]{width:auto}#tp .g{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:7px}#tp button{border:0;border-radius:8px;padding:6px 4px;background:#ffffff26;color:#fff;font:12px system-ui;cursor:pointer}#tp button:hover{background:#ffffff48}#tp .h{display:flex;justify-content:space-between;align-items:center}#tp #ts{margin-top:6px;opacity:.8;font-size:11px}';
+  sh.appendChild(css);
+  const pan = document.createElement('div'); pan.id = 'tp';
+  pan.innerHTML = '<div class="h"><b>🍋 Modo prueba</b><button id="tx" style="width:26px">–</button></div><div id="tb"><label>Evento<select id="te"><option value="">(elegí uno)</option></select></label><label>Fecha y hora<input id="tf" type="datetime-local"></label><label>Clima<select id="tw"><option value="">Real</option><option value="frio">Frío (7°)</option><option value="calor">Calor (35°)</option><option value="lluvia">Lluvia</option><option value="nube">Nublado</option><option value="tormenta">Tormenta</option><option value="viento">Viento</option><option value="nada">Sin clima</option></select></label><label><input id="tn" type="checkbox"> Noche</label><label><input id="tc" type="checkbox"> Local cerrado</label><div class="g" id="bt"></div><div id="ts"></div></div>';
+  sh.appendChild(pan);
+  const q = id => pan.querySelector('#' + id), pad = n => String(n).padStart(2, '0'), loc = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  const F = (ITEMS || {}).fechas || {}, lista = [...EVENTOS.filter(e => !e.always), ...(F.extras || []).filter(e => e.activo !== false)];
+  lista.forEach((e, i) => { const o = document.createElement('option'); o.value = i; o.textContent = e.titulo; q('te').append(o) });
+  const aplicar = v => { fechaOv = v ? new Date(v) : null; SS('mm_fecha', ''); calcularFecha() };
+  q('te').onchange = () => { const ev = lista[+q('te').value]; if (!ev) return; const hoy = new Date(); hoy.setHours(12, 0, 0, 0); const o = ocurrencia(ev, hoy); if (!o) return show('Ese evento ya pasó (tiene un año fijo).', null, 3000); const d = new Date(hoy); d.setDate(d.getDate() + o.dias); q('tf').value = loc(d); aplicar(q('tf').value) };
+  q('tf').onchange = () => aplicar(q('tf').value);
+  const W = { frio: { T: 7, frio: true }, calor: { T: 35, calor: true }, lluvia: { T: 20, lluvia: true }, nube: { T: 22, nube: true }, tormenta: { T: 22, tormenta: true, lluvia: true }, viento: { T: 20, viento: true } };
+  q('tw').onchange = () => { SS('mm_wxd', ''); if (q('tw').value === '') clima(); else WX = W[q('tw').value] || null };
+  q('tn').onchange = () => { nightOv = q('tn').checked ? true : null };
+  q('tc').onchange = () => { cerradoOv = q('tc').checked ? true : null };
+  q('tx').onclick = () => { const b = q('tb'); b.style.display = b.style.display === 'none' ? '' : 'none'; q('tx').textContent = b.style.display === 'none' ? '+' : '–' };
+  const reposo = () => { if (mode === 'cart') return; J = null; P = null; D = null; trip = null; tripRot = 0; corre = false; wantCart = false; toCart = false; fl = 'b'; const [a, b] = range('b'); u = clamp(pos.x, a, b); pos = edge('b', u); mode = 'idle'; sub = 'stand'; tm = 20; grump = 0; hide() };
+  const izq = () => { const [a] = range('b'); u = a + 10; pos = edge('b', u) };
+  const acc = [
+    ['🪨 Piedra', () => { reposo(); izq(); evPiedra() }], ['🏃 Correr', () => { reposo(); izq(); evCorrer() }], ['🎧 Música', () => { reposo(); evMusica() }], ['☂️ Paraguas', () => { reposo(); WX = { T: 22, nube: true }; umAnim = { t: 0 } }],
+    ['🧉 Sentarse', () => { reposo(); sub = 'sit' }], ['😤 Despertar', () => { reposo(); nightOv = true; q('tn').checked = true; sub = 'sleep'; setTimeout(despertar, 1200) }], ['🎁 Msj. de fecha', () => { SS('mm_fecha', ''); if (!fechaMsg()) show('No hay evento para esa fecha.', null, 3000) }], ['🔋 Batería 15%', () => { BAT = { n: 15, carga: false }; SS('mm_b1', ''); SS('mm_b2', '') }],
+    ['🔋 Batería 8%', () => { BAT = { n: 8, carga: false }; SS('mm_b1', ''); SS('mm_b2', '') }], ['💸 Código', () => { SS('mm_dn', '0'); LS('mm_dto', '0'); if (!darCodigo('indecision')) show('No hay código disponible (¿desc_limon.json activo?).', null, 4000) }], ['🛵 Envíos', envioTabla], ['🛍️ Recomendar', recMenu],
+    ['🔥 Ofertas', () => { reposo(); tour(true) }], ['🔄 Restablecer', () => { fechaOv = null; nightOv = null; cerradoOv = null; q('tf').value = ''; q('te').value = ''; q('tw').value = ''; q('tn').checked = q('tc').checked = false; calcularFecha(); clima(); reposo(); tm = 2 }]];
+  acc.forEach(([t, f]) => { const b = document.createElement('button'); b.textContent = t; b.onclick = f; q('bt').append(b) });
+  setInterval(() => { q('ts').textContent = (FECHA ? `Evento: ${FECHA.ev.titulo} (${FECHA.dias} d) · ` : 'Sin evento · ') + 'puesto: ' + (visSig || 'nada') }, 700);
 }
 
 /* ---------- Planificador (cada segundo) ---------- */
 function sched() {
   const now = Date.now(); if (document.hidden || mode === 'cart' || mode === 'drag') return;
-  if (DESC && DESC.activo === true && mode === 'idle' && sub !== 'sleep' && !silent && !bubUntil && now - lastSay > 8000 && !cartOpen()) {
-    const min = (now - tStart) / 6e4, ina = (now - lastAct) / 1e3, car = cartSince ? (now - cartSince) / 6e4 : 0;
-    if (((car >= (DESC.minutosCarritoParado ?? 3) && ina >= 15) || (min >= (DESC.minutosSinComprar ?? 5) && ina >= (DESC.inactivoSeg ?? 40))) && !tipeando && darCodigo('indecision')) return;
+  const min = (now - tStart) / 6e4, ina = (now - lastAct) / 1e3, car = cartSince ? (now - cartSince) / 6e4 : 0, libre = mode === 'idle' && sub !== 'sleep' && !silent && !tipeando && !bubUntil && !cartOpen();
+  const CA = (ITEMS || {}).carritoAviso || {}, t1 = CA.minutos ?? 3, EN = (ITEMS || {}).envio || {};
+  if (libre && BAT && !BAT.carga) {   // batería: recordatorio amable, sin ventas
+    const um = ((ITEMS || {}).bateria || {}).umbral ?? 20;
+    if (BAT.n <= 10 && !SS('mm_b2')) { SS('mm_b2', '1'); SS('mm_b1', '1'); show(fill(R(L.bat2), { n: BAT.n }), null, 6000); return }
+    if (BAT.n <= um && !SS('mm_b1')) { SS('mm_b1', '1'); show(fill(R(L.bat), { n: BAT.n }), null, 6000); return }
+    if (BAT.n <= 45 && !SS('mm_bj') && Math.random() < .004) { SS('mm_bj', '1'); show(fill(R(L.batBroma), { n: BAT.n }), null, 5000); return }
+  }
+  if (libre && now - lastSay > 8000 && cartCount > 0 && EN.activo !== false && !SS('mm_envio') && car >= 1.2 && ina >= 10) {   // retiro en el local
+    SS('mm_envio', '1'); promo(EN.retiro || 'Retirando personalmente no se abona el envío 🛍️', [['🛵 Ver costos de envío', envioTabla], ['Ahora no', () => {}]]); return;
+  }
+  if (libre && CA.activo !== false && cartCount > 0 && car >= t1 && ina >= 15 && !SS('mm_ca')) {   // paso 1: aviso amable, sin descuento
+    SS('mm_ca', '1'); promo(fill(R(L.carritoAviso), { n: cartCount, s: cartCount > 1 ? 's' : '' }), [['🛒 Abrir carrito', abrirCarrito]]); return;
+  }
+  if (libre && DESC && DESC.activo === true && now - lastSay > 8000) {   // paso 2: recién más tarde, el código
+    if (((car >= Math.max(DESC.minutosCarritoParado ?? 6, t1 + 2) && ina >= 15) || (min >= (DESC.minutosSinComprar ?? 5) && ina >= (DESC.inactivoSeg ?? 40))) && darCodigo('indecision')) return;
   }
   if (mode === 'idle' && sub !== 'sleep') {
     if (canSpeak() && now - lastScroll > 1500) {
       if (chequearCierre()) return;
+      if (!SS('mm_favs') && now - tStart > 12e3) { SS('mm_favs', '1'); favoritosAviso(); return }
       if (FECHA && !SS('mm_fecha') && now - tStart > 25e3) { SS('mm_fecha', '1'); if (fechaMsg()) return }
       if (now >= nextTour) { if (tour(false)) { nextTour = now + gap(35, 60); return } nextTour = now + 12e3 }
       if (now >= nextPeek) { if (tour(false, true)) { nextPeek = now + gap(100, 170); return } nextPeek = now + 15e3 }
@@ -659,7 +804,7 @@ function listo() {
   const cs = getComputedStyle(f); return cs.display === 'none' || parseInt(cs.zIndex) < 0;   // el logo de inicio ya pasó al fondo
 }
 function iniciar() {
-  document.body.appendChild(host); vigilarTienda(); cargar(); if (CFG.clima !== false) clima();
+  document.body.appendChild(host); vigilarTienda(); cargar(); if (CFG.clima !== false) clima(); bateria(); if (/[?&]limon(=|&|$)/.test(location.search)) panelPrueba();
   nextTour = Date.now() + 12e3 * CFG.ritmo; nextRec = Date.now() + 30e3 * CFG.ritmo; nextQuip = Date.now() + 22e3 * CFG.ritmo; nextPeek = Date.now() + 70e3 * CFG.ritmo; nextReto = Date.now() + 100e3 * CFG.ritmo;
   pos = edge('b', -40); tgt = CFG.mi + 70; mode = 'walk'; last = performance.now(); requestAnimationFrame(frame); setInterval(sched, 1000);
   if (SS('mm_hi') !== '1' && !silent) { SS('mm_hi', '1'); setTimeout(async () => { if (mode !== 'cart') { const [t, b, ms] = await saludoInicial(); if (mode !== 'cart') show(t, b, ms) } }, 1800) }
@@ -669,5 +814,5 @@ let tries = 0;
   if (window.mensajeActivo === true) return setTimeout(esperar, 500);   // hay un aviso importante en pantalla: espera a que lo cierren
   if (listo() || ++tries > 16) setTimeout(iniciar, 300); else setTimeout(esperar, 250);
 })();
-window.__mm = { show, complemento, saludoInicial, comoComprar, chequearCierre, regalosMenu, regaloIdeas, fechaMsg, setFecha: d => { fechaOv = d; calcularFecha() }, fecha: () => FECHA, hatOf: () => hat, tipeando: () => tipeando, tour, recomendar, despertar, piedra: evPiedra, correr: evCorrer, musica: evMusica, setWX: w => { WX = w }, noche: v => { nightOv = v }, darCodigo, verOfertas, tiro: contarTiro, last: () => lastRec, flip, state: () => ({ fl, mode, sub, pos, promos, sensor, tgt, toCart, WX, umAnim, grump, corre, rock: !!rock }) };
+window.__mm = { show, complemento, saludoInicial, comoComprar, chequearCierre, regalosMenu, regaloIdeas, fechaMsg, setFecha: d => { fechaOv = d; calcularFecha() }, fecha: () => FECHA, hatOf: () => FECHA && FECHA.on ? FECHA.acc : null, vestido: () => visSig, tiempos: (c, i) => { cartSince = Date.now() - c * 6e4; lastAct = Date.now() - i * 1e3 }, tipeando: () => tipeando, tour, recomendar, despertar, piedra: evPiedra, correr: evCorrer, musica: evMusica, setWX: w => { WX = w }, noche: v => { nightOv = v }, darCodigo, verOfertas, tiro: contarTiro, last: () => lastRec, flip, state: () => ({ fl, mode, sub, pos, promos, sensor, tgt, toCart, WX, umAnim, grump, corre, rock: !!rock }) };
 })();
