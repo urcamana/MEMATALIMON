@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-01T12:07:11.508Z",
+  "actualizado": "2026-11-03T12:35:50.996Z",
   "items": [
     {
       "id": "1",
@@ -47,6 +47,10 @@
     },
     {
       "id": "27",
+      "checklist": true
+    },
+    {
+      "id": "28",
       "checklist": true
     },
     {
@@ -226,6 +230,10 @@
       "checklist": true
     },
     {
+      "id": "168",
+      "checklist": true
+    },
+    {
       "id": "169",
       "checklist": true
     },
@@ -330,7 +338,15 @@
       "checklist": true
     },
     {
+      "id": "232",
+      "checklist": true
+    },
+    {
       "id": "233",
+      "checklist": true
+    },
+    {
+      "id": "238",
       "checklist": true
     },
     {
@@ -346,7 +362,15 @@
       "checklist": true
     },
     {
+      "id": "248",
+      "checklist": true
+    },
+    {
       "id": "249",
+      "checklist": true
+    },
+    {
+      "id": "250",
       "checklist": true
     },
     {
@@ -522,10 +546,6 @@
       "checklist": false
     },
     {
-      "id": "28",
-      "checklist": false
-    },
-    {
       "id": "29",
       "checklist": false
     },
@@ -546,7 +566,15 @@
       "checklist": false
     },
     {
+      "id": "40",
+      "checklist": false
+    },
+    {
       "id": "43",
+      "checklist": false
+    },
+    {
+      "id": "52",
       "checklist": false
     },
     {
@@ -674,10 +702,6 @@
       "checklist": false
     },
     {
-      "id": "168",
-      "checklist": false
-    },
-    {
       "id": "178",
       "checklist": false
     },
@@ -738,15 +762,7 @@
       "checklist": false
     },
     {
-      "id": "232",
-      "checklist": false
-    },
-    {
       "id": "236",
-      "checklist": false
-    },
-    {
-      "id": "238",
       "checklist": false
     },
     {
@@ -767,14 +783,6 @@
     },
     {
       "id": "246",
-      "checklist": false
-    },
-    {
-      "id": "248",
-      "checklist": false
-    },
-    {
-      "id": "250",
       "checklist": false
     },
     {
@@ -906,15 +914,7 @@
       "checklist": false
     },
     {
-      "id": "40",
-      "checklist": false
-    },
-    {
       "id": "48",
-      "checklist": false
-    },
-    {
-      "id": "52",
       "checklist": false
     },
     {
@@ -1059,6 +1059,10 @@
     },
     {
       "id": "305",
+      "checklist": false
+    },
+    {
+      "id": "311",
       "checklist": false
     },
     {
@@ -1219,10 +1223,6 @@
     },
     {
       "id": "308",
-      "checklist": false
-    },
-    {
-      "id": "311",
       "checklist": false
     },
     {
@@ -1506,11 +1506,11 @@
       "checklist": false
     },
     {
-      "id": "181",
+      "id": "109",
       "checklist": false
     },
     {
-      "id": "109",
+      "id": "181",
       "checklist": false
     },
     {
