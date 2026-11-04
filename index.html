@@ -102,6 +102,9 @@
 
                 <li><a class="nav-link-desk" href="politicas.html">Politicas</a></li>
                 <li><a class="nav-link-desk" href="contacto.html">Contacto</a></li>
+                <li class="d-none" id="menuItemPedidosDesk">
+                    <a class="nav-link-desk fw-semibold" href="https://pedidos.mematalimon.com.ar/" target="_blank" rel="noopener" title="Catálogo a pedido">📦 A pedido</a>
+                </li>
 <!-- 
                 <li><button type="button" class="nav-link-desk btn-compartir-tienda" id="btnCompartirTiendaDesk" title="Compartir la tienda">Compartir</button></li>
    --> 
@@ -164,6 +167,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="https://wa.me/5493751588753?text=Hola%2C%20quiero%20ejercer%20el%20derecho%20de%20arrepentimiento%20sobre%20un%20pedido." target="_blank" rel="noopener">Botón de arrepentimiento</a>
                 </li>
+                <li class="nav-item d-none" id="menuItemPedidosMovil">
+                    <a class="nav-link fw-semibold" href="https://pedidos.mematalimon.com.ar/" target="_blank" rel="noopener" style="color:#f3e8ff;">📦 Catálogo a pedido</a>
+                </li>
             </ul>
         </div>
     </div>
@@ -209,12 +215,73 @@
     </div>
 </header>	
     <style>
-        
-
-
-
         .display-4.fw-bolder {
             font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+
+        /* Banner catálogo a pedido */
+        .banner-pedidos-cta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 14px 18px;
+            border-radius: 14px;
+            text-decoration: none;
+            color: #fff;
+            background: linear-gradient(135deg, #a88cd7 0%, #8b6bc4 55%, #7a5bb0 100%);
+            box-shadow: 0 4px 16px rgba(139, 107, 196, 0.35);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .banner-pedidos-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 107, 196, 0.45);
+            color: #fff;
+        }
+        .banner-pedidos-icon {
+            font-size: 1.6rem;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+        .banner-pedidos-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+            flex: 1;
+            min-width: 0;
+            gap: 2px;
+        }
+        .banner-pedidos-text strong {
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+        }
+        .banner-pedidos-text small {
+            font-size: 0.85rem;
+            opacity: 0.92;
+            line-height: 1.25;
+        }
+        .banner-pedidos-arrow {
+            font-size: 1.4rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            opacity: 0.9;
+        }
+        @media (max-width: 576px) {
+            .banner-pedidos-cta {
+                padding: 12px 14px;
+                gap: 10px;
+                border-radius: 12px;
+            }
+            .banner-pedidos-text strong {
+                font-size: 0.98rem;
+            }
+            .banner-pedidos-text small {
+                font-size: 0.78rem;
+            }
         }
     </style>
     <!-- le saque el row al main para que se centre el filtrado -->
@@ -437,6 +504,17 @@
                 </div>
                 <div class="mt-2">
                     <a class="link-arrepentimiento" href="https://wa.me/5493751588753?text=Hola%2C%20quiero%20ejercer%20el%20derecho%20de%20arrepentimiento%20sobre%20un%20pedido." target="_blank" rel="noopener">Botón de arrepentimiento</a>
+                </div>
+                <!-- Banner catálogo a pedido (solo si está habilitado) -->
+                <div id="bannerPedidosWrap" class="d-none mt-3 ocultar-en-busqueda">
+                    <a id="bannerPedidosLink" href="https://pedidos.mematalimon.com.ar/" target="_blank" rel="noopener" class="banner-pedidos-cta">
+                        <span class="banner-pedidos-icon">📦</span>
+                        <span class="banner-pedidos-text">
+                            <strong>Catálogo a pedido abierto</strong>
+                            <small id="bannerPedidosSub">Reservá con el 50% de seña · Tocá para ver</small>
+                        </span>
+                        <span class="banner-pedidos-arrow">→</span>
+                    </a>
                 </div>
                 <div class="collapse" id="panelComoComprar">
                     <div class="como-comprar-panel mx-auto mt-2">
@@ -825,6 +903,68 @@
         }
       });
     </script>
+
+<script>
+/* Muestra menú + banner de "Catálogo a pedido" solo si pedidos.mematalimon.com.ar está habilitado */
+(function () {
+  var URL_CONFIG = 'https://pedidos.mematalimon.com.ar/config.json?t=' + Date.now();
+  var URL_PEDIDOS = 'https://pedidos.mematalimon.com.ar/';
+
+  function mostrarPedidos(config) {
+    var menuMovil = document.getElementById('menuItemPedidosMovil');
+    var menuDesk = document.getElementById('menuItemPedidosDesk');
+    var banner = document.getElementById('bannerPedidosWrap');
+    var sub = document.getElementById('bannerPedidosSub');
+    var link = document.getElementById('bannerPedidosLink');
+
+    if (menuMovil) menuMovil.classList.remove('d-none');
+    if (menuDesk) menuDesk.classList.remove('d-none');
+    if (banner) banner.classList.remove('d-none');
+    if (link) link.href = URL_PEDIDOS;
+
+    // Texto opcional más informativo si el config trae datos
+    if (sub && config) {
+      var partes = [];
+      partes.push('Reservá con el 50% de seña');
+      if (config.mensajeAvisoWhatsApp) {
+        // no lo usamos acá; el subtítulo fijo alcanza
+      }
+      sub.textContent = partes.join(' · ') + ' · Tocá para ver';
+    }
+  }
+
+  function catalogoHabilitado(config) {
+    if (!config || config.catalogoHabilitado !== true) return false;
+    if (!config.proveedorActivo) return false;
+    return true;
+  }
+
+  fetch(URL_CONFIG, { cache: 'no-store' })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (config) {
+      if (catalogoHabilitado(config)) {
+        // Verificación extra: si el proveedor tiene fechaCierre vencida, no mostrar
+        var idProv = config.proveedorActivo;
+        return fetch('https://pedidos.mematalimon.com.ar/proveedores/' + idProv + '.json?t=' + Date.now(), { cache: 'no-store' })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (prov) {
+            if (prov && prov.fechaCierre) {
+              var cierre = new Date(prov.fechaCierre);
+              if (new Date() > cierre) return; // cerrado por fecha
+            }
+            mostrarPedidos(config);
+          })
+          .catch(function () {
+            // Si falla el JSON del proveedor pero el config dice habilitado, igual mostramos
+            mostrarPedidos(config);
+          });
+      }
+    })
+    .catch(function () {
+      // CORS o red: no mostramos nada (queda oculto)
+    });
+})();
+</script>
 
 <script src="mascota.js" defer></script>
 </body>
