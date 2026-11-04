@@ -270,6 +270,16 @@
             flex-shrink: 0;
             opacity: 0.9;
         }
+        .banner-pedidos-proxima {
+            background: linear-gradient(135deg, #6c757d 0%, #5a6268 55%, #495057 100%);
+            box-shadow: 0 4px 14px rgba(73, 80, 87, 0.28);
+            cursor: default;
+        }
+        .banner-pedidos-proxima:hover {
+            transform: none;
+            box-shadow: 0 4px 14px rgba(73, 80, 87, 0.28);
+            color: #fff;
+        }
         @media (max-width: 576px) {
             .banner-pedidos-cta {
                 padding: 12px 14px;
@@ -505,16 +515,25 @@
                 <div class="mt-2">
                     <a class="link-arrepentimiento" href="https://wa.me/5493751588753?text=Hola%2C%20quiero%20ejercer%20el%20derecho%20de%20arrepentimiento%20sobre%20un%20pedido." target="_blank" rel="noopener">Botón de arrepentimiento</a>
                 </div>
-                <!-- Banner catálogo a pedido (solo si está habilitado) -->
+                <!-- Banner catálogo a pedido: abierto / próximo / oculto -->
                 <div id="bannerPedidosWrap" class="d-none mt-3 ocultar-en-busqueda">
-                    <a id="bannerPedidosLink" href="https://pedidos.mematalimon.com.ar/" target="_blank" rel="noopener" class="banner-pedidos-cta">
+                    <!-- Estado ABIERTO -->
+                    <a id="bannerPedidosLink" href="https://pedidos.mematalimon.com.ar/" target="_blank" rel="noopener" class="banner-pedidos-cta d-none">
                         <span class="banner-pedidos-icon">📦</span>
                         <span class="banner-pedidos-text">
-                            <strong>Catálogo a pedido abierto</strong>
+                            <strong id="bannerPedidosTitulo">Catálogo a pedido abierto</strong>
                             <small id="bannerPedidosSub">Reservá con el 50% de seña · Tocá para ver</small>
                         </span>
                         <span class="banner-pedidos-arrow">→</span>
                     </a>
+                    <!-- Estado PRÓXIMO (contador) -->
+                    <div id="bannerPedidosProximamente" class="banner-pedidos-cta banner-pedidos-proxima d-none" role="status">
+                        <span class="banner-pedidos-icon">⏳</span>
+                        <span class="banner-pedidos-text">
+                            <strong id="bannerPedidosProxTitulo">Próximamente se toman pedidos</strong>
+                            <small id="bannerPedidosProxSub">Queda — para que se habilite</small>
+                        </span>
+                    </div>
                 </div>
                 <div class="collapse" id="panelComoComprar">
                     <div class="como-comprar-panel mx-auto mt-2">
@@ -905,64 +924,161 @@
     </script>
 
 <script>
-/* Muestra menú + banner de "Catálogo a pedido" solo si pedidos.mematalimon.com.ar está habilitado */
+/* Banner/menú "Catálogo a pedido":
+   - ABIERTO  → banner violeta + links de menú
+   - PRÓXIMO  → contador (solo si la fecha está dentro de 2 meses)
+   - OTRO     → totalmente oculto
+*/
 (function () {
   var URL_CONFIG = 'https://pedidos.mematalimon.com.ar/config.json?t=' + Date.now();
   var URL_PEDIDOS = 'https://pedidos.mematalimon.com.ar/';
+  var timerProximamente = null;
 
-  function mostrarPedidos(config) {
-    var menuMovil = document.getElementById('menuItemPedidosMovil');
-    var menuDesk = document.getElementById('menuItemPedidosDesk');
-    var banner = document.getElementById('bannerPedidosWrap');
-    var sub = document.getElementById('bannerPedidosSub');
-    var link = document.getElementById('bannerPedidosLink');
+  function els() {
+    return {
+      menuMovil: document.getElementById('menuItemPedidosMovil'),
+      menuDesk: document.getElementById('menuItemPedidosDesk'),
+      wrap: document.getElementById('bannerPedidosWrap'),
+      link: document.getElementById('bannerPedidosLink'),
+      sub: document.getElementById('bannerPedidosSub'),
+      prox: document.getElementById('bannerPedidosProximamente'),
+      proxTitulo: document.getElementById('bannerPedidosProxTitulo'),
+      proxSub: document.getElementById('bannerPedidosProxSub')
+    };
+  }
 
-    if (menuMovil) menuMovil.classList.remove('d-none');
-    if (menuDesk) menuDesk.classList.remove('d-none');
-    if (banner) banner.classList.remove('d-none');
-    if (link) link.href = URL_PEDIDOS;
+  function mostrarMenus(si) {
+    var e = els();
+    if (e.menuMovil) e.menuMovil.classList.toggle('d-none', !si);
+    if (e.menuDesk) e.menuDesk.classList.toggle('d-none', !si);
+  }
 
-    // Texto opcional más informativo si el config trae datos
-    if (sub && config) {
-      var partes = [];
-      partes.push('Reservá con el 50% de seña');
-      if (config.mensajeAvisoWhatsApp) {
-        // no lo usamos acá; el subtítulo fijo alcanza
-      }
-      sub.textContent = partes.join(' · ') + ' · Tocá para ver';
+  function mostrarAbierto() {
+    var e = els();
+    if (!e.wrap) return;
+    e.wrap.classList.remove('d-none');
+    if (e.link) {
+      e.link.classList.remove('d-none');
+      e.link.href = URL_PEDIDOS;
+    }
+    if (e.prox) e.prox.classList.add('d-none');
+    if (e.sub) e.sub.textContent = 'Reservá con el 50% de seña · Tocá para ver';
+    mostrarMenus(true);
+  }
+
+  function formatearDia(fecha) {
+    try {
+      return fecha.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });
+    } catch (err) {
+      return fecha.toLocaleDateString('es-AR');
     }
   }
 
+  function textoRestante(ms) {
+    if (ms <= 0) return 'ya casi se habilita';
+    var totalMin = Math.floor(ms / 60000);
+    var dias = Math.floor(totalMin / (60 * 24));
+    var horas = Math.floor((totalMin % (60 * 24)) / 60);
+    var mins = totalMin % 60;
+    if (dias > 0) return dias + 'd ' + horas + 'h ' + mins + 'm';
+    if (horas > 0) return horas + 'h ' + mins + 'm';
+    return mins + ' min';
+  }
+
+  function mostrarProximamente(fechaObj) {
+    var e = els();
+    if (!e.wrap || !e.prox) return;
+
+    e.wrap.classList.remove('d-none');
+    if (e.link) e.link.classList.add('d-none');
+    e.prox.classList.remove('d-none');
+    mostrarMenus(false); // menú solo cuando está abierto
+
+    var diaTxt = formatearDia(fechaObj);
+    // Capitalizar primera letra del día
+    diaTxt = diaTxt.charAt(0).toUpperCase() + diaTxt.slice(1);
+
+    if (e.proxTitulo) {
+      e.proxTitulo.textContent = 'El día ' + diaTxt + ' se empieza a tomar pedidos de algunos productos';
+    }
+
+    function tick() {
+      var resto = fechaObj.getTime() - Date.now();
+      if (resto <= 0) {
+        if (e.proxSub) e.proxSub.textContent = 'Ya debería estar habilitado · Recargá la página';
+        if (timerProximamente) clearInterval(timerProximamente);
+        return;
+      }
+      if (e.proxSub) {
+        e.proxSub.textContent = 'Queda ' + textoRestante(resto) + ' para que la web se habilite';
+      }
+    }
+
+    tick();
+    if (timerProximamente) clearInterval(timerProximamente);
+    timerProximamente = setInterval(tick, 60000);
+  }
+
+  function proximaFechaValida(config) {
+    if (!config || !config.proximasFechasApertura || !config.proximasFechasApertura.length) return null;
+    var ahora = new Date();
+    var limite = new Date();
+    limite.setMonth(limite.getMonth() + 2);
+
+    var candidatas = config.proximasFechasApertura
+      .map(function (item) {
+        return { fecha: new Date(item.fecha), etiqueta: item.etiqueta || '' };
+      })
+      .filter(function (item) {
+        return !isNaN(item.fecha.getTime()) && item.fecha > ahora && item.fecha <= limite;
+      })
+      .sort(function (a, b) { return a.fecha - b.fecha; });
+
+    return candidatas.length ? candidatas[0] : null;
+  }
+
   function catalogoHabilitado(config) {
-    if (!config || config.catalogoHabilitado !== true) return false;
-    if (!config.proveedorActivo) return false;
-    return true;
+    return !!(config && config.catalogoHabilitado === true && config.proveedorActivo);
+  }
+
+  function evaluarConfig(config) {
+    if (!config) return;
+
+    // 1) ¿Está abierto ahora?
+    if (catalogoHabilitado(config)) {
+      var idProv = config.proveedorActivo;
+      fetch('https://pedidos.mematalimon.com.ar/proveedores/' + idProv + '.json?t=' + Date.now(), { cache: 'no-store' })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (prov) {
+          if (prov && prov.fechaCierre) {
+            var cierre = new Date(prov.fechaCierre);
+            if (new Date() > cierre) {
+              // Cerrado por fecha → mirar próxima apertura
+              var prox = proximaFechaValida(config);
+              if (prox) mostrarProximamente(prox.fecha);
+              return;
+            }
+          }
+          mostrarAbierto();
+        })
+        .catch(function () {
+          mostrarAbierto();
+        });
+      return;
+    }
+
+    // 2) No está abierto → ¿hay fecha próxima dentro de 2 meses?
+    var prox = proximaFechaValida(config);
+    if (prox) {
+      mostrarProximamente(prox.fecha);
+    }
+    // 3) Si no hay fecha dentro de 2 meses → queda todo oculto
   }
 
   fetch(URL_CONFIG, { cache: 'no-store' })
     .then(function (r) { return r.ok ? r.json() : null; })
-    .then(function (config) {
-      if (catalogoHabilitado(config)) {
-        // Verificación extra: si el proveedor tiene fechaCierre vencida, no mostrar
-        var idProv = config.proveedorActivo;
-        return fetch('https://pedidos.mematalimon.com.ar/proveedores/' + idProv + '.json?t=' + Date.now(), { cache: 'no-store' })
-          .then(function (r) { return r.ok ? r.json() : null; })
-          .then(function (prov) {
-            if (prov && prov.fechaCierre) {
-              var cierre = new Date(prov.fechaCierre);
-              if (new Date() > cierre) return; // cerrado por fecha
-            }
-            mostrarPedidos(config);
-          })
-          .catch(function () {
-            // Si falla el JSON del proveedor pero el config dice habilitado, igual mostramos
-            mostrarPedidos(config);
-          });
-      }
-    })
-    .catch(function () {
-      // CORS o red: no mostramos nada (queda oculto)
-    });
+    .then(evaluarConfig)
+    .catch(function () { /* sin CORS / red → oculto */ });
 })();
 </script>
 
