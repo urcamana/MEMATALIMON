@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-08T12:20:42.196Z",
+  "actualizado": "2026-11-10T12:09:02.326Z",
   "items": [
     {
       "id": "1",
@@ -119,6 +119,10 @@
     },
     {
       "id": "77",
+      "checklist": true
+    },
+    {
+      "id": "82",
       "checklist": true
     },
     {
@@ -530,6 +534,10 @@
       "checklist": true
     },
     {
+      "id": "378",
+      "checklist": true
+    },
+    {
       "id": "394",
       "checklist": true
     },
@@ -583,10 +591,6 @@
     },
     {
       "id": "79",
-      "checklist": false
-    },
-    {
-      "id": "82",
       "checklist": false
     },
     {
@@ -855,10 +859,6 @@
     },
     {
       "id": "376",
-      "checklist": false
-    },
-    {
-      "id": "378",
       "checklist": false
     },
     {
@@ -1170,6 +1170,10 @@
       "checklist": false
     },
     {
+      "id": "411",
+      "checklist": false
+    },
+    {
       "id": "412",
       "checklist": false
     },
@@ -1342,10 +1346,6 @@
       "checklist": false
     },
     {
-      "id": "411",
-      "checklist": false
-    },
-    {
       "id": "422",
       "checklist": false
     },
@@ -1391,6 +1391,10 @@
     },
     {
       "id": "149",
+      "checklist": false
+    },
+    {
+      "id": "231",
       "checklist": false
     },
     {
@@ -1503,10 +1507,6 @@
     },
     {
       "id": "229",
-      "checklist": false
-    },
-    {
-      "id": "231",
       "checklist": false
     },
     {
@@ -1779,6 +1779,582 @@
     },
     {
       "id": "448",
+      "checklist": false
+    },
+    {
+      "id": "449",
+      "checklist": false
+    },
+    {
+      "id": "450",
+      "checklist": false
+    },
+    {
+      "id": "451",
+      "checklist": false
+    },
+    {
+      "id": "452",
+      "checklist": false
+    },
+    {
+      "id": "453",
+      "checklist": false
+    },
+    {
+      "id": "454",
+      "checklist": false
+    },
+    {
+      "id": "455",
+      "checklist": false
+    },
+    {
+      "id": "456",
+      "checklist": false
+    },
+    {
+      "id": "457",
+      "checklist": false
+    },
+    {
+      "id": "458",
+      "checklist": false
+    },
+    {
+      "id": "459",
+      "checklist": false
+    },
+    {
+      "id": "460",
+      "checklist": false
+    },
+    {
+      "id": "461",
+      "checklist": false
+    },
+    {
+      "id": "462",
+      "checklist": false
+    },
+    {
+      "id": "463",
+      "checklist": false
+    },
+    {
+      "id": "464",
+      "checklist": false
+    },
+    {
+      "id": "465",
+      "checklist": false
+    },
+    {
+      "id": "466",
+      "checklist": false
+    },
+    {
+      "id": "467",
+      "checklist": false
+    },
+    {
+      "id": "468",
+      "checklist": false
+    },
+    {
+      "id": "469",
+      "checklist": false
+    },
+    {
+      "id": "470",
+      "checklist": false
+    },
+    {
+      "id": "471",
+      "checklist": false
+    },
+    {
+      "id": "472",
+      "checklist": false
+    },
+    {
+      "id": "473",
+      "checklist": false
+    },
+    {
+      "id": "474",
+      "checklist": false
+    },
+    {
+      "id": "475",
+      "checklist": false
+    },
+    {
+      "id": "476",
+      "checklist": false
+    },
+    {
+      "id": "477",
+      "checklist": false
+    },
+    {
+      "id": "478",
+      "checklist": false
+    },
+    {
+      "id": "479",
+      "checklist": false
+    },
+    {
+      "id": "480",
+      "checklist": false
+    },
+    {
+      "id": "481",
+      "checklist": false
+    },
+    {
+      "id": "482",
+      "checklist": false
+    },
+    {
+      "id": "483",
+      "checklist": false
+    },
+    {
+      "id": "484",
+      "checklist": false
+    },
+    {
+      "id": "485",
+      "checklist": false
+    },
+    {
+      "id": "486",
+      "checklist": false
+    },
+    {
+      "id": "487",
+      "checklist": false
+    },
+    {
+      "id": "488",
+      "checklist": false
+    },
+    {
+      "id": "489",
+      "checklist": false
+    },
+    {
+      "id": "490",
+      "checklist": false
+    },
+    {
+      "id": "491",
+      "checklist": false
+    },
+    {
+      "id": "492",
+      "checklist": false
+    },
+    {
+      "id": "493",
+      "checklist": false
+    },
+    {
+      "id": "494",
+      "checklist": false
+    },
+    {
+      "id": "495",
+      "checklist": false
+    },
+    {
+      "id": "496",
+      "checklist": false
+    },
+    {
+      "id": "497",
+      "checklist": false
+    },
+    {
+      "id": "498",
+      "checklist": false
+    },
+    {
+      "id": "499",
+      "checklist": false
+    },
+    {
+      "id": "500",
+      "checklist": false
+    },
+    {
+      "id": "501",
+      "checklist": false
+    },
+    {
+      "id": "502",
+      "checklist": false
+    },
+    {
+      "id": "503",
+      "checklist": false
+    },
+    {
+      "id": "504",
+      "checklist": false
+    },
+    {
+      "id": "505",
+      "checklist": false
+    },
+    {
+      "id": "506",
+      "checklist": false
+    },
+    {
+      "id": "507",
+      "checklist": false
+    },
+    {
+      "id": "508",
+      "checklist": false
+    },
+    {
+      "id": "509",
+      "checklist": false
+    },
+    {
+      "id": "510",
+      "checklist": false
+    },
+    {
+      "id": "511",
+      "checklist": false
+    },
+    {
+      "id": "512",
+      "checklist": false
+    },
+    {
+      "id": "513",
+      "checklist": false
+    },
+    {
+      "id": "515",
+      "checklist": false
+    },
+    {
+      "id": "516",
+      "checklist": false
+    },
+    {
+      "id": "517",
+      "checklist": false
+    },
+    {
+      "id": "518",
+      "checklist": false
+    },
+    {
+      "id": "519",
+      "checklist": false
+    },
+    {
+      "id": "520",
+      "checklist": false
+    },
+    {
+      "id": "521",
+      "checklist": false
+    },
+    {
+      "id": "522",
+      "checklist": false
+    },
+    {
+      "id": "523",
+      "checklist": false
+    },
+    {
+      "id": "524",
+      "checklist": false
+    },
+    {
+      "id": "525",
+      "checklist": false
+    },
+    {
+      "id": "526",
+      "checklist": false
+    },
+    {
+      "id": "527",
+      "checklist": false
+    },
+    {
+      "id": "528",
+      "checklist": false
+    },
+    {
+      "id": "529",
+      "checklist": false
+    },
+    {
+      "id": "530",
+      "checklist": false
+    },
+    {
+      "id": "531",
+      "checklist": false
+    },
+    {
+      "id": "532",
+      "checklist": false
+    },
+    {
+      "id": "533",
+      "checklist": false
+    },
+    {
+      "id": "534",
+      "checklist": false
+    },
+    {
+      "id": "535",
+      "checklist": false
+    },
+    {
+      "id": "536",
+      "checklist": false
+    },
+    {
+      "id": "537",
+      "checklist": false
+    },
+    {
+      "id": "538",
+      "checklist": false
+    },
+    {
+      "id": "539",
+      "checklist": false
+    },
+    {
+      "id": "540",
+      "checklist": false
+    },
+    {
+      "id": "541",
+      "checklist": false
+    },
+    {
+      "id": "542",
+      "checklist": false
+    },
+    {
+      "id": "543",
+      "checklist": false
+    },
+    {
+      "id": "544",
+      "checklist": false
+    },
+    {
+      "id": "545",
+      "checklist": false
+    },
+    {
+      "id": "546",
+      "checklist": false
+    },
+    {
+      "id": "547",
+      "checklist": false
+    },
+    {
+      "id": "548",
+      "checklist": false
+    },
+    {
+      "id": "549",
+      "checklist": false
+    },
+    {
+      "id": "550",
+      "checklist": false
+    },
+    {
+      "id": "551",
+      "checklist": false
+    },
+    {
+      "id": "552",
+      "checklist": false
+    },
+    {
+      "id": "553",
+      "checklist": false
+    },
+    {
+      "id": "554",
+      "checklist": false
+    },
+    {
+      "id": "555",
+      "checklist": false
+    },
+    {
+      "id": "556",
+      "checklist": false
+    },
+    {
+      "id": "557",
+      "checklist": false
+    },
+    {
+      "id": "558",
+      "checklist": false
+    },
+    {
+      "id": "559",
+      "checklist": false
+    },
+    {
+      "id": "560",
+      "checklist": false
+    },
+    {
+      "id": "561",
+      "checklist": false
+    },
+    {
+      "id": "562",
+      "checklist": false
+    },
+    {
+      "id": "564",
+      "checklist": false
+    },
+    {
+      "id": "566",
+      "checklist": false
+    },
+    {
+      "id": "567",
+      "checklist": false
+    },
+    {
+      "id": "568",
+      "checklist": false
+    },
+    {
+      "id": "569",
+      "checklist": false
+    },
+    {
+      "id": "570",
+      "checklist": false
+    },
+    {
+      "id": "571",
+      "checklist": false
+    },
+    {
+      "id": "572",
+      "checklist": false
+    },
+    {
+      "id": "573",
+      "checklist": false
+    },
+    {
+      "id": "574",
+      "checklist": false
+    },
+    {
+      "id": "575",
+      "checklist": false
+    },
+    {
+      "id": "576",
+      "checklist": false
+    },
+    {
+      "id": "577",
+      "checklist": false
+    },
+    {
+      "id": "578",
+      "checklist": false
+    },
+    {
+      "id": "579",
+      "checklist": false
+    },
+    {
+      "id": "580",
+      "checklist": false
+    },
+    {
+      "id": "581",
+      "checklist": false
+    },
+    {
+      "id": "582",
+      "checklist": false
+    },
+    {
+      "id": "583",
+      "checklist": false
+    },
+    {
+      "id": "584",
+      "checklist": false
+    },
+    {
+      "id": "585",
+      "checklist": false
+    },
+    {
+      "id": "586",
+      "checklist": false
+    },
+    {
+      "id": "587",
+      "checklist": false
+    },
+    {
+      "id": "588",
+      "checklist": false
+    },
+    {
+      "id": "589",
+      "checklist": false
+    },
+    {
+      "id": "590",
+      "checklist": false
+    },
+    {
+      "id": "591",
+      "checklist": false
+    },
+    {
+      "id": "592",
+      "checklist": false
+    },
+    {
+      "id": "593",
+      "checklist": false
+    },
+    {
+      "id": "594",
+      "checklist": false
+    },
+    {
+      "id": "595",
       "checklist": false
     },
     {

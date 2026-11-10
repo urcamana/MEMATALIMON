@@ -924,10 +924,10 @@
     </script>
 
 <script>
-/* Banner/menú "Catálogo a pedido":
+/* Banner/menú "Catálogo a pedido" — config con categoriasPedido
    - ABIERTO  → banner violeta + links de menú
-   - PRÓXIMO  → contador (solo si la fecha está dentro de 2 meses)
-   - OTRO     → totalmente oculto
+   - PRÓXIMO  → contador (fecha dentro de 2 meses)
+   - OTRO     → oculto
 */
 (function () {
   var URL_CONFIG = 'https://pedidos.mematalimon.com.ar/config.json?t=' + Date.now();
@@ -968,7 +968,8 @@
 
   function formatearDia(fecha) {
     try {
-      return fecha.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });
+      var t = fecha.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });
+      return t.charAt(0).toUpperCase() + t.slice(1);
     } catch (err) {
       return fecha.toLocaleDateString('es-AR');
     }
@@ -988,20 +989,13 @@
   function mostrarProximamente(fechaObj) {
     var e = els();
     if (!e.wrap || !e.prox) return;
-
     e.wrap.classList.remove('d-none');
     if (e.link) e.link.classList.add('d-none');
     e.prox.classList.remove('d-none');
-    mostrarMenus(false); // menú solo cuando está abierto
-
-    var diaTxt = formatearDia(fechaObj);
-    // Capitalizar primera letra del día
-    diaTxt = diaTxt.charAt(0).toUpperCase() + diaTxt.slice(1);
-
+    mostrarMenus(false);
     if (e.proxTitulo) {
-      e.proxTitulo.textContent = 'El día ' + diaTxt + ' se empieza a tomar pedidos de algunos productos';
+      e.proxTitulo.textContent = 'El día ' + formatearDia(fechaObj) + ' se empieza a tomar pedidos de algunos productos';
     }
-
     function tick() {
       var resto = fechaObj.getTime() - Date.now();
       if (resto <= 0) {
@@ -1009,76 +1003,64 @@
         if (timerProximamente) clearInterval(timerProximamente);
         return;
       }
-      if (e.proxSub) {
-        e.proxSub.textContent = 'Queda ' + textoRestante(resto) + ' para que la web se habilite';
-      }
+      if (e.proxSub) e.proxSub.textContent = 'Queda ' + textoRestante(resto) + ' para que la web se habilite';
     }
-
     tick();
     if (timerProximamente) clearInterval(timerProximamente);
     timerProximamente = setInterval(tick, 60000);
   }
 
-  function proximaFechaValida(config) {
-    if (!config || !config.proximasFechasApertura || !config.proximasFechasApertura.length) return null;
+  function parseFecha(str) {
+    if (!str) return null;
+    var d = new Date(str);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  function categoriasAbiertas(config) {
+    var ahora = new Date();
+    return (config.categoriasPedido || []).filter(function (c) {
+      if (c.visible !== true) return false;
+      var a = parseFecha(c.fechaApertura);
+      if (a && ahora < a) return false;
+      var cierre = parseFecha(c.fechaCierre);
+      if (cierre && ahora > cierre) return false;
+      return true;
+    });
+  }
+
+  function proximaApertura(config) {
     var ahora = new Date();
     var limite = new Date();
     limite.setMonth(limite.getMonth() + 2);
+    var candidatas = [];
 
-    var candidatas = config.proximasFechasApertura
-      .map(function (item) {
-        return { fecha: new Date(item.fecha), etiqueta: item.etiqueta || '' };
-      })
-      .filter(function (item) {
-        return !isNaN(item.fecha.getTime()) && item.fecha > ahora && item.fecha <= limite;
-      })
-      .sort(function (a, b) { return a.fecha - b.fecha; });
+    (config.categoriasPedido || []).forEach(function (c) {
+      if (c.visible !== true) return;
+      var f = parseFecha(c.fechaApertura);
+      if (f && f > ahora && f <= limite) candidatas.push(f);
+    });
 
+    (config.proximasFechasApertura || []).forEach(function (item) {
+      var f = parseFecha(item.fecha);
+      if (f && f > ahora && f <= limite) candidatas.push(f);
+    });
+
+    candidatas.sort(function (a, b) { return a - b; });
     return candidatas.length ? candidatas[0] : null;
-  }
-
-  function catalogoHabilitado(config) {
-    return !!(config && config.catalogoHabilitado === true && config.proveedorActivo);
-  }
-
-  function evaluarConfig(config) {
-    if (!config) return;
-
-    // 1) ¿Está abierto ahora?
-    if (catalogoHabilitado(config)) {
-      var idProv = config.proveedorActivo;
-      fetch('https://pedidos.mematalimon.com.ar/proveedores/' + idProv + '.json?t=' + Date.now(), { cache: 'no-store' })
-        .then(function (r) { return r.ok ? r.json() : null; })
-        .then(function (prov) {
-          if (prov && prov.fechaCierre) {
-            var cierre = new Date(prov.fechaCierre);
-            if (new Date() > cierre) {
-              // Cerrado por fecha → mirar próxima apertura
-              var prox = proximaFechaValida(config);
-              if (prox) mostrarProximamente(prox.fecha);
-              return;
-            }
-          }
-          mostrarAbierto();
-        })
-        .catch(function () {
-          mostrarAbierto();
-        });
-      return;
-    }
-
-    // 2) No está abierto → ¿hay fecha próxima dentro de 2 meses?
-    var prox = proximaFechaValida(config);
-    if (prox) {
-      mostrarProximamente(prox.fecha);
-    }
-    // 3) Si no hay fecha dentro de 2 meses → queda todo oculto
   }
 
   fetch(URL_CONFIG, { cache: 'no-store' })
     .then(function (r) { return r.ok ? r.json() : null; })
-    .then(evaluarConfig)
-    .catch(function () { /* sin CORS / red → oculto */ });
+    .then(function (config) {
+      if (!config) return;
+      if (categoriasAbiertas(config).length > 0) {
+        mostrarAbierto();
+        return;
+      }
+      var prox = proximaApertura(config);
+      if (prox) mostrarProximamente(prox);
+    })
+    .catch(function () {});
 })();
 </script>
 
