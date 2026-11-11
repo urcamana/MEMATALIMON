@@ -15,7 +15,7 @@ const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
 
 /* ---------- Frases ---------- */
 const L = {
-  hi: ['¡Hola! Soy Limón 🍋 Tocame si querés ver ofertas o que te recomiende algo.', '¡Bienvenido a la tienda! Soy Limón 🍋 Si no necesitás ayuda, tocame 😝.', '¡Hola! Limón al servicio 🍋 ¿Te muestro las ofertas?'],
+  hi: ['¡Hola! Soy Limón 🍋 Tocame si querés ver ofertas o que te recomiende algo.', '¡Bienvenido a la tienda! Soy Limón 🍋 Si NO necesitás ayuda, tocame 😝.', '¡Hola! Limón al servicio 🍋 ¿Te muestro las ofertas?'],
   oferta: [(p, n) => `¿Este te sirve? ¡Comprálo, está en oferta! ${p} OFF 🍋`, (p, n) => `Psst… ${n} tiene ${p} de descuento. ¡No te lo pierdas!`, (p, n) => `¡Ofertón! ${n}, ${p} OFF. Yo en tu lugar lo llevo 😉`],
   rec: [(n, p) => `No te distraigas conmigo 😅 ¿Ya viste ${n}? Está a ${p}.`, (n, p) => `¡Ojo con ${n}! ${p} y es genial 🍋`, (n, p) => `¿Buscás algo? Mirá ${n}: ${p}.`],
   recOf: [(n, p, d) => `¡${n} está en oferta! ${d}% OFF, ahora ${p} 🔥`],
@@ -32,9 +32,9 @@ const L = {
   despCerrado: ['Estamos cerrados y encima me despertás 😤 Dejá tu pedido y mis empleados lo ven apenas abran', '¿A esta hora? Hasta los jefes dormimos… Dejá tu pedido y mañana te atienden 😴', 'Soy el jefe y estoy durmiendo. Dejá tu pedido, que mis empleados se encargan 😤'],
   cerrado: ['Ahora estamos cerrados, pero dejanos tu pedido que mis empleados te atenderán pronto.', 'Yo soy el jefe, pero estoy de paso… 🍋 podes seguir comprando...', 'Estamos cerrados, pero mis empleados ven los pedidos apenas abren. ¡Yo soy el jefe, ojo! 😎', 'Cerrado por ahora. Armá tu carrito y mis empleados se encargan cuando vuelvan 🛒', 'Mis empleados están descansando (yo no, soy el jefe 😤). Dejá tu pedido y te atienden pronto.'],
   addCerrado: ['¡Buena elección! Mis empleados lo preparan apenas abramos 🍋', '¡Eso! Dejá el pedido y ellos se encargan cuando vuelvan 🛒'],
-  trip: ['Esto me trajo recuerdos de aquel día que me caí del árbol 🌳🍋', '¿Quién tiró esa piedra? ¡Fue a propósito! 😤', 'Si, me caí... pero no le cuentes a nadie. 🍋', 'Ups! Me acabo de comprar la página web... 🍋', 'Auch… eso dolió más que un exprimidor 🍋'],
+  trip: ['Esto me trajo recuerdos de aquel día que me caí del árbol 🌳🍋', '¿Quién tiró esa piedra? ¡Fue a propósito! 😤', 'Auch… eso dolió más que un exprimidor 🍋'],
   corrio: ['¡Uff! Si me hubiera chocado a esa velocidad me hacía limonada 🍋💨', '¡Uf! Corrí tan rápido que casi me exprimo 😅', '¡Qué carrera! Nuevo récord personal 🏅'],
-  musica: ['¡Qué buen tema! 🎧 Por cierto, acá vendemos auriculares re buenos…', '¿Escuchaste eso? 🎶 Tenemos auriculares geniales 😉'],
+  musica: ['¡Qué buen tema! 🎧 Por cierto, acá vendemos auriculares re buenos…', '¡Qué buen tema! 🎶 Acá tenemos auriculares geniales 😉'],
   wx: {
     frio: ['¡Brrr! 🥶 Con {T}° hasta los limones nos congelamos', 'Hace {T}°… me puse el gorro y la bufanda 🧣', '¡Qué frío! ({T}°) Ideal para quedarse en casa eligiendo cositas 🍋'],
     tormenta: ['¡Hay tormenta! ⚡ Mejor comprar desde casa', 'Se viene tormenta… ¡qué miedo! 😱 Yo me quedo acá, calentito'],
@@ -59,7 +59,7 @@ const L = {
   favOferta: ['¡Ese que guardaste está en oferta! 🔥 {n}: {d}% OFF', '¡Buenas noticias! {n} (de tus favoritos) tiene {d}% de descuento 🍋'],
   favPocasAviso: ['Quedan pocas unidades de uno de tus favoritos: {n} ⏳', '¡Ojo! {n} se está por agotar y lo tenés en favoritos 😱'],
   carritoAviso: ['¿Lo terminamos? 🛒 Tenés {n} producto{s} esperando', 'Tu pedido está casi listo 🛍️ ¿Lo enviamos por WhatsApp?'],
-  wake: ['¡Ah! Estaba soñando con ofertas 💤', '¡¿Quién? ¿Dónde?! Uhh, pensé que venia el patrón.. 🫩 💤', '¡Ay! emm, si, claro, ya te atiendo.. solo me despabilo 🥱💤', '¡¡Ahhh, No me quiten las ofertas!! 🥴💤'],
+  wake: ['¡Ah! Estaba soñando con ofertas 💤', 'Productos a pedido: pedidos.mematalimon.com.ar', '¡Ah! ya te atiendo.. solo deja que me despabilo 🥱💤', '¡¡Soñé que habia malas ofertas!! 🥴💤'],
 };
 
 /* ---------- Estructura (Shadow DOM: el CSS de la tienda no lo toca) ---------- */
@@ -570,7 +570,7 @@ document.addEventListener('click', e => {
 });
 
 /* ---------- Extras de venta ---------- */
-let EVENTOS = [], FECHA = null, hat = null, fechaOv = null, lastComp = 0, cartIds = [], tipeando = false, ideaI = {};
+let EVENTOS = [], evForzado = null, FECHA = null, hat = null, fechaOv = null, lastComp = 0, cartIds = [], tipeando = false, ideaI = {};
 const hoyF = () => fechaOv ? new Date(fechaOv) : new Date();
 const getP = id => ALL.get(id) ?? ALL.get(Number(id)) ?? ALL.get(String(id));
 const leerCarrito = () => { try { const d = JSON.parse(LS('datosCarrito') || 'null'); return d && d.items ? d.items : [] } catch (e) { return [] } };
@@ -652,7 +652,7 @@ function ocurrencia(ev, hoy) {   // la que está en curso o la próxima (campos 
   }
   return mejor;
 }
-const PRIO_DEF = { padre: 1, '25mayo': 1, bandera: 1, independencia: 1, sanmartin: 1, halloween: 1 }, EXCL_DEF = new Set(['25mayo', 'bandera', 'independencia', 'sanmartin']);
+const EXCL_DEF = new Set(['25mayo', 'bandera', 'independencia', 'sanmartin']);
 function calcularFecha() {
   const F = (ITEMS || {}).fechas || {}; FECHA = null; if (F.activo === false) return;
   const mapa = new Map(EVENTOS.filter(e => !e.always).map(e => [e.id, e]));   // si un evento está en los dos lugares, se combinan (gana items_limon.json)
@@ -661,15 +661,27 @@ function calcularFecha() {
   const prin = F.principales || (Array.isArray(F.celebrar) ? F.celebrar : ['enamorados', 'padre', 'amigo', 'profe', 'madre', 'navidad', 'novia', 'mujer', 'hombre', 'niño']);
   const dur0 = e => e.duracion > 1 ? e.duracion : 0, antes = e => e.vestirAntes ?? F.vestirAntes ?? 0;   // el disfraz/objeto se ve solo ese día (o todo el evento si es largo)
   const on = x => x.dias <= antes(x.ev) && x.dias >= -dur0(x.ev);
-  const pr = x => x.ev.prioridad ?? PRIO_DEF[x.ev.id] ?? (x.ev.duracion > 1 ? 1 : 0), excl = F.excluir || [], hoy = hoyF(); hoy.setHours(12, 0, 0, 0);
+  const excl = F.excluir || [], hoy = hoyF(); hoy.setHours(12, 0, 0, 0);
+  // candidatos dentro de la ventana de aviso (sin prioridades: ninguna fecha gana siempre)
   const l = todas.filter(e => !excl.includes(e.id)).map(e => ({ ev: e, ...ocurrencia(e, hoy) }))
-    .filter(x => x.dias !== undefined && x.dias <= (prin.includes(x.ev.id) ? (F.avisoDias ?? 14) : (x.ev.aviso ?? F.avisoOtros ?? 2)))
-    .sort((a, b) => (on(b) - on(a)) || (pr(b) - pr(a)) || Math.abs(a.dias) - Math.abs(b.dias));
-  FECHA = l[0] || null;
-  if (FECHA) {
-    l.forEach(x => { x.acc = accDe(x.ev); x.on = on(x) });
-    const ex = x => x.ev.exclusivo ?? EXCL_DEF.has(x.ev.id);   // las fechas patrias van solas (solo la escarapela)
-    FECHA.todos = FECHA.on ? (ex(FECHA) ? [FECHA] : l.filter(x => x.on && !ex(x))) : [];   // si coinciden varias fechas, se combinan sus objetos
+    .filter(x => x.dias !== undefined && x.dias <= (prin.includes(x.ev.id) ? (F.avisoDias ?? 14) : (x.ev.aviso ?? F.avisoOtros ?? 2)));
+  l.forEach(x => { x.acc = accDe(x.ev); x.on = on(x) });
+  const onList = l.filter(x => x.on);
+  if (onList.length) {
+    // varias fechas en curso → se turnan: rotación por día + contador de sesión (al recargar cambia el turno)
+    const seed = hoy.getFullYear() * 400 + hoy.getMonth() * 40 + hoy.getDate();
+    let rot = +SS('mm_frot') || 0;
+    if (!SS('mm_frot_set')) { rot = (rot + 1) % Math.max(onList.length, 1); SS('mm_frot', String(rot)); SS('mm_frot_set', '1') }
+    // si coinciden varias: 1) la elegida en el modo prueba, 2) la que cae EXACTO hoy (las demás solo están en ventana), 3) opcional fechas.prioridad, 4) turnos
+    const exacta = onList.filter(x => x.dias === 0), forz = onList.filter(x => x.ev.id === evForzado), prio = new Set(F.prioridad || []);
+    let pool = forz.length ? forz : exacta.length ? exacta : onList; const pp = pool.filter(x => prio.has(x.ev.id)); if (pp.length) pool = pp;
+    FECHA = pool[(seed + rot) % pool.length];
+    FECHA.todos = [FECHA];   // solo esa fecha: animación / mensaje / accesorios de una a la vez
+  } else {
+    // nadie en curso: aviso del más cercano (por distancia en días)
+    l.sort((a, b) => Math.abs(a.dias) - Math.abs(b.dias) || a.dias - b.dias);
+    FECHA = l[0] || null;
+    if (FECHA) FECHA.todos = [];
   }
   activarModelos();
 }
@@ -703,7 +715,9 @@ async function leerModelo(id) { if (!(id in MODS)) { const j = await leer(CFG.mo
 async function activarModelos() {
   const tok = ++modTok; if (MAPA === null) MAPA = await leer(CFG.modelos + '_mapa.json') || {};
   const usados = new Set(), ms = [];
+  const sinMod = new Set(((ITEMS || {}).fechas || {}).sinModelo || [...EXCL_DEF]);   // fechas patrias: van solas con la escarapela, sin modelo de modelos/
   for (const x of (FECHA && FECHA.on ? FECHA.todos : [])) {
+    if (sinMod.has(x.ev.id)) continue;
     for (const id of [].concat(MAPA[x.ev.id] || [])) {
       const m = await leerModelo(id); if (!m) continue;
       const sl = m.disfraz ? [...HUECOS, 'companero'] : (m.partes || []).map(pt => pt.slot);
@@ -816,8 +830,8 @@ async function panelPrueba() {
   const q = id => pan.querySelector('#' + id), pad = n => String(n).padStart(2, '0'), loc = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
   const F = (ITEMS || {}).fechas || {}, lista = [...EVENTOS.filter(e => !e.always), ...(F.extras || []).filter(e => e.activo !== false)];
   lista.forEach((e, i) => { const o = document.createElement('option'); o.value = i; o.textContent = e.titulo; q('te').append(o) });
-  const aplicar = v => { fechaOv = v ? new Date(v) : null; SS('mm_fecha', ''); calcularFecha() };
-  q('te').onchange = () => { const ev = lista[+q('te').value]; if (!ev) return; const hoy = new Date(); hoy.setHours(12, 0, 0, 0); const o = ocurrencia(ev, hoy); if (!o) return show('Ese evento ya pasó (tiene un año fijo).', null, 3000); const d = new Date(hoy); d.setDate(d.getDate() + o.dias); q('tf').value = loc(d); aplicar(q('tf').value) };
+  const aplicar = (v, id) => { fechaOv = v ? new Date(v) : null; evForzado = id || null; SS('mm_fecha', ''); calcularFecha() };
+  q('te').onchange = () => { const ev = lista[+q('te').value]; if (!ev) return; const hoy = new Date(); hoy.setHours(12, 0, 0, 0); const o = ocurrencia(ev, hoy); if (!o) return show('Ese evento ya pasó (tiene un año fijo).', null, 3000); const d = new Date(hoy); d.setDate(d.getDate() + o.dias); q('tf').value = loc(d); aplicar(q('tf').value, ev.id) };
   q('tf').onchange = () => aplicar(q('tf').value);
   const W = { frio: { T: 7, frio: true }, calor: { T: 35, calor: true }, lluvia: { T: 20, lluvia: true }, nube: { T: 22, nube: true }, tormenta: { T: 22, tormenta: true, lluvia: true }, viento: { T: 20, viento: true } };
   q('tw').onchange = () => { SS('mm_wxd', ''); if (q('tw').value === '') clima(); else WX = W[q('tw').value] || null };
@@ -830,7 +844,7 @@ async function panelPrueba() {
     ['🪨 Piedra', () => { reposo(); izq(); evPiedra() }], ['🏃 Correr', () => { reposo(); izq(); evCorrer() }], ['🎧 Música', () => { reposo(); evMusica() }], ['☂️ Paraguas', () => { reposo(); WX = { T: 22, nube: true }; umAnim = { t: 0 } }],
     ['🧉 Sentarse', () => { reposo(); sub = 'sit' }], ['😤 Despertar', () => { reposo(); nightOv = true; q('tn').checked = true; sub = 'sleep'; setTimeout(despertar, 1200) }], ['🎁 Msj. de fecha', () => { SS('mm_fecha', ''); if (!fechaMsg()) show('No hay evento para esa fecha.', null, 3000) }], ['🔋 Batería 15%', () => { BAT = { n: 15, carga: false }; SS('mm_b1', ''); SS('mm_b2', '') }],
     ['🔋 Batería 8%', () => { BAT = { n: 8, carga: false }; SS('mm_b1', ''); SS('mm_b2', '') }], ['💸 Código', () => { SS('mm_dn', '0'); LS('mm_dto', '0'); if (!darCodigo('indecision')) show('No hay código disponible (¿desc_limon.json activo?).', null, 4000) }], ['🛵 Envíos', envioTabla], ['🛍️ Recomendar', recMenu],
-    ['🔥 Ofertas', () => { reposo(); tour(true) }], ['🔄 Restablecer', () => { fechaOv = null; nightOv = null; cerradoOv = null; q('tf').value = ''; q('te').value = ''; q('tw').value = ''; q('tn').checked = q('tc').checked = false; calcularFecha(); clima(); reposo(); tm = 2 }]];
+    ['🔥 Ofertas', () => { reposo(); tour(true) }], ['🔄 Restablecer', () => { fechaOv = null; evForzado = null; nightOv = null; cerradoOv = null; q('tf').value = ''; q('te').value = ''; q('tw').value = ''; q('tn').checked = q('tc').checked = false; calcularFecha(); clima(); reposo(); tm = 2 }]];
   acc.forEach(([t, f]) => { const b = document.createElement('button'); b.textContent = t; b.onclick = f; q('bt').append(b) });
   setInterval(() => { q('ts').textContent = (FECHA ? `Evento: ${FECHA.ev.titulo} (${FECHA.dias} d) · ` : 'Sin evento · ') + 'puesto: ' + (visSig || 'nada') + (MOD.n ? ' · modelo: ' + MOD.nombres : '') }, 700);
 }

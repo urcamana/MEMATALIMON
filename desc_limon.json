@@ -13,7 +13,7 @@
       "clave": "CHOCALOSCINCO",
       "descuento": 5,
       "activo": true,
-      "vence": "2026-11-07",
+      "vence": "2026-11-14",
       "minimo": 0,
       "peso": 2,
       "uso": "toque"
@@ -22,7 +22,7 @@
       "clave": "DIEZLIMONES",
       "descuento": 10,
       "activo": true,
-      "vence": "2026-11-07",
+      "vence": "2026-11-14",
       "minimo": 15000,
       "peso": 1,
       "uso": "indecision"
@@ -31,7 +31,7 @@
       "clave": "CIERRALIMON",
       "descuento": 10,
       "activo": true,
-      "vence": "2026-11-07",
+      "vence": "2026-11-13",
       "minimo": 10000,
       "peso": 1,
       "uso": "cierre"
@@ -40,7 +40,7 @@
       "clave": "REVOLEAME20",
       "descuento": 20,
       "activo": true,
-      "vence": "2026-11-07",
+      "vence": "2026-11-11",
       "minimo": 20000,
       "peso": 1,
       "uso": "reto"
@@ -71,8 +71,13 @@
       "¿Te animás? Agarrame y tirame desde arriba {veces} veces… y te doy un código 🎁"
     ],
     "progreso": [
-      "¡Van {n} de {veces}! Seguí, que me estoy mareando 😵",
+      "¡Van {n} de {veces}! Seguí, aunque me estoy mareando 😵",
       "{n} de {veces}… ¡qué brazo! 💪",
+    "{n} de {veces}… ¿Y si le pones un poquito mas de ganas?",
+    "{n} de {veces}… aahh, me dieron un poquito de náuseas",
+      "{n} de {veces}… Me parece que me estas sacudiendo con un mouse gamer... 💪",
+    "{n} de {veces}… Uff, ese me dejó medio loco",
+    "{n} de {veces}… Me parece que te falta un buen puchero",
       "¡{n} de {veces}! No pares ahora 😈"
     ],
     "premio": [
