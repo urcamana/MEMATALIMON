@@ -59,7 +59,7 @@ const L = {
   favOferta: ['¡Ese que guardaste está en oferta! 🔥 {n}: {d}% OFF', '¡Buenas noticias! {n} (de tus favoritos) tiene {d}% de descuento 🍋'],
   favPocasAviso: ['Quedan pocas unidades de uno de tus favoritos: {n} ⏳', '¡Ojo! {n} se está por agotar y lo tenés en favoritos 😱'],
   carritoAviso: ['¿Lo terminamos? 🛒 Tenés {n} producto{s} esperando', 'Tu pedido está casi listo 🛍️ ¿Lo enviamos por WhatsApp?'],
-  wake: ['¡Ah! Estaba soñando con ofertas 💤', 'Productos a pedido: pedidos.mematalimon.com.ar', '¡Ah! ya te atiendo.. solo deja que me despabilo 🥱💤', '¡¡Soñé que habia malas ofertas!! 🥴💤'],
+  wake: ['¡Ah! Estaba soñando con ofertas 💤', 'Productos a pedido: pedidos.mematalimon.com.ar', '¡Ah! ya te atiendo.. solo deja que me despabilo 🥱💤', '¿Alguien puede pensar en Limón?🥱', '¡¡Soñé que habia malas ofertas!! 🥴💤'],
 };
 
 /* ---------- Estructura (Shadow DOM: el CSS de la tienda no lo toca) ---------- */
