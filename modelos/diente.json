@@ -1,0 +1,14 @@
+{
+ "id": "diente",
+ "partes": [
+  {
+   "slot": "mano_d",
+   "svg": "<path d='M66 57L72 31' stroke='#8fa3b5' stroke-width='2.4' stroke-linecap='round'/><circle cx='73.5' cy='25' r='6' fill='#e8f6ff' stroke='#6a8fb0' stroke-width='1.8'/><path d='M70 22Q72 20 75 21' stroke='#fff' stroke-width='1.5' fill='none' stroke-linecap='round'/>"
+  },
+  {
+   "slot": "mano_i",
+   "svg": "<g transform='translate(2 46) scale(.62) translate(-22 -44)'><path d='M4 34Q4 22 14 22Q18 24 22 24Q26 22 30 22Q40 22 40 34Q40 44 35 58Q33 66 30 58Q27 50 22 50Q17 50 14 58Q11 66 9 58Q4 44 4 34Z' fill='#fff' stroke='#9fb3c8' stroke-width='2.4' stroke-linejoin='round'/><circle cx='15' cy='35' r='2.2' fill='#333'/><circle cx='29' cy='35' r='2.2' fill='#333'/><path d='M14 41Q22 49 30 41' fill='none' stroke='#333' stroke-width='2' stroke-linecap='round'/><path d='M10 28Q12 25 16 25' stroke='#dbe7f3' stroke-width='2' fill='none'/></g>"
+  }
+ ],
+ "anim": []
+}

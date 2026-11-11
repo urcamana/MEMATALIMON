@@ -1,0 +1,10 @@
+{
+ "id": "llave_inglesa",
+ "partes": [
+  {
+   "slot": "mano_d",
+   "svg": "<g transform='translate(66 46) rotate(35)'><rect x='-3' y='-20' width='6' height='26' rx='2.5' fill='#b0bec5' stroke='#546e7a' stroke-width='1.3'/><path d='M-8 -20Q-8 -27 -3 -28L-3 -23L3 -23L3 -28Q8 -27 8 -20Q8 -17 5 -16L-5 -16Q-8 -17 -8 -20Z' fill='#b0bec5' stroke='#546e7a' stroke-width='1.3' stroke-linejoin='round'/><circle cx='0' cy='4' r='2' fill='#78909c'/></g>"
+  }
+ ],
+ "anim": []
+}

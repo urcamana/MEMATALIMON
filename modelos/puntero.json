@@ -1,0 +1,13 @@
+{
+ "id": "puntero",
+ "extras": [
+  "birrete"
+ ],
+ "partes": [
+  {
+   "slot": "mano_d",
+   "svg": "<g transform='translate(66 54) rotate(22)'><rect x='-1.6' y='-34' width='3.2' height='36' rx='1.5' fill='#a77b3f' stroke='#6b4a1f' stroke-width='.8'/><rect x='-1.1' y='-46' width='2.2' height='14' rx='1.1' fill='#c8964e' stroke='#6b4a1f' stroke-width='.7'/><path d='M-2 -32H2' stroke='#6b4a1f' stroke-width='1'/><circle cx='0' cy='-47' r='1.6' fill='#e53935'/></g>"
+  }
+ ],
+ "anim": []
+}

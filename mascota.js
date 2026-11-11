@@ -1,7 +1,7 @@
 /* Limón 🍋 — mascota vendedora para la tienda. */
 (() => {
 'use strict';
-const CFG = { json: 'articulos.json', items: 'items_limon.json', obsequios: 'obsequios/', desc: 'desc_limon.json', W: 60, H: 72, mi: 64, md: 84, borde: 4, maxPromos: 20, ritmo: 1, lat: -26.4, lon: -54.63, calor: 30, frio: 12, viento: 30 };   // lat/lon: ubicación del local (para el clima). calor: grados a partir de los que se acalora   // ritmo: 1 = normal, 0.5 = más charlatán, 2 = más callado
+const CFG = { json: 'articulos.json', items: 'items_limon.json', obsequios: 'obsequios/', desc: 'desc_limon.json', W: 60, H: 72, mi: 64, md: 84, borde: 4, maxPromos: 20, ritmo: 1, lat: -26.4, lon: -54.63, calor: 30, frio: 12, viento: 30, modelos: 'modelos/' };   // lat/lon: ubicación del local (para el clima). calor: grados a partir de los que se acalora   // ritmo: 1 = normal, 0.5 = más charlatán, 2 = más callado
 const gap = (a, b) => rnd(a, b) * 1e3 * CFG.ritmo;
 const W = CFG.W, H = CFG.H;
 const $q = (s, r = document) => r.querySelector(s), $a = (s, r = document) => [...r.querySelectorAll(s)];
@@ -69,6 +69,7 @@ const sh = host.attachShadow({ mode: 'open' });
 sh.innerHTML = `<style>
 *{box-sizing:border-box;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
 #m{position:absolute;left:0;top:0;width:${W}px;height:${H}px;transform-origin:50% 100%;pointer-events:auto;touch-action:none;cursor:grab;will-change:transform;transition:opacity .4s}
+#comp{position:absolute;left:0;top:0;width:${W}px;height:${H}px;transform-origin:50% 100%;pointer-events:none;display:none;will-change:transform}
 #m.dg{cursor:grabbing}#m.gone{opacity:0;pointer-events:none}
 svg{width:100%;height:100%;overflow:visible;display:block}
 #rk{position:absolute;left:0;top:0;width:26px;height:18px;border-radius:55% 55% 40% 40%;background:radial-gradient(circle at 35% 30%,#c4bfb3,#7c776b);box-shadow:inset -3px -3px 0 #0002,0 2px 3px #0003;display:none;will-change:transform}
@@ -80,8 +81,8 @@ svg{width:100%;height:100%;overflow:visible;display:block}
 #bub button:hover{background:#e4d6f5}
 @media (prefers-reduced-motion:reduce){#bub{transition:none}}
 </style>
-<div id="m"><svg viewBox="0 0 80 96"><ellipse cx="40" cy="92" rx="20" ry="4" fill="#0003"/>
-<g id="bd"><g id="fx">
+<div id="comp"><svg viewBox="0 0 80 96"><g id="compg"></g></svg></div><div id="m"><svg viewBox="0 0 80 96"><ellipse cx="40" cy="92" rx="20" ry="4" fill="#0003"/>
+<g id="bd"><g id="fx"><g id="s_espalda"></g>
 <g id="l1"><path d="M32 74V85" stroke="#7a5d00" stroke-width="5" stroke-linecap="round"/><ellipse cx="33" cy="88" rx="6.5" ry="3.4" fill="#6b4ca3"/></g>
 <g id="l2"><path d="M48 74V85" stroke="#7a5d00" stroke-width="5" stroke-linecap="round"/><ellipse cx="47" cy="88" rx="6.5" ry="3.4" fill="#6b4ca3"/></g>
 <ellipse cx="40" cy="50" rx="27" ry="29" fill="#ffe14a" stroke="#c99a00" stroke-width="3"/>
@@ -89,13 +90,13 @@ svg{width:100%;height:100%;overflow:visible;display:block}
 <g id="hp" style="display:none"><path d="M16 46Q40 -4 64 46" fill="none" stroke="#3a2a66" stroke-width="4" stroke-linecap="round"/><ellipse cx="15" cy="49" rx="5.5" ry="8" fill="#6b4ca3" stroke="#3a2a66" stroke-width="2"/><ellipse cx="65" cy="49" rx="5.5" ry="8" fill="#6b4ca3" stroke="#3a2a66" stroke-width="2"/></g>
 <path id="leaf" d="M40 22Q42 8 58 8Q56 22 40 22Z" fill="#5bbf4a" stroke="#3c8c32" stroke-width="2" stroke-linejoin="round"/>
 <g id="um" style="display:none"><path d="M6 0Q38 -32 70 0Q60 -6 52 0Q44 -6 38 0Q32 -6 24 0Q16 -6 6 0Z" fill="#7b4fc9" stroke="#4a2b8a" stroke-width="2" stroke-linejoin="round"/><path d="M38 0 L22 54" stroke="#4a2b8a" stroke-width="2.5" stroke-linecap="round"/><circle cx="22" cy="54" r="2.5" fill="#4a2b8a"/></g>
-<g id="a1"><ellipse cx="14" cy="55" rx="5" ry="8" fill="#ffe14a" stroke="#c99a00" stroke-width="2.5"/><g id="um2" style="display:none"><path d="M11 52 L11 78" stroke="#4a2b8a" stroke-width="2.2" stroke-linecap="round"/><path d="M11 52 Q6 48 8 42 Q11 38 14 42 Q16 48 11 52" fill="#7b4fc9" stroke="#4a2b8a" stroke-width="1.5" stroke-linejoin="round"/><circle cx="11" cy="78" r="1.8" fill="#4a2b8a"/></g></g>
+<g id="a1"><g id="s_mano_i"></g><ellipse cx="14" cy="55" rx="5" ry="8" fill="#ffe14a" stroke="#c99a00" stroke-width="2.5"/><g id="um2" style="display:none"><path d="M11 52 L11 78" stroke="#4a2b8a" stroke-width="2.2" stroke-linecap="round"/><path d="M11 52 Q6 48 8 42 Q11 38 14 42 Q16 48 11 52" fill="#7b4fc9" stroke="#4a2b8a" stroke-width="1.5" stroke-linejoin="round"/><circle cx="11" cy="78" r="1.8" fill="#4a2b8a"/></g></g>
 <g id="a2"><g id="mate" style="display:none"><path d="M61 42Q59 58 66 58Q73 58 71 42Z" fill="#a9743a" stroke="#6b4420" stroke-width="1.6"/><path d="M60 42H72" stroke="#6b4420" stroke-width="2"/><path d="M68 42L74 26" stroke="#c0c0c0" stroke-width="2" stroke-linecap="round"/><circle cx="75" cy="25" r="1.8" fill="#c0c0c0"/></g>
 <g id="jer" style="display:none"><rect x="63" y="28" width="6" height="22" rx="2" fill="#e8f4ff" stroke="#6a8fb0" stroke-width="1.5"/><path d="M66 28V16" stroke="#9aa" stroke-width="1.6" stroke-linecap="round"/><rect x="60" y="48" width="12" height="3" rx="1" fill="#6a8fb0"/><rect x="64" y="52" width="4" height="5" fill="#6a8fb0"/><path d="M63 36H69M63 40H69" stroke="#6a8fb0" stroke-width="1"/></g>
 <g id="copa" style="display:none"><path d="M60 30H72L69.5 44Q66 47 62.5 44Z" fill="#ffe9a8" stroke="#c9a227" stroke-width="1.6"/><path d="M66 46V56M61 56H71" stroke="#c9a227" stroke-width="2" stroke-linecap="round"/><circle cx="64" cy="36" r="1" fill="#fff"/><circle cx="68" cy="39" r="1" fill="#fff"/></g>
 <g id="corn" style="display:none"><path d="M62 52L90 34L94 46Z" fill="#74acdf" stroke="#3d7fb8" stroke-width="1.6" stroke-linejoin="round"/><path d="M74 44L78 38M82 40L86 34" stroke="#fff" stroke-width="3"/><circle cx="62" cy="54" r="4" fill="#f6b40e"/></g>
-<g id="cartel" style="display:none"><path d="M64 24V54" stroke="#8d6e63" stroke-width="2.2" stroke-linecap="round"/><rect x="40" y="8" width="48" height="17" rx="2.5" fill="#e53935" stroke="#b71c1c" stroke-width="1.6"/><text x="64" y="20.2" font-size="9.5" font-weight="700" fill="#fff" text-anchor="middle" font-family="system-ui,sans-serif">OFERTAS</text></g>
-<ellipse cx="66" cy="55" rx="5" ry="8" fill="#ffe14a" stroke="#c99a00" stroke-width="2.5"/></g>
+<g id="cartel" style="display:none"><path d="M64 24V54" stroke="#8d6e63" stroke-width="2.2" stroke-linecap="round"/><rect x="40" y="8" width="48" height="17" rx="2.5" fill="#e53935" stroke="#b71c1c" stroke-width="1.6"/><text class="tx" data-cx="64" x="64" y="20.2" font-size="9.5" font-weight="700" fill="#fff" text-anchor="middle" font-family="system-ui,sans-serif">OFERTAS</text></g>
+<g id="s_mano_d"></g><ellipse cx="66" cy="55" rx="5" ry="8" fill="#ffe14a" stroke="#c99a00" stroke-width="2.5"/></g>
 <ellipse cx="24" cy="57" rx="4.5" ry="3" fill="#ff9aa8" opacity=".6"/><ellipse cx="56" cy="57" rx="4.5" ry="3" fill="#ff9aa8" opacity=".6"/>
 <g id="e1"><ellipse cx="32" cy="46" rx="5.6" ry="6.4" fill="#fff" stroke="#333" stroke-width="1"/><circle id="p1" cx="32" cy="47" r="3" fill="#222"/></g>
 <g id="e2"><ellipse cx="48" cy="46" rx="5.6" ry="6.4" fill="#fff" stroke="#333" stroke-width="1"/><circle id="p2" cx="48" cy="47" r="3" fill="#222"/></g>
@@ -120,7 +121,9 @@ svg{width:100%;height:100%;overflow:visible;display:block}
 <path id="mo" d="M33 58Q40 65 47 58" stroke="#8a4b00" stroke-width="2.4" fill="none" stroke-linecap="round"/>
 <g id="br" style="display:none" stroke="#5a3d00" stroke-width="2.8" stroke-linecap="round"><path d="M24 37L38 42"/><path d="M56 37L42 42"/></g>
 <g id="sw" style="display:none" fill="#6ec6ff" stroke="#2b8fd6" stroke-width=".8"><path id="sw1" d="M62 34q4 6 0 9q-4-3 0-9z"/><path id="sw2" d="M14 38q4 6 0 9q-4-3 0-9z"/></g>
+<g id="s_cuerpo"></g><g id="s_cuello"></g><g id="s_cara"></g><g id="s_cabeza"></g>
 </g>
+<g id="s_disfraz"></g>
 <g id="st" style="display:none" fill="#ffb300" font-size="11"><text id="s1">★</text><text id="s2">★</text><text id="s3">★</text></g>
 <g id="zz" style="display:none" fill="#fff" stroke="#6b4ca3" stroke-width=".7" font-weight="700"><text id="z1" x="58" y="22" font-size="11">z</text><text id="z2" x="64" y="12" font-size="14">Z</text></g>
 <g id="nt" style="display:none" fill="#fff" stroke="#6b4ca3" stroke-width=".6" font-weight="700"><text id="n1" font-size="13">♪</text><text id="n2" font-size="11">♫</text></g>
@@ -432,7 +435,7 @@ function extras(dt) {   // clima, auriculares, enojo, correr
     }
   }
   g('um').style.display = holdOpen ? '' : 'none';
-  vestirAplicar();
+  animarModelos(); vestirAplicar();
   g('um2').style.display = holdClosed ? '' : 'none';
   g('sw').style.display = wx.calor ? '' : 'none'; g('heat').setAttribute('opacity', wx.calor ? .22 : 0);
   if (wx.calor) [1, 2].forEach(i => { const k = (T * .9 + i * .5) % 1, s = g('sw' + i); s.setAttribute('transform', `translate(0 ${k * 12})`); s.setAttribute('opacity', 1 - k) });
@@ -459,11 +462,13 @@ function extras(dt) {   // clima, auriculares, enojo, correr
   }
 }
 function draw(dt) {
-  const d = ((ROT[fl] + tripRot + (D ? clamp(D.vx * .06, -25, 25) : 0) - rot + 540) % 360) - 180; rot += d * Math.min(1, dt * 12);
+  const lieOn = !!MOD.lie && mode === 'idle' && sub === 'sit'; MOD.lieK = (MOD.lieK || 0) + ((lieOn ? 1 : 0) - (MOD.lieK || 0)) * Math.min(1, dt * 4);
+  const lk = MOD.lie ? MOD.lieK : 0, lieA = lk * (MOD.lie ? MOD.lie.grados : 0) * face;   // se recuesta de costado sobre el objeto
+  const d = ((ROT[fl] + tripRot + lieA + (D ? clamp(D.vx * .06, -25, 25) : 0) - rot + 540) % 360) - 180; rot += d * Math.min(1, dt * 12);
   squash = Math.max(0, squash - dt * 1.4); stars = Math.max(0, stars - dt); happy = Math.max(0, happy - dt);
   const hop = happy > 0 ? Math.abs(Math.sin(T * 13)) * 9 : 0;
   const bob = sub === 'music' && mode === 'idle' ? Math.sin(T * 6) * 4 : 0, shake = grump > 0 ? Math.sin(T * 45) * 1.2 : (WX && WX.frio && mode === 'idle' && sub !== 'sleep') ? Math.sin(T * 38) * .9 : 0;
-  m.style.transform = `translate(${pos.x - W / 2}px,${pos.y - H - hop}px) rotate(${rot}deg)`;
+  m.style.transform = `translate(${pos.x - W / 2 + lk * (MOD.lie ? MOD.lie.dx : 0) * face}px,${pos.y - H - hop + lk * (MOD.lie ? MOD.lie.dy : 0)}px) rotate(${rot}deg)`;
   const walking = mode === 'walk', scared = mode === 'drag' || (mode === 'jump' && J && J.ease === 'in'), asleep = sub === 'sleep' && mode === 'idle', sit = sub === 'sit' && mode === 'idle', watch = mode === 'cart';
   const lg = walking ? Math.sin(T * 14) * 30 : scared ? Math.sin(T * 18) * 25 : 0;
   g('l1').setAttribute('transform', rt(lg, 32, 74)); g('l2').setAttribute('transform', rt(-lg, 48, 74));
@@ -487,7 +492,7 @@ function draw(dt) {
   g('st').style.display = stars > 0 ? '' : 'none'; g('zz').style.display = asleep ? '' : 'none';
   if (stars > 0) [1, 2, 3].forEach(i => { const a = T * 6 + i * 2.1, s = g('s' + i); s.setAttribute('x', 40 + Math.cos(a) * 20 - 5); s.setAttribute('y', 8 + Math.sin(a) * 5) });
   if (asleep) { g('z1').setAttribute('opacity', .4 + .6 * Math.abs(Math.sin(T * 1.5))); g('z2').setAttribute('opacity', .4 + .6 * Math.abs(Math.sin(T * 1.5 + 1))) }
-  extras(dt); placeBub();
+  drawComp(dt); extras(dt); placeBub();
 }
 function frame(now) {
   const dt = Math.min(.05, (now - last) / 1000 || 0); last = now; T += dt;
@@ -632,7 +637,7 @@ async function cargarEventos() {
   try { const t = await (await fetch(CFG.obsequios + 'obsequios.js')).text(), a = t.indexOf('[', t.indexOf('const EVENTOS')), z = t.indexOf('];', a); EVENTOS = new Function('return ' + t.slice(a, z + 1))() } catch (e) { EVENTOS = [] }
 }
 function enesimo(y, m, dow, n) { const d = new Date(y, m - 1, 1); let c = 0; while (d.getMonth() === m - 1) { if (d.getDay() === dow && ++c === n) return new Date(d); d.setDate(d.getDate() + 1) } return new Date(y, m - 1, 15) }
-const ACC_DEF = { enamorados: ['corazones'], novia: ['corazones'], navidad: ['santa'], padre: ['corbata'], hombre: ['corbata'], profe: ['birrete'], profesor: ['birrete'], bibliotecario: ['lentes'], programador: ['lentes'], psicologo: ['lentes'], disenador_grafico: ['lentes'], quimico: ['lentes'], optico: ['lentes'], fotografo: ['lentes'], periodista: ['lentes'], contador: ['corbata'], abogado: ['corbata'], bancario: ['corbata'], inmobiliario: ['corbata'], viajante: ['corbata'], comercio_exterior: ['corbata'], empleado_comercio: ['corbata'], enfermeria: ['jeringa'], farmaceutico: ['jeringa'], odontologo: ['jeringa'], kinesiologo: ['estetoscopio'], veterinario: ['estetoscopio'], medico: ['estetoscopio'], pizzero_pastelero: ['chef'], gastronomico: ['chef'], ingeniero: ['casco'], arquitecto: ['casco'], mecanico: ['casco'], transporte: ['gorra'], camionero: ['gorra'], canillita: ['gorra'], guardavidas: ['sol'], vitivinicola: ['copa'], musico: ['auriculares'], locutor: ['auriculares'], mundial: ['mundial'] };
+const ACC_DEF = { enamorados: ['corazones'], novia: ['corazones'], navidad: ['santa'], padre: ['corbata'], hombre: ['corbata'], profe: ['birrete'], profesor: ['birrete'], bibliotecario: ['lentes'], programador: ['lentes'], psicologo: ['lentes'], disenador_grafico: ['lentes'], quimico: ['lentes'], optico: ['lentes'], fotografo: ['lentes'], periodista: ['lentes'], contador: ['corbata'], abogado: ['corbata'], bancario: ['corbata'], inmobiliario: ['corbata'], viajante: ['corbata'], comercio_exterior: ['corbata'], empleado_comercio: ['corbata'], enfermeria: ['jeringa'], farmaceutico: ['jeringa'], odontologo: ['lentes'], kinesiologo: ['estetoscopio'], veterinario: ['estetoscopio'], medico: ['estetoscopio'], pizzero_pastelero: ['chef'], gastronomico: ['chef'], ingeniero: ['casco'], arquitecto: ['casco'], mecanico: ['casco'], transporte: ['gorra'], camionero: ['gorra'], canillita: ['gorra'], guardavidas: ['sol'], vitivinicola: ['copa'], musico: ['auriculares'], locutor: ['auriculares'], mundial: ['mundial'] };
 const accDe = ev => { const o = (((ITEMS || {}).fechas || {}).accesorios || {})[ev.id] ?? ev.accesorio ?? ACC_DEF[ev.id]; return o ? [].concat(o) : ['fiesta'] };
 function diaDe(ev, yy) {
   const d = ev.tipoFecha === 'tercer_domingo' ? enesimo(yy, ev.mes, 0, 3) : ev.tipoFecha === 'segundo_lunes' ? enesimo(yy, ev.mes, 1, 2) : ev.tipoFecha === 'cuarto_viernes' ? enesimo(yy, ev.mes, 5, 4) : ev.tipoFecha === 'dia_256' ? new Date(yy, 0, 256) : new Date(yy, (ev.mes || 1) - 1, ev.dia || 1);
@@ -647,21 +652,30 @@ function ocurrencia(ev, hoy) {   // la que está en curso o la próxima (campos 
   }
   return mejor;
 }
+const PRIO_DEF = { padre: 1, '25mayo': 1, bandera: 1, independencia: 1, sanmartin: 1, halloween: 1 }, EXCL_DEF = new Set(['25mayo', 'bandera', 'independencia', 'sanmartin']);
 function calcularFecha() {
   const F = (ITEMS || {}).fechas || {}; FECHA = null; if (F.activo === false) return;
   const mapa = new Map(EVENTOS.filter(e => !e.always).map(e => [e.id, e]));   // si un evento está en los dos lugares, se combinan (gana items_limon.json)
   (F.extras || []).forEach(e => e.activo === false ? mapa.delete(e.id) : mapa.set(e.id, { ...(mapa.get(e.id) || {}), ...e }));
   const todas = [...mapa.values()];
   const prin = F.principales || (Array.isArray(F.celebrar) ? F.celebrar : ['enamorados', 'padre', 'amigo', 'profe', 'madre', 'navidad', 'novia', 'mujer', 'hombre', 'niño']);
-  const pr = x => x.ev.prioridad ?? (x.ev.duracion > 1 ? 1 : 0), excl = F.excluir || [], hoy = hoyF(); hoy.setHours(12, 0, 0, 0);
+  const dur0 = e => e.duracion > 1 ? e.duracion : 0, antes = e => e.vestirAntes ?? F.vestirAntes ?? 0;   // el disfraz/objeto se ve solo ese día (o todo el evento si es largo)
+  const on = x => x.dias <= antes(x.ev) && x.dias >= -dur0(x.ev);
+  const pr = x => x.ev.prioridad ?? PRIO_DEF[x.ev.id] ?? (x.ev.duracion > 1 ? 1 : 0), excl = F.excluir || [], hoy = hoyF(); hoy.setHours(12, 0, 0, 0);
   const l = todas.filter(e => !excl.includes(e.id)).map(e => ({ ev: e, ...ocurrencia(e, hoy) }))
     .filter(x => x.dias !== undefined && x.dias <= (prin.includes(x.ev.id) ? (F.avisoDias ?? 14) : (x.ev.aviso ?? F.avisoOtros ?? 2)))
-    .sort((a, b) => (pr(b) - pr(a)) || Math.abs(a.dias) - Math.abs(b.dias));   // los eventos largos (Mundial, Black Friday) pasan primero
-  FECHA = l[0] || null; if (FECHA) { FECHA.acc = accDe(FECHA.ev); FECHA.on = FECHA.dias <= (F.sombreroDias ?? 3) }
+    .sort((a, b) => (on(b) - on(a)) || (pr(b) - pr(a)) || Math.abs(a.dias) - Math.abs(b.dias));
+  FECHA = l[0] || null;
+  if (FECHA) {
+    l.forEach(x => { x.acc = accDe(x.ev); x.on = on(x) });
+    const ex = x => x.ev.exclusivo ?? EXCL_DEF.has(x.ev.id);   // las fechas patrias van solas (solo la escarapela)
+    FECHA.todos = FECHA.on ? (ex(FECHA) ? [FECHA] : l.filter(x => x.on && !ex(x))) : [];   // si coinciden varias fechas, se combinan sus objetos
+  }
+  activarModelos();
 }
 function fechaMsg() {
   const x = FECHA; if (!x) return false; const ev = x.ev, t = ev.titulo, n = x.dias;
-  const txt = n === 0 || (n < 0 && x.dur > 1) ? (ev.saludo || fill(R(L.fechaHoy), { t })) : n < 0 ? fill(R(L.fechaAyer), { t }) : n === 1 ? fill(R(L.fechaManana), { t }) : n <= 3 ? fill(R(L.fechaPronto), { t, n }) : fill(R(L.fechaLejos), { t });
+  const txt = n === 0 || (n < 0 && x.dur > 1) ? (ev.saludo || MOD.saludo || fill(R(L.fechaHoy), { t })) : n < 0 ? fill(R(L.fechaAyer), { t }) : n === 1 ? fill(R(L.fechaManana), { t }) : n <= 3 ? fill(R(L.fechaPronto), { t, n }) : fill(R(L.fechaLejos), { t });
   promo(txt, [...(ev.archivo ? [['🎁 Ver ideas', () => regaloIdeas(ev.archivo, t)]] : []), ['Ahora no', () => {}]]); return true;
 }
 
@@ -682,6 +696,62 @@ async function regalosMenu() {
   show('¿Para quién es el regalo? 🎁', opts.slice(0, 4), 14000);
 }
 
+/* ---------- Modelos por fecha: cada archivo de modelos/ es un disfraz u objeto distinto ---------- */
+let MAPA = null, MODS = {}, modTok = 0, MOD = { anim: [], ocultos: [], extras: [], disfraz: false, comp: null, n: 0, nombres: '', saludo: '', lie: null, lieK: 0, dichos: [] }, nextDicho = Date.now() + 25e3;
+const HUECOS = ['espalda', 'cuerpo', 'cuello', 'cara', 'cabeza', 'mano_d', 'mano_i', 'disfraz'];
+async function leerModelo(id) { if (!(id in MODS)) { const j = await leer(CFG.modelos + id + '.json'); MODS[id] = j && j.partes ? j : null } return MODS[id] }
+async function activarModelos() {
+  const tok = ++modTok; if (MAPA === null) MAPA = await leer(CFG.modelos + '_mapa.json') || {};
+  const usados = new Set(), ms = [];
+  for (const x of (FECHA && FECHA.on ? FECHA.todos : [])) {
+    for (const id of [].concat(MAPA[x.ev.id] || [])) {
+      const m = await leerModelo(id); if (!m) continue;
+      const sl = m.disfraz ? [...HUECOS, 'companero'] : (m.partes || []).map(pt => pt.slot);
+      if (sl.some(s => usados.has(s))) continue;   // un modelo no pisa el hueco de otro
+      sl.forEach(s => usados.add(s)); ms.push(m);
+    }
+  }
+  if (tok !== modTok) return;   // cambió la fecha mientras cargaba
+  limpiarModelos(); if (ms.length) aplicarModelos(ms);
+}
+function limpiarModelos() {
+  HUECOS.forEach(s => { const e = g('s_' + s); if (e) e.innerHTML = '' }); g('compg').innerHTML = '';
+  MOD.ocultos.forEach(id => { const e = g(id); if (e) e.style.display = '' });
+  MOD = { anim: [], ocultos: [], extras: [], disfraz: false, comp: null, n: 0, nombres: '', saludo: '', lie: null, lieK: 0, dichos: [] };
+}
+function aplicarModelos(ms) {
+  ms.forEach(m => {
+    (m.partes || []).forEach(pt => {
+      if (pt.slot === 'companero') { g('compg').innerHTML += pt.svg; MOD.comp = { dx: pt.dx ?? 46, dy: pt.dy ?? 0 } }
+      else { const e = g('s_' + pt.slot); if (e) e.innerHTML += pt.svg }
+    });
+    if (m.disfraz) MOD.disfraz = true; if (m.saludo) MOD.saludo = m.saludo; if (m.recuesta) MOD.lie = m.recuesta; (m.dichos || []).forEach(d => MOD.dichos.push(d));
+    (m.ocultar || []).forEach(id => { const e = g(id); if (e) { e.style.display = 'none'; MOD.ocultos.push(id) } });
+    (m.extras || []).forEach(x => MOD.extras.push(x)); MOD.nombres += (MOD.nombres ? ', ' : '') + m.id; MOD.n++;
+  });
+  ms.forEach(m => (m.anim || []).forEach(a => { const e = g(a.sel); if (e) MOD.anim.push({ ...a, e }) }));
+}
+function animarModelos() {   // animaciones simples que pueden usar los modelos
+  sh.querySelectorAll('.tx').forEach(e => e.setAttribute('transform', face < 0 ? `translate(${2 * (+e.dataset.cx || 40)} 0) scale(-1 1)` : ''));   // textos (clase tx + data-cx): se des-espejan
+  for (const a of MOD.anim) {
+    const [px, py] = a.pivote || [40, 48], v = a.vel ?? 1, s = Math.sin(T * v * 6.2832 + (a.fase ?? 0));
+    if (a.tipo === 'balanceo') a.e.setAttribute('transform', rt(s * (a.grados ?? 8), px, py));
+    else if (a.tipo === 'giro') a.e.setAttribute('transform', rt(T * v * 360, px, py));
+    else if (a.tipo === 'rueda') a.e.setAttribute('transform', rt((fl === 'b' || fl === 't' ? pos.x : pos.y) * (a.k ?? 5), px, py));
+    else if (a.tipo === 'pulso') a.e.setAttribute('transform', `translate(${px} ${py}) scale(${1 + s * (a.amp ?? .05)}) translate(${-px} ${-py})`);
+    else if (a.tipo === 'flota') a.e.setAttribute('transform', `translate(0 ${s * (a.amp ?? 2)})`);
+    else if (a.tipo === 'parpadeo') a.e.setAttribute('opacity', (T * v + (a.fase ?? 0)) % 1 < (a.duty ?? .1) ? 1 : 0);
+    else if (a.tipo === 'subida') { const k = (T * v + (a.fase ?? 0)) % 1; a.e.setAttribute('transform', `translate(${Math.sin(k * 6.28) * (a.amp ?? 2)} ${-k * (a.alto ?? 14)})`); a.e.setAttribute('opacity', 1 - k) }
+  }
+}
+function drawComp(dt) {   // objeto acompañante (cochecito, carrito…): sigue a Limón y se queda en el piso si él se sube a una tarjeta
+  const c = g('comp'); if (!MOD.comp || m.classList.contains('gone')) { c.style.display = 'none'; return } c.style.display = 'block';
+  if (mode !== 'perch' && mode !== 'jump' && mode !== 'drag') { MOD.tx = pos.x; MOD.ty = pos.y }
+  if (MOD.cx == null) { MOD.cx = MOD.tx ?? pos.x; MOD.cy = MOD.ty ?? pos.y }
+  const k = Math.min(1, dt * 7); MOD.cx += ((MOD.tx ?? pos.x) - MOD.cx) * k; MOD.cy += ((MOD.ty ?? pos.y) - MOD.cy) * k;
+  c.style.transform = `translate(${MOD.cx - W / 2}px,${MOD.cy - H}px) rotate(${ROT[fl]}deg) translate(${MOD.comp.dx * face}px,${MOD.comp.dy}px) scale(${face},1)`;   // sin la inclinación de Limón (tropiezo, recostado)
+}
+
 /* ---------- Ropa y accesorios (fechas, clima, hora) ---------- */
 const KIND = { fiesta: ['hat1'], santa: ['hat2'], lana: ['hat3', 'scarf'], gorra: ['hat4'], dormir: ['hat5'], birrete: ['hat6'], chef: ['hat7'], casco: ['hat8'], calabaza: ['hat9'], mundial: ['hat10', 'corn'], sol: ['gl'], lentes: ['gl2'], corbata: ['tie'], estetoscopio: ['steto'], jeringa: ['jer'], escarapela: ['esc'], corazones: ['hearts'], ofertas: ['gl', 'cartel'], copa: ['hat1', 'copa'], auriculares: ['hp', 'nt'], mate: ['mate'] };
 const CABEZA = new Set(['hat1', 'hat2', 'hat3', 'hat4', 'hat5', 'hat6', 'hat7', 'hat8', 'hat9', 'hat10', 'hp']), TODOS = [...new Set(Object.values(KIND).flat())];
@@ -689,12 +759,14 @@ let visSig = '', nextSusto = 12, BAT = null;
 function vestirAplicar() {
   const vis = new Set(); let cab = false, dorm = sub === 'sleep' && mode === 'idle';
   const add = ks => ks.forEach(k => (KIND[k] || []).forEach(id => { if (CABEZA.has(id)) { if (cab) return; cab = true } vis.add(id) }));
-  if (FECHA && FECHA.on) add(FECHA.acc);
+  if (FECHA && FECHA.on && !MOD.n) FECHA.todos.forEach(x => add(x.acc));
+  add(MOD.extras);
   const wx = WX || {}, hr = hoyF().getHours();
   if (wx.frio) add(['lana']); if (wx.calor) add(dorm ? ['gorra'] : ['gorra', 'sol']);
   if (dorm || (cerrado() && hr >= 13 && hr < 17)) add(['dormir']);
   if (sub === 'music' && mode === 'idle') add(['auriculares']);
   if (hr >= 6 && hr < 12 && sub === 'sit' && mode === 'idle') add(['mate']);
+  if (MOD.disfraz) vis.clear();
   const sig = [...vis].join(); if (sig === visSig) return; visSig = sig;
   TODOS.forEach(id => { const e = g(id); if (e) e.style.display = vis.has(id) ? '' : 'none' });
 }
@@ -760,7 +832,7 @@ async function panelPrueba() {
     ['🔋 Batería 8%', () => { BAT = { n: 8, carga: false }; SS('mm_b1', ''); SS('mm_b2', '') }], ['💸 Código', () => { SS('mm_dn', '0'); LS('mm_dto', '0'); if (!darCodigo('indecision')) show('No hay código disponible (¿desc_limon.json activo?).', null, 4000) }], ['🛵 Envíos', envioTabla], ['🛍️ Recomendar', recMenu],
     ['🔥 Ofertas', () => { reposo(); tour(true) }], ['🔄 Restablecer', () => { fechaOv = null; nightOv = null; cerradoOv = null; q('tf').value = ''; q('te').value = ''; q('tw').value = ''; q('tn').checked = q('tc').checked = false; calcularFecha(); clima(); reposo(); tm = 2 }]];
   acc.forEach(([t, f]) => { const b = document.createElement('button'); b.textContent = t; b.onclick = f; q('bt').append(b) });
-  setInterval(() => { q('ts').textContent = (FECHA ? `Evento: ${FECHA.ev.titulo} (${FECHA.dias} d) · ` : 'Sin evento · ') + 'puesto: ' + (visSig || 'nada') }, 700);
+  setInterval(() => { q('ts').textContent = (FECHA ? `Evento: ${FECHA.ev.titulo} (${FECHA.dias} d) · ` : 'Sin evento · ') + 'puesto: ' + (visSig || 'nada') + (MOD.n ? ' · modelo: ' + MOD.nombres : '') }, 700);
 }
 
 /* ---------- Planificador (cada segundo) ---------- */
@@ -786,6 +858,7 @@ function sched() {
   if (mode === 'idle' && sub !== 'sleep') {
     if (canSpeak() && now - lastScroll > 1500) {
       if (chequearCierre()) return;
+      if (MOD.dichos.length && now >= nextDicho) { nextDicho = now + gap(70, 130); promo(R(MOD.dichos)); return }   // frases del modelo del día (ej. «¡Qué lindo mi anillo!»)
       if (!SS('mm_favs') && now - tStart > 12e3) { SS('mm_favs', '1'); favoritosAviso(); return }
       if (FECHA && !SS('mm_fecha') && now - tStart > 25e3) { SS('mm_fecha', '1'); if (fechaMsg()) return }
       if (now >= nextTour) { if (tour(false)) { nextTour = now + gap(35, 60); return } nextTour = now + 12e3 }
@@ -816,5 +889,5 @@ let tries = 0;
   if (window.mensajeActivo === true) return setTimeout(esperar, 500);   // hay un aviso importante en pantalla: espera a que lo cierren
   if (listo() || ++tries > 16) setTimeout(iniciar, 300); else setTimeout(esperar, 250);
 })();
-window.__mm = { show, complemento, saludoInicial, comoComprar, chequearCierre, regalosMenu, regaloIdeas, fechaMsg, setFecha: d => { fechaOv = d; calcularFecha() }, fecha: () => FECHA, hatOf: () => FECHA && FECHA.on ? FECHA.acc : null, vestido: () => visSig, tiempos: (c, i) => { cartSince = Date.now() - c * 6e4; lastAct = Date.now() - i * 1e3 }, tipeando: () => tipeando, tour, recomendar, despertar, piedra: evPiedra, correr: evCorrer, musica: evMusica, setWX: w => { WX = w }, noche: v => { nightOv = v }, darCodigo, verOfertas, tiro: contarTiro, last: () => lastRec, flip, state: () => ({ fl, mode, sub, pos, promos, sensor, tgt, toCart, WX, umAnim, grump, corre, rock: !!rock }) };
+window.__mm = { show, complemento, saludoInicial, comoComprar, chequearCierre, regalosMenu, regaloIdeas, fechaMsg, setFecha: d => { fechaOv = d; calcularFecha() }, fecha: () => FECHA, hatOf: () => FECHA && FECHA.on ? FECHA.acc : null, vestido: () => visSig, tiempos: (c, i) => { cartSince = Date.now() - c * 6e4; lastAct = Date.now() - i * 1e3 }, tipeando: () => tipeando, tour, recomendar, despertar, piedra: evPiedra, correr: evCorrer, musica: evMusica, setWX: w => { WX = w }, noche: v => { nightOv = v }, darCodigo, verOfertas, tiro: contarTiro, last: () => lastRec, flip, state: () => ({ face, fl, mode, sub, pos, promos, sensor, tgt, toCart, WX, umAnim, grump, corre, rock: !!rock }) };
 })();

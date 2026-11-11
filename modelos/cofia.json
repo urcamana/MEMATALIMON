@@ -1,0 +1,13 @@
+{
+ "id": "cofia",
+ "extras": [
+  "jeringa"
+ ],
+ "partes": [
+  {
+   "slot": "cabeza",
+   "svg": "<path d='M26 24Q28 9 40 8Q52 9 54 24Q40 20 26 24Z' fill='#fff' stroke='#cfd8dc' stroke-width='1.6' stroke-linejoin='round'/><rect x='24' y='20' width='32' height='5' rx='2' fill='#fff' stroke='#cfd8dc' stroke-width='1.4'/><path d='M40 11V18M36.5 14.5H43.5' stroke='#e53935' stroke-width='2.4' stroke-linecap='round'/>"
+  }
+ ],
+ "anim": []
+}

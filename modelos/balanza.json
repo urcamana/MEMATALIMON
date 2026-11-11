@@ -1,0 +1,21 @@
+{
+ "id": "balanza",
+ "partes": [
+  {
+   "slot": "mano_d",
+   "svg": "<g id='ba_p'><path d='M66 58V16' stroke='#c9a227' stroke-width='2.2' stroke-linecap='round'/><path d='M60 58H72' stroke='#c9a227' stroke-width='2.5' stroke-linecap='round'/></g><g id='ba_v'><path d='M52 18H80' stroke='#c9a227' stroke-width='2.2' stroke-linecap='round'/><path d='M55 18L51 33M55 18L59 33M77 18L73 33M77 18L81 33' stroke='#c9a227' stroke-width='.9'/><path d='M50 33Q55 40 60 33Z' fill='#e6c34a' stroke='#b8901a' stroke-width='1'/><path d='M72 33Q77 40 82 33Z' fill='#e6c34a' stroke='#b8901a' stroke-width='1'/><circle cx='66' cy='15' r='2.8' fill='#e6c34a' stroke='#b8901a' stroke-width='.8'/></g>"
+  }
+ ],
+ "anim": [
+  {
+   "sel": "ba_v",
+   "tipo": "balanceo",
+   "grados": 7,
+   "vel": 0.33,
+   "pivote": [
+    66,
+    18
+   ]
+  }
+ ]
+}

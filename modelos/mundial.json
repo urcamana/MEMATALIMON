@@ -1,0 +1,34 @@
+{
+ "id": "mundial",
+ "saludo": "¡Vamos Argentina! 🇦🇷",
+ "partes": [
+  {
+   "slot": "cabeza",
+   "svg": "<path d='M31 21L42 -9L52 21Z' fill='#74acdf' stroke='#3d7fb8' stroke-width='2' stroke-linejoin='round'/><path d='M35 14H49M38 5H46' stroke='#fff' stroke-width='3'/><circle cx='42' cy='-10' r='3.6' fill='#f6b40e' stroke='#c78f00'/>"
+  },
+  {
+   "slot": "cuerpo",
+   "svg": "<clipPath id='mu_c'><ellipse cx='40' cy='50' rx='26' ry='28'/></clipPath><g clip-path='url(#mu_c)'><rect x='14' y='60' width='10' height='22' fill='#74acdf'/><rect x='24' y='60' width='10' height='22' fill='#ffffff'/><rect x='34' y='60' width='10' height='22' fill='#74acdf'/><rect x='44' y='60' width='10' height='22' fill='#ffffff'/><rect x='54' y='60' width='10' height='22' fill='#74acdf'/><rect x='64' y='60' width='10' height='22' fill='#ffffff'/></g><path d='M17 62Q40 72 63 62' fill='none' stroke='#3d7fb8' stroke-width='1.4'/>"
+  },
+  {
+   "slot": "mano_d",
+   "svg": "<path d='M66 58V12' stroke='#8d6e63' stroke-width='2.2' stroke-linecap='round'/><g id='mu_f'><path d='M66 12Q74 9 82 12T98 12V28Q90 31 82 28T66 28Z' fill='#74acdf' stroke='#3d7fb8' stroke-width='1'/><path d='M66 17.5Q74 14.5 82 17.5T98 17.5V22.5Q90 25.5 82 22.5T66 22.5Z' fill='#fff'/><circle cx='82' cy='20' r='2.6' fill='#f6b40e' stroke='#c78f00' stroke-width='.6'/></g>"
+  },
+  {
+   "slot": "mano_i",
+   "svg": "<g transform='translate(8 44)'><path d='M-7 -12H7Q7 -2 3 0Q2 3 2 6H-2Q-2 3 -3 0Q-7 -2 -7 -12Z' fill='#fbc02d' stroke='#c79100' stroke-width='1.2' stroke-linejoin='round'/><path d='M-7 -9Q-12 -9 -11 -5Q-10 -2 -5 -2M7 -9Q12 -9 11 -5Q10 -2 5 -2' fill='none' stroke='#c79100' stroke-width='1.2'/><rect x='-5' y='6' width='10' height='4' rx='1' fill='#388e3c' stroke='#1b5e20' stroke-width='1'/><path d='M-4 -10Q-5 -5 -3 -3' stroke='#fff59d' stroke-width='1.4' fill='none' opacity='.8'/></g>"
+  }
+ ],
+ "anim": [
+  {
+   "sel": "mu_f",
+   "tipo": "balanceo",
+   "grados": 4,
+   "vel": 0.9,
+   "pivote": [
+    66,
+    20
+   ]
+  }
+ ]
+}

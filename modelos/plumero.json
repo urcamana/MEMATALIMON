@@ -1,0 +1,36 @@
+{
+ "id": "plumero",
+ "partes": [
+  {
+   "slot": "mano_d",
+   "svg": "<g id='pl_g'><path d='M68 58L58 26' stroke='#8d6e63' stroke-width='2.6' stroke-linecap='round'/><ellipse cx='58' cy='15' rx='2.4' ry='11' fill='#ef5350' transform='rotate(-34 58 26)'/><ellipse cx='58' cy='15' rx='2.4' ry='11' fill='#ffa726' transform='rotate(-17 58 26)'/><ellipse cx='58' cy='15' rx='2.4' ry='11' fill='#fdd835'/><ellipse cx='58' cy='15' rx='2.4' ry='11' fill='#66bb6a' transform='rotate(17 58 26)'/><ellipse cx='58' cy='15' rx='2.4' ry='11' fill='#42a5f5' transform='rotate(34 58 26)'/><circle cx='58' cy='26' r='2.6' fill='#6d4c41'/></g><g id='pl_d1'><circle cx='50' cy='6' r='1.2' fill='#bdbdbd'/></g><g id='pl_d2'><circle cx='68' cy='8' r='1' fill='#cfcfcf'/></g>"
+  }
+ ],
+ "anim": [
+  {
+   "sel": "pl_g",
+   "tipo": "balanceo",
+   "grados": 13,
+   "vel": 1.4,
+   "pivote": [
+    66,
+    55
+   ]
+  },
+  {
+   "sel": "pl_d1",
+   "tipo": "subida",
+   "vel": 0.8,
+   "alto": 12,
+   "amp": 2
+  },
+  {
+   "sel": "pl_d2",
+   "tipo": "subida",
+   "vel": 0.6,
+   "alto": 12,
+   "amp": 2,
+   "fase": 0.5
+  }
+ ]
+}

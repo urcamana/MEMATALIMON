@@ -1,0 +1,10 @@
+{
+ "id": "estetoscopio",
+ "partes": [
+  {
+   "slot": "cuello",
+   "svg": "<path d='M13 49Q12 68 30 74Q38 77 40 80M67 49Q68 68 50 74Q42 77 40 80M40 80V84' fill='none' stroke='#37474f' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/><circle cx='13' cy='49' r='2.6' fill='#90a4ae' stroke='#37474f' stroke-width='1.2'/><circle cx='67' cy='49' r='2.6' fill='#90a4ae' stroke='#37474f' stroke-width='1.2'/><circle cx='40' cy='87' r='4.2' fill='#cfd8dc' stroke='#37474f' stroke-width='1.6'/><circle cx='40' cy='87' r='1.8' fill='#90a4ae'/>"
+  }
+ ],
+ "anim": []
+}

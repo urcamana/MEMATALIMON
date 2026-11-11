@@ -1,0 +1,21 @@
+{
+ "id": "estudio",
+ "partes": [
+  {
+   "slot": "cabeza",
+   "svg": "<path d='M15 48Q40 -6 65 48' fill='none' stroke='#455a64' stroke-width='4.2' stroke-linecap='round'/><ellipse cx='13' cy='49' rx='6.2' ry='9.5' fill='#c62828' stroke='#7f1313' stroke-width='1.5'/><ellipse cx='67' cy='49' rx='6.2' ry='9.5' fill='#c62828' stroke='#7f1313' stroke-width='1.5'/><ellipse cx='13' cy='49' rx='3' ry='6' fill='#455a64'/><ellipse cx='67' cy='49' rx='3' ry='6' fill='#455a64'/>"
+  },
+  {
+   "slot": "mano_d",
+   "svg": "<path d='M69 56Q76 60 73 69Q70 77 77 83' fill='none' stroke='#212121' stroke-width='1.8' stroke-linecap='round'/><path d='M68 55H55' stroke='#1c262b' stroke-width='6.4' stroke-linecap='round'/><path d='M68 55H55' stroke='#455a64' stroke-width='4.6' stroke-linecap='round'/><path d='M62 52.6V57.4M65.5 52.6V57.4' stroke='#90a4ae' stroke-width='1.2'/><ellipse cx='51' cy='54' rx='5.4' ry='6.6' fill='#cfd8dc' stroke='#37474f' stroke-width='1.4'/><path d='M46.6 51H55.4M46.2 54H55.8M46.6 57H55.4M51 47.6V60.4' stroke='#78909c' stroke-width='.7'/><circle cx='78' cy='44' r='2.6' fill='#f44336' id='es_l'/>"
+  }
+ ],
+ "anim": [
+  {
+   "sel": "es_l",
+   "tipo": "parpadeo",
+   "vel": 0.6,
+   "duty": 0.55
+  }
+ ]
+}

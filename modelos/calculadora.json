@@ -1,0 +1,10 @@
+{
+ "id": "calculadora",
+ "partes": [
+  {
+   "slot": "mano_d",
+   "svg": "<rect x='56' y='28' width='20' height='28' rx='3' fill='#8f9aa3' stroke='#4b555d' stroke-width='1.6'/><rect x='58' y='30' width='16' height='8' rx='1.5' fill='#cfe8d4' stroke='#4b555d' stroke-width='.8'/><text class='tx' data-cx='66' x='66' y='36.2' font-size='6' font-weight='700' text-anchor='middle' fill='#25352a' font-family='monospace'>50%</text><g stroke='#4b555d' stroke-width='.5'><rect x='58.0' y='40' width='3.6' height='3.8' rx='1' fill='#e0e5ea'/><rect x='62.5' y='40' width='3.6' height='3.8' rx='1' fill='#e0e5ea'/><rect x='67.0' y='40' width='3.6' height='3.8' rx='1' fill='#e0e5ea'/><rect x='71.5' y='40' width='3.6' height='3.8' rx='1' fill='#ffb74d'/><rect x='58.0' y='45' width='3.6' height='3.8' rx='1' fill='#e0e5ea'/><rect x='62.5' y='45' width='3.6' height='3.8' rx='1' fill='#e0e5ea'/><rect x='67.0' y='45' width='3.6' height='3.8' rx='1' fill='#e0e5ea'/><rect x='71.5' y='45' width='3.6' height='3.8' rx='1' fill='#ffb74d'/><rect x='58.0' y='50' width='3.6' height='3.8' rx='1' fill='#e0e5ea'/><rect x='62.5' y='50' width='3.6' height='3.8' rx='1' fill='#e0e5ea'/><rect x='67.0' y='50' width='3.6' height='3.8' rx='1' fill='#e0e5ea'/><rect x='71.5' y='50' width='3.6' height='3.8' rx='1' fill='#ffb74d'/></g>"
+  }
+ ],
+ "anim": []
+}

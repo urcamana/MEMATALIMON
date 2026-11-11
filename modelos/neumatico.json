@@ -1,0 +1,24 @@
+{
+ "id": "neumatico",
+ "partes": [
+  {
+   "slot": "mano_d",
+   "svg": "<g transform='translate(66 55)'><g id='ne_g'><circle cx='6' cy='-15' r='14' fill='#2b2b2b' stroke='#111' stroke-width='1.2'/><circle cx='6' cy='-15' r='12' fill='none' stroke='#5a5a5a' stroke-width='1.6' stroke-dasharray='2.6 2.4'/><circle cx='6' cy='-15' r='8' fill='#cfd8dc' stroke='#78909c' stroke-width='1.2'/><path d='M6 -15L13.0 -15.0' stroke='#90a4ae' stroke-width='1.6' stroke-linecap='round'/><path d='M6 -15L8.2 -8.3' stroke='#90a4ae' stroke-width='1.6' stroke-linecap='round'/><path d='M6 -15L0.3 -10.9' stroke='#90a4ae' stroke-width='1.6' stroke-linecap='round'/><path d='M6 -15L0.3 -19.1' stroke='#90a4ae' stroke-width='1.6' stroke-linecap='round'/><path d='M6 -15L8.2 -21.7' stroke='#90a4ae' stroke-width='1.6' stroke-linecap='round'/><circle cx='9.6' cy='-12.4' r='1.05' fill='#607d8b'/><circle cx='4.6' cy='-10.8' r='1.05' fill='#607d8b'/><circle cx='1.6' cy='-15.0' r='1.05' fill='#607d8b'/><circle cx='4.6' cy='-19.2' r='1.05' fill='#607d8b'/><circle cx='9.6' cy='-17.6' r='1.05' fill='#607d8b'/><circle cx='6' cy='-15' r='2.2' fill='#eceff1' stroke='#90a4ae' stroke-width='.6'/></g></g>"
+  },
+  {
+   "slot": "mano_i",
+   "svg": "<g transform='translate(14 55) rotate(-14)'><rect x='-3.2' y='-13' width='6.4' height='13' rx='2.4' fill='#ff7043' stroke='#bf360c' stroke-width='1'/><path d='M-1.6 -12V-1M1.6 -12V-1' stroke='#bf360c' stroke-width='.8'/><rect x='-1' y='-33' width='2' height='20' fill='#b0bec5' stroke='#78909c' stroke-width='.6'/><path d='M-2 -33H2L1 -36H-1Z' fill='#90a4ae'/></g>"
+  }
+ ],
+ "anim": [
+  {
+   "sel": "ne_g",
+   "tipo": "giro",
+   "vel": 0.1,
+   "pivote": [
+    6,
+    -15
+   ]
+  }
+ ]
+}

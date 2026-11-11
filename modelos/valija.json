@@ -1,0 +1,10 @@
+{
+ "id": "valija",
+ "partes": [
+  {
+   "slot": "mano_i",
+   "svg": "<path d='M14 58L5 63' stroke='#5d3512' stroke-width='2' stroke-linecap='round'/><g transform='translate(1 78)'><path d='M-4 -14V-19H10V-14' stroke='#5d3512' stroke-width='2' fill='none' stroke-linejoin='round'/><rect x='-9' y='-14' width='28' height='20' rx='3' fill='#8d5524' stroke='#5d3512' stroke-width='1.6'/><path d='M-9 -4H19' stroke='#5d3512' stroke-width='1'/><rect x='-3' y='-15' width='4' height='5' fill='#ffd54f' stroke='#c79100' stroke-width='.6'/><rect x='9' y='-15' width='4' height='5' fill='#ffd54f' stroke='#c79100' stroke-width='.6'/><circle cx='-3' cy='-8' r='3' fill='#29b6f6' stroke='#fff' stroke-width='.8'/><rect x='5' y='-11' width='8' height='5' fill='#ef5350' stroke='#fff' stroke-width='.8' transform='rotate(-8 9 -8)'/><path d='M12 -2L17 -2L14.5 2.5Z' fill='#66bb6a' stroke='#fff' stroke-width='.7'/></g>"
+  }
+ ],
+ "anim": []
+}

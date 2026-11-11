@@ -1,0 +1,30 @@
+{
+ "id": "copa_botella",
+ "partes": [
+  {
+   "slot": "mano_d",
+   "svg": "<g transform='translate(66 55)'><path d='M-6.5 -28H6.5L4.6 -15Q0 -11.5 -4.6 -15Z' fill='#ffe9a8' fill-opacity='.9' stroke='#c9a227' stroke-width='1.4' stroke-linejoin='round'/><path d='M0 -12V-2M-5 -2H5' stroke='#c9a227' stroke-width='1.8' stroke-linecap='round'/><g id='cb_1'><circle cx='-1.5' cy='-17' r='.9' fill='#fff'/></g><g id='cb_2'><circle cx='1.8' cy='-17' r='.8' fill='#fff'/></g></g>"
+  },
+  {
+   "slot": "mano_i",
+   "svg": "<g transform='translate(14 55) rotate(-16)'><rect x='-5.2' y='-24' width='10.4' height='25' rx='3.2' fill='#2e6b3e' stroke='#16391f' stroke-width='1.2'/><path d='M-5.2 -24Q-5.2 -29 -2.2 -31V-35H2.2V-31Q5.2 -29 5.2 -24Z' fill='#2e6b3e' stroke='#16391f' stroke-width='1.2' stroke-linejoin='round'/><rect x='-3' y='-42' width='6' height='9' rx='1' fill='#fbc02d' stroke='#c79100' stroke-width='.8'/><path d='M-3 -36H3M-3 -39H3' stroke='#c79100' stroke-width='.6'/><rect x='-4.6' y='-19' width='9.2' height='9' rx='1' fill='#fff8e1' stroke='#c9b78a' stroke-width='.7'/><circle cx='0' cy='-14.5' r='2.4' fill='#fbc02d' stroke='#c79100' stroke-width='.5'/><path d='M-3.4 -22Q-3.6 -8 -3.4 0' stroke='#7ccf8a' stroke-width='1.2' fill='none' opacity='.6'/></g>"
+  }
+ ],
+ "anim": [
+  {
+   "sel": "cb_1",
+   "tipo": "subida",
+   "vel": 0.9,
+   "alto": 8,
+   "amp": 1
+  },
+  {
+   "sel": "cb_2",
+   "tipo": "subida",
+   "vel": 0.7,
+   "alto": 9,
+   "amp": 1,
+   "fase": 0.5
+  }
+ ]
+}

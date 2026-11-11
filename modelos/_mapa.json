@@ -1,0 +1,165 @@
+{
+ "_ayuda": "Cada línea: id de la fecha (el mismo id de obsequios.js o de fechas.extras en items_limon.json) → lista de modelos (archivos de esta carpeta, sin .json). Si una fecha no figura acá, usa su accesorio simple de siempre. Para sumar un modelo: copiá su archivo .json en esta carpeta y agregá una línea acá. 'cochecito' queda disponible sin usar (probalo cambiando madre por [\"cochecito\"]).",
+ "halloween": [
+  "fantasma"
+ ],
+ "abogado": [
+  "balanza"
+ ],
+ "odontologo": [
+  "diente"
+ ],
+ "madre": [
+  "ramo"
+ ],
+ "niño": [
+  "molinete"
+ ],
+ "fotografo": [
+  "camara"
+ ],
+ "padre": [
+  "bigote"
+ ],
+ "enamorados": [
+  "cupido"
+ ],
+ "bancario": [
+  "fajo"
+ ],
+ "canillita": [
+  "diario"
+ ],
+ "municipal": [
+  "credencial"
+ ],
+ "hombre": [
+  "sombrero_copa"
+ ],
+ "enfermeria": [
+  "cofia"
+ ],
+ "medico": [
+  "estetoscopio"
+ ],
+ "ama_de_casa": [
+  "plumero"
+ ],
+ "optico": [
+  "lentes_prueba"
+ ],
+ "contador": [
+  "calculadora"
+ ],
+ "blackfriday": [
+  "carrito"
+ ],
+ "mujer": [
+  "aurora"
+ ],
+ "amigo": [
+  "abrazo"
+ ],
+ "novia": [
+  "anillo"
+ ],
+ "profe": [
+  "manzana"
+ ],
+ "publicitario": [
+  "megafono"
+ ],
+ "artesano": [
+  "pincel"
+ ],
+ "viajante": [
+  "valija"
+ ],
+ "secretaria": [
+  "agenda"
+ ],
+ "mundial": [
+  "mundial"
+ ],
+ "actor": [
+  "mascaras"
+ ],
+ "barrabas": [
+  "vasija"
+ ],
+ "comercio_exterior": [
+  "timon"
+ ],
+ "locutor": [
+  "estudio"
+ ],
+ "camionero": [
+  "gorra_trucker"
+ ],
+ "veterinario": [
+  "huella"
+ ],
+ "almacenero": [
+  "delantal"
+ ],
+ "inmobiliario": [
+  "llaves"
+ ],
+ "bibliotecario": [
+  "libro"
+ ],
+ "programador": [
+  "lentes_codigo"
+ ],
+ "profesor": [
+  "puntero"
+ ],
+ "empleado_comercio": [
+  "lector"
+ ],
+ "farmaceutico": [
+  "mortero"
+ ],
+ "disenador_grafico": [
+  "stylus"
+ ],
+ "transporte": [
+  "volante"
+ ],
+ "psicologo": [
+  "divan"
+ ],
+ "musico": [
+  "guitarra"
+ ],
+ "vitivinicola": [
+  "copa_botella"
+ ],
+ "guardavidas": [
+  "salvavidas"
+ ],
+ "mecanico": [
+  "neumatico"
+ ],
+ "pizzero_pastelero": [
+  "palo_amasar"
+ ],
+ "kinesiologo": [
+  "hueso"
+ ],
+ "disenador_interiores": [
+  "florero"
+ ],
+ "disenador_moda": [
+  "tijera"
+ ],
+ "periodista": [
+  "celular"
+ ],
+ "arquitecto": [
+  "escuadra"
+ ],
+ "quimico": [
+  "laboratorio"
+ ]
+}

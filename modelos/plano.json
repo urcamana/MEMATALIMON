@@ -1,0 +1,10 @@
+{
+ "id": "plano",
+ "partes": [
+  {
+   "slot": "espalda",
+   "svg": "<g transform='translate(52 32) rotate(38)'><rect x='-4' y='-4.5' width='38' height='9' rx='4.5' fill='#26c6da' stroke='#00838f' stroke-width='1.2'/><path d='M0 -2H31M0 2H27' stroke='#b2ebf2' stroke-width='.8'/><ellipse cx='34' cy='0' rx='2.2' ry='4.5' fill='#00acc1' stroke='#00838f' stroke-width='1'/><path d='M8 -4.5V4.5M24 -4.5V4.5' stroke='#e0f7fa' stroke-width='1.2'/></g>"
+  }
+ ],
+ "anim": []
+}

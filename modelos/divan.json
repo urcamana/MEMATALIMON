@@ -1,0 +1,18 @@
+{
+ "id": "divan",
+ "saludo": "Mmm… contame, ¿cómo te sentís hoy? 🛋️",
+ "recuesta": {
+  "dx": 17,
+  "dy": -36,
+  "grados": 82
+ },
+ "partes": [
+  {
+   "slot": "companero",
+   "svg": "<rect x='-14' y='80' width='6' height='9' rx='1.5' fill='#6d4c41' stroke='#4e342e' stroke-width='1'/><rect x='88' y='80' width='6' height='9' rx='1.5' fill='#6d4c41' stroke='#4e342e' stroke-width='1'/><path d='M-18 70Q-18 62 -10 62H84Q92 62 92 70V80H-18Z' fill='#26262e' stroke='#101014' stroke-width='1.6' stroke-linejoin='round'/><path d='M-17 66Q-16 63 -10 63H84Q90 63 91 66' fill='none' stroke='#5a5a68' stroke-width='1.6' stroke-linecap='round'/><ellipse cx='78' cy='60' rx='12' ry='6' fill='#f5f5f5' stroke='#cfcfcf' stroke-width='1'/><g fill='#3a3a46'><circle cx='-4' cy='71' r='1.4'/><circle cx='14' cy='71' r='1.4'/><circle cx='32' cy='71' r='1.4'/><circle cx='50' cy='71' r='1.4'/><circle cx='68' cy='71' r='1.4'/></g>",
+   "dx": 46,
+   "dy": 0
+  }
+ ],
+ "anim": []
+}

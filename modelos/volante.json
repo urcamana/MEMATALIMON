@@ -1,0 +1,24 @@
+{
+ "id": "volante",
+ "extras": [
+  "gorra"
+ ],
+ "partes": [
+  {
+   "slot": "mano_d",
+   "svg": "<g transform='translate(66 55)'><g id='vo_g'><circle cx='7' cy='-14' r='10.5' fill='none' stroke='#37474f' stroke-width='3.6'/><path d='M-3.5 -14H17.5M7 -14V-3.5' stroke='#37474f' stroke-width='2.8'/><circle cx='7' cy='-14' r='3.6' fill='#d32f2f' stroke='#8e1b17' stroke-width='1'/></g></g>"
+  }
+ ],
+ "anim": [
+  {
+   "sel": "vo_g",
+   "tipo": "balanceo",
+   "grados": 14,
+   "vel": 0.35,
+   "pivote": [
+    7,
+    -14
+   ]
+  }
+ ]
+}

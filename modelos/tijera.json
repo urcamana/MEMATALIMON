@@ -1,0 +1,32 @@
+{
+ "id": "tijera",
+ "partes": [
+  {
+   "slot": "mano_d",
+   "svg": "<g transform='translate(66 55) rotate(6)'><g id='ti_a'><path d='M0 -12L5.5 -38L2.6 -38.5L-2.8 -12Z' fill='#e0e6ea' stroke='#78909c' stroke-width='1' stroke-linejoin='round'/><path d='M0 -12L-3.5 -2' stroke='#ff7043' stroke-width='3' stroke-linecap='round'/><ellipse cx='-4.8' cy='2.6' rx='3.6' ry='4.6' fill='none' stroke='#ff7043' stroke-width='2.6'/></g><g id='ti_b'><path d='M0 -12L-5.5 -38L-2.6 -38.5L2.8 -12Z' fill='#e0e6ea' stroke='#78909c' stroke-width='1' stroke-linejoin='round'/><path d='M0 -12L3.5 -2' stroke='#ff7043' stroke-width='3' stroke-linecap='round'/><ellipse cx='4.8' cy='2.6' rx='3.6' ry='4.6' fill='none' stroke='#ff7043' stroke-width='2.6'/></g><circle cx='0' cy='-12' r='1.8' fill='#546e7a'/></g>"
+  }
+ ],
+ "anim": [
+  {
+   "sel": "ti_a",
+   "tipo": "balanceo",
+   "grados": 9,
+   "vel": 0.7,
+   "pivote": [
+    0,
+    -12
+   ]
+  },
+  {
+   "sel": "ti_b",
+   "tipo": "balanceo",
+   "grados": 9,
+   "vel": 0.7,
+   "pivote": [
+    0,
+    -12
+   ],
+   "fase": 3.14
+  }
+ ]
+}

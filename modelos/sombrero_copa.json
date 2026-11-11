@@ -1,0 +1,10 @@
+{
+ "id": "sombrero_copa",
+ "partes": [
+  {
+   "slot": "cabeza",
+   "svg": "<g transform='translate(32 21) rotate(-16)'><ellipse cx='0' cy='0' rx='17' ry='4.2' fill='#1d1d25' stroke='#000' stroke-width='1'/><path d='M-10 0V-26Q0 -30 10 -26V0Z' fill='#2a2a35' stroke='#000' stroke-width='1.2' stroke-linejoin='round'/><ellipse cx='0' cy='-26' rx='10' ry='3' fill='#34343f' stroke='#000' stroke-width='1'/><rect x='-10' y='-8' width='20' height='5' fill='#b71c1c' stroke='#7f1313' stroke-width='.8'/></g>"
+  }
+ ],
+ "anim": []
+}

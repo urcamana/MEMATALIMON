@@ -1,0 +1,20 @@
+{
+ "id": "molinete",
+ "partes": [
+  {
+   "slot": "mano_d",
+   "svg": "<path d='M66 58V22' stroke='#a1887f' stroke-width='2.2' stroke-linecap='round'/><g id='mo_r'><path d='M66 18L66 5L77 12Z' fill='#ef5350'/><path d='M66 18L79 18L72 29Z' fill='#fdd835'/><path d='M66 18L66 31L55 24Z' fill='#42a5f5'/><path d='M66 18L53 18L60 7Z' fill='#66bb6a'/><circle cx='66' cy='18' r='2.4' fill='#fff' stroke='#999' stroke-width='.8'/></g>"
+  }
+ ],
+ "anim": [
+  {
+   "sel": "mo_r",
+   "tipo": "giro",
+   "vel": 0.8,
+   "pivote": [
+    66,
+    18
+   ]
+  }
+ ]
+}

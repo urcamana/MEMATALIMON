@@ -1,0 +1,13 @@
+{
+ "id": "silbato",
+ "extras": [
+  "sol"
+ ],
+ "partes": [
+  {
+   "slot": "cuello",
+   "svg": "<path d='M25 61Q40 82 55 61' fill='none' stroke='#212121' stroke-width='1.6'/><g transform='translate(40 77)'><ellipse cx='0' cy='0' rx='6' ry='4.4' fill='#e53935' stroke='#8e1b17' stroke-width='1.2'/><rect x='-4' y='-8' width='8' height='5' rx='1' fill='#e53935' stroke='#8e1b17' stroke-width='1.1'/><circle cx='1' cy='1' r='1.6' fill='#fff' opacity='.7'/><rect x='3' y='-1.6' width='7' height='3.2' rx='1.4' fill='#c62828' stroke='#8e1b17' stroke-width='1'/></g>"
+  }
+ ],
+ "anim": []
+}

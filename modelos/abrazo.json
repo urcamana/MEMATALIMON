@@ -1,0 +1,15 @@
+{
+ "id": "abrazo",
+ "saludo": "¡Feliz Día del Amigo! 🤝",
+ "ocultar": [
+  "a1",
+  "a2"
+ ],
+ "partes": [
+  {
+   "slot": "cuerpo",
+   "svg": "<path d='M18 51Q11 60 14 69' fill='none' stroke='#c99a00' stroke-width='9.5' stroke-linecap='round'/><path d='M18 51Q11 60 14 69' fill='none' stroke='#ffe14a' stroke-width='6' stroke-linecap='round'/><path d='M62 51Q69 60 66 69' fill='none' stroke='#c99a00' stroke-width='9.5' stroke-linecap='round'/><path d='M62 51Q69 60 66 69' fill='none' stroke='#ffe14a' stroke-width='6' stroke-linecap='round'/><rect x='13' y='67' width='54' height='18' rx='3' fill='#ffcc80' stroke='#a1673a' stroke-width='1.6'/><path d='M16 70H64M16 82H64' stroke='#fff3d6' stroke-width='1' opacity='.7'/><text class='tx' data-cx='40' x='40' y='80' font-size='9.4' font-weight='800' text-anchor='middle' fill='#c62828' font-family='system-ui,sans-serif'>AMIGOS</text><ellipse cx='14' cy='69' rx='4.6' ry='5.2' fill='#ffe14a' stroke='#c99a00' stroke-width='1.6'/><ellipse cx='66' cy='69' rx='4.6' ry='5.2' fill='#ffe14a' stroke='#c99a00' stroke-width='1.6'/>"
+  }
+ ],
+ "anim": []
+}

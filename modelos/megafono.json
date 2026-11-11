@@ -1,0 +1,21 @@
+{
+ "id": "megafono",
+ "partes": [
+  {
+   "slot": "mano_d",
+   "svg": "<g transform='translate(64 46) rotate(-30) scale(1.25)'><path d='M0 -4L18 -11V11L0 4Z' fill='#ef5350' stroke='#a8201a' stroke-width='1.4' stroke-linejoin='round'/><rect x='-5' y='-4.5' width='6' height='9' rx='2' fill='#455a64' stroke='#263238' stroke-width='1.2'/><ellipse cx='18' cy='0' rx='3' ry='11' fill='#ffcdd2' stroke='#a8201a' stroke-width='1.2'/><rect x='3' y='3' width='3' height='9' rx='1.2' fill='#455a64'/></g><g id='me_r'><path d='M85.6 27.1L87.9 18.4' stroke='#ffb300' stroke-width='2.6' stroke-linecap='round'/><path d='M88.4 28.5L94.0 21.4' stroke='#ffb300' stroke-width='2.6' stroke-linecap='round'/><path d='M90.4 30.8L98.2 26.3' stroke='#ffb300' stroke-width='2.6' stroke-linecap='round'/><path d='M91.4 33.7L100.3 32.4' stroke='#ffb300' stroke-width='2.6' stroke-linecap='round'/><path d='M91.2 36.9L99.9 39.2' stroke='#ffb300' stroke-width='2.6' stroke-linecap='round'/></g>"
+  }
+ ],
+ "anim": [
+  {
+   "sel": "me_r",
+   "tipo": "pulso",
+   "amp": 0.22,
+   "vel": 1.6,
+   "pivote": [
+    83.5,
+    34.8
+   ]
+  }
+ ]
+}

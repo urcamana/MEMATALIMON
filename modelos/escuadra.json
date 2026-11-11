@@ -1,0 +1,10 @@
+{
+ "id": "escuadra",
+ "partes": [
+  {
+   "slot": "mano_d",
+   "svg": "<g transform='translate(64 56) rotate(-8)'><path fill-rule='evenodd' d='M0 0V-28L26 0ZM5 -5V-17L17 -5Z' fill='#80deea' fill-opacity='.6' stroke='#00838f' stroke-width='1.3' stroke-linejoin='round'/><path d='M0 -4H2M0 -8H3M0 -12H2M0 -16H3M0 -20H2M0 -24H3M4 0V-2M8 0V-3M12 0V-2M16 0V-3M20 0V-2' stroke='#006064' stroke-width='.8'/></g>"
+  }
+ ],
+ "anim": []
+}

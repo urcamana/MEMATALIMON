@@ -1,0 +1,21 @@
+{
+ "id": "libro",
+ "partes": [
+  {
+   "slot": "cabeza",
+   "svg": "<g id='li_g'><rect x='19' y='23' width='42' height='7.5' rx='1.2' fill='#8d5524' stroke='#5d3512' stroke-width='1'/><rect x='22' y='24.6' width='36' height='4.3' fill='#fff8e1'/><path d='M20.6 24V29.5' stroke='#ffd54f' stroke-width='1'/><rect x='23' y='15.5' width='36' height='7.5' rx='1.2' fill='#1e88e5' stroke='#0d47a1' stroke-width='1'/><rect x='26' y='17.1' width='30' height='4.3' fill='#fff8e1'/><path d='M24.6 16.5V22.0' stroke='#ffd54f' stroke-width='1'/><rect x='28' y='8' width='26' height='7.5' rx='1.2' fill='#e53935' stroke='#8e1b17' stroke-width='1'/><rect x='31' y='9.6' width='20' height='4.3' fill='#fff8e1'/><path d='M29.6 9V14.5' stroke='#ffd54f' stroke-width='1'/></g>"
+  }
+ ],
+ "anim": [
+  {
+   "sel": "li_g",
+   "tipo": "balanceo",
+   "grados": 3,
+   "vel": 0.5,
+   "pivote": [
+    40,
+    30
+   ]
+  }
+ ]
+}

@@ -1,0 +1,36 @@
+{
+ "id": "guitarra",
+ "partes": [
+  {
+   "slot": "mano_d",
+   "svg": "<g id='gu_g'><g transform='translate(66 55) rotate(18)'><rect x='-1.9' y='-34' width='3.8' height='30' rx='1' fill='#6d4c41' stroke='#3e2723' stroke-width='.8'/><rect x='-2.8' y='-43' width='5.6' height='10' rx='1.2' fill='#4e342e' stroke='#2b1b17' stroke-width='.8'/><g fill='#d7ccc8'><circle cx='-3.6' cy='-40' r='1'/><circle cx='-3.6' cy='-36' r='1'/><circle cx='3.6' cy='-40' r='1'/><circle cx='3.6' cy='-36' r='1'/></g><path d='M-6 0Q-9.5 -4 -5 -7.5Q0 -9.5 5 -7.5Q9.5 -4 6 0Q11 3.5 10 10Q9 19 0 19Q-9 19 -10 10Q-11 3.5 -6 0Z' fill='#d08a45' stroke='#7b4a1a' stroke-width='1.3' stroke-linejoin='round'/><circle cx='0' cy='6' r='3.2' fill='#2b1b17'/><rect x='-4.5' y='12.5' width='9' height='1.8' rx='.8' fill='#3e2723'/><path d='M-.9 -34V13M0 -34V13M.9 -34V13' stroke='#eee' stroke-width='.4'/></g></g><g id='gu_n1'><text x='80' y='28' font-size='11' fill='#fff' stroke='#6b4ca3' stroke-width='.5' font-weight='700'>♪</text></g><g id='gu_n2'><text x='88' y='40' font-size='10' fill='#fff' stroke='#6b4ca3' stroke-width='.5' font-weight='700'>♫</text></g>"
+  }
+ ],
+ "anim": [
+  {
+   "sel": "gu_g",
+   "tipo": "balanceo",
+   "grados": 3,
+   "vel": 0.8,
+   "pivote": [
+    66,
+    55
+   ]
+  },
+  {
+   "sel": "gu_n1",
+   "tipo": "subida",
+   "vel": 0.55,
+   "alto": 14,
+   "amp": 2
+  },
+  {
+   "sel": "gu_n2",
+   "tipo": "subida",
+   "vel": 0.45,
+   "alto": 16,
+   "amp": 2,
+   "fase": 0.5
+  }
+ ]
+}

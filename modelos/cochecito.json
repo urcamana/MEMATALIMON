@@ -1,0 +1,37 @@
+{
+ "id": "cochecito",
+ "partes": [
+  {
+   "slot": "companero",
+   "dx": 52,
+   "dy": 0,
+   "svg": "<g id='co_b'><circle cx='38' cy='50' r='9.5' fill='#ffe14a' stroke='#c99a00' stroke-width='2'/><circle cx='35' cy='49' r='1.6' fill='#333'/><circle cx='42' cy='49' r='1.6' fill='#333'/><path d='M35 54Q38.5 57 42 54' fill='none' stroke='#8a4b00' stroke-width='1.3' stroke-linecap='round'/><path d='M38 41Q39 36 45 36Q44 41 38 41Z' fill='#5bbf4a' stroke='#3c8c32' stroke-width='.8'/></g><path d='M5 56Q5 32 24 32Q32 32 32 48L32 56Z' fill='#ff8fb0' stroke='#d46b8a' stroke-width='2' stroke-linejoin='round'/><path d='M5 56H55Q55 78 37 80H21Q5 78 5 56Z' fill='#ffb6c9' stroke='#d46b8a' stroke-width='2' stroke-linejoin='round'/><path d='M5 62H55' stroke='#fff' stroke-opacity='.6' stroke-width='2'/><path d='M5 54L-5 38H-10' fill='none' stroke='#8d6e63' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/><g id='co_r1'><circle cx='18' cy='86' r='7' fill='#fff' stroke='#555' stroke-width='2'/><path d='M18 79V93M11 86H25' stroke='#555' stroke-width='1.4'/></g><g id='co_r2'><circle cx='46' cy='86' r='7' fill='#fff' stroke='#555' stroke-width='2'/><path d='M46 79V93M39 86H53' stroke='#555' stroke-width='1.4'/></g>"
+  }
+ ],
+ "anim": [
+  {
+   "sel": "co_r1",
+   "tipo": "rueda",
+   "k": 6,
+   "pivote": [
+    18,
+    86
+   ]
+  },
+  {
+   "sel": "co_r2",
+   "tipo": "rueda",
+   "k": 6,
+   "pivote": [
+    46,
+    86
+   ]
+  },
+  {
+   "sel": "co_b",
+   "tipo": "flota",
+   "amp": 0.8,
+   "vel": 1.2
+  }
+ ]
+}

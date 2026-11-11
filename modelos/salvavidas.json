@@ -1,0 +1,13 @@
+{
+ "id": "salvavidas",
+ "extras": [
+  "sol"
+ ],
+ "partes": [
+  {
+   "slot": "cuerpo",
+   "svg": "<path d='M17 72A23 8 0 0 0 63 72' fill='none' stroke='#a84300' stroke-width='11.4' stroke-linecap='butt'/><path d='M17 72A23 8 0 0 0 63 72' fill='none' stroke='#fff' stroke-width='9' stroke-linecap='butt'/><path d='M17 72A23 8 0 0 0 63 72' fill='none' stroke='#ff6d00' stroke-width='9' stroke-dasharray='13.5 13.5' stroke-linecap='butt'/><path d='M17 72Q15 69 17 66.5M63 72Q65 69 63 66.5' fill='none' stroke='#a84300' stroke-width='1.4'/>"
+  }
+ ],
+ "anim": []
+}

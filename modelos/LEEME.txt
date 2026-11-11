@@ -1,0 +1,23 @@
+MODELOS DE LIMÓN
+================
+Carpeta modelos/ (va junto a index.html). Cada archivo .json es un disfraz u objeto distinto; _mapa.json dice qué fecha usa cuál.
+
+Para agregar modelos nuevos: copiá los .json que te mande en esta carpeta y reemplazá _mapa.json (o agregale las líneas nuevas). No hace falta tocar mascota.js.
+Para cambiar qué modelo usa una fecha: editá su línea en _mapa.json. Se pueden poner varios: "abogado": ["balanza", "otro"].
+Probalo con index.html?limon (modo prueba) eligiendo el evento.
+
+Formato de un modelo (por si querés editar):
+  partes: lista de { slot, svg }. Slots: espalda, cuerpo, cuello, cara, cabeza, mano_d, mano_i, disfraz (cubre todo) y companero (objeto al lado: dx/dy en px).
+  El dibujo usa las coordenadas de Limón (ancho 80, alto 96; pies en y=90; mano derecha en 66,55; mano izquierda en 14,55).
+  anim: lista de { sel (id dentro del dibujo), tipo, ... } con tipos balanceo (grados, vel, pivote), giro (vel, pivote), rueda (k, pivote), pulso (amp), flota (amp), parpadeo (vel, duty), subida (alto, vel).
+  Otros campos: disfraz (true oculta los accesorios simples), extras (accesorios simples a sumar, ej. ["corazones"]), ocultar (ids del dibujo base a esconder).
+Los elementos que se animan tienen que ser un <g> con id y sin transform propio.
+
+Novedades del formato (segunda tanda):
+  saludo: texto que dice Limón ese día si la fecha no tiene uno propio (ej. el diario del Canillita).
+  Textos dentro de un dibujo: usá <text class='tx' data-cx='X' text-anchor='middle' x='X'> (X = centro del texto) para que no se vea espejado cuando Limón mira hacia la izquierda.
+  Eventos largos (Mundial, Black Friday): el modelo aparece desde el día que empiezan y dura todo el evento.
+  recuesta: {dx, dy, grados} -> cuando Limón se sienta, se recuesta de costado sobre el objeto acompañante (ver divan.json).
+  dichos: lista de frases que Limón dice de vez en cuando ese día (ej. el anillo de la novia).
+  ocultar: ids del dibujo base a esconder (ej. ['a1','a2'] esconde los brazos para dibujar los propios).
+Si coinciden dos fechas el mismo día se combinan sus objetos (si no usan el mismo hueco); el Día del Padre y las fechas patrias tienen prioridad.

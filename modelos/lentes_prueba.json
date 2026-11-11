@@ -1,0 +1,29 @@
+{
+ "id": "lentes_prueba",
+ "partes": [
+  {
+   "slot": "cara",
+   "svg": "<path d='M22 37H58' stroke='#37474f' stroke-width='3' stroke-linecap='round'/><circle cx='32' cy='46' r='9.2' fill='#cfe9ff' fill-opacity='.35' stroke='#263238' stroke-width='3.2'/><circle cx='48' cy='46' r='9.2' fill='#cfe9ff' fill-opacity='.35' stroke='#263238' stroke-width='3.2'/><path d='M41.2 45H38.8' stroke='#263238' stroke-width='2.4'/><path d='M23 45L15 42M57 45L65 42' stroke='#263238' stroke-width='2.6' stroke-linecap='round'/><g id='lp_1'><circle cx='32' cy='36' r='3' fill='#90a4ae' stroke='#263238' stroke-width='1.4'/><path d='M32 33.4V36' stroke='#263238' stroke-width='1.2'/></g><g id='lp_2'><circle cx='48' cy='36' r='3' fill='#90a4ae' stroke='#263238' stroke-width='1.4'/><path d='M48 33.4V36' stroke='#263238' stroke-width='1.2'/></g>"
+  }
+ ],
+ "anim": [
+  {
+   "sel": "lp_1",
+   "tipo": "giro",
+   "vel": 0.25,
+   "pivote": [
+    32,
+    36
+   ]
+  },
+  {
+   "sel": "lp_2",
+   "tipo": "giro",
+   "vel": -0.2,
+   "pivote": [
+    48,
+    36
+   ]
+  }
+ ]
+}

@@ -1,0 +1,20 @@
+{
+ "id": "stylus",
+ "extras": [
+  "lentes"
+ ],
+ "partes": [
+  {
+   "slot": "mano_d",
+   "svg": "<g transform='translate(66 55) rotate(28)'><rect x='-2' y='-30' width='4' height='30' rx='2' fill='#1e88e5' stroke='#0d47a1' stroke-width='1'/><path d='M-2 -30L0 -36L2 -30Z' fill='#cfd8dc' stroke='#78909c' stroke-width='.8' stroke-linejoin='round'/><rect x='-2' y='-22' width='4' height='3' fill='#bbdefb'/><circle cx='0' cy='-2' r='2.2' fill='#90caf9' stroke='#0d47a1' stroke-width='.8'/></g><g id='sg_s' opacity='0'><path d='M83 15V29M76 22H90M78 17L88 27M88 17L78 27' stroke='#fff' stroke-width='1.6' stroke-linecap='round'/><path d='M83 16V28M77 22H89' stroke='#4dd0e1' stroke-width='.8'/></g>"
+  }
+ ],
+ "anim": [
+  {
+   "sel": "sg_s",
+   "tipo": "parpadeo",
+   "vel": 0.6,
+   "duty": 0.15
+  }
+ ]
+}

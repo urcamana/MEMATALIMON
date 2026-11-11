@@ -1,0 +1,40 @@
+{
+ "id": "carrito",
+ "extras": [
+  "sol"
+ ],
+ "partes": [
+  {
+   "slot": "companero",
+   "svg": "<g id='bf_b'><rect x='14' y='26' width='14' height='15' rx='1.5' fill='#42a5f5' stroke='#1e6fb5' stroke-width='1.4'/><path d='M21 26V41M14 33.5H28' stroke='#fff' stroke-width='1.6'/><rect x='30' y='18' width='15' height='23' rx='1.5' fill='#ef5350' stroke='#b71c1c' stroke-width='1.4'/><path d='M37.5 18V41M30 29H45' stroke='#ffd54f' stroke-width='1.8'/><path d='M37.5 18Q33 11 30 15Q33 19 37.5 18Q42 11 45 15Q42 19 37.5 18Z' fill='#ffd54f' stroke='#c79100' stroke-width='.8'/><rect x='47' y='28' width='11' height='13' rx='1.5' fill='#ffd54f' stroke='#c79100' stroke-width='1.4'/></g><path d='M56 38V3' stroke='#8d6e63' stroke-width='2' stroke-linecap='round'/><rect x='24' y='3' width='32' height='11' rx='2' fill='#e53935' stroke='#b71c1c' stroke-width='1.4'/><text class='tx' data-cx='40' x='40' y='11.2' font-size='6.4' font-weight='700' text-anchor='middle' fill='#fff' font-family='system-ui,sans-serif'>OFERTAS</text><path d='M8 38H64L58 68H14Z' fill='#cfd8dc' fill-opacity='.45' stroke='#607d8b' stroke-width='2.2' stroke-linejoin='round'/><path d='M12 48H61M15 58H57M26 38L28 68M40 38V68M54 38L52 68' stroke='#607d8b' stroke-width='1.1'/><path d='M8 38L-1 26H-8' fill='none' stroke='#607d8b' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/><path d='M16 68L18 72M54 68L52 72' stroke='#607d8b' stroke-width='2'/><g id='bf_r1'><circle cx='18' cy='77' r='5.5' fill='#455a64' stroke='#263238' stroke-width='1.4'/><path d='M18 72.5V81.5M13.5 77H22.5' stroke='#90a4ae' stroke-width='1.2'/></g><g id='bf_r2'><circle cx='52' cy='77' r='5.5' fill='#455a64' stroke='#263238' stroke-width='1.4'/><path d='M52 72.5V81.5M47.5 77H56.5' stroke='#90a4ae' stroke-width='1.2'/></g>",
+   "dx": 54,
+   "dy": 0
+  }
+ ],
+ "anim": [
+  {
+   "sel": "bf_r1",
+   "tipo": "rueda",
+   "k": 6,
+   "pivote": [
+    18,
+    77
+   ]
+  },
+  {
+   "sel": "bf_r2",
+   "tipo": "rueda",
+   "k": 6,
+   "pivote": [
+    52,
+    77
+   ]
+  },
+  {
+   "sel": "bf_b",
+   "tipo": "flota",
+   "amp": 0.8,
+   "vel": 1.5
+  }
+ ]
+}

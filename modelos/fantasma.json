@@ -1,0 +1,22 @@
+{
+ "id": "fantasma",
+ "disfraz": true,
+ "partes": [
+  {
+   "slot": "disfraz",
+   "svg": "<g id='fa_g'><path fill-rule='evenodd' d='M6 88L10 40Q10 4 40 4Q70 4 70 40L74 88Q68.4 96 62.7 88Q57 96 51.3 88Q45.7 96 40 88Q34.3 96 28.7 88Q23 96 17.3 88Q11.7 96 6 88ZM24.4 46a7.6 8.8 0 1 0 15.2 0a7.6 8.8 0 1 0 -15.2 0ZM40.4 46a7.6 8.8 0 1 0 15.2 0a7.6 8.8 0 1 0 -15.2 0Z' fill='#fbfbff' stroke='#c3cce0' stroke-width='2' stroke-linejoin='round'/><ellipse cx='32' cy='46' rx='7.6' ry='8.8' fill='none' stroke='#6f7aa0' stroke-width='1.8'/><ellipse cx='48' cy='46' rx='7.6' ry='8.8' fill='none' stroke='#6f7aa0' stroke-width='1.8'/><path d='M18 70Q40 80 62 70M20 56Q18 66 22 76' fill='none' stroke='#dfe5f2' stroke-width='2' stroke-linecap='round'/></g>"
+  }
+ ],
+ "anim": [
+  {
+   "sel": "fa_g",
+   "tipo": "pulso",
+   "amp": 0.012,
+   "vel": 0.5,
+   "pivote": [
+    40,
+    90
+   ]
+  }
+ ]
+}

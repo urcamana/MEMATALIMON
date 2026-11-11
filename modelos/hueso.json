@@ -1,0 +1,10 @@
+{
+ "id": "hueso",
+ "partes": [
+  {
+   "slot": "mano_d",
+   "svg": "<g transform='translate(66 55) rotate(32)'><g fill='#fffdf3' stroke='#c9bf9f' stroke-width='1.2'><circle cx='-3.4' cy='-31' r='3.9'/><circle cx='3.4' cy='-31' r='3.9'/><circle cx='-3.4' cy='1' r='3.9'/><circle cx='3.4' cy='1' r='3.9'/></g><rect x='-3' y='-31' width='6' height='32' fill='#fffdf3'/><path d='M-3 -30V0M3 -30V0' stroke='#c9bf9f' stroke-width='1.2'/><path d='M-.8 -27V-4' stroke='#ece3c2' stroke-width='1.6' stroke-linecap='round'/></g>"
+  }
+ ],
+ "anim": []
+}

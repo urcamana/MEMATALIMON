@@ -1,0 +1,32 @@
+{
+ "id": "llaves",
+ "partes": [
+  {
+   "slot": "mano_d",
+   "svg": "<g id='ll_g'><circle cx='66' cy='58' r='4' fill='none' stroke='#9e9e9e' stroke-width='1.8'/><path d='M66 62L66 66L60 66L66 61L72 66Z' fill='#ef5350' stroke='#b71c1c' stroke-width='.8' stroke-linejoin='round' transform='translate(0 0)'/><g id='ll_1'><rect x='60.6' y='68' width='2.8' height='10' rx='1.4' fill='#fbc02d' stroke='#c79100' stroke-width='.8'/><circle cx='62' cy='80' r='3.4' fill='#fbc02d' stroke='#c79100' stroke-width='.8'/><circle cx='62' cy='80' r='1.2' fill='#fff8e1'/><path d='M60.6 77H58.4M60.6 80H58.4' stroke='#c79100' stroke-width='1.2'/></g><g id='ll_2'><rect x='64.6' y='66' width='2.8' height='12' rx='1.4' fill='#cfd8dc' stroke='#78909c' stroke-width='.8'/><circle cx='66' cy='80' r='3.4' fill='#cfd8dc' stroke='#78909c' stroke-width='.8'/><circle cx='66' cy='80' r='1.2' fill='#fff8e1'/><path d='M64.6 75H62.4M64.6 78H62.4' stroke='#78909c' stroke-width='1.2'/></g><g id='ll_3'><rect x='68.6' y='69' width='2.8' height='9' rx='1.4' fill='#d7a86e' stroke='#8a5f25' stroke-width='.8'/><circle cx='70' cy='80' r='3.4' fill='#d7a86e' stroke='#8a5f25' stroke-width='.8'/><circle cx='70' cy='80' r='1.2' fill='#fff8e1'/><path d='M68.6 78H66.4M68.6 81H66.4' stroke='#8a5f25' stroke-width='1.2'/></g></g>"
+  }
+ ],
+ "anim": [
+  {
+   "sel": "ll_g",
+   "tipo": "balanceo",
+   "grados": 9,
+   "vel": 1.1,
+   "pivote": [
+    66,
+    58
+   ]
+  },
+  {
+   "sel": "ll_2",
+   "tipo": "balanceo",
+   "grados": 6,
+   "vel": 1.6,
+   "pivote": [
+    66,
+    66
+   ],
+   "fase": 1.5
+  }
+ ]
+}

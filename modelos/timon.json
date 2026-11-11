@@ -1,0 +1,20 @@
+{
+ "id": "timon",
+ "partes": [
+  {
+   "slot": "mano_d",
+   "svg": "<g transform='translate(66 55)'><g id='ti_g'><path d='M7 -14L19.0 -14.0' stroke='#a1673a' stroke-width='1.8' stroke-linecap='round'/><circle cx='20.2' cy='-14.0' r='1.7' fill='#c8964e' stroke='#6b4a1f' stroke-width='.6'/><path d='M7 -14L15.5 -5.5' stroke='#a1673a' stroke-width='1.8' stroke-linecap='round'/><circle cx='16.3' cy='-4.7' r='1.7' fill='#c8964e' stroke='#6b4a1f' stroke-width='.6'/><path d='M7 -14L7.0 -2.0' stroke='#a1673a' stroke-width='1.8' stroke-linecap='round'/><circle cx='7.0' cy='-0.8' r='1.7' fill='#c8964e' stroke='#6b4a1f' stroke-width='.6'/><path d='M7 -14L-1.5 -5.5' stroke='#a1673a' stroke-width='1.8' stroke-linecap='round'/><circle cx='-2.3' cy='-4.7' r='1.7' fill='#c8964e' stroke='#6b4a1f' stroke-width='.6'/><path d='M7 -14L-5.0 -14.0' stroke='#a1673a' stroke-width='1.8' stroke-linecap='round'/><circle cx='-6.2' cy='-14.0' r='1.7' fill='#c8964e' stroke='#6b4a1f' stroke-width='.6'/><path d='M7 -14L-1.5 -22.5' stroke='#a1673a' stroke-width='1.8' stroke-linecap='round'/><circle cx='-2.3' cy='-23.3' r='1.7' fill='#c8964e' stroke='#6b4a1f' stroke-width='.6'/><path d='M7 -14L7.0 -26.0' stroke='#a1673a' stroke-width='1.8' stroke-linecap='round'/><circle cx='7.0' cy='-27.2' r='1.7' fill='#c8964e' stroke='#6b4a1f' stroke-width='.6'/><path d='M7 -14L15.5 -22.5' stroke='#a1673a' stroke-width='1.8' stroke-linecap='round'/><circle cx='16.3' cy='-23.3' r='1.7' fill='#c8964e' stroke='#6b4a1f' stroke-width='.6'/><circle cx='7' cy='-14' r='9.2' fill='none' stroke='#a1673a' stroke-width='2.6'/><circle cx='7' cy='-14' r='2.6' fill='#d7a86e' stroke='#6b4a1f' stroke-width='.8'/></g></g>"
+  }
+ ],
+ "anim": [
+  {
+   "sel": "ti_g",
+   "tipo": "giro",
+   "vel": 0.07,
+   "pivote": [
+    7,
+    -14
+   ]
+  }
+ ]
+}

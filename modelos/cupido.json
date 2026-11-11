@@ -1,0 +1,13 @@
+{
+ "id": "cupido",
+ "extras": [
+  "corazones"
+ ],
+ "partes": [
+  {
+   "slot": "mano_d",
+   "svg": "<path d='M64 28Q88 48 64 70' fill='none' stroke='#8d5a2b' stroke-width='3' stroke-linecap='round'/><path d='M64 28L64 70' stroke='#e6e6e6' stroke-width='1.1'/><path d='M52 49H82' stroke='#8d5a2b' stroke-width='1.8' stroke-linecap='round'/><path d='M82 52C76 48 78 44 82 47C86 44 88 48 82 52Z' fill='#ff4d79'/><path d='M52 49L48 46M52 49L48 52M56 49L52 46M56 49L52 52' stroke='#ff4d79' stroke-width='1.4' stroke-linecap='round'/>"
+  }
+ ],
+ "anim": []
+}

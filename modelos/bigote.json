@@ -1,0 +1,10 @@
+{
+ "id": "bigote",
+ "partes": [
+  {
+   "slot": "cara",
+   "svg": "<path d='M40 54.6Q33.5 51.4 27.5 54.4Q23 56.6 21.2 52' fill='none' stroke='#3b2414' stroke-width='4.4' stroke-linecap='round'/><path d='M40 54.6Q46.5 51.4 52.5 54.4Q57 56.6 58.8 52' fill='none' stroke='#3b2414' stroke-width='4.4' stroke-linecap='round'/><ellipse cx='40' cy='55' rx='4.2' ry='2.8' fill='#3b2414'/><path d='M30 53.4Q34 52 38 54M50 53.4Q46 52 42 54' stroke='#7a5230' stroke-width='1' fill='none' stroke-linecap='round' opacity='.85'/>"
+  }
+ ],
+ "anim": []
+}

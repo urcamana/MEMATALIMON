@@ -1,0 +1,17 @@
+{
+ "id": "camara",
+ "partes": [
+  {
+   "slot": "cuello",
+   "svg": "<path d='M24 61L40 76L56 61' fill='none' stroke='#2b2b3a' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/><rect x='27' y='70' width='26' height='16' rx='3' fill='#3b3f4a' stroke='#1f2230' stroke-width='1.4'/><path d='M33 70V67H41V70Z' fill='#3b3f4a' stroke='#1f2230' stroke-width='1.2'/><circle cx='38' cy='78' r='6' fill='#1b1b2a' stroke='#9aa' stroke-width='1.6'/><circle cx='38' cy='78' r='3' fill='#3a5a8a'/><circle cx='36.5' cy='76.5' r='1' fill='#fff' opacity='.8'/><rect x='45' y='71.5' width='6' height='3' rx='1' fill='#ffe9a8'/><g id='ca_f' opacity='0'><circle cx='48' cy='73' r='8' fill='#fff7c2' opacity='.85'/><path d='M53 72L61 66M54 74L63 74M52 70L56 62' stroke='#ffe14a' stroke-width='2.4' stroke-linecap='round'/></g>"
+  }
+ ],
+ "anim": [
+  {
+   "sel": "ca_f",
+   "tipo": "parpadeo",
+   "vel": 0.17,
+   "duty": 0.05
+  }
+ ]
+}
