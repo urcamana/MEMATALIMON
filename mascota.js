@@ -32,7 +32,7 @@ const L = {
   despCerrado: ['Estamos cerrados y encima me despertás 😤 Dejá tu pedido y mis empleados lo ven apenas abran', '¿A esta hora? Hasta los jefes dormimos… Dejá tu pedido y mañana te atienden 😴', 'Soy el jefe y estoy durmiendo. Dejá tu pedido, que mis empleados se encargan 😤'],
   cerrado: ['Ahora estamos cerrados, pero dejanos tu pedido que mis empleados te atenderán pronto.', 'Yo soy el jefe, pero estoy de paso… 🍋 podes seguir comprando...', 'Estamos cerrados, pero mis empleados ven los pedidos apenas abren. ¡Yo soy el jefe, ojo! 😎', 'Cerrado por ahora. Armá tu carrito y mis empleados se encargan cuando vuelvan 🛒', 'Mis empleados están descansando (yo no, soy el jefe 😤). Dejá tu pedido y te atienden pronto.'],
   addCerrado: ['¡Buena elección! Mis empleados lo preparan apenas abramos 🍋', '¡Eso! Dejá el pedido y ellos se encargan cuando vuelvan 🛒'],
-  trip: ['Esto me trajo recuerdos de aquel día que me caí del árbol 🌳🍋', '¿Quién tiró esa piedra? ¡Fue a propósito! 😤', 'Auch… eso dolió más que un exprimidor 🍋'],
+  trip: ['Esto me trajo recuerdos de aquel día que me caí del árbol 🌳🍋', '¿Quién tiró esa piedra? ¡Fue a propósito! 😤', 'Si, me caí... pero no le cuentes a nadie. 🍋', 'Ups! Me acabo de comprar la página web... 🍋', 'Auch… eso dolió más que un exprimidor 🍋'],
   corrio: ['¡Uff! Si me hubiera chocado a esa velocidad me hacía limonada 🍋💨', '¡Uf! Corrí tan rápido que casi me exprimo 😅', '¡Qué carrera! Nuevo récord personal 🏅'],
   musica: ['¡Qué buen tema! 🎧 Por cierto, acá vendemos auriculares re buenos…', '¿Escuchaste eso? 🎶 Tenemos auriculares geniales 😉'],
   wx: {
