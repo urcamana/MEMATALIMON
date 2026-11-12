@@ -1,0 +1,111 @@
+/* Limón 💬 — chat con IA para la mascota. Cargar DESPUÉS de mascota.js:
+   <script src="mascota.js" defer></script>
+   <script src="limon_chat.js" defer></script>                                  */
+(() => {
+'use strict';
+const CFG = {
+  api: '/api/limon',          // ruta del Worker (misma web, sin CORS)
+  json: 'articulos.json',
+  items: 'items_limon.json',
+  maxHist: 6,                 // mensajes anteriores que se envían (cuida el límite gratis)
+  arriba: false,              // true = barra de escritura arriba en vez de abajo
+  fallback: '¿Por qué tantas preguntas? ¿Sos del FBI? Es hora de un descansito 😴. Escribile por WhatsApp a mis empleados y ellos te ayudan.'
+};
+const $ = id => document.getElementById(id);
+const num = v => Number(String(v == null ? '' : v).replace(/,/g, '.')) || 0;
+const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+const corto = s => s.length > 24 ? s.slice(0, 22) + '…' : s;
+const STOP = new Set('el la los las un una unos unas de del al y o en con para por que es hay tenes tienen tiene quiero busco necesito me te se lo como cuanto cuesta sale precio alguna algun esta estas hola buen dias tardes noche gracias favor podes puedo ver mostrame'.split(' '));
+let ART = null, ENVIO = null, hist = [], busy = false, bar = null, inp = null;
+
+/* Lee un JSON (si está en Base64 lo decodifica, igual que mascota.js) */
+async function leer(url) {
+  try {
+    const r = await fetch(url, { cache: 'no-cache' }); if (!r.ok) return null; let t = (await r.text()).trim();
+    if (t[0] !== '{' && t[0] !== '[') t = new TextDecoder().decode(Uint8Array.from(atob(t.replace(/\s/g, '')), c => c.charCodeAt(0)));
+    return JSON.parse(t);
+  } catch (e) { return null }
+}
+async function cargar() {
+  if (ART) return;
+  try {
+    const d = await (await fetch(CFG.json, { cache: 'force-cache' })).json();
+    ART = d.map(p => {
+      let ds = num(p.Descuento); if (ds > 0 && ds < 1) ds *= 100; ds = Math.round(ds);
+      return { id: p['Artículo'], n: String(p['Descripción'] || '').trim(), c: String(p.Categoria || ''), d: ds, pr: num(p.Venta) * (num(p.DOLAR) || 1) * (1 - ds / 100), st: num(p.Inventario) >= 1 && num(p.Venta) > 0 };
+    }).filter(p => p.n);
+    ART.forEach(p => { p.k = norm(p.n + ' ' + p.c) });
+  } catch (e) { ART = [] }
+  const it = await leer(CFG.items); ENVIO = (it && it.envio) || null;
+}
+
+/* Búsqueda local: la IA solo recibe los 5 productos más parecidos (ahorra mucho límite) */
+function buscar(q) {
+  const ts = norm(q).split(/[^a-z0-9]+/).map(t => t.replace(/(es|s)$/, '')).filter(t => t.length > 3 && !STOP.has(t));
+  if (!ts.length) return [];
+  return ART.map(p => ({ p, s: ts.reduce((a, t) => a + (p.k.includes(t) ? 1 : 0), 0) }))
+    .filter(x => x.s > 0 && x.p.st).sort((a, b) => b.s - a.s || b.p.d - a.p.d).slice(0, 5).map(x => x.p);
+}
+
+/* Respuestas que no necesitan IA (gratis y siempre correctas) */
+const abierto = () => (($('badgeAbierto') || {}).textContent || '').trim();
+const horario = () => (($('horarioHoy') || {}).textContent || '').trim();
+function local(q) {
+  const n = norm(q);
+  if (/horario|abiert|cerrad|a que hora|hasta que hora/.test(n)) {
+    const a = abierto(), h = horario(); if (a || h) return (a ? a + '. ' : '') + (h ? 'Hoy: ' + h : '') + ' 🕒';
+  }
+  if (/envio|moto|delivery|retir/.test(n) && ENVIO) {
+    const t = (ENVIO.tabla || []).map(r => r[0] + ': ' + r[1]).join('\n');
+    return '🛵 Envío por moto (aprox.)\n' + t + (ENVIO.nota ? '\n' + ENVIO.nota : '') + (ENVIO.retiro ? '\n' + ENVIO.retiro : '');
+  }
+  return null;
+}
+
+function ver(id) {   // igual que verProducto() de mascota.js
+  const im = $('img' + id), c = im && (im.closest('.tarjetas2') || im.closest('.card-group') || im);
+  if (c) c.scrollIntoView({ behavior: 'smooth', block: 'center' }); else location.href = location.pathname + '?p=' + id;
+}
+function hablar(t, btns, ms) { if (window.__mm) window.__mm.show(t, btns, ms) }
+function responder(texto, prods) {
+  const b = (prods || []).slice(0, 2).map(p => ['👀 ' + corto(p.n), () => ver(p.id)]);
+  b.push(['💬 Otra pregunta', abrir]);
+  hablar(texto, b, Math.min(25000, 7000 + texto.length * 60));
+}
+
+async function enviar() {
+  const q = inp.value.trim(); if (!q || busy) return;
+  inp.value = ''; busy = true; hablar('🍋 Pensando…', null, 30000);
+  let texto = CFG.fallback, prods = [];
+  try {
+    await cargar(); prods = buscar(q);
+    const loc = local(q);
+    if (loc) texto = loc;
+    else {
+      const r = await fetch(CFG.api, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ q, hist: hist.slice(-CFG.maxHist), prods: prods.map(p => ({ n: p.n, c: p.c, pr: Math.round(p.pr), d: p.d })), abierto: abierto(), horario: horario(), envio: ENVIO })
+      });
+      const j = await r.json(); if (j && j.text) texto = j.text;
+    }
+  } catch (e) {}
+  hist.push({ r: 'user', c: q }, { r: 'assistant', c: texto }); busy = false;
+  responder(texto, prods);
+}
+
+function crear() {
+  bar = document.createElement('div'); bar.id = 'limonChat';
+  bar.style.cssText = 'position:fixed;left:8px;right:8px;' + (CFG.arriba ? 'top:70px' : 'bottom:8px') + ';max-width:420px;margin:0 auto;z-index:1047;display:none;gap:6px;padding:8px;border-radius:14px;background:#fff;box-shadow:0 4px 20px #0004;font-family:system-ui,sans-serif';
+  bar.innerHTML = '<input type="text" maxlength="200" placeholder="Preguntale a Limón 🍋" enterkeyhint="send" autocomplete="off" style="flex:1;min-width:0;font-size:16px;padding:8px 10px;border:1px solid #d9c9ee;border-radius:10px;outline:0;color:#2b2140;background:#fff">'
+    + '<button type="button" data-a="s" style="border:0;border-radius:10px;padding:0 14px;background:#6b4ca3;color:#fff;font-size:16px;cursor:pointer">➤</button>'
+    + '<button type="button" data-a="x" style="border:0;border-radius:10px;padding:0 12px;background:#f3ecfa;color:#4a2b7a;font-size:16px;cursor:pointer">✕</button>';
+  document.body.appendChild(bar); inp = bar.querySelector('input');
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); enviar() } });
+  bar.addEventListener('click', e => { const a = e.target.dataset && e.target.dataset.a; if (a === 's') enviar(); else if (a === 'x') { bar.style.display = 'none'; inp.blur() } });
+}
+function abrir() {
+  if (!bar) crear(); bar.style.display = 'flex'; cargar();
+  setTimeout(() => inp.focus(), 80);   // al enfocar, mascota.js se calla sola mientras escribís
+}
+window.__mmChat = abrir;
+})();

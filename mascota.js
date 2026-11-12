@@ -510,6 +510,7 @@ function menu() {
   const b = [['🛍️ Recomendame', recMenu], ['🔥 Ofertas', () => tour(true)], ['🎁 Ayudame a elegir', regalosMenu], ['🛵 Envíos', envioTabla]];
   b.push([silent ? '🔔 Hablar' : '🤫 Silencio', () => { silent = !silent; SS('mm_sil', silent ? '1' : '0'); show(silent ? 'Ok, me quedo calladito 🤫' : '¡Vuelvo a charlar! 🍋', null, 2500) }]);
   b.push(['👋 Chau', () => { LS('mm_off', Date.now() + 7 * 864e5); show('¡Chau! Vuelvo en unos días 👋', null, 2200); setTimeout(() => { host.remove(); window.__mmOn = false }, 2400) }]);
+  b.unshift(['💬 Preguntame', () => window.__mmChat && window.__mmChat()]);
   show(R(L.poke), b, 12000);
 }
 m.addEventListener('pointerdown', e => { D = { sx: e.clientX, sy: e.clientY, moved: false, vx: 0, lx: e.clientX, id: e.pointerId }; m.setPointerCapture(e.pointerId); e.preventDefault() });
