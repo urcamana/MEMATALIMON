@@ -9,13 +9,13 @@ const CFG = {
   items: 'items_limon.json',
   maxHist: 6,                 // mensajes anteriores que se envían (cuida el límite gratis)
   arriba: false,              // true = barra de escritura arriba en vez de abajo
-  fallback: '¿Por qué tantas preguntas? ¿Sos del FBI? Es hora de un descansito 😴. Escribile por WhatsApp a mis empleados y ellos te ayudan.'
+  fallback: 'Limón se tomó un descansito 😴 Escribinos por WhatsApp y te ayudamos enseguida.'
 };
 const $ = id => document.getElementById(id);
 const num = v => Number(String(v == null ? '' : v).replace(/,/g, '.')) || 0;
 const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 const corto = s => s.length > 24 ? s.slice(0, 22) + '…' : s;
-const STOP = new Set('el la los las un una unos unas de del al y o en con para por que es hay tenes tienen tiene quiero busco necesito me te se lo como cuanto cuesta sale precio alguna algun esta estas hola buen dias tardes noche gracias favor podes puedo ver mostrame'.split(' '));
+const STOP = new Set('el la los las un una unos unas de del al y o en con para por que es hay tenes tienen tiene quiero busco necesito me te se lo como cuanto cuesta sale precio alguna algun esta estas hola buen dias tardes noche gracias favor podes puedo ver mostrame stock hay tiene tienen disponible'.split(' '));
 let ART = null, ENVIO = null, hist = [], busy = false, bar = null, inp = null;
 
 /* Lee un JSON (si está en Base64 lo decodifica, igual que mascota.js) */
@@ -32,19 +32,51 @@ async function cargar() {
     const d = await (await fetch(CFG.json, { cache: 'force-cache' })).json();
     ART = d.map(p => {
       let ds = num(p.Descuento); if (ds > 0 && ds < 1) ds *= 100; ds = Math.round(ds);
-      return { id: p['Artículo'], n: String(p['Descripción'] || '').trim(), c: String(p.Categoria || ''), d: ds, pr: num(p.Venta) * (num(p.DOLAR) || 1) * (1 - ds / 100), st: num(p.Inventario) >= 1 && num(p.Venta) > 0 };
+      const inv = num(p.Inventario);
+      return {
+        id: p['Artículo'],
+        n: String(p['Descripción'] || '').trim(),
+        c: String(p.Categoria || ''),
+        d: ds,
+        pr: num(p.Venta) * (num(p.DOLAR) || 1) * (1 - ds / 100),
+        inv,
+        st: inv >= 1 && num(p.Venta) > 0
+      };
     }).filter(p => p.n);
-    ART.forEach(p => { p.k = norm(p.n + ' ' + p.c) });
+    ART.forEach(p => { p.k = norm(p.n + ' ' + p.c + ' ' + (p.id || '')) });
   } catch (e) { ART = [] }
   const it = await leer(CFG.items); ENVIO = (it && it.envio) || null;
 }
 
-/* Búsqueda local: la IA solo recibe los 5 productos más parecidos (ahorra mucho límite) */
+/* Búsqueda local mejorada: tokens más cortos, incluye sin stock si preguntan por stock */
 function buscar(q) {
-  const ts = norm(q).split(/[^a-z0-9]+/).map(t => t.replace(/(es|s)$/, '')).filter(t => t.length > 3 && !STOP.has(t));
+  if (!ART || !ART.length) return [];
+  const nq = norm(q);
+  const quiereStock = /stock|hay|disponible|queda|quedan|tienen|tiene|inventario/.test(nq);
+  const ts = nq.split(/[^a-z0-9]+/)
+    .map(t => t.replace(/(es|s)$/, ''))
+    .filter(t => t.length > 2 && !STOP.has(t));
   if (!ts.length) return [];
-  return ART.map(p => ({ p, s: ts.reduce((a, t) => a + (p.k.includes(t) ? 1 : 0), 0) }))
-    .filter(x => x.s > 0 && x.p.st).sort((a, b) => b.s - a.s || b.p.d - a.p.d).slice(0, 5).map(x => x.p);
+
+  const scored = ART.map(p => {
+    let s = 0;
+    for (const t of ts) {
+      if (p.k.includes(t)) s += 2;
+      // bonus si el token está al inicio de una palabra del nombre
+      if (p.k.split(' ').some(w => w.startsWith(t))) s += 1;
+    }
+    return { p, s };
+  }).filter(x => x.s > 0);
+
+  // Si preguntan stock, no filtramos los sin stock; si no, preferimos los que tienen
+  const lista = quiereStock
+    ? scored
+    : scored.filter(x => x.p.st).concat(scored.filter(x => !x.p.st));
+
+  return lista
+    .sort((a, b) => b.s - a.s || (b.p.st - a.p.st) || b.p.d - a.p.d)
+    .slice(0, 5)
+    .map(x => x.p);
 }
 
 /* Respuestas que no necesitan IA (gratis y siempre correctas) */
@@ -84,7 +116,21 @@ async function enviar() {
     else {
       const r = await fetch(CFG.api, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ q, hist: hist.slice(-CFG.maxHist), prods: prods.map(p => ({ n: p.n, c: p.c, pr: Math.round(p.pr), d: p.d })), abierto: abierto(), horario: horario(), envio: ENVIO })
+        body: JSON.stringify({
+          q,
+          hist: hist.slice(-CFG.maxHist),
+          prods: prods.map(p => ({
+            n: p.n,
+            c: p.c,
+            pr: Math.round(p.pr),
+            d: p.d,
+            inv: p.inv,
+            st: p.st
+          })),
+          abierto: abierto(),
+          horario: horario(),
+          envio: ENVIO
+        })
       });
       const j = await r.json(); if (j && j.text) texto = j.text;
     }
