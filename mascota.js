@@ -513,6 +513,20 @@ function menu() {
   b.unshift(['💬 Preguntame', () => window.__mmChat && window.__mmChat()]);
   show(R(L.poke), b, 12000);
 }
+/* ============================================================
+   PARCHE MÍNIMO PARA mascota.js
+   Pegá este bloque JUSTO DESPUÉS de la definición de la función menu()
+   ============================================================ */
+
+/* --- Antagonista Empírico (solo se activa con ?antagonista) --- */
+if (window.__Antagonista && window.__Antagonista.activo) {
+  const _menuOriginal = menu;
+  menu = function () {
+    window.__Antagonista.menu(show);
+  };
+  window.__mmMenuOriginal = _menuOriginal;
+  console.info('[Limón] Menú Antagonista Empírico enganchado (con IA)');
+}
 m.addEventListener('pointerdown', e => { D = { sx: e.clientX, sy: e.clientY, moved: false, vx: 0, lx: e.clientX, id: e.pointerId }; m.setPointerCapture(e.pointerId); e.preventDefault() });
 m.addEventListener('pointermove', e => {
   if (!D) return; D.vx = e.clientX - D.lx; D.lx = e.clientX;
