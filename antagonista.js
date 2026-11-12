@@ -73,6 +73,7 @@
 
   // ---------- Llamada al Worker ----------
   let hist = [];
+  const charlar = ms => { try { window.__mm && window.__mm.charlar && window.__mm.charlar(ms) } catch (e) {} };   // Limón se queda quieto mientras conversan
 
   async function procesarConIA(texto) {
     try {
@@ -99,6 +100,7 @@
 
   // ---------- Menú y UI ----------
   function menuAntagonista(showFn) {
+    charlar(60000);
     const opciones = [
       ['🤔 Cuestionar una certeza', () => pedirCerteza(showFn)],
       ['⚖️ Ver ramas y alternativas', () => mostrarRamas(showFn)],
@@ -110,23 +112,36 @@
     showFn('El Antagonista Empírico 🍋\n¿Qué querés mirar con más calma?', opciones, 14000);
   }
 
-  async function pedirCerteza(showFn, esSeguir) {
-    const afirmacion = window.prompt(
-      esSeguir
-        ? 'Seguimos. Escribí lo que quieras cuestionar o matizar:'
-        : 'Escribí una certeza, decisión o afirmación absoluta que quieras cuestionar:\n\n(Ej: “Siempre conviene comprar lo más barato”, “Nunca voy a cambiar de trabajo”)'
-    );
-    if (afirmacion === null) return;
-    showFn('🍋 Pensando…', null, 25000);
-    const respuesta = await procesarConIA(afirmacion.trim());
-    showFn(respuesta, [
+  function botonesRespuesta(showFn) {
+    return [
       ['🤔 Otra certeza', () => pedirCerteza(showFn)],
       ['⚖️ Ver más ramas', () => mostrarRamas(showFn)],
       ['💬 Seguir', () => pedirCerteza(showFn, true)]
-    ], 22000);
+    ];
+  }
+
+  /* Abre la misma barra de chat que usa Limón (limon_chat.js). Si no está cargada, cae al cuadro del navegador. */
+  async function pedirCerteza(showFn, esSeguir) {
+    charlar(120000);
+    if (window.__mmChat) {
+      window.__mmChat({
+        placeholder: esSeguir ? 'Seguí charlando con el Antagonista…' : 'Escribí una certeza o decisión…',
+        manejar: texto => procesarConIA(texto.trim()),
+        botones: () => botonesRespuesta(showFn)
+      });
+      setTimeout(() => showFn(esSeguir ? 'Seguimos 🍋 Escribime lo que quieras cuestionar o matizar.' : 'Escribime una certeza, una decisión o una afirmación absoluta, y la miramos juntos 🍋', null, 7000), 200);
+      return;
+    }
+    const afirmacion = window.prompt(esSeguir ? 'Seguimos. Escribí lo que quieras cuestionar o matizar:' : 'Escribí una certeza, decisión o afirmación absoluta que quieras cuestionar:');
+    if (afirmacion === null) return;
+    showFn('🍋 Pensando…', null, 25000);
+    const respuesta = await procesarConIA(afirmacion.trim());
+    charlar(90000);
+    showFn(respuesta, botonesRespuesta(showFn), 22000);
   }
 
   function mostrarRamas(showFn) {
+    charlar(90000);
     const ramas = [
       'Rama 1 — Costo de oportunidad: ¿qué dejás de hacer o de aprender si elegís esto?',
       'Rama 2 — Escala pequeña: ¿podés probar una versión mínima antes de comprometerte del todo?',

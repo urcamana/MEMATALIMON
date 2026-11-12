@@ -160,7 +160,15 @@ function show(text, btns, ms) {
   bub.classList.add('on'); bubUntil = Date.now() + (ms || (btns && btns.length ? 10000 : clamp(2800 + text.length * 55, 3500, 8000))); lastSay = Date.now();
 }
 const hide = () => { bub.classList.remove('on'); bubUntil = 0 };
-const canSpeak = () => !silent && !tipeando && promos < CFG.maxPromos && Date.now() - lastSay > 16000 * CFG.ritmo && !bubUntil && !cartOpen() && !document.hidden;
+/* Modo charla: mientras conversan con él (chat con IA) se queda quieto y no suelta frases programadas */
+let charla = 0; const hablando = () => Date.now() < charla;
+function charlar(ms) {
+  if (!(ms > 0)) { charla = 0; return }
+  charla = Date.now() + ms;
+  if (mode === 'walk' && !trip) { mode = 'idle'; sub = 'stand'; tm = 6; corre = false; rock = null; tgt = u }
+  else if (mode === 'idle') { if (sub === 'sleep' || sub === 'music' || sub === 'fan') sub = 'stand'; tm = Math.max(tm, 6) }
+}
+const canSpeak = () => !silent && !hablando() && !tipeando && promos < CFG.maxPromos && Date.now() - lastSay > 16000 * CFG.ritmo && !bubUntil && !cartOpen() && !document.hidden;
 const promo = (t, b) => { promos++; SS('mm_n', promos); show(t, b) };
 function placeBub() {
   if (!bubUntil) return;
@@ -328,7 +336,7 @@ function walk(dt) {
   if (rock && !rock.hit && rock.f >= 1 && !toCart && Math.abs(u - rock.u) < 14) { rock.hit = true; trip = { t: 0, d }; mode = 'trip'; corre = false; pos = edge(fl, u); return }
   if (Math.abs(tgt - u) < 3) {
     if (toCart) { toCart = false; mode = 'cart' }
-    else { mode = 'idle'; sub = 'stand'; tm = rnd(1, 3); if (corre) { corre = false; squash = .15; tm = 3; if (!silent) show(R(L.corrio), null, 4500) } }
+    else { mode = 'idle'; sub = 'stand'; tm = rnd(1, 3); if (corre) { corre = false; squash = .15; tm = 3; if (!silent && !hablando()) show(R(L.corrio), null, 4500) } }
     entering = false;
   }
   pos = edge(fl, u);
@@ -338,7 +346,7 @@ function tropiezo(dt) {
   tripRot = trip.d * (t < .25 ? 80 * (t / .25) : t < 1.4 ? 80 : 80 * Math.max(0, 1 - (t - 1.4) / .4));
   if (t > .3 && !trip.s) { trip.s = 1; stars = 1.4; squash = .3 }
   if (t > 1.8) {
-    tripRot = 0; mode = 'idle'; sub = 'stand'; tm = 3; trip = null; if (!silent) show(R(L.trip), null, 5200);
+    tripRot = 0; mode = 'idle'; sub = 'stand'; tm = 3; trip = null; if (!silent && !hablando()) show(R(L.trip), null, 5200);
     const r0 = rock; setTimeout(() => { if (rock === r0) { rock = null; rk.style.display = 'none' } }, 2500);
   }
   pos = edge(fl, u);
@@ -350,7 +358,7 @@ function rockUpd(dt) {
 function idle(dt) {
   if (wantCart && cartOpen() && fl === 'b') { irAlCarrito(); return }
   if (!entering) { const [a, b] = range(fl); u = clamp(u, a, b) }
-  pos = edge(fl, u); tm -= dt; if (tm <= 0 && !bubUntil) nextAction();
+  pos = edge(fl, u); tm -= dt; if (tm <= 0 && !bubUntil && !hablando()) nextAction();
 }
 
 /* Tour por las tarjetas con etiqueta de oferta */
@@ -383,7 +391,7 @@ function perch(dt) {
   if (r.top < nb + H + 4 || r.top > innerHeight - 40) return bajar();
   pos.x = clamp(r.left + r.width * .5, CFG.mi, innerWidth - CFG.md); pos.y = r.top + 2; sub = 'stand'; P.t += dt;
   if (!P.said && P.t > .3) { P.said = true; promos++; SS('mm_n', promos); show(it.pct ? R(L.oferta)(it.pct, it.name) : R(L.peek)(it.name), [['Verlo', () => verProducto(it.id)]], 6500) }
-  if (P.t > 7.5 && !bubUntil) { P.i++; P.i < P.list.length ? visitar() : bajar() }
+  if (P.t > 7.5 && !bubUntil && !hablando()) { P.i++; P.i < P.list.length ? visitar() : bajar() }
 }
 function bajar() { hide(); u = clamp(pos.x, ...range('b')); P = null; fl = 'b'; go(edge('b', u), { d: .5, arc: 20, ease: 'in', done: () => land(false) }) }
 
@@ -442,7 +450,7 @@ function extras(dt) {   // clima, auriculares, enojo, correr
   if (musica) [1, 2].forEach(i => { const k = (T * .7 + i * .5) % 1, n = g('n' + i); n.setAttribute('x', (i === 1 ? 62 : 8) + Math.sin(T * 3 + i) * 3); n.setAttribute('y', 18 - k * 26); n.setAttribute('opacity', 1 - k) });
   g('br').style.display = grump > 0 ? '' : 'none';
   const lf = g('leaf'); if (lf) lf.setAttribute('transform', rt(wx.viento ? Math.sin(T * 9) * 14 : Math.sin(T * 1.6) * 2, 40, 22));
-  if (wx.tormenta && mode === 'idle' && sub !== 'sleep' && T > nextSusto) { nextSusto = T + rnd(25, 45); happy = Math.max(happy, .7); if (!silent && !tipeando && !bubUntil && Math.random() < .5) show(R(L.trueno), null, 2600) }
+  if (wx.tormenta && mode === 'idle' && sub !== 'sleep' && T > nextSusto) { nextSusto = T + rnd(25, 45); happy = Math.max(happy, .7); if (!silent && !hablando() && !tipeando && !bubUntil && Math.random() < .5) show(R(L.trueno), null, 2600) }
   if (visSig.includes('hearts')) [1, 2, 3].forEach(i => { const k = (T * .5 + i * .33) % 1, e = g('h' + i); e.setAttribute('x', [4, 62, 33][i - 1] + Math.sin(T * 2 + i) * 3); e.setAttribute('y', 34 - k * 40); e.setAttribute('opacity', 1 - k) });
   if (run) { const s = Math.sin(T * 26) * 42; g('l1').setAttribute('transform', rt(s, 32, 74)); g('l2').setAttribute('transform', rt(-s, 48, 74)); g('a1').setAttribute('transform', rt(s, 18, 48)); g('a2').setAttribute('transform', rt(s, 62, 48)) }
   if (fan) g('a2').setAttribute('transform', rt(-(105 + Math.sin(T * 18) * 12), 62, 48));
@@ -507,25 +515,12 @@ function despertar() {   // lo despiertan de noche: se enoja un rato y los incen
   grump = 6; show(R(cerrado() ? L.despCerrado : L.desp), [['🛒 Mi carrito', abrirCarrito], ['🔥 Ver ofertas', verOfertas]], 9000);
 }
 function menu() {
+  if (window.__Antagonista && window.__Antagonista.activo) return window.__Antagonista.menu(show);   // modo oculto ?antagonista
   const b = [['🛍️ Recomendame', recMenu], ['🔥 Ofertas', () => tour(true)], ['🎁 Ayudame a elegir', regalosMenu], ['🛵 Envíos', envioTabla]];
   b.push([silent ? '🔔 Hablar' : '🤫 Silencio', () => { silent = !silent; SS('mm_sil', silent ? '1' : '0'); show(silent ? 'Ok, me quedo calladito 🤫' : '¡Vuelvo a charlar! 🍋', null, 2500) }]);
   b.push(['👋 Chau', () => { LS('mm_off', Date.now() + 7 * 864e5); show('¡Chau! Vuelvo en unos días 👋', null, 2200); setTimeout(() => { host.remove(); window.__mmOn = false }, 2400) }]);
   b.unshift(['💬 Preguntame', () => window.__mmChat && window.__mmChat()]);
   show(R(L.poke), b, 12000);
-}
-/* ============================================================
-   PARCHE MÍNIMO PARA mascota.js
-   Pegá este bloque JUSTO DESPUÉS de la definición de la función menu()
-   ============================================================ */
-
-/* --- Antagonista Empírico (solo se activa con ?antagonista) --- */
-if (window.__Antagonista && window.__Antagonista.activo) {
-  const _menuOriginal = menu;
-  menu = function () {
-    window.__Antagonista.menu(show);
-  };
-  window.__mmMenuOriginal = _menuOriginal;
-  console.info('[Limón] Menú Antagonista Empírico enganchado (con IA)');
 }
 m.addEventListener('pointerdown', e => { D = { sx: e.clientX, sy: e.clientY, moved: false, vx: 0, lx: e.clientX, id: e.pointerId }; m.setPointerCapture(e.pointerId); e.preventDefault() });
 m.addEventListener('pointermove', e => {
@@ -540,8 +535,8 @@ m.addEventListener('pointerup', e => {
 });
 const act = () => {
   const ina = Date.now() - lastAct; lastAct = Date.now();
-  if (sub === 'sleep' && mode === 'idle' && !night()) { sub = 'stand'; tm = 1.5; if (!silent && !bubUntil) show(R(L.wake), null, 2500) }
-  else if (ina > 60e3 && !silent && !bubUntil && mode !== 'cart' && Math.random() < .4) { happy = .8; show('¡Volviste! Te estaba esperando 🍋', null, 2400) }
+  if (sub === 'sleep' && mode === 'idle' && !night()) { sub = 'stand'; tm = 1.5; if (!silent && !hablando() && !bubUntil) show(R(L.wake), null, 2500) }
+  else if (ina > 60e3 && !silent && !hablando() && !bubUntil && mode !== 'cart' && Math.random() < .4) { happy = .8; show('¡Volviste! Te estaba esperando 🍋', null, 2400) }
 };
 addEventListener('pointermove', e => { ptr = { x: e.clientX, y: e.clientY }; act() }, { passive: true });
 addEventListener('scroll', () => { lastScroll = Date.now(); act() }, { passive: true });
@@ -553,7 +548,7 @@ function onOri(e) {
   const b = e.beta * Math.PI / 180, c = e.gamma * Math.PI / 180, an = ((screen.orientation && screen.orientation.angle) || ((window.orientation || 0) + 360) % 360 || 0) * Math.PI / 180;
   const gx = Math.cos(b) * Math.sin(c), gy = Math.sin(b), x = gx * Math.cos(an) + gy * Math.sin(an), y = -gx * Math.sin(an) + gy * Math.cos(an);
   let w = fl; if (Math.max(Math.abs(x), Math.abs(y)) > .72) w = Math.abs(y) >= Math.abs(x) ? (y > 0 ? 'b' : 't') : (x > 0 ? 'r' : 'l');
-  if (w !== want) { want = w; wantSince = Date.now() } else if (w !== fl && Date.now() - wantSince > 500 && Date.now() - lastFlip > 2000 && !reduce) flip(w);
+  if (w !== want) { want = w; wantSince = Date.now() } else if (w !== fl && Date.now() - wantSince > 500 && Date.now() - lastFlip > 2000 && !reduce && !hablando()) flip(w);
 }
 function escucharSensor() { addEventListener('deviceorientation', onOri) }
 function pedirSensor() {   // iPhone: el permiso se pide con el primer toque a Limón, sin menús
@@ -568,7 +563,7 @@ function vigilarTienda() {
   const cc = $q('#cantCarrito'); cartCount = parseInt(cc && cc.textContent) || 0; cartSince = cartCount > 0 ? Date.now() : 0; cartIds = leerCarrito().map(x => x['Artículo']);
   if (cc) new MutationObserver(() => {
     const n = parseInt(cc.textContent) || 0, up = n > cartCount; cartCount = n; cartSince = n > 0 ? Date.now() : 0;
-    if (up && Date.now() - lastAdd > 8000 && mode !== 'cart') { lastAdd = Date.now(); happy = 1.2; complemento().then(ok => { if (!ok && !silent && !tipeando && Math.random() < .5) show(R(cerrado() ? L.addCerrado : L.add), null, 2600) }) } else if (!up) cartIds = leerCarrito().map(x => x['Artículo'])
+    if (up && Date.now() - lastAdd > 8000 && mode !== 'cart') { lastAdd = Date.now(); happy = 1.2; complemento().then(ok => { if (!ok && !silent && !hablando() && !tipeando && Math.random() < .5) show(R(cerrado() ? L.addCerrado : L.add), null, 2600) }) } else if (!up) cartIds = leerCarrito().map(x => x['Artículo'])
   }).observe(cc, { childList: true, characterData: true, subtree: true });
   const o = cartEl(); if (o) new MutationObserver(onCart).observe(o, { attributes: true, attributeFilter: ['class'] });
 }
@@ -578,7 +573,7 @@ L.favPocas = ['¡Quedan pocas unidades de ese! No lo dejes solo en favoritos �
 document.addEventListener('click', e => {
   const bf = e.target.closest && e.target.closest('.btn-favorito-card'); if (!bf) return;
   setTimeout(() => {
-    if (silent || tipeando || cartOpen() || !/❤/.test(bf.textContent) || Date.now() - lastFav < 15000) return;   // solo al agregar, no al quitar
+    if (silent || hablando() || tipeando || cartOpen() || !/❤/.test(bf.textContent) || Date.now() - lastFav < 15000) return;   // solo al agregar, no al quitar
     lastFav = Date.now(); const c = bf.closest('.tarjetas2') || bf.closest('.card-group') || document, poco = !!c.querySelector('.badge-ultimas-unidades:not(.d-none)');
     happy = .8; show(R(poco ? L.favPocas : L.fav), null, 5200);
   }, 60);
@@ -600,7 +595,7 @@ document.addEventListener('focusout', () => setTimeout(() => { const a = documen
 async function complemento() {
   const reglas = Array.isArray((ITEMS || {}).complementos) ? ITEMS.complementos : [];
   const ids = leerCarrito().map(x => x['Artículo']), nuevos = ids.filter(id => !cartIds.includes(id)); cartIds = ids;
-  if (!reglas.length || !nuevos.length || silent || tipeando || cartOpen() || Date.now() - lastComp < 90e3) return false;
+  if (!reglas.length || !nuevos.length || silent || hablando() || tipeando || cartOpen() || Date.now() - lastComp < 90e3) return false;
   await cargar(); const p = getP(nuevos[nuevos.length - 1]); if (!p) return false;
   const enCarrito = ids.map(getP).filter(Boolean), minus = s => String(s || '').toLowerCase();
   const tiene = o => enCarrito.some(q => minus(q.c) === minus(o.categoria) && (!o.buscar || minus(q.n).includes(minus(o.buscar))));
@@ -866,7 +861,7 @@ async function panelPrueba() {
 
 /* ---------- Planificador (cada segundo) ---------- */
 function sched() {
-  const now = Date.now(); if (document.hidden || mode === 'cart' || mode === 'drag') return;
+  const now = Date.now(); if (document.hidden || mode === 'cart' || mode === 'drag' || hablando()) return;
   const min = (now - tStart) / 6e4, ina = (now - lastAct) / 1e3, car = cartSince ? (now - cartSince) / 6e4 : 0, libre = mode === 'idle' && sub !== 'sleep' && !silent && !tipeando && !bubUntil && !cartOpen();
   const CA = (ITEMS || {}).carritoAviso || {}, t1 = CA.minutos ?? 3, EN = (ITEMS || {}).envio || {};
   if (libre && BAT && !BAT.carga) {   // batería: recordatorio amable, sin ventas
@@ -918,5 +913,5 @@ let tries = 0;
   if (window.mensajeActivo === true) return setTimeout(esperar, 500);   // hay un aviso importante en pantalla: espera a que lo cierren
   if (listo() || ++tries > 16) setTimeout(iniciar, 300); else setTimeout(esperar, 250);
 })();
-window.__mm = { show, complemento, saludoInicial, comoComprar, chequearCierre, regalosMenu, regaloIdeas, fechaMsg, setFecha: d => { fechaOv = d; calcularFecha() }, fecha: () => FECHA, hatOf: () => FECHA && FECHA.on ? FECHA.acc : null, vestido: () => visSig, tiempos: (c, i) => { cartSince = Date.now() - c * 6e4; lastAct = Date.now() - i * 1e3 }, tipeando: () => tipeando, tour, recomendar, despertar, piedra: evPiedra, correr: evCorrer, musica: evMusica, setWX: w => { WX = w }, noche: v => { nightOv = v }, darCodigo, verOfertas, tiro: contarTiro, last: () => lastRec, flip, state: () => ({ face, fl, mode, sub, pos, promos, sensor, tgt, toCart, WX, umAnim, grump, corre, rock: !!rock }) };
+window.__mm = { show, charlar, complemento, saludoInicial, comoComprar, chequearCierre, regalosMenu, regaloIdeas, fechaMsg, setFecha: d => { fechaOv = d; calcularFecha() }, fecha: () => FECHA, hatOf: () => FECHA && FECHA.on ? FECHA.acc : null, vestido: () => visSig, tiempos: (c, i) => { cartSince = Date.now() - c * 6e4; lastAct = Date.now() - i * 1e3 }, tipeando: () => tipeando, tour, recomendar, despertar, piedra: evPiedra, correr: evCorrer, musica: evMusica, setWX: w => { WX = w }, noche: v => { nightOv = v }, darCodigo, verOfertas, tiro: contarTiro, last: () => lastRec, flip, state: () => ({ face, fl, mode, sub, pos, promos, sensor, tgt, toCart, WX, umAnim, grump, corre, rock: !!rock }) };
 })();

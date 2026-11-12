@@ -16,7 +16,7 @@ const num = v => Number(String(v == null ? '' : v).replace(/,/g, '.')) || 0;
 const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 const corto = s => s.length > 24 ? s.slice(0, 22) + '…' : s;
 const STOP = new Set('el la los las un una unos unas de del al y o en con para por que es hay tenes tienen tiene quiero busco necesito me te se lo como cuanto cuesta sale precio alguna algun esta estas hola buen dias tardes noche gracias favor podes puedo ver mostrame stock hay tiene tienen disponible'.split(' '));
-let ART = null, ENVIO = null, hist = [], busy = false, bar = null, inp = null;
+let ART = null, ENVIO = null, hist = [], busy = false, bar = null, inp = null, modo = null;   // modo: lo usa el Antagonista para reutilizar esta barra
 
 /* Lee un JSON (si está en Base64 lo decodifica, igual que mascota.js) */
 async function leer(url) {
@@ -98,10 +98,11 @@ function ver(id) {   // igual que verProducto() de mascota.js
   const im = $('img' + id), c = im && (im.closest('.tarjetas2') || im.closest('.card-group') || im);
   if (c) c.scrollIntoView({ behavior: 'smooth', block: 'center' }); else location.href = location.pathname + '?p=' + id;
 }
-function hablar(t, btns, ms) { if (window.__mm) window.__mm.show(t, btns, ms) }
+const charlar = ms => { if (window.__mm && window.__mm.charlar) window.__mm.charlar(ms) };   // mantiene quieto a Limón mientras conversan
+function hablar(t, btns, ms) { if (window.__mm) { charlar((ms || 0) + 45000); window.__mm.show(t, btns, ms) } }
 function responder(texto, prods) {
-  const b = (prods || []).slice(0, 2).map(p => ['👀 ' + corto(p.n), () => ver(p.id)]);
-  b.push(['💬 Otra pregunta', abrir]);
+  const b = modo && modo.botones ? modo.botones() : (prods || []).slice(0, 2).map(p => ['👀 ' + corto(p.n), () => ver(p.id)]);
+  if (!(modo && modo.botones)) b.push(['💬 Otra pregunta', () => abrir()]);
   hablar(texto, b, Math.min(25000, 7000 + texto.length * 60));
 }
 
@@ -110,9 +111,11 @@ async function enviar() {
   inp.value = ''; busy = true; hablar('🍋 Pensando…', null, 30000);
   let texto = CFG.fallback, prods = [];
   try {
-    await cargar(); prods = buscar(q);
-    const loc = local(q);
-    if (loc) texto = loc;
+    if (modo) { const t = await modo.manejar(q); if (t) texto = t }   // modo externo: no usa búsqueda de productos
+    else { await cargar(); prods = buscar(q); }
+    const loc = modo ? null : local(q);
+    if (modo) { }
+    else if (loc) texto = loc;
     else {
       const r = await fetch(CFG.api, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -120,6 +123,7 @@ async function enviar() {
           q,
           hist: hist.slice(-CFG.maxHist),
           prods: prods.map(p => ({
+            id: p.id,
             n: p.n,
             c: p.c,
             pr: Math.round(p.pr),
@@ -146,11 +150,14 @@ function crear() {
     + '<button type="button" data-a="s" style="border:0;border-radius:10px;padding:0 14px;background:#6b4ca3;color:#fff;font-size:16px;cursor:pointer">➤</button>'
     + '<button type="button" data-a="x" style="border:0;border-radius:10px;padding:0 12px;background:#f3ecfa;color:#4a2b7a;font-size:16px;cursor:pointer">✕</button>';
   document.body.appendChild(bar); inp = bar.querySelector('input');
+  inp.addEventListener('input', () => charlar(120000));
   inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); enviar() } });
-  bar.addEventListener('click', e => { const a = e.target.dataset && e.target.dataset.a; if (a === 's') enviar(); else if (a === 'x') { bar.style.display = 'none'; inp.blur() } });
+  bar.addEventListener('click', e => { const a = e.target.dataset && e.target.dataset.a; if (a === 's') enviar(); else if (a === 'x') { bar.style.display = 'none'; inp.blur(); charlar(0) } });
 }
-function abrir() {
-  if (!bar) crear(); bar.style.display = 'flex'; cargar();
+function abrir(opts) {
+  modo = opts && opts.manejar ? opts : null;
+  if (!bar) crear(); bar.style.display = 'flex'; charlar(120000); if (!modo) cargar();
+  inp.placeholder = (modo && modo.placeholder) || 'Preguntale a Limón 🍋';
   setTimeout(() => inp.focus(), 80);   // al enfocar, mascota.js se calla sola mientras escribís
 }
 window.__mmChat = abrir;
