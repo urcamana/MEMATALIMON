@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-12T11:53:03.954Z",
+  "actualizado": "2026-11-13T21:43:56.862Z",
   "items": [
     {
       "id": "1",
@@ -494,6 +494,10 @@
       "checklist": true
     },
     {
+      "id": "319",
+      "checklist": true
+    },
+    {
       "id": "320",
       "checklist": true
     },
@@ -511,6 +515,10 @@
     },
     {
       "id": "324",
+      "checklist": true
+    },
+    {
+      "id": "325",
       "checklist": true
     },
     {
@@ -538,11 +546,23 @@
       "checklist": true
     },
     {
+      "id": "356",
+      "checklist": true
+    },
+    {
+      "id": "371",
+      "checklist": true
+    },
+    {
       "id": "377",
       "checklist": true
     },
     {
       "id": "378",
+      "checklist": true
+    },
+    {
+      "id": "382",
       "checklist": true
     },
     {
@@ -818,14 +838,6 @@
       "checklist": false
     },
     {
-      "id": "319",
-      "checklist": false
-    },
-    {
-      "id": "325",
-      "checklist": false
-    },
-    {
       "id": "327",
       "checklist": false
     },
@@ -874,10 +886,6 @@
       "checklist": false
     },
     {
-      "id": "382",
-      "checklist": false
-    },
-    {
       "id": "386",
       "checklist": false
     },
@@ -923,6 +931,10 @@
     },
     {
       "id": "424",
+      "checklist": false
+    },
+    {
+      "id": "426",
       "checklist": false
     },
     {
@@ -1130,10 +1142,6 @@
       "checklist": false
     },
     {
-      "id": "356",
-      "checklist": false
-    },
-    {
       "id": "358",
       "checklist": false
     },
@@ -1202,7 +1210,7 @@
       "checklist": false
     },
     {
-      "id": "426",
+      "id": "425",
       "checklist": false
     },
     {
@@ -1358,10 +1366,6 @@
       "checklist": false
     },
     {
-      "id": "425",
-      "checklist": false
-    },
-    {
       "id": "6",
       "checklist": false
     },
@@ -1375,6 +1379,10 @@
     },
     {
       "id": "22",
+      "checklist": false
+    },
+    {
+      "id": "24",
       "checklist": false
     },
     {
@@ -1403,6 +1411,10 @@
     },
     {
       "id": "231",
+      "checklist": false
+    },
+    {
+      "id": "237",
       "checklist": false
     },
     {
@@ -1442,10 +1454,6 @@
       "checklist": false
     },
     {
-      "id": "371",
-      "checklist": false
-    },
-    {
       "id": "372",
       "checklist": false
     },
@@ -1470,15 +1478,15 @@
       "checklist": false
     },
     {
-      "id": "24",
-      "checklist": false
-    },
-    {
       "id": "31",
       "checklist": false
     },
     {
       "id": "37",
+      "checklist": false
+    },
+    {
+      "id": "45",
       "checklist": false
     },
     {
@@ -1514,10 +1522,6 @@
       "checklist": false
     },
     {
-      "id": "237",
-      "checklist": false
-    },
-    {
       "id": "239",
       "checklist": false
     },
@@ -1547,10 +1551,6 @@
     },
     {
       "id": "32",
-      "checklist": false
-    },
-    {
-      "id": "45",
       "checklist": false
     },
     {
