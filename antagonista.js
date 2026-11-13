@@ -125,6 +125,7 @@
       window.__mmChat({
         placeholder: esSeguir ? 'Seguí charlando con el Antagonista…' : 'Escribí una certeza o decisión…',
         manejar: texto => procesarConIA(texto.trim()),
+        fijo: true,   // el globo queda hasta que cierres la ventanita de chat (✕)
         botones: () => botonesRespuesta(showFn)
       });
       setTimeout(() => showFn(esSeguir ? 'Seguimos 🍋 Escribime lo que quieras cuestionar o matizar.' : 'Escribime una certeza, una decisión o una afirmación absoluta, y la miramos juntos 🍋', null, 7000), 200);

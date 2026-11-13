@@ -161,7 +161,7 @@ function show(text, btns, ms) {
 }
 const hide = () => { bub.classList.remove('on'); bubUntil = 0 };
 /* Modo charla: mientras conversan con él (chat con IA) se queda quieto y no suelta frases programadas */
-let charla = 0; const hablando = () => Date.now() < charla;
+let charla = 0, fijo = false; const hablando = () => Date.now() < charla;   // fijo: el globo no se oculta solo al enfocar el chat
 function charlar(ms) {
   if (!(ms > 0)) { charla = 0; return }
   charla = Date.now() + ms;
@@ -588,7 +588,7 @@ const irObsequios = () => { location.href = CFG.obsequios + 'obsequios.html' };
 
 /* Callarse mientras escriben (buscador, código del carrito, etc.) */
 const campo = 'input,textarea,select,[contenteditable="true"]';
-document.addEventListener('focusin', e => { if (e.target.matches && e.target.matches(campo)) { tipeando = true; if (bubUntil) hide() } });
+document.addEventListener('focusin', e => { if (e.target.matches && e.target.matches(campo)) { tipeando = true; if (bubUntil && !fijo) hide() } });
 document.addEventListener('focusout', () => setTimeout(() => { const a = document.activeElement; if (!a || !a.matches || !a.matches(campo)) tipeando = false }, 1200));
 
 /* Complemento al agregar: reglas en items_limon.json → "complementos" */
@@ -913,5 +913,5 @@ let tries = 0;
   if (window.mensajeActivo === true) return setTimeout(esperar, 500);   // hay un aviso importante en pantalla: espera a que lo cierren
   if (listo() || ++tries > 16) setTimeout(iniciar, 300); else setTimeout(esperar, 250);
 })();
-window.__mm = { show, charlar, complemento, saludoInicial, comoComprar, chequearCierre, regalosMenu, regaloIdeas, fechaMsg, setFecha: d => { fechaOv = d; calcularFecha() }, fecha: () => FECHA, hatOf: () => FECHA && FECHA.on ? FECHA.acc : null, vestido: () => visSig, tiempos: (c, i) => { cartSince = Date.now() - c * 6e4; lastAct = Date.now() - i * 1e3 }, tipeando: () => tipeando, tour, recomendar, despertar, piedra: evPiedra, correr: evCorrer, musica: evMusica, setWX: w => { WX = w }, noche: v => { nightOv = v }, darCodigo, verOfertas, tiro: contarTiro, last: () => lastRec, flip, state: () => ({ face, fl, mode, sub, pos, promos, sensor, tgt, toCart, WX, umAnim, grump, corre, rock: !!rock }) };
+window.__mm = { show, charlar, hide, fijar: v => { fijo = !!v }, complemento, saludoInicial, comoComprar, chequearCierre, regalosMenu, regaloIdeas, fechaMsg, setFecha: d => { fechaOv = d; calcularFecha() }, fecha: () => FECHA, hatOf: () => FECHA && FECHA.on ? FECHA.acc : null, vestido: () => visSig, tiempos: (c, i) => { cartSince = Date.now() - c * 6e4; lastAct = Date.now() - i * 1e3 }, tipeando: () => tipeando, tour, recomendar, despertar, piedra: evPiedra, correr: evCorrer, musica: evMusica, setWX: w => { WX = w }, noche: v => { nightOv = v }, darCodigo, verOfertas, tiro: contarTiro, last: () => lastRec, flip, state: () => ({ face, fl, mode, sub, pos, promos, sensor, tgt, toCart, WX, umAnim, grump, corre, rock: !!rock }) };
 })();

@@ -98,12 +98,14 @@ function ver(id) {   // igual que verProducto() de mascota.js
   const im = $('img' + id), c = im && (im.closest('.tarjetas2') || im.closest('.card-group') || im);
   if (c) c.scrollIntoView({ behavior: 'smooth', block: 'center' }); else location.href = location.pathname + '?p=' + id;
 }
+const fijar = v => { if (window.__mm && window.__mm.fijar) window.__mm.fijar(v) };   // globo fijo (Antagonista)
 const charlar = ms => { if (window.__mm && window.__mm.charlar) window.__mm.charlar(ms) };   // mantiene quieto a Limón mientras conversan
 function hablar(t, btns, ms) { if (window.__mm) { charlar((ms || 0) + 45000); window.__mm.show(t, btns, ms) } }
 function responder(texto, prods) {
   const b = modo && modo.botones ? modo.botones() : (prods || []).slice(0, 2).map(p => ['👀 ' + corto(p.n), () => ver(p.id)]);
   if (!(modo && modo.botones)) b.push(['💬 Otra pregunta', () => abrir()]);
-  hablar(texto, b, Math.min(25000, 7000 + texto.length * 60));
+  // Tiempo que queda el globo: 7 s + 60 ms por letra (máx. 25 s). Con modo.fijo queda hasta cerrar la ventanita (✕).
+  hablar(texto, b, modo && modo.fijo ? 18e5 : Math.min(25000, 7000 + texto.length * 60));
 }
 
 async function enviar() {
@@ -152,10 +154,10 @@ function crear() {
   document.body.appendChild(bar); inp = bar.querySelector('input');
   inp.addEventListener('input', () => charlar(120000));
   inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); enviar() } });
-  bar.addEventListener('click', e => { const a = e.target.dataset && e.target.dataset.a; if (a === 's') enviar(); else if (a === 'x') { bar.style.display = 'none'; inp.blur(); charlar(0) } });
+  bar.addEventListener('click', e => { const a = e.target.dataset && e.target.dataset.a; if (a === 's') enviar(); else if (a === 'x') { bar.style.display = 'none'; inp.blur(); charlar(0); if (modo && modo.fijo && window.__mm && window.__mm.hide) window.__mm.hide(); fijar(false) } });
 }
 function abrir(opts) {
-  modo = opts && opts.manejar ? opts : null;
+  modo = opts && opts.manejar ? opts : null; fijar(!!(modo && modo.fijo));
   if (!bar) crear(); bar.style.display = 'flex'; charlar(120000); if (!modo) cargar();
   inp.placeholder = (modo && modo.placeholder) || 'Preguntale a Limón 🍋';
   setTimeout(() => inp.focus(), 80);   // al enfocar, mascota.js se calla sola mientras escribís
