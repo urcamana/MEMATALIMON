@@ -103,7 +103,6 @@
     charlar(60000);
     const opciones = [
       ['🤔 Cuestionar una certeza', () => pedirCerteza(showFn)],
-      ['⚖️ Ver ramas y alternativas', () => mostrarRamas(showFn)],
       ['💬 Seguir charlando', () => pedirCerteza(showFn, true)],
       ['👋 Salir del modo', () => {
         showFn('Para volver al modo normal de la tienda, sacá “?antagonista” de la URL y recargá.', null, 5000);
@@ -115,7 +114,6 @@
   function botonesRespuesta(showFn) {
     return [
       ['🤔 Otra certeza', () => pedirCerteza(showFn)],
-      ['⚖️ Ver más ramas', () => mostrarRamas(showFn)],
       ['💬 Seguir', () => pedirCerteza(showFn, true)]
     ];
   }
@@ -138,24 +136,6 @@
     const respuesta = await procesarConIA(afirmacion.trim());
     charlar(90000);
     showFn(respuesta, botonesRespuesta(showFn), 22000);
-  }
-
-  function mostrarRamas(showFn) {
-    charlar(90000);
-    const ramas = [
-      'Rama 1 — Costo de oportunidad: ¿qué dejás de hacer o de aprender si elegís esto?',
-      'Rama 2 — Escala pequeña: ¿podés probar una versión mínima antes de comprometerte del todo?',
-      'Rama 3 — Perspectiva temporal: ¿cómo se ve la misma decisión en 1 semana, 1 mes y 1 año?',
-      'Rama 4 — Sesgo de confirmación: ¿qué evidencia te haría cambiar de opinión?',
-      'Rama 5 — Alternativa no binaria: ¿existe un “sí, pero con estas condiciones”?'
-    ];
-    const texto = 'Algunas ramas útiles para no quedarte en el primer camino:\n\n' +
-      ramas.map(r => '• ' + r).join('\n') +
-      '\n\nElegí una y pensala en voz alta. Yo no te doy la respuesta “correcta”: te ayudo a no cerrar la puerta demasiado rápido.';
-    showFn(texto, [
-      ['🤔 Cuestionar una certeza', () => pedirCerteza(showFn)],
-      ['Listo por ahora', () => {}]
-    ], 22000);
   }
 
   // ---------- API pública ----------
