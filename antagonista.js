@@ -80,24 +80,29 @@
   const charlar = ms => { try { window.__mm && window.__mm.charlar && window.__mm.charlar(ms) } catch (e) {} };
 
   async function procesarConIA(texto) {
-    try {
-      const r = await fetch(CFG.api, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          q: texto,
-          modo: modoActual,
-          hist: hist.slice(-CFG.maxHist)
-        })
-      });
-      if (!r.ok) throw new Error('status ' + r.status);
-      const j = await r.json();
-      if (j && j.text) {
-        hist.push({ r: 'user', c: texto }, { r: 'assistant', c: j.text });
-        return j.text;
+    // hasta 2 intentos, 20 s cada uno: si el Worker se cuelga o falla, no se queda esperando para siempre
+    for (let i = 0; i < 2; i++) {
+      const ac = new AbortController(), t = setTimeout(() => ac.abort(), 20000);
+      try {
+        const r = await fetch(CFG.api, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ q: texto, modo: modoActual, hist: hist.slice(-CFG.maxHist) }),
+          signal: ac.signal
+        });
+        clearTimeout(t);
+        if (r.ok) {
+          const j = await r.json();
+          if (j && j.text && String(j.text).trim()) {
+            hist.push({ r: 'user', c: texto }, { r: 'assistant', c: j.text });
+            return j.text;
+          }
+        }
+      } catch (e) {
+        clearTimeout(t);
+        console.warn('[Poliformo] intento ' + (i + 1) + ' falló', e);
       }
-    } catch (e) {
-      console.warn('[Poliformo] Worker no disponible, uso fallback local', e);
+      if (i === 0) await new Promise(res => setTimeout(res, 700));
     }
     if (CFG.fallbackLocal) return procesarLocal(texto, modoActual);
     return 'Se me cruzaron los cables un segundo 🍋 Probá de nuevo.';

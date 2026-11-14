@@ -64,7 +64,7 @@ const L = {
 
 /* ---------- Estructura (Shadow DOM: el CSS de la tienda no lo toca) ---------- */
 const host = document.createElement('div');
-host.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:1046';
+host.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:1046;overflow:hidden';
 const sh = host.attachShadow({ mode: 'open' });
 sh.innerHTML = `<style>
 *{box-sizing:border-box;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
@@ -73,7 +73,10 @@ sh.innerHTML = `<style>
 #m.dg{cursor:grabbing}#m.gone{opacity:0;pointer-events:none}
 svg{width:100%;height:100%;overflow:visible;display:block}
 #rk{position:absolute;left:0;top:0;width:26px;height:18px;border-radius:55% 55% 40% 40%;background:radial-gradient(circle at 35% 30%,#c4bfb3,#7c776b);box-shadow:inset -3px -3px 0 #0002,0 2px 3px #0003;display:none;will-change:transform}
-#bub{position:absolute;left:0;top:0;max-width:min(230px,72vw);padding:9px 12px;border-radius:14px;background:#fff;color:#2b2140;font-size:13px;line-height:1.3;box-shadow:0 4px 16px #0003;pointer-events:auto;opacity:0;visibility:hidden;transition:opacity .25s}
+#bub{position:absolute;left:0;top:0;max-width:min(230px,72vw);padding:9px 12px;border-radius:14px;background:#fff;color:#2b2140;font-size:13px;line-height:1.3;box-shadow:0 4px 16px #0003;pointer-events:auto;opacity:0;visibility:hidden;transition:opacity .25s;display:flex;flex-direction:column;overflow:hidden}
+#bub.big{max-width:min(340px,92vw)}
+#bub>div:first-child{min-height:0;flex:0 1 auto;overflow-y:auto;overflow-wrap:anywhere;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y;scrollbar-width:thin}
+#bub .a{flex:none}
 #bub.on{opacity:1;visibility:visible}
 #bub .a{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
 #bub>div:first-child{white-space:pre-line}
@@ -132,8 +135,16 @@ const m = sh.getElementById('m'), bub = sh.getElementById('bub'), g = id => sh.g
 
 /* ---------- Estado ---------- */
 let fl = 'b', u = -40, pos = { x: -40, y: 0 }, rot = 0, face = 1, mode = 'idle', sub = 'stand', tm = 1, tgt = 0, entering = true;
+/* Medidas de la pantalla = las del propio contenedor fijo (host). En el celu, innerHeight cambia al deslizar (barra del navegador)
+   y no coincide con el contenedor → Limón aparecía corrido. Con teclado abierto se achica a la parte visible. */
+let VW = innerWidth, VH = innerHeight;
+function medir() {
+  let w = host.clientWidth || innerWidth, h = host.clientHeight || innerHeight; const v = window.visualViewport;
+  if (v && Math.abs(v.scale - 1) < .02) { const vis = v.offsetTop + v.height; if (h - vis > 120) h = Math.max(vis, 200) }
+  if (w !== VW || h !== VH) { VW = w; VH = h }
+}
 let T = 0, last = 0, J = null, P = null, D = null, squash = 0, stars = 0, happy = 0, blinkAt = 2, lastSay = 0, lastAct = Date.now(), lastScroll = 0;
-let silent = SS('mm_sil') === '1', promos = +SS('mm_n') || 0, ptr = { x: innerWidth / 2, y: innerHeight / 2 }, sensor = false, want = 'b', wantSince = 0, lastFlip = 0;
+let silent = SS('mm_sil') === '1', promos = +SS('mm_n') || 0, ptr = { x: VW / 2, y: VH / 2 }, sensor = false, want = 'b', wantSince = 0, lastFlip = 0;
 let ART = null, bubUntil = 0, nextTour = Date.now() + 25e3, nextRec = Date.now() + 55e3, nextQuip = Date.now() + 40e3, nextNudge = Date.now() + 100e3, cartCount = 0, lastAdd = 0, nudged = false;
 let ITEMS = null, DESC = null, ALL = new Map(), tStart = Date.now(), cartSince = 0, lastRec = null, nextPeek = Date.now() + 70e3, nextReto = Date.now() + 100e3, wantCart = false, toCart = false, lastFav = 0, pidio = false, WX = null, umAnim = null, grump = 0, tripRot = 0, corre = false, rock = null, trip = null, lastEvt = Date.now() - 45e3, nextCerrado = Date.now() + 40e3, cerrados = 0, nightOv = null;
 const ROT = { b: 0, t: 180, l: 90, r: -90 };
@@ -142,8 +153,8 @@ let cerradoOv = null;
 const cerrado = () => cerradoOv !== null ? cerradoOv : /cerrado/i.test((document.getElementById('badgeAbierto') || {}).textContent || '');   // lee el cartel «Abierto/Cerrado ahora» de tu página
 const abrirCarrito = () => { const b = $q('#listaInteres'); b && b.click() };
 const navBottom = () => { const n = $q('#nav1'); return n ? n.getBoundingClientRect().bottom : 0 };
-const range = f => (f === 'b' || f === 't') ? [CFG.mi, innerWidth - CFG.md] : [navBottom() + H, innerHeight - H];
-const edge = (f, uu) => { const b = CFG.borde; return f === 'b' ? { x: uu, y: innerHeight - b } : f === 't' ? { x: uu, y: b } : f === 'l' ? { x: b, y: uu } : { x: innerWidth - b, y: uu } };
+const range = f => (f === 'b' || f === 't') ? [CFG.mi, VW - CFG.md] : [navBottom() + H, VH - H];
+const edge = (f, uu) => { const b = CFG.borde; return f === 'b' ? { x: uu, y: VH - b } : f === 't' ? { x: uu, y: b } : f === 'l' ? { x: b, y: uu } : { x: VW - b, y: uu } };
 const sgn = () => (fl === 'b' || fl === 'l') ? 1 : -1;
 const cartEl = () => $q('#offcanvasDark');
 const cartOpen = () => { const o = cartEl(); return !!o && o.classList.contains('show') };
@@ -157,9 +168,12 @@ function show(text, btns, ms) {
     btns.forEach(([lab, fn]) => { const b = document.createElement('button'); b.textContent = lab; b.onclick = e => { e.stopPropagation(); hide(); fn() }; a.append(b) });
     bub.append(a);
   }
-  bub.classList.add('on'); bubUntil = Date.now() + (ms || (btns && btns.length ? 10000 : clamp(2800 + text.length * 55, 3500, 8000))); lastSay = Date.now();
+  bub.classList.toggle('big', text.length > 140); const sc0 = bub.firstChild; if (sc0) sc0.scrollTop = 0;
+  bub.classList.add('on'); bubUntil = Date.now() + Math.max(ms || (btns && btns.length ? 10000 : clamp(2800 + text.length * 55, 3500, 8000)), Math.min(30000, 2500 + text.length * 45)); lastSay = Date.now();
 }
 const hide = () => { bub.classList.remove('on'); bubUntil = 0 };
+const mantener = () => { if (bubUntil && bubUntil < 3e12) bubUntil = Math.max(bubUntil, Date.now() + 9000) };
+['pointerdown', 'touchmove', 'wheel'].forEach(ev => bub.addEventListener(ev, mantener, { passive: true }));
 /* Modo charla: mientras conversan con él (chat con IA) se queda quieto y no suelta frases programadas */
 let charla = 0, fijo = false; const hablando = () => Date.now() < charla;   // fijo: el globo no se oculta solo al enfocar el chat
 function charlar(ms) {
@@ -173,9 +187,15 @@ const promo = (t, b) => { promos++; SS('mm_n', promos); show(t, b) };
 function placeBub() {
   if (!bubUntil) return;
   if (Date.now() > bubUntil) { hide(); return }
+  /* espacio libre según el borde donde está Limón; si la barra de chat está abierta, el globo no la tapa */
+  const cb = document.getElementById('limonChat'), cbTop = cb && cb.style.display !== 'none' ? cb.getBoundingClientRect().top : VH;
+  const bot = Math.min(VH, cbTop) - 6;
+  let avail = fl === 'b' ? pos.y - H - 8 - 6 : fl === 't' ? bot - (pos.y + H + 8) : bot - 12;
+  const mh = Math.round(clamp(avail, 110, Math.max(110, bot - 12)));
+  if (bub._mh !== mh) { bub.style.maxHeight = mh + 'px'; bub._mh = mh }
   const bw = bub.offsetWidth, bh = bub.offsetHeight; let x, y;
   if (fl === 'b') { x = pos.x - bw / 2; y = pos.y - H - bh - 8 } else if (fl === 't') { x = pos.x - bw / 2; y = pos.y + H + 8 } else if (fl === 'l') { x = pos.x + H + 8; y = pos.y - bh / 2 } else { x = pos.x - H - 8 - bw; y = pos.y - bh / 2 }
-  bub.style.left = clamp(x, 6, innerWidth - bw - 6) + 'px'; bub.style.top = clamp(y, 6, innerHeight - bh - 6) + 'px';
+  bub.style.left = clamp(x, 6, VW - bw - 6) + 'px'; bub.style.top = clamp(y, 6, Math.max(6, bot - bh)) + 'px';
 }
 
 /* ---------- Productos ---------- */
@@ -250,7 +270,7 @@ function darCodigo(motivo = 'indecision', min) {
 const retoCfg = () => { const c = DESC && DESC.reto; return c && c.activo === true && DESC.activo === true && !LS('mm_reto_ok') && (DESC.codigos || []).some(x => x.uso === 'reto' && x.activo !== false && x.clave) ? c : null };
 const fill = (t, o) => t.replace(/\{(\w+)\}/g, (s, k) => o[k] == null ? s : o[k]);
 function contarTiro(dist) {   // cuenta solo los tiros desde bien arriba
-  const c = retoCfg(); if (!c || dist < innerHeight * .4) return;
+  const c = retoCfg(); if (!c || dist < VH * .4) return;
   const n = (+LS('mm_reto') || 0) + 1, total = c.veces || 10; LS('mm_reto', n);
   if (n >= total) return premioReto(c);
   stars = Math.max(stars, 1.5); show(fill(R(c.progreso && c.progreso.length ? c.progreso : L.retoProg), { n, veces: total }), null, 2200);
@@ -353,7 +373,7 @@ function tropiezo(dt) {
 }
 function rockUpd(dt) {
   if (!rock) return; rk.style.display = ''; if (rock.f < 1) rock.f = Math.min(1, rock.f + dt * 2.2);
-  rk.style.transform = `translate(${rock.u - 13}px,${innerHeight - CFG.borde - 17 - (rock.f < 1 ? (1 - rock.f * rock.f) * innerHeight * .7 : 0)}px)`;
+  rk.style.transform = `translate(${rock.u - 13}px,${VH - CFG.borde - 17 - (rock.f < 1 ? (1 - rock.f * rock.f) * VH * .7 : 0)}px)`;
 }
 function idle(dt) {
   if (wantCart && cartOpen() && fl === 'b') { irAlCarrito(); return }
@@ -363,7 +383,7 @@ function idle(dt) {
 
 /* Tour por las tarjetas con etiqueta de oferta */
 function tarjetasOferta(todas) {
-  const nb = navBottom(), vh = innerHeight, seen = new Set();
+  const nb = navBottom(), vh = VH, seen = new Set();
   return (todas ? $a('#contenedorCatalogo .tarjetas2').map(c => ({ c })) : $a('#contenedorCatalogo .text-overlay').map(o => ({ o, c: o.closest('.tarjetas2') || o.closest('.card-group') }))).map(({ o, c }) => {
     if (!c || seen.has(c)) return null; seen.add(c);
     const r = c.getBoundingClientRect(); if (r.width < 80 || r.top < nb + H + 6 || r.top > vh - 90) return null;
@@ -382,14 +402,14 @@ function tour(force, todas) {
 function visitar() {
   const it = P.list[P.i]; if (!it || !it.c.isConnected) return bajar();
   const r = it.c.getBoundingClientRect(); hide();
-  go({ x: clamp(r.left + r.width * .5, CFG.mi, innerWidth - CFG.md), y: r.top + 2 }, { d: .7, arc: 55, done: () => { mode = 'perch'; P.t = 0; P.said = false } });
+  go({ x: clamp(r.left + r.width * .5, CFG.mi, VW - CFG.md), y: r.top + 2 }, { d: .7, arc: 55, done: () => { mode = 'perch'; P.t = 0; P.said = false } });
 }
 function perch(dt) {
   if (wantCart) return bajar();   // se abrió el carrito mientras saltaba: baja y va hacia él
   const it = P.list[P.i]; if (!it || !it.c.isConnected) return bajar();
   const r = it.c.getBoundingClientRect(), nb = navBottom();
-  if (r.top < nb + H + 4 || r.top > innerHeight - 40) return bajar();
-  pos.x = clamp(r.left + r.width * .5, CFG.mi, innerWidth - CFG.md); pos.y = r.top + 2; sub = 'stand'; P.t += dt;
+  if (r.top < nb + H + 4 || r.top > VH - 40) return bajar();
+  pos.x = clamp(r.left + r.width * .5, CFG.mi, VW - CFG.md); pos.y = r.top + 2; sub = 'stand'; P.t += dt;
   if (!P.said && P.t > .3) { P.said = true; promos++; SS('mm_n', promos); show(it.pct ? R(L.oferta)(it.pct, it.name) : R(L.peek)(it.name), [['Verlo', () => verProducto(it.id)]], 6500) }
   if (P.t > 7.5 && !bubUntil && !hablando()) { P.i++; P.i < P.list.length ? visitar() : bajar() }
 }
@@ -399,9 +419,9 @@ function bajar() { hide(); u = clamp(pos.x, ...range('b')); P = null; fl = 'b'; 
 let lastCart = false;
 function cartMode() {
   const o = cartEl(); if (!o) return; const pw = o.offsetWidth;
-  pos = { x: Math.min(pw + W / 2 + 14, innerWidth - W / 2 - 8), y: innerHeight - CFG.borde }; face = -1; sub = 'watch';
+  pos = { x: Math.min(pw + W / 2 + 14, VW - W / 2 - 8), y: VH - CFG.borde }; face = -1; sub = 'watch';
 }
-const cartX = () => Math.min((cartEl().offsetWidth || 0) + W / 2 + 14, innerWidth - W / 2 - 8);
+const cartX = () => Math.min((cartEl().offsetWidth || 0) + W / 2 + 14, VW - W / 2 - 8);
 function irAlCarrito() {   // camina hasta el costado del carrito
   wantCart = false; corre = false; u = pos.x; tgt = cartX(); sub = 'stand'; entering = false;
   if (Math.abs(tgt - u) < 3) { mode = 'cart'; return } toCart = true; mode = 'walk';
@@ -409,7 +429,7 @@ function irAlCarrito() {   // camina hasta el costado del carrito
 function onCart() {
   const open = cartOpen(); if (open === lastCart) return; lastCart = open;
   if (open) {
-    hide(); const room = innerWidth - (cartEl().offsetWidth || 0) >= W + 30;
+    hide(); const room = VW - (cartEl().offsetWidth || 0) >= W + 30;
     if (!room) { m.classList.add('gone'); mode = 'cart'; P = null; J = null; fl = 'b'; return }
     m.classList.remove('gone'); wantCart = true;
     if (mode === 'idle' || mode === 'walk') irAlCarrito(); else if (mode === 'perch') bajar();
@@ -503,6 +523,7 @@ function draw(dt) {
   drawComp(dt); extras(dt); placeBub();
 }
 function frame(now) {
+  medir();
   const dt = Math.min(.05, (now - last) / 1000 || 0); last = now; T += dt;
   if (mode === 'idle') idle(dt); else if (mode === 'walk') walk(dt); else if (mode === 'jump') jump(dt); else if (mode === 'perch') perch(dt); else if (mode === 'cart') cartMode(); else if (mode === 'trip') tropiezo(dt);
   rockUpd(dt); draw(dt); requestAnimationFrame(frame);
@@ -540,6 +561,7 @@ const act = () => {
 };
 addEventListener('pointermove', e => { ptr = { x: e.clientX, y: e.clientY }; act() }, { passive: true });
 addEventListener('scroll', () => { lastScroll = Date.now(); act() }, { passive: true });
+addEventListener('resize', medir); addEventListener('orientationchange', () => setTimeout(medir, 250)); if (window.visualViewport) visualViewport.addEventListener('resize', medir);
 addEventListener('keydown', act); addEventListener('touchstart', act, { passive: true });
 
 /* Sensor de inclinación: si se da vuelta el celular, se cae hacia el borde que quedó abajo */
@@ -903,7 +925,7 @@ function listo() {
   const cs = getComputedStyle(f); return cs.display === 'none' || parseInt(cs.zIndex) < 0;   // el logo de inicio ya pasó al fondo
 }
 function iniciar() {
-  document.body.appendChild(host); vigilarTienda(); cargar(); if (CFG.clima !== false) clima(); bateria(); if (/[?&]limon(=|&|$)/.test(location.search)) panelPrueba();
+  document.body.appendChild(host); medir(); vigilarTienda(); cargar(); if (CFG.clima !== false) clima(); bateria(); if (/[?&]limon(=|&|$)/.test(location.search)) panelPrueba();
   nextTour = Date.now() + 12e3 * CFG.ritmo; nextRec = Date.now() + 30e3 * CFG.ritmo; nextQuip = Date.now() + 22e3 * CFG.ritmo; nextPeek = Date.now() + 70e3 * CFG.ritmo; nextReto = Date.now() + 100e3 * CFG.ritmo;
   pos = edge('b', -40); tgt = CFG.mi + 70; mode = 'walk'; last = performance.now(); requestAnimationFrame(frame); setInterval(sched, 1000);
   if (SS('mm_hi') !== '1' && !silent) { SS('mm_hi', '1'); setTimeout(async () => { if (mode !== 'cart') { const [t, b, ms] = await saludoInicial(); if (mode !== 'cart') show(t, b, ms) } }, 1800) }

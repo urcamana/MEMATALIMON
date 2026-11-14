@@ -18,6 +18,20 @@ const corto = s => s.length > 24 ? s.slice(0, 22) + '…' : s;
 const STOP = new Set('el la los las un una unos unas de del al y o en con para por que es hay tenes tienen tiene quiero busco necesito me te se lo como cuanto cuesta sale precio alguna algun esta estas hola buen dias tardes noche gracias favor podes puedo ver mostrame stock hay tiene tienen disponible'.split(' '));
 let ART = null, ENVIO = null, hist = [], busy = false, bar = null, inp = null, modo = null;   // modo: lo usa el Antagonista para reutilizar esta barra
 
+/* fetch con tiempo máximo y 1 reintento (si el Worker tarda o falla, no deja a Limón colgado) */
+async function pedir(url, opts, ms = 20000, reint = 1) {
+  for (let i = 0; i <= reint; i++) {
+    const ac = new AbortController(), t = setTimeout(() => ac.abort(), ms);
+    try {
+      const r = await fetch(url, Object.assign({}, opts, { signal: ac.signal }));
+      clearTimeout(t);
+      if (r.ok) { const j = await r.json(); if (j && j.text) return j }
+    } catch (e) { clearTimeout(t) }
+    if (i < reint) await new Promise(res => setTimeout(res, 700));
+  }
+  return null;
+}
+
 /* Lee un JSON (si está en Base64 lo decodifica, igual que mascota.js) */
 async function leer(url) {
   try {
@@ -110,41 +124,40 @@ function responder(texto, prods) {
 
 async function enviar() {
   const q = inp.value.trim(); if (!q || busy) return;
-  inp.value = ''; busy = true; hablar('🍋 Pensando…', null, 30000);
-  let texto = CFG.fallback, prods = [];
+  inp.value = ''; busy = true; hablar('🍋 Pensando…', null, 45000);
+  let texto = CFG.fallback, prods = [], real = false;
   try {
-    if (modo) { const t = await modo.manejar(q); if (t) texto = t }   // modo externo: no usa búsqueda de productos
-    else { await cargar(); prods = buscar(q); }
-    const loc = modo ? null : local(q);
-    if (modo) { }
-    else if (loc) texto = loc;
+    if (modo) { const t = await modo.manejar(q); if (t) { texto = t; real = true } }   // modo externo: no usa búsqueda de productos
     else {
-      const r = await fetch(CFG.api, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          q,
-          hist: hist.slice(-CFG.maxHist),
-          prods: prods.map(p => ({
-            id: p.id,
-            n: p.n,
-            c: p.c,
-            pr: Math.round(p.pr),
-            d: p.d,
-            inv: p.inv,
-            st: p.st
-          })),
-          abierto: abierto(),
-          horario: horario(),
-          envio: ENVIO
-        })
-      });
-      const j = await r.json(); if (j && j.text) texto = j.text;
+      await cargar(); prods = buscar(q);
+      const loc = local(q);
+      if (loc) { texto = loc; real = true }
+      else {
+        const j = await pedir(CFG.api, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            q,
+            hist: hist.slice(-CFG.maxHist),
+            prods: prods.map(p => ({ id: p.id, n: p.n, c: p.c, pr: Math.round(p.pr), d: p.d, inv: p.inv, st: p.st })),
+            abierto: abierto(),
+            horario: horario(),
+            envio: ENVIO
+          })
+        });
+        if (j) { texto = j.text; real = true }
+      }
     }
-  } catch (e) {}
-  hist.push({ r: 'user', c: q }, { r: 'assistant', c: texto }); busy = false;
+  } catch (e) { }
+  finally { busy = false }   // pase lo que pase, se puede volver a escribir
+  if (real) hist.push({ r: 'user', c: q }, { r: 'assistant', c: texto });
   responder(texto, prods);
 }
 
+function ubicar() {   // con el teclado abierto, la barra queda pegada arriba del teclado
+  if (!bar || CFG.arriba) return; const v = window.visualViewport; if (!v) return;
+  const kb = document.documentElement.clientHeight - (v.offsetTop + v.height);
+  bar.style.bottom = (kb > 120 ? kb + 8 : 8) + 'px';
+}
 function crear() {
   bar = document.createElement('div'); bar.id = 'limonChat';
   bar.style.cssText = 'position:fixed;left:8px;right:8px;' + (CFG.arriba ? 'top:70px' : 'bottom:8px') + ';max-width:420px;margin:0 auto;z-index:1047;display:none;gap:6px;padding:8px;border-radius:14px;background:#fff;box-shadow:0 4px 20px #0004;font-family:system-ui,sans-serif';
@@ -152,13 +165,15 @@ function crear() {
     + '<button type="button" data-a="s" style="border:0;border-radius:10px;padding:0 14px;background:#6b4ca3;color:#fff;font-size:16px;cursor:pointer">➤</button>'
     + '<button type="button" data-a="x" style="border:0;border-radius:10px;padding:0 12px;background:#f3ecfa;color:#4a2b7a;font-size:16px;cursor:pointer">✕</button>';
   document.body.appendChild(bar); inp = bar.querySelector('input');
+  bar.style.maxWidth = 'min(420px,calc(100vw - 16px))'; bar.style.boxSizing = 'border-box';
+  if (window.visualViewport) { visualViewport.addEventListener('resize', ubicar); visualViewport.addEventListener('scroll', ubicar) }
   inp.addEventListener('input', () => charlar(120000));
   inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); enviar() } });
   bar.addEventListener('click', e => { const a = e.target.dataset && e.target.dataset.a; if (a === 's') enviar(); else if (a === 'x') { bar.style.display = 'none'; inp.blur(); charlar(0); if (modo && modo.fijo && window.__mm && window.__mm.hide) window.__mm.hide(); fijar(false) } });
 }
 function abrir(opts) {
   modo = opts && opts.manejar ? opts : null; fijar(!!(modo && modo.fijo));
-  if (!bar) crear(); bar.style.display = 'flex'; charlar(120000); if (!modo) cargar();
+  if (!bar) crear(); bar.style.display = 'flex'; ubicar(); charlar(120000); if (!modo) cargar();
   inp.placeholder = (modo && modo.placeholder) || 'Preguntale a Limón 🍋';
   setTimeout(() => inp.focus(), 80);   // al enfocar, mascota.js se calla sola mientras escribís
 }
