@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-13T21:43:56.862Z",
+  "actualizado": "2026-11-15T13:59:28.086Z",
   "items": [
     {
       "id": "1",
@@ -19,6 +19,10 @@
     },
     {
       "id": "8",
+      "checklist": true
+    },
+    {
+      "id": "10",
       "checklist": true
     },
     {
@@ -211,6 +215,10 @@
     },
     {
       "id": "153",
+      "checklist": true
+    },
+    {
+      "id": "158",
       "checklist": true
     },
     {
@@ -570,10 +578,6 @@
       "checklist": true
     },
     {
-      "id": "10",
-      "checklist": false
-    },
-    {
       "id": "13",
       "checklist": false
     },
@@ -619,6 +623,10 @@
     },
     {
       "id": "79",
+      "checklist": false
+    },
+    {
+      "id": "84",
       "checklist": false
     },
     {
@@ -711,10 +719,6 @@
     },
     {
       "id": "154",
-      "checklist": false
-    },
-    {
-      "id": "158",
       "checklist": false
     },
     {
@@ -846,6 +850,10 @@
       "checklist": false
     },
     {
+      "id": "332",
+      "checklist": false
+    },
+    {
       "id": "333",
       "checklist": false
     },
@@ -934,6 +942,10 @@
       "checklist": false
     },
     {
+      "id": "425",
+      "checklist": false
+    },
+    {
       "id": "426",
       "checklist": false
     },
@@ -971,10 +983,6 @@
     },
     {
       "id": "81",
-      "checklist": false
-    },
-    {
-      "id": "84",
       "checklist": false
     },
     {
@@ -1134,11 +1142,11 @@
       "checklist": false
     },
     {
-      "id": "332",
+      "id": "346",
       "checklist": false
     },
     {
-      "id": "346",
+      "id": "348",
       "checklist": false
     },
     {
@@ -1207,10 +1215,6 @@
     },
     {
       "id": "422",
-      "checklist": false
-    },
-    {
-      "id": "425",
       "checklist": false
     },
     {
@@ -1314,10 +1318,6 @@
       "checklist": false
     },
     {
-      "id": "348",
-      "checklist": false
-    },
-    {
       "id": "349",
       "checklist": false
     },
@@ -1366,6 +1366,10 @@
       "checklist": false
     },
     {
+      "id": "423",
+      "checklist": false
+    },
+    {
       "id": "6",
       "checklist": false
     },
@@ -1383,6 +1387,10 @@
     },
     {
       "id": "24",
+      "checklist": false
+    },
+    {
+      "id": "45",
       "checklist": false
     },
     {
@@ -1466,7 +1474,11 @@
       "checklist": false
     },
     {
-      "id": "423",
+      "id": "414",
+      "checklist": false
+    },
+    {
+      "id": "420",
       "checklist": false
     },
     {
@@ -1483,10 +1495,6 @@
     },
     {
       "id": "37",
-      "checklist": false
-    },
-    {
-      "id": "45",
       "checklist": false
     },
     {
@@ -1542,14 +1550,6 @@
       "checklist": false
     },
     {
-      "id": "414",
-      "checklist": false
-    },
-    {
-      "id": "420",
-      "checklist": false
-    },
-    {
       "id": "32",
       "checklist": false
     },
@@ -1562,6 +1562,10 @@
       "checklist": false
     },
     {
+      "id": "44",
+      "checklist": false
+    },
+    {
       "id": "54",
       "checklist": false
     },
@@ -1570,7 +1574,11 @@
       "checklist": false
     },
     {
-      "id": "44",
+      "id": "428",
+      "checklist": false
+    },
+    {
+      "id": "52",
       "checklist": false
     },
     {
@@ -1582,15 +1590,11 @@
       "checklist": false
     },
     {
+      "id": "401",
+      "checklist": false
+    },
+    {
       "id": "405",
-      "checklist": false
-    },
-    {
-      "id": "428",
-      "checklist": false
-    },
-    {
-      "id": "52",
       "checklist": false
     },
     {
@@ -1618,11 +1622,11 @@
       "checklist": false
     },
     {
-      "id": "401",
+      "id": "421",
       "checklist": false
     },
     {
-      "id": "421",
+      "id": "46",
       "checklist": false
     },
     {
@@ -1635,10 +1639,6 @@
     },
     {
       "id": "399",
-      "checklist": false
-    },
-    {
-      "id": "46",
       "checklist": false
     },
     {
@@ -1666,15 +1666,15 @@
       "checklist": false
     },
     {
+      "id": "336",
+      "checklist": false
+    },
+    {
       "id": "122",
       "checklist": false
     },
     {
       "id": "188",
-      "checklist": false
-    },
-    {
-      "id": "336",
       "checklist": false
     },
     {
@@ -1690,15 +1690,15 @@
       "checklist": false
     },
     {
+      "id": "337",
+      "checklist": false
+    },
+    {
       "id": "78",
       "checklist": false
     },
     {
       "id": "182",
-      "checklist": false
-    },
-    {
-      "id": "337",
       "checklist": false
     },
     {
@@ -2195,10 +2195,6 @@
     },
     {
       "id": "553",
-      "checklist": false
-    },
-    {
-      "id": "554",
       "checklist": false
     },
     {
@@ -2859,6 +2855,10 @@
     },
     {
       "id": "721",
+      "checklist": false
+    },
+    {
+      "id": "554",
       "checklist": false
     },
     {
