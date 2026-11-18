@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-15T13:59:28.086Z",
+  "actualizado": "2026-11-18T19:41:43.069Z",
   "items": [
     {
       "id": "1",
@@ -131,6 +131,10 @@
     },
     {
       "id": "83",
+      "checklist": true
+    },
+    {
+      "id": "84",
       "checklist": true
     },
     {
@@ -574,7 +578,15 @@
       "checklist": true
     },
     {
+      "id": "391",
+      "checklist": true
+    },
+    {
       "id": "394",
+      "checklist": true
+    },
+    {
+      "id": "425",
       "checklist": true
     },
     {
@@ -591,6 +603,10 @@
     },
     {
       "id": "29",
+      "checklist": false
+    },
+    {
+      "id": "33",
       "checklist": false
     },
     {
@@ -623,10 +639,6 @@
     },
     {
       "id": "79",
-      "checklist": false
-    },
-    {
-      "id": "84",
       "checklist": false
     },
     {
@@ -695,6 +707,10 @@
     },
     {
       "id": "138",
+      "checklist": false
+    },
+    {
+      "id": "139",
       "checklist": false
     },
     {
@@ -814,6 +830,10 @@
       "checklist": false
     },
     {
+      "id": "271",
+      "checklist": false
+    },
+    {
       "id": "273",
       "checklist": false
     },
@@ -906,10 +926,6 @@
       "checklist": false
     },
     {
-      "id": "391",
-      "checklist": false
-    },
-    {
       "id": "402",
       "checklist": false
     },
@@ -942,10 +958,6 @@
       "checklist": false
     },
     {
-      "id": "425",
-      "checklist": false
-    },
-    {
       "id": "426",
       "checklist": false
     },
@@ -966,10 +978,6 @@
       "checklist": false
     },
     {
-      "id": "33",
-      "checklist": false
-    },
-    {
       "id": "51",
       "checklist": false
     },
@@ -979,6 +987,10 @@
     },
     {
       "id": "62",
+      "checklist": false
+    },
+    {
+      "id": "69",
       "checklist": false
     },
     {
@@ -1018,15 +1030,15 @@
       "checklist": false
     },
     {
-      "id": "139",
-      "checklist": false
-    },
-    {
       "id": "150",
       "checklist": false
     },
     {
       "id": "157",
+      "checklist": false
+    },
+    {
+      "id": "164",
       "checklist": false
     },
     {
@@ -1075,10 +1087,6 @@
     },
     {
       "id": "260",
-      "checklist": false
-    },
-    {
-      "id": "271",
       "checklist": false
     },
     {
@@ -1214,7 +1222,15 @@
       "checklist": false
     },
     {
+      "id": "420",
+      "checklist": false
+    },
+    {
       "id": "422",
+      "checklist": false
+    },
+    {
+      "id": "423",
       "checklist": false
     },
     {
@@ -1231,10 +1247,6 @@
     },
     {
       "id": "61",
-      "checklist": false
-    },
-    {
-      "id": "69",
       "checklist": false
     },
     {
@@ -1263,10 +1275,6 @@
     },
     {
       "id": "162",
-      "checklist": false
-    },
-    {
-      "id": "164",
       "checklist": false
     },
     {
@@ -1363,10 +1371,6 @@
     },
     {
       "id": "406",
-      "checklist": false
-    },
-    {
-      "id": "423",
       "checklist": false
     },
     {
@@ -1475,10 +1479,6 @@
     },
     {
       "id": "414",
-      "checklist": false
-    },
-    {
-      "id": "420",
       "checklist": false
     },
     {
@@ -2027,10 +2027,6 @@
     },
     {
       "id": "510",
-      "checklist": false
-    },
-    {
-      "id": "511",
       "checklist": false
     },
     {
@@ -2859,6 +2855,10 @@
     },
     {
       "id": "554",
+      "checklist": false
+    },
+    {
+      "id": "511",
       "checklist": false
     },
     {
